@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/shape_solid_2170e7_corners_10dp" android:state_enabled="false" />
+    <item android:drawable="@drawable/shape_gradient_5be1fb_589bf1_corners_10dp" android:state_pressed="true" />
+    <item android:drawable="@drawable/shape_gradient_27e7fc_226ce9_corners_10dp" android:state_pressed="false" />
+</selector>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayoutContainer"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:textAlignment="center">
+
+    <ImageView
+        android:id="@+id/imageViewWifiStatus"
+        android:layout_width="32dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="928dp"
+        android:layout_marginEnd="0dp"
+        android:contentDescription="@string/image_description"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textViewWifiName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/test_text"
+        android:textAlignment="center"
+        android:textColor="@color/color_A0BAEF"
+        android:textSize="@dimen/small_small_text_size"
+        app:autoSizeMaxTextSize="@dimen/mid_small_small_text_size"
+        app:autoSizeMinTextSize="18sp"
+        app:autoSizeTextType="uniform" />
+
+    <View
+        android:layout_width="939.1dp"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/color_082E83" />
+</FrameLayout>

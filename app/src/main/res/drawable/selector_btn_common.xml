@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" >
+        <shape>
+            <corners android:radius="@dimen/dp_5" />
+            <gradient android:angle="-90" android:endColor="@color/col_common_btn_bg_dark_end_disable" android:startColor="@color/col_common_btn_bg_dark_start_disable" />
+            <item android:shadowColor="@color/col_common_btn_bg_dark_shadow_color_press"></item>
+            <item android:shadowDx="0"/>
+            <item android:shadowDy="1"/>
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/dp_5" />
+            <gradient android:angle="-90" android:endColor="@color/col_common_btn_bg_dark_end_press" android:startColor="@color/col_common_btn_bg_dark_start_press" />
+            <item android:shadowColor="@color/col_common_btn_bg_dark_shadow_color_press"></item>
+            <item android:shadowDx="0"/>
+            <item android:shadowDy="1"/>
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="@dimen/dp_5" />
+            <gradient android:angle="-90" android:endColor="@color/col_common_btn_bg_dark_end" android:startColor="@color/col_common_btn_bg_dark_start" />
+            <item android:shadowColor="@color/col_common_btn_bg_dark_shadow_color_press"></item>
+            <item android:shadowDx="0"/>
+            <item android:shadowDy="1"/>
+        </shape>
+    </item>
+</selector>

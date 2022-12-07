@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_16"
+        android:background="@color/col_create_general_view_bg"
+        />
+
+    <RelativeLayout
+        android:id="@+id/rl_route_main_menu"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_64"
+        android:background="@drawable/shape_bg_round_top_0e40a4"
+        >
+
+        <ImageView
+            android:id="@+id/iv_fold_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_fold"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_32"
+            />
+
+        <TextView
+            android:id="@+id/tv_main_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            tools:text="主菜单"
+            android:textSize="@dimen/sp_28"
+            android:textStyle="bold"
+            android:textColor="@color/color_A0BAEF"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_toRightOf="@+id/iv_fold_expand"
+            />
+
+
+        <CheckBox
+            android:id="@+id/cb_select_all"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_10"
+            android:minWidth="@dimen/dp_10"
+            android:button="@null"
+            android:background="@drawable/checkbox"
+            android:layout_centerVertical="true"
+            android:visibility="visible"
+            android:layout_toLeftOf="@+id/tv_seleced_all"
+            />
+
+        <TextView
+            android:id="@+id/tv_seleced_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_select_all"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/sp_24"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_32"
+            android:layout_alignParentRight="true"
+            />
+
+        <View
+            android:id="@+id/view_underline"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/color_4D6FBE"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_32"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

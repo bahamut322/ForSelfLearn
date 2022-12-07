@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/color_0E40A4"></solid>
+    <item android:shadowColor="@color/col_common_btn_bg_dark_shadow_color_press"></item>
+    <item android:shadowDx="0"></item>
+    <item android:shadowDy="1"></item>
+    <corners
+        android:topRightRadius="@dimen/dp_6"
+        android:topLeftRadius="@dimen/dp_6"></corners>
+</shape>

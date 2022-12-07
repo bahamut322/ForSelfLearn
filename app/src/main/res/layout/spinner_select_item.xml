@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_bg_round_e2ebfe"
+    >
+
+    <TextView
+        android:id="@+id/tvMapName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_12"
+        android:background="@color/color_E2EBFE"
+        android:textColor="@color/color_4D6FBE"
+        android:layout_alignParentLeft="true"
+        android:text="激光图"
+        android:textSize="@dimen/sp_24"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/dp_15"
+        android:padding="@dimen/dp_15"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_arrow_down"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>

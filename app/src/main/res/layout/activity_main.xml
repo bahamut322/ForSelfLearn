@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <fragment
+            android:id="@+id/fragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/navigation"
+            tools:ignore="FragmentTagUsage"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline148"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="13dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline189"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="9dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline149"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline150"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1030dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline151"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1112dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline152"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1166dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline153"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1183dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline154"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1215dp" />
+
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/color_F6F6F6"
+            android:textSize="@dimen/mini_mini_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline149"
+            app:layout_constraintTop_toTopOf="@+id/guideline148"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="16:55" />
+
+        <TextView
+            android:id="@+id/textViewPowerStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/color_F6F6F6"
+            android:textSize="@dimen/mini_mini_size"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline154"
+            app:layout_constraintTop_toTopOf="@+id/textViewTime"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="90%" />
+
+        <ImageView
+            android:id="@+id/imageViewPowerStatus"
+            android:layout_width="22dp"
+            android:layout_height="16dp"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline153"
+            app:layout_constraintTop_toTopOf="@+id/textViewTime"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/imageViewFlash"
+            android:layout_width="6.1dp"
+            android:layout_height="11dp"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewPowerStatus"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.01"
+            app:layout_constraintStart_toEndOf="@+id/imageViewPowerStatus"
+            app:layout_constraintTop_toTopOf="@+id/imageViewPowerStatus"
+            app:srcCompat="@drawable/ic_power_flash" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:gravity="bottom|end"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+            app:layout_constraintEnd_toStartOf="@+id/guideline152"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline150"
+            app:layout_constraintTop_toTopOf="@+id/textViewTime"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/textViewRobotName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="@color/color_F6F6F6"
+                android:textSize="@dimen/mini_mini_size"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline150"
+                app:layout_constraintTop_toTopOf="@+id/textViewTime"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="机器人4号"
+                tools:visibility="visible" />
+
+            <TextView
+
+                android:id="@+id/textViewNetCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:includeFontPadding="false"
+                android:textColor="@color/color_F6F6F6"
+                android:textSize="@dimen/mini_mini_size"
+                android:layout_marginStart="12dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline150"
+                app:layout_constraintTop_toTopOf="@+id/textViewTime"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="中国电信"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/imageViewNetStatus"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end"
+                android:layout_marginStart="12dp"
+                android:contentDescription="@string/image_description"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline151"
+                app:layout_constraintTop_toTopOf="@id/guideline189"
+                tools:srcCompat="@tools:sample/avatars"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/imageViewWifiStatus"
+                android:layout_width="22dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end"
+                android:layout_marginStart="12dp"
+                android:contentDescription="@string/image_description"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline152"
+                app:layout_constraintTop_toTopOf="@+id/textViewTime"
+                tools:ignore="ImageContrastCheck"
+                tools:srcCompat="@tools:sample/avatars"
+                tools:visibility="visible"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape>
+            <corners android:radius="@dimen/dp_10" />
+            <solid android:color="@color/col_input_bg" />
+            <stroke android:width="@dimen/dp_1" android:color="@color/col_edt_stroke_select" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/dp_10" />
+            <solid android:color="@color/col_input_bg" />
+            <stroke android:width="@dimen/dp_1" android:color="@color/col_edt_stroke_focus" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <corners android:radius="@dimen/dp_10" />
+            <solid android:color="@color/col_input_bg" />
+            <stroke android:width="@dimen/dp_1" android:color="@color/col_edt_stroke" />
+        </shape>
+    </item>
+</selector>

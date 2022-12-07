@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <size android:width="34dp" android:height="34dp" />
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_switch_thumb_checked" android:width="34dp" android:height="34dp" tools:ignore="UnusedAttribute" />
+        </layer-list>
+    </item>
+    <item android:state_checked="false">
+        <layer-list>
+            <item>
+                <shape>
+                    <size android:width="34dp" android:height="34dp" />
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_switch_thumb_uncheck" android:width="34dp" android:height="34dp" tools:ignore="UnusedAttribute" />
+        </layer-list>
+    </item>
+</selector>

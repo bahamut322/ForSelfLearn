@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+    <!--    <androidx.constraintlayout.motion.widget.MotionLayout-->
+    <!--        android:id="@+id/motionLayoutGoBack"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:layoutDescription="@xml/fragment_go_back"-->
+    <!--        tools:context=".view.fragment.GuideArriveFragment">-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/motionLayoutGoBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background2"
+        tools:context=".view.fragment.HomeFragment">
+
+        <ImageView
+            android:id="@+id/imageViewGoBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+
+        <ImageButton
+            android:id="@+id/buttonSend"
+            android:layout_width="409dp"
+            android:layout_height="363dp"
+            android:background="@drawable/selector_bg_button_home"
+            android:clickable="false"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/buttonGuide"
+            app:layout_constraintTop_toBottomOf="@+id/guideline12"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/buttonGuide"
+            android:layout_width="409dp"
+            android:layout_height="363dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/selector_bg_button_home"
+            android:clickable="false"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonSend"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/guideline12"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/imageViewLockSend"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/image_description"
+            android:src="@drawable/ic_lock"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
+            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
+            app:layout_constraintHorizontal_bias="0.09"
+            app:layout_constraintStart_toStartOf="@+id/buttonSend"
+            app:layout_constraintTop_toTopOf="@+id/buttonSend"
+            app:layout_constraintVertical_bias="0.07"
+            tools:ignore="ImageContrastCheck" />
+
+
+        <ImageView
+            android:id="@+id/imageViewLockGuide"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/image_description"
+            android:src="@drawable/ic_lock"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
+            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
+            app:layout_constraintHorizontal_bias="0.09"
+            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
+            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
+            app:layout_constraintVertical_bias="0.07"
+            tools:ignore="ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/textViewGuideTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guide"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
+            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
+            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
+            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
+            app:layout_constraintVertical_bias="0.67" />
+
+        <TextView
+            android:id="@+id/textViewSendTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
+            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
+            app:layout_constraintStart_toStartOf="@+id/buttonSend"
+            app:layout_constraintTop_toTopOf="@+id/buttonSend"
+            app:layout_constraintVertical_bias="0.67" />
+
+        <TextView
+            android:id="@+id/textViewGuideTitleEnglish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guide_in_english_upper_case"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
+            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
+            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
+            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
+            app:layout_constraintVertical_bias="0.84" />
+
+        <TextView
+            android:id="@+id/textViewSendTitleEnglish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send_in_english_upper_case"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
+            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
+            app:layout_constraintStart_toStartOf="@+id/buttonSend"
+            app:layout_constraintTop_toTopOf="@+id/buttonSend"
+            app:layout_constraintVertical_bias="0.84"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/textViewRemind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/i_can_offer_this_service"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline182"
+            app:layout_constraintTop_toTopOf="@+id/guideline181"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewSecond"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline184"
+            app:layout_constraintTop_toTopOf="@+id/guideline183"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="30s" />
+
+        <TextView
+            android:id="@+id/textViewBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="@string/back"
+            android:textColor="@color/color_4D6FBE"
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline187"
+            app:layout_constraintTop_toTopOf="@+id/guideline185"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.3875" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline181"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.22" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline183"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.0525" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline185"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.0625" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline71"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1258" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline187"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.0852" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline184"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.032" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline186"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.032" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline182"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.275" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline72"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5531" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline156"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5805" />
+
+        <com.sendi.deliveredrobot.view.widget.BottomAlarmTextView
+            android:id="@+id/bottomAlarmTextViewGoBack"
+            android:layout_width="match_parent"
+            android:layout_height="179dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/imageViewGuide"
+            android:layout_width="148dp"
+            android:layout_height="148dp"
+            android:background="@drawable/ic_guide"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
+            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
+            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
+            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
+            app:layout_constraintVertical_bias="0.1906" />
+
+        <TextView
+            android:id="@+id/imageViewSend"
+            android:layout_width="148dp"
+            android:layout_height="148dp"
+            android:background="@drawable/ic_send"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
+            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
+            app:layout_constraintStart_toStartOf="@+id/buttonSend"
+            app:layout_constraintTop_toTopOf="@+id/buttonSend"
+            app:layout_constraintVertical_bias="0.1685"
+            tools:ignore="ImageContrastCheck" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupGuideButton"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="buttonGuide,imageViewGuide,imageViewLockGuide,textViewGuideTitle,textViewGuideTitleEnglish" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupSendButton"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="buttonSend,imageViewSend,imageViewLockSend,textViewSendTitle,textViewSendTitleEnglish" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupState3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="textViewBack,textViewSecond,textViewRemind"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupState2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="imageViewGoBack,bottomAlarmTextViewGoBack"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

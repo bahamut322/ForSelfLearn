@@ -1,0 +1,3 @@
+rootProject.name = "DeliveredRobot"
+include ':app'
+include ':wifimanager'

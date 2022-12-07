@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewBackGround"
+        android:layout_width="640dp"
+        android:layout_height="376dp"
+        android:background="@drawable/shape_solid_ffffff_corners_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:text="@string/please_input_fix_map_id"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:text="@string/sub_map_1"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextSubMap1"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/editTextSubMap1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <EditText
+        android:id="@+id/editTextSubMap1"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/shape_solid_dddddd_corners_4dp"
+        android:ems="10"
+        android:hint="@string/sub_map_1"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:text="@string/sub_map_2"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextSubMap2"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/editTextSubMap2"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <EditText
+        android:id="@+id/editTextSubMap2"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="168dp"
+        android:background="@drawable/shape_solid_dddddd_corners_4dp"
+        android:ems="10"
+        android:hint="@string/sub_map_2"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck" />
+
+    <TextView
+        android:id="@+id/textViewFixCommit"
+        android:layout_width="560dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="264dp"
+        android:background="@drawable/selector_bg2_button"
+        android:gravity="center"
+        android:text="@string/start_fix"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mid_small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/viewDismiss"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="909dp"
+        android:layout_marginTop="137dp"
+        android:background="@drawable/ic_close_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

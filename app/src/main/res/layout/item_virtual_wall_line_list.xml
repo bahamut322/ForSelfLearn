@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.sendi.deliveredrobot.view.widget.SwipeMenuLayout
+        android:id="@+id/swipeMenuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
+        tools:ignore="DuplicateClickableBoundsCheck">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:orientation="horizontal">
+
+<!--            <View-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="match_parent" />-->
+
+            <FrameLayout
+                android:id="@+id/frameLayoutContainer"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
+                android:background="@drawable/shape_solid_0e40a4_corners_10dp">
+
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="0dp"
+                    android:textColor="@color/color_E2EBFE"
+                    android:textSize="@dimen/mini_text_size"
+                    tools:text="Line 1" />
+
+            </FrameLayout>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_width="13dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/textViewDelete"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_solid_ff8282_corners_10dp"
+            android:gravity="center"
+            android:text="@string/delete"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mini_text_size" />
+
+    </com.sendi.deliveredrobot.view.widget.SwipeMenuLayout>
+</layout>

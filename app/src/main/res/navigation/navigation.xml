@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/guidingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuidingFragment"
+        android:label="fragment_guiding"
+        tools:layout="@layout/fragment_guiding">
+        <action
+            android:id="@+id/action_guidingFragment_to_guideArriveFragment"
+            app:destination="@id/guideArriveFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_guidingFragment_to_chooseGuidePlaceFragment"
+            app:destination="@id/chooseGuidePlaceFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_guidingFragment_to_callLiftFragment"
+            app:destination="@id/callLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/inputRoomNumberFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.InputRoomNumberFragment"
+        android:label="fragment_input_room_number"
+        tools:layout="@layout/fragment_input_room_number">
+        <action
+            android:id="@+id/action_inputRoomNumberFragment_to_guidingFragment"
+            app:destination="@id/guidingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_inputRoomNumberFragment_to_chooseGuidePlaceFragment"
+            app:destination="@id/chooseGuidePlaceFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/guideArriveFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuideArriveFragment"
+        android:label="fragment_guide_arrive"
+        tools:layout="@layout/fragment_guide_arrive">
+        <action
+            android:id="@+id/action_guideArriveFragment_to_goBackFragment"
+            app:destination="@id/goBackFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/placeListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuidePlaceListFragment"
+        android:label="fragment_place_list"
+        tools:layout="@layout/fragment_place_list" />
+    <fragment
+        android:id="@+id/chooseGuidePlaceFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ChooseGuidePlaceFragment"
+        android:label="fragment_choose_guide_place"
+        tools:layout="@layout/fragment_choose_guide_place">
+        <action
+            android:id="@+id/action_choosePlaceFragment_to_guidingFragment"
+            app:destination="@id/guidingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chargeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ChargeFragment"
+        android:label="chargeFragment"
+        tools:layout="@layout/fragment_charge" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.HomeFragment"
+        android:label="homeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_inputRoomNumberFragment"
+            app:destination="@id/inputRoomNumberFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_settingHomeFragment"
+            app:destination="@id/settingHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/callLiftFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CallLiftFragment"
+        android:label="fragment_call_lift"
+        tools:layout="@layout/fragment_call_lift">
+        <action
+            android:id="@+id/action_callLiftFragment_to_intoLiftFragment"
+            app:destination="@id/intoLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/callLiftFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/intoLiftFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.IntoLiftFragment"
+        android:label="fragment_into_lift"
+        tools:layout="@layout/fragment_into_lift">
+        <action
+            android:id="@+id/action_intoLiftFragment_to_liftFragment"
+            app:destination="@id/liftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/intoLiftFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/liftFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.LiftFragment"
+        android:label="fragment_lift"
+        tools:layout="@layout/fragment_lift">
+        <action
+            android:id="@+id/action_liftFragment_to_outLiftFragment"
+            app:destination="@id/outLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/liftFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/outLiftFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.OutLiftFragment"
+        android:label="fragment_out_lift"
+        tools:layout="@layout/fragment_out_lift" />
+
+    <fragment
+        android:id="@+id/putObjectFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.PutObjectFragment"
+        android:label="fragment_put_object"
+        tools:layout="@layout/fragment_put_object">
+        <action
+            android:id="@+id/action_putObjectFragment_to_chooseSendPlaceBin1Fragment"
+            app:destination="@id/chooseSendPlaceBin1Fragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/putObjectFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_putObjectFragment_to_chooseSendPlaceBin2Fragment"
+            app:destination="@id/chooseSendPlaceBin2Fragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/putObjectFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_putObjectFragment_to_sendingFragment"
+            app:destination="@id/sendingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/putObjectFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseSendPlaceBin1Fragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ChooseSendPlaceBin1Fragment"
+        android:label="ChooseSendPlaceBin1Fragment">
+        <action
+            android:id="@+id/action_chooseSendPlaceBin1Fragment_to_putObjectFragment"
+            app:destination="@id/putObjectFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/putObjectFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseSendPlaceBin2Fragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ChooseSendPlaceBin2Fragment"
+        android:label="ChooseSendPlaceBin2Fragment">
+        <action
+            android:id="@+id/action_chooseSendPlaceBin2Fragment_to_putObjectFragment"
+            app:destination="@id/putObjectFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/putObjectFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendPlaceBin1ListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SendPlaceBin1ListFragment"
+        android:label="SendPlaceBin1ListFragment" />
+    <fragment
+        android:id="@+id/sendPlaceBin2ListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SendPlaceBin2ListFragment"
+        android:label="SendPlaceBin2ListFragment" />
+    <fragment
+        android:id="@+id/sendingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SendingFragment"
+        android:label="SendingFragment">
+        <action
+            android:id="@+id/action_sendingFragment_to_callLiftFragment"
+            app:destination="@id/callLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_sendingFragment_to_callRoomFragment"
+            app:destination="@id/callRoomFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/callRoomFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CallRoomFragment"
+        android:label="callRoomFragment"
+        tools:layout="@layout/fragment_call_room">
+        <action
+            android:id="@+id/action_callRoomFragment_to_takeObjectFragment"
+            app:destination="@id/takeObjectFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/callRoomFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/takeObjectFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.TakeObjectFragment"
+        android:label="takeObjectFragment"
+        tools:layout="@layout/fragment_take_object">
+        <action
+            android:id="@+id/action_takeObjectFragment_to_goBackFragment"
+            app:destination="@id/goBackFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/goBackFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GoBackFragment"
+        android:label="GoBackFragment">
+        <action
+            android:id="@+id/action_goBackFragment_to_callLiftFragment"
+            app:destination="@id/callLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <!--模式设置!-->
+    <fragment
+        android:id="@+id/mapSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ModeSettingFragment"
+        android:label="fragment_map_setting"
+        tools:layout="@layout/fragment_mode_setting" />
+    <fragment
+        android:id="@+id/sendModeSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SendModeSettingFragment"
+        android:label="fragment_send_mode_setting"
+        tools:layout="@layout/fragment_send_mode_setting" />
+    <fragment
+        android:id="@+id/basicSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.DebugBasicSettingFragment"
+        android:label="fragment_basic_setting"
+        tools:layout="@layout/fragment_basic_setting" />
+    <fragment
+        android:id="@+id/guideModeSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuideModeSettingFragment"
+        android:label="fragment_guide_mode_setting"
+        tools:layout="@layout/fragment_guide_mode_setting" />
+    <fragment
+        android:id="@+id/settingHomeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SettingHomeFragment"
+        android:label="fragment_setting_home"
+        tools:layout="@layout/fragment_setting_home">
+        <action
+            android:id="@+id/action_settingHomeFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_settingHomeFragment_to_verifyToDebugFragment"
+            app:destination="@id/verifyToDebugFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/wifiSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.WifiSettingFragment"
+        android:label="fragment_wifi_setting"
+        tools:layout="@layout/fragment_wifi_setting" />
+    <fragment
+        android:id="@+id/containFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ContainFragment"
+        android:label="ContainFragment" />
+
+    <fragment
+        android:id="@+id/selfCheckFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.SelfCheckFragment"
+        android:label="fragment_self_check"
+        tools:layout="@layout/fragment_self_check">
+        <action
+            android:id="@+id/action_selfCheckFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+
+        <action
+            android:id="@+id/action_selfCheckFragment_to_chargeFragment"
+            app:destination="@id/chargeFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/dockingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.DockingFragment"
+        android:label="fragment_docking"
+        tools:layout="@layout/fragment_docking" />
+    <fragment
+        android:id="@+id/finishDockFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.FinishDockFragment"
+        android:label="FinishDockFragment" />
+    <fragment
+        android:id="@+id/readyForTaskFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ReadyForTaskFragment"
+        android:label="ReadyForTaskFragment" />
+    <fragment
+        android:id="@+id/inputTakeObjectCodeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.InputTakeObjectCodeFragment"
+        android:label="InputTakeObjectCodeFragment" />
+    <fragment
+        android:id="@+id/debuggingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.DebuggingFragment"
+        android:label="fragment_debugging"
+        tools:layout="@layout/fragment_debugging">
+        <action
+            android:id="@+id/action_debuggingFragment_to_settingHomeFragment"
+            app:destination="@id/settingHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutMeSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.AboutMeSettingFragment"
+        android:label="AboutMeSettingFragment" />
+    <fragment
+        android:id="@+id/laserListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.LaserListFragment"
+        android:label="LaserListFragment" />
+    <fragment
+        android:id="@+id/laserScanFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.LaserScanFragment"
+        android:label="LaserScanFragment" />
+    <fragment
+        android:id="@+id/createGeneralViewFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateGeneralViewFragment"
+        android:label="CreateGeneralViewFragment" />
+    <fragment
+        android:id="@+id/confirmSubMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ConfirmSubMapFragment"
+        android:label="ConfirmSubMapFragment" />
+    <fragment
+        android:id="@+id/fixLaserMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.FixLaserMapFragment"
+        android:label="FixLaserMapFragment" />
+    <fragment
+        android:id="@+id/showOriginMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ShowOriginMapFragment"
+        android:label="ShowOriginMapFragment" />
+    <fragment
+        android:id="@+id/showFixLaserMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ShowFixLaserMapFragment"
+        android:label="ShowFixLaserMapFragment" />
+    <fragment
+        android:id="@+id/adjustFixMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.AdjustFixMapFragment"
+        android:label="adjustFixMapFragment"
+        tools:layout="@layout/fragment_adjust_fix_map" />
+    <fragment
+        android:id="@+id/editLaserMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.EditLaserMapFragment"
+        android:label="EditLaserMapFragment" />
+    <fragment
+        android:id="@+id/relocationLaserFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.RelocationLaserFragment"
+        android:label="RelocationLaserFragment" />
+    <fragment
+        android:id="@+id/routeMapListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.RouteMapListFragment"
+        android:label="RouteMapListFragment">
+        <action
+            android:id="@+id/action_routeMapListFragment_to_relocationLaserFragment"
+            app:destination="@id/relocationLaserFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createRouteMapFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateRouteMapFragment"
+        android:label="CreateRouteMapFragment" />
+    <fragment
+        android:id="@+id/verifyToDebugFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.VerifyToDebugFragment"
+        android:label="VerifyToDebugFragment">
+        <action
+            android:id="@+id/action_verifyToDebugFragment_to_settingHomeFragment"
+            app:destination="@id/settingHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createTargetSortFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateTargetSortFragment"
+        android:label="CreateTargetSortFragment" />
+    <fragment
+        android:id="@+id/createTargetPointFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateTargetPointFragment"
+        android:label="CreateTargetPointFragment" />
+    <fragment
+        android:id="@+id/limitSpeedListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.LimitSpeedListFragment"
+        android:label="LimitSpeedListFragment" />
+    <fragment
+        android:id="@+id/limitSpeedHomeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.LimitSpeedHomeFragment"
+        android:label="LimitSpeedHomeFragment" />
+    <fragment
+        android:id="@+id/createLimitSpeedFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateLimitSpeedFragment"
+        android:label="CreateLimitSpeedFragment" />
+    <fragment
+        android:id="@+id/virtualWallListFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.VirtualWallListFragment"
+        android:label="VirtualWallListFragment" />
+    <fragment
+        android:id="@+id/virtualWallHomeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.VirtualWallHomeFragment"
+        android:label="virtualWallHomeFragment"
+        tools:layout="@layout/fragment_virtual_wall_home" />
+    <fragment
+        android:id="@+id/createVirtualWallFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CreateVirtualWallFragment"
+        android:label="CreateVirtualWallFragment" />
+    <fragment
+        android:id="@+id/inputVerificationCodeFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.InputVerificationCodeFragment"
+        android:label="InputVerificationCodeFragment" />
+    <fragment
+        android:id="@+id/remoteOrderCloseDoorFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.RemoteOrderCloseDoorFragment"
+        android:label="RemoteOrderCloseDoorFragment" />
+    <fragment
+        android:id="@+id/commonHandleExceptionFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CommonHandleExceptionFragment"
+        android:label="CommonHandleExceptionFragment" />
+
+</navigation>

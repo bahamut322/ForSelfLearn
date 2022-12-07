@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/col_tab_dark_menu_text_sel" android:state_selected="true" />
+    <item android:color="@color/col_room_dark_table_item_text_unsel" android:state_selected="false" />
+</selector>

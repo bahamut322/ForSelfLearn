@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_3"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_20">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:text="@string/home_Setting"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_32"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="@dimen/dp_1010"
+                    android:layout_height="@dimen/dp_209"
+                    android:layout_marginTop="@dimen/dp_24"
+                    android:background="@drawable/setting_item_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+                <TextView
+                    android:id="@+id/displayTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_14"
+                    android:alpha="0.6"
+                    android:text="@string/Home_function_display"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/view" />
+
+                <CheckBox
+                    android:id="@+id/all"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/displayTv"
+                    app:layout_constraintStart_toEndOf="@+id/displayTv"
+                    app:layout_constraintTop_toTopOf="@+id/displayTv" />
+
+                <TextView
+                    android:id="@+id/textView55"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/allSelect"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/all"
+                    app:layout_constraintStart_toEndOf="@+id/all"
+                    app:layout_constraintTop_toTopOf="@+id/all" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="946dp"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_marginTop="@dimen/dp_64"
+                    android:alpha="0.6"
+                    android:background="@color/white"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/view" />
+
+                <CheckBox
+                    android:id="@+id/red"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="31dp"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view2"
+                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Etiquette_welcome"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/red"
+                    app:layout_constraintStart_toEndOf="@+id/red"
+                    app:layout_constraintTop_toTopOf="@+id/red" />
+
+                <CheckBox
+                    android:id="@+id/blue"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="@dimen/dp_88"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView5"
+                    app:layout_constraintStart_toEndOf="@+id/textView5"
+                    app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Intelligent_leadership"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/blue"
+                    app:layout_constraintStart_toEndOf="@+id/blue"
+                    app:layout_constraintTop_toTopOf="@+id/blue" />
+
+                <CheckBox
+                    android:id="@+id/yellow"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="@dimen/dp_88"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                    app:layout_constraintStart_toEndOf="@+id/textView6"
+                    app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Intelligent_explanation"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/yellow"
+                    app:layout_constraintStart_toEndOf="@+id/yellow"
+                    app:layout_constraintTop_toTopOf="@+id/yellow" />
+
+                <CheckBox
+                    android:id="@+id/orange"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="@dimen/dp_88"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                    app:layout_constraintStart_toEndOf="@+id/textView8"
+                    app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Intelligent_QA"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/orange"
+                    app:layout_constraintStart_toEndOf="@+id/orange"
+                    app:layout_constraintTop_toTopOf="@+id/orange" />
+
+                <CheckBox
+                    android:id="@+id/white"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginTop="@dimen/dp_36"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintStart_toStartOf="@+id/red"
+                    app:layout_constraintTop_toBottomOf="@+id/red" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Light_application"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/white"
+                    app:layout_constraintStart_toEndOf="@+id/white"
+                    app:layout_constraintTop_toTopOf="@+id/white" />
+
+                <CheckBox
+                    android:id="@+id/black"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginTop="@dimen/dp_36"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintStart_toStartOf="@+id/blue"
+                    app:layout_constraintTop_toBottomOf="@+id/blue" />
+
+                <TextView
+                    android:id="@+id/textView56"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.6"
+                    android:text="@string/Special_explanation"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/black"
+                    app:layout_constraintStart_toEndOf="@+id/black"
+                    app:layout_constraintTop_toTopOf="@+id/black" />
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_41"
+                    android:text="@string/audio_setup"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_32"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="@dimen/dp_1010"
+                    android:layout_height="@dimen/dp_264"
+                    android:layout_marginTop="@dimen/dp_24"
+                    android:background="@drawable/setting_item_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_50"
+                    android:alpha="0.6"
+                    android:text="@string/Robot_voice"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toTopOf="@+id/view3" />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="46dp"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginStart="@dimen/dp_38"
+                    android:src="@drawable/no_sound"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView10"
+                    app:layout_constraintStart_toEndOf="@+id/textView10"
+                    app:layout_constraintTop_toTopOf="@+id/textView10" />
+
+                <com.sendi.deliveredrobot.view.widget.MySeekBar
+                    android:id="@+id/seekbarMusic"
+                    android:layout_width="@dimen/dp_600"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginStart="@dimen/dp_25"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                    app:layout_constraintStart_toEndOf="@+id/imageView5"
+                    app:layout_constraintTop_toTopOf="@+id/imageView5" />
+
+                <ImageView
+                    android:layout_width="@dimen/dp_46"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginStart="@dimen/dp_24"
+                    android:src="@drawable/have_sound"
+                    app:layout_constraintBottom_toBottomOf="@+id/seekbarMusic"
+                    app:layout_constraintStart_toEndOf="@+id/seekbarMusic"
+                    app:layout_constraintTop_toTopOf="@+id/seekbarMusic" />
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_92"
+                    android:alpha="0.6"
+                    android:text="@string/Video_volume"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintEnd_toEndOf="@+id/textView10"
+                    app:layout_constraintStart_toStartOf="@+id/textView10"
+                    app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="@dimen/dp_46"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginTop="@dimen/dp_92"
+                    android:src="@drawable/no_sound"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                    app:layout_constraintStart_toStartOf="@+id/imageView5"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+                <com.sendi.deliveredrobot.view.widget.MySeekBar
+                    android:id="@+id/seekbarVoice"
+                    android:layout_width="@dimen/dp_600"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginStart="@dimen/dp_25"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                    app:layout_constraintStart_toEndOf="@+id/imageView7"
+                    app:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="@dimen/dp_46"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginStart="@dimen/dp_24"
+                    android:src="@drawable/have_sound"
+                    app:layout_constraintBottom_toBottomOf="@+id/seekbarVoice"
+                    app:layout_constraintStart_toEndOf="@+id/seekbarVoice"
+                    app:layout_constraintTop_toTopOf="@+id/seekbarVoice" />
+
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_41"
+                    android:text="@string/timbre"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_32"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+                <View
+                    android:id="@+id/view7"
+                    android:layout_width="@dimen/dp_1010"
+                    android:layout_height="@dimen/dp_120"
+                    android:layout_marginTop="@dimen/dp_24"
+                    android:background="@drawable/setting_item_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+                <RadioGroup
+                    android:id="@+id/express"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_48"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="@+id/view7"
+                    app:layout_constraintTop_toTopOf="@+id/view7">
+
+
+
+                    <RadioButton
+                        android:id="@+id/Boy_voice"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:background="@drawable/selector_bg_select_btn"
+                        android:button="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:alpha="0.6"
+                        android:text="@string/Male_voice"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_24" />
+
+
+
+                    <RadioButton
+                        android:id="@+id/Female_voice"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_128"
+                        android:background="@drawable/selector_bg_select_btn"
+                        android:button="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:alpha="0.6"
+                        android:text="@string/Female_voice"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_24" />
+
+
+
+                    <RadioButton
+                        android:id="@+id/Child_voice"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_128"
+                        android:background="@drawable/selector_bg_select_btn"
+                        android:button="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:alpha="0.6"
+                        android:text="@string/Child_voice"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_24" />
+
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/textView16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_32"
+                    android:layout_marginTop="@dimen/dp_41"
+                    android:text="@string/Expression_Settings"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_32"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view7" />
+
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="@dimen/dp_1010"
+                    android:layout_height="@dimen/dp_120"
+                    android:layout_marginTop="@dimen/dp_24"
+                    android:background="@drawable/setting_item_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:alpha="0.6"
+                    android:text="@string/Whether"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/view8"
+                    app:layout_constraintStart_toStartOf="@+id/view8"
+                    app:layout_constraintTop_toTopOf="@+id/view8" />
+
+                <RadioGroup
+                    android:id="@+id/expression_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_104"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/view8"
+                    app:layout_constraintStart_toEndOf="@+id/textView17"
+                    app:layout_constraintTop_toTopOf="@+id/view8">
+
+                    <RadioButton
+                        android:id="@+id/expression_yes"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_gravity="center"
+                        android:background="@drawable/selector_bg_select_btn"
+                        android:button="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:alpha="0.6"
+                        android:text="@string/yes"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_24" />
+
+
+                    <RadioButton
+                        android:id="@+id/expression_no"
+                        android:layout_width="@dimen/dp_24"
+                        android:layout_height="@dimen/dp_24"
+                        android:layout_marginStart="@dimen/dp_128"
+                        android:background="@drawable/selector_bg_select_btn"
+                        android:button="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:alpha="0.6"
+                        android:text="@string/no"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_24" />
+
+                </RadioGroup>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

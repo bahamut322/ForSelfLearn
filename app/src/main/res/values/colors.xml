@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="color_216FE8">#216FE8</color>
+    <color name="transparency">#00000000</color>
+    <color name="col_transparent">#00ffffff</color>
+    <color name="color_4D6FBE">#4D6FBE</color>
+    <color name="color_A0BAEF">#A0BAEF</color>
+    <color name="color_0E40A4">#0E40A4</color>
+    <color name="color_F6F6F6">#F6F6F6</color>
+    <color name="color_CFE2F5">#CFE2F5</color>
+    <color name="color_226DE8">#226DE8</color>
+    <color name="color_4EECFD">#4EECFD</color>
+    <color name="color_00195F">#00195F</color>
+    <color name="color_FF8282">#FF8282</color>
+    <color name="color_082E83">#082E83</color>
+    <color name="color_6787D4">#6787D4</color>
+    <color name="color_00114E">#00114E</color>
+    <color name="color_47D7FA">#47D7FA</color>
+    <color name="color_2170E7">#2170E7</color>
+    <color name="color_5691EE">#5691EE</color>
+    <color name="color_27E7FC">#27E7FC</color>
+    <color name="color_226CE9">#226CE9</color>
+    <color name="color_5BE1FB">#5BE1FB</color>
+    <color name="color_589BF1">#589BF1</color>
+    <color name="color_2269CE">#2269CE</color>
+    <color name="color_0950BD">#0950BD</color>
+    <color name="color_4485E2">#4485E2</color>
+    <color name="color_072B7E">#072B7E</color>
+    <color name="color_001356">#001356</color>
+    <color name="color_0048AB">#0048AB</color>
+    <color name="color_08174E">#08174E</color>
+    <color name="color_023290">#023290</color>
+    <color name="color_self_check_bg">#002D7F</color>
+    <color name="feed_grow_progress_bar">#FF8282</color>
+    <!-- 调试  -->
+    <!--  深色版背景色 input  -->
+    <color name="col_input_bg">#2F3D6E</color>
+    <!-- 输入框-->
+    <color name="col_edt_stroke_focus">#0B83FE</color>
+    <color name="col_edt_stroke_select">#F23030</color>
+    <color name="col_edt_stroke">#F0F4F8</color>
+    <color name="col_edt_tip">#F23030</color>
+    <color name="col_text_input">#FFFFFF</color>
+    <color name="col_text_hint">#CCCCCC</color>
+    <!--  深色版本按钮-->
+    <color name="col_common_btn_bg_dark_confirm">#2170E7 </color>
+    <color name="col_common_btn_bg_dark_start">#4E78CE</color>
+    <color name="col_common_btn_bg_dark_end">#285CC5</color>
+    <color name="col_common_btn_bg_dark_start_press">#7FA3EC</color>
+    <color name="col_common_btn_bg_dark_end_press">#497FEA</color>
+    <color name="col_common_btn_bg_dark_start_disable">#7D8FB1</color>
+    <color name="col_common_btn_bg_dark_end_disable">#5E6F8E</color>
+    <color name="col_common_btn_bg_dark_text_color_press">#DEE4F8</color>
+    <color name="col_common_btn_bg_dark_shadow_color_press">#0A0F22</color>
+    <!-- 深色版背景色 父view 的背景 -->
+    <color name="col_bg_main_start">#232F5E</color>
+    <color name="col_bg_main_end">#030923</color>
+    <color name="col_dark_bg">#313D74</color>
+    <color name="col_room_dark_table_item_text_unsel">#B6C6F7</color>
+    <!-- tablayout item 的 下划线 背景色 -->
+    <color name="col_tab_menu_line">#00000000</color>
+    <color name="col_tab_menu_line_sel_start">#3E9EFF</color>
+    <color name="col_tab_menu_line_sel_end">#0A82FE</color>
+    <!--        深色版tablayout item 的 文字 颜色-->
+    <color name="col_tab_dark_menu_text_sel">#A6BEFD</color>
+    <!-- tablayout item 的 文字 颜色 -->
+    <color name="col_tab_menu_text">#939AA4</color>
+    <color name="col_tab_menu_text_sel">#131E33</color>
+    <!-- 调试  -->
+
+    <color name="col_edit_text">#E2EBFE</color>
+    <color name="col_create_general_view_bg">#081952</color>
+    <color name="menu_select">#ce8fe2</color>
+    <color name="menu_nor">#dfdedf</color>
+    <color name="create_general_number">#071a57</color>
+    <color name="color_30333C">#30333C</color>
+    <color name="color_999999">#999999</color>
+    <color name="color_666666">#666666</color>
+    <color name="color_DDDDDD">#DDDDDD</color>
+    <color name="color_E2EBFE">#E2EBFE</color>
+    <color name="color_08174F">#08174F</color>
+    <color name="color_216ee8">#216ee8</color>
+    <color name="color_344274">#344274</color>
+    <color name="color_002d7f">#002D7F</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_041D64">#041D64</color>
+    <color name="color_06297B">#06297B</color>
+    <color name="color_49DCFA">#49DCFA</color>
+    <color name="color_FEFEFF">#FEFEFF</color>
+    <color name="color_1A49A8">#1A49A8</color>
+    <color name="color_2469D9">#2469D9</color>
+
+
+    <!-- x8 -->
+    <color name="colorPrimary">#6200EE</color>
+    <color name="color_53F19F">#53F19F</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#0ADA03</color>
+    <color name="black">#0F1012</color>
+    <color name="bg">#232229</color>
+    <color name="backgroud">#0F1012</color>
+    <color name="red">#583737</color>
+    <color name="gray">#944141</color>
+    <color name="line">#B3B0B0</color>
+    <color name="detail">#77000000</color>
+    <color name="orgen">#E17606</color>
+    <color name="progress_bg">#7C88A7</color>
+    <color name="status_text">#B3B0B0</color>
+    <color name="bg_kuang">#4426223F</color>
+    <color name="line_color">#55464647</color>
+    <color name="app_color_transparent">#00000000</color>
+    <color name="color_F0F0F8">#F0F0F8</color>
+    <color name="color_FF6079">#FF6079</color>
+    <color name="color_160E8E">#160E8E</color>
+    <color name="color_00EEFF">#00EEFF</color>
+    <color name="color_29139B">#29139B</color>
+    <color name="color_3B37A7">#3B37A7</color>
+    <color name="color_5FECA3">#5FECA3</color>
+    <color name="color_00A7FF">#00A7FF</color>
+    <color name="color_FE6A66">#FE6A66</color>
+    <color name="color_FB4D77">#FB4D77</color>
+    <color name="color_0F0250">#0F0250</color>
+    <color name="color_1DA8FE">#1DA8FE</color>
+    <color name="color_295DD2">#295DD2</color>
+    <color name="gray1">#F8F8F8</color>
+    <color name="gray_home">#909090</color>
+    <color name="homecolor1">#1a5cc0 </color>
+    <color name="color_red">#FF5722</color>
+    <color name="black_home">#484848</color>
+    <color name="blue">#2BC7E5</color>
+
+</resources>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        tools:context=".view.fragment.AdjustFixMapFragment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="61dp"
+            android:text="@string/fix_laser_map_2"
+            android:textColor="@color/color_E2EBFE"
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.sendi.deliveredrobot.view.widget.LaserPointsView
+            android:id="@+id/laserPointsView"
+            android:layout_width="960dp"
+            android:layout_height="625dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="136dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.sendi.deliveredrobot.view.widget.CrossKeyboardBackGroundView
+            android:id="@+id/crossKeyboardLayout"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="270dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+        <View
+            android:id="@+id/viewLeft"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/selector_cross_keyboard_left"
+            app:layout_constraintBottom_toBottomOf="@+id/crossKeyboardLayout"
+            app:layout_constraintEnd_toEndOf="@+id/crossKeyboardLayout"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/crossKeyboardLayout"
+            app:layout_constraintTop_toTopOf="@+id/crossKeyboardLayout" />
+
+        <View
+            android:id="@+id/viewRight"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="136dp"
+            android:background="@drawable/selector_cross_keyboard_right"
+            app:layout_constraintBottom_toBottomOf="@+id/crossKeyboardLayout"
+            app:layout_constraintEnd_toEndOf="@+id/crossKeyboardLayout"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/crossKeyboardLayout"
+            app:layout_constraintTop_toTopOf="@+id/crossKeyboardLayout" />
+
+        <View
+            android:id="@+id/viewUp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/selector_cross_keyboard_up"
+            app:layout_constraintBottom_toBottomOf="@+id/crossKeyboardLayout"
+            app:layout_constraintEnd_toEndOf="@+id/crossKeyboardLayout"
+            app:layout_constraintStart_toStartOf="@+id/crossKeyboardLayout"
+            app:layout_constraintTop_toTopOf="@+id/crossKeyboardLayout"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/viewDown"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="136dp"
+            android:background="@drawable/selector_cross_keyboard_down"
+            app:layout_constraintBottom_toBottomOf="@+id/crossKeyboardLayout"
+            app:layout_constraintEnd_toEndOf="@+id/crossKeyboardLayout"
+            app:layout_constraintHorizontal_bias="0.50"
+            app:layout_constraintStart_toStartOf="@+id/crossKeyboardLayout"
+            app:layout_constraintTop_toTopOf="@+id/crossKeyboardLayout"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/white"
+            android:spinnerMode="dropdown"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/crossKeyboardLayout"
+            app:layout_constraintStart_toStartOf="@+id/crossKeyboardLayout"
+            app:layout_constraintTop_toBottomOf="@+id/textView25"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="136dp"
+            android:text="@string/adjustment_coefficient"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/viewLeftRotate"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="536dp"
+            android:background="@drawable/selector_left_rotate"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/viewRightRotate"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="1168dp"
+            android:layout_marginTop="536dp"
+            android:background="@drawable/selector_right_rotate"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewDone"
+            android:layout_width="200dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="688dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/done"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/spinner"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/spinner"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25" />
+
+        <TextView
+            android:id="@+id/textViewGiveUp"
+            android:layout_width="200dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="611dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/give_up"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/spinner"
+            app:layout_constraintStart_toStartOf="@+id/spinner"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

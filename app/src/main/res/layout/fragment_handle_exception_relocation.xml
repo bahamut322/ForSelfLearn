@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background3"
+        tools:context=".view.fragment.HandleExceptionRelocationFragment">
+
+        <View
+            android:id="@+id/viewRemind"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/viewRemindIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="229dp"
+            android:layout_marginTop="104dp"
+            android:background="@drawable/ic_waring"
+            app:layout_constraintBottom_toBottomOf="@+id/viewRemind"
+            app:layout_constraintEnd_toEndOf="@+id/viewRemind"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/viewRemind"
+            app:layout_constraintTop_toTopOf="@+id/viewRemind"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewWarningRemind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/reboot_lost_warning_remind"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/viewRemindIcon"
+            app:layout_constraintEnd_toEndOf="@+id/viewRemind"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/viewRemindIcon"
+            app:layout_constraintTop_toTopOf="@+id/viewRemindIcon" />
+
+        <TextView
+            android:id="@+id/textViewEnsureRobotLocation"
+            android:layout_width="336dp"
+            android:layout_height="88dp"
+            android:layout_marginBottom="70dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/ensure_robot_location"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/viewRemind"
+            app:layout_constraintEnd_toEndOf="@+id/viewRemind"
+            app:layout_constraintStart_toStartOf="@+id/viewRemind"
+            app:layout_constraintTop_toTopOf="@+id/viewRemind"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupWarningRemind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="viewRemind,viewRemindIcon,textViewEnsureRobotLocation,textViewWarningRemind"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/textViewRelocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="91dp"
+            android:text="@string/please_input_your_face_room"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.sendi.deliveredrobot.view.widget.CustomIndicatorTextView
+            android:id="@+id/customIndicatorTextView"
+            android:layout_width="198dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewRelocation"
+            app:layout_constraintVertical_bias="0.0"
+            app:text_size="36" />
+
+        <com.sendi.deliveredrobot.view.widget.CustomKeyBoardView
+            android:id="@+id/customKeyBoardView"
+            android:layout_width="374dp"
+            android:layout_height="396dp"
+            android:layout_marginTop="228dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewEnsure"
+            android:layout_width="336dp"
+            android:layout_height="88dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/confirm"
+            android:letterSpacing="0.3"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            tools:targetApi="lollipop" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupRelocation"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="textViewRelocation,customIndicatorTextView,customKeyBoardView,textViewEnsure"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BottomAlarmTextView">
+        <attr name="bottom_alarm_text" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SwipeMenuLayout">
+        <attr name="swipeEnable" format="boolean"/>
+        <attr name="ios" format="boolean"/>
+        <attr name="leftSwipe" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomSwitchTextView">
+        <attr name="view_background" format="reference"/>
+        <attr name="left_select_background" format="reference"/>
+        <attr name="right_select_background" format="reference"/>
+        <attr name="left_text" format="string"/>
+        <attr name="right_text" format="string"/>
+        <attr name="default_text_color" format="reference"/>
+        <attr name="select_text_color" format="reference"/>
+        <attr name="view_selected" format="boolean"/>
+        <attr name="view_text_size" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="NoDataView">
+        <attr name="center_icon" format="reference"/>
+        <attr name="center_icon_width" format="float"/>
+        <attr name="center_icon_height" format="float"/>
+        <attr name="center_message" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomIndicatorTextView">
+        <attr name="text_size" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomKeyBoardView">
+        <attr name="keyboard_type"/>
+    </declare-styleable>
+
+    <attr name="keyboard_type">
+        <enum name="clear_remove" value="0" />
+        <enum name="remove_confirm" value="1" />
+    </attr>
+</resources>

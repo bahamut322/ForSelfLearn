@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".view.fragment.DebugSettingFragment"
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/viewApnBackGround"
+                android:layout_width="1200dp"
+                android:layout_height="393dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/shape_solid_0e40a4_corners_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="45dp"
+                android:text="@string/apn_setting"
+                android:textColor="@color/white"
+                android:textSize="@dimen/mid_small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:id="@+id/view22"
+                android:layout_width="1136dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="120dp"
+                android:background="@color/color_4D6FBE"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textViewApply"
+                android:layout_width="160dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="29dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/selector_bg_button"
+                android:gravity="center"
+                android:text="@string/apply"
+                android:textColor="@color/color_E2EBFE"
+                android:textSize="@dimen/small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="44dp"
+                android:text="@string/apn"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextApnName"
+                app:layout_constraintEnd_toStartOf="@+id/editTextApnName"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/editTextApnName" />
+
+            <TextView
+                android:id="@+id/textView32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="44dp"
+                android:text="@string/mcc"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextMcc"
+                app:layout_constraintEnd_toStartOf="@+id/editTextApnName"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/editTextMcc" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="39dp"
+                android:text="@string/mnc"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextMnc"
+                app:layout_constraintEnd_toStartOf="@+id/editTextMnc"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/editTextMnc" />
+
+            <EditText
+                android:id="@+id/editTextApnName"
+                android:layout_width="1000dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="157dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/selector_edittext_bg"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:paddingStart="23dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="0.0"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/editTextMcc"
+                android:layout_width="392dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="168dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="36dp"
+                android:background="@drawable/selector_edittext_bg"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="23dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="1.0"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/editTextMnc"
+                android:layout_width="392dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="36dp"
+                android:background="@drawable/selector_edittext_bg"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="23dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="@dimen/small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewApnBackGround"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewApnBackGround"
+                app:layout_constraintVertical_bias="1.0"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+
+            <View
+                android:id="@+id/viewAssistFunctionBackground"
+                android:layout_width="1200dp"
+                android:layout_height="273dp"
+                android:layout_marginTop="441dp"
+                android:layout_marginBottom="100dp"
+                android:background="@drawable/shape_solid_0e40a4_corners_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="44dp"
+                android:text="@string/accessibility"
+                android:textColor="@color/white"
+                android:textSize="@dimen/mid_small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintEnd_toEndOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintTop_toTopOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:id="@+id/view23"
+                android:layout_width="1136dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="120dp"
+                android:background="@color/color_4D6FBE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/viewApnBackGround"
+                app:layout_constraintStart_toStartOf="@+id/viewApnBackGround"
+                app:layout_constraintTop_toTopOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textViewFactoryDataReset"
+                android:layout_width="200dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="56dp"
+                android:layout_marginTop="165dp"
+                android:background="@drawable/selector_bg_button"
+                android:gravity="center"
+                android:text="@string/factory_data_reset"
+                android:textColor="@color/color_E2EBFE"
+                android:textSize="@dimen/small_small_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintEnd_toEndOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintTop_toTopOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="21dp"
+                android:text="@string/factory_data_reset_description"
+                android:textColor="@color/color_FF8282"
+                android:textSize="@dimen/mini_text_size"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewFactoryDataReset"
+                app:layout_constraintEnd_toEndOf="@+id/viewAssistFunctionBackground"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/textViewFactoryDataReset"
+                app:layout_constraintTop_toTopOf="@+id/textViewFactoryDataReset" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

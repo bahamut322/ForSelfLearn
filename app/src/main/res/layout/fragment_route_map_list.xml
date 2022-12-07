@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragment.GeneralViewListFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewLaserList"
+            android:layout_width="0dp"
+            android:layout_height="480dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvCreateMap"
+            android:layout_width="240dp"
+            android:layout_height="72dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/str_create_general_view"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewLaserList"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_road_map_empty"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selector_edt_general_bg"
+            android:visibility="gone"
+            android:layout_marginRight="@dimen/dp_40"
+            android:layout_marginLeft="@dimen/dp_40"
+            app:layout_constraintBottom_toBottomOf="@+id/recyclerViewLaserList"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/image_general_empty"
+                android:layout_width="@dimen/dp_150"
+                android:layout_height="@dimen/dp_155"
+                android:layout_marginTop="@dimen/dp_100"
+                android:layout_marginBottom="@dimen/dp_192"
+                android:src="@drawable/ic_nothing_general"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_general_empty"
+                android:layout_width="@dimen/dp_258"
+                android:layout_height="@dimen/dp_26"
+                android:layout_marginTop="@dimen/dp_28"
+                android:gravity="center"
+                android:text="暂无路径图，请先创建..."
+                android:textColor="@color/color_A0BAEF"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/image_general_empty"
+                app:layout_constraintStart_toStartOf="@+id/image_general_empty"
+                app:layout_constraintTop_toBottomOf="@+id/image_general_empty" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

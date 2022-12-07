@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motionLayoutSending"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_002d7f"
+        app:layoutDescription="@xml/fragment_sending_scene"
+        tools:context=".view.fragment.GuideArriveFragment">
+
+        <ImageView
+            android:id="@+id/imageViewSending"
+            android:layout_width="982dp"
+            android:layout_height="500dp"
+            android:layout_marginTop="30dp"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:src="@tools:sample/avatars" />
+
+        <com.sendi.deliveredrobot.view.widget.BottomAlarmTextView
+            android:id="@+id/bottomAlarmTextViewSending"
+            android:layout_width="match_parent"
+            android:layout_height="179dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

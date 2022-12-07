@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/constraintLayoutWifiSetting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context=".view.fragment.WifiSettingFragment">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutWifiOpen"
+                android:layout_width="1006.6dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="33dp"
+                android:layout_marginTop="72dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/shape_solid_0e40a4_corners_10dp"
+                android:minHeight="100dp"
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+
+                <FrameLayout
+                    android:id="@+id/frameLayoutWifiOpenUp"
+                    android:layout_width="1006.6dp"
+                    android:layout_height="99.5dp">
+
+                    <Switch
+                        android:id="@+id/switchOpenWifi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="913dp"
+                        android:layout_marginTop="36dp"
+                        android:thumb="@drawable/selector_switch_thumb"
+                        android:track="@drawable/selector_switch_track"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginTop="37dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/wifi_open"
+                        android:textColor="@color/color_A0BAEF"
+                        android:textSize="@dimen/small_small_text_size" />
+
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/view13"
+                    android:layout_width="940.6dp"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center"
+                    android:background="@color/color_082E83" />
+
+                <FrameLayout
+                    android:id="@+id/frameLayoutWifiOpenDown"
+                    android:layout_width="1006.6dp"
+                    android:layout_height="99.5dp">
+
+                    <ImageView
+                        android:id="@+id/imageViewConnectStatus"
+                        android:layout_width="32dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="928dp"
+                        android:contentDescription="@string/image_description"
+                        tools:src="@tools:sample/avatars" />
+
+                    <TextView
+                        android:id="@+id/textViewDescribe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="132dp"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/color_6787D4"
+                        android:textSize="@dimen/small_small_text_size" />
+
+                    <TextView
+                        android:id="@+id/textViewConnectWifi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginTop="37dp"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/color_A0BAEF"
+                        android:textSize="@dimen/small_small_text_size" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewChooseWifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="33dp"
+                android:layout_marginTop="69dp"
+                android:layout_marginEnd="0dp"
+                android:text="@string/choose_wifi"
+                android:textColor="@color/color_4D6FBE"
+                android:textSize="@dimen/mid_small_small_text_size" />
+
+            <com.sendi.deliveredrobot.view.widget.NoScrollRecyclerView
+                android:id="@+id/recyclerViewWifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="33dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="41dp"
+                android:background="@drawable/shape_solid_0e40a4_corners_10dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="75dp"/>
+        </LinearLayout>
+    </ScrollView>
+</layout>

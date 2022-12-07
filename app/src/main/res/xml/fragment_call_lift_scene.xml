@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/state2"
+        motion:constraintSetStart="@id/state1"
+        motion:duration="1000">
+       <KeyFrameSet>
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/state1">
+        <Constraint
+            android:id="@+id/bottomAlarmTextView"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="179dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintVertical_bias="1.0"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" >
+            <CustomAttribute
+                motion:attributeName="translationY"
+                motion:customFloatValue="1000" />
+        </Constraint>
+        <Constraint
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="680dp"
+            android:layout_height="560dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/imageView"
+            motion:layout_constraintVertical_bias="0.0"
+            android:layout_marginTop="50dp" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/state2">
+        <Constraint
+            android:id="@+id/bottomAlarmTextView"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="179dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintVertical_bias="1.0"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" >
+            <CustomAttribute
+                motion:attributeName="translationY"
+                motion:customFloatValue="0" />
+        </Constraint>
+    </ConstraintSet>
+</MotionScene>

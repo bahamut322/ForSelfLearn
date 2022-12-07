@@ -1,0 +1,11 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!--     未选中 -->
+    <item
+        android:state_checked="false"
+        android:drawable="@drawable/radio_item_two" />
+    <!--          选中 -->
+    <item
+        android:state_checked="true"
+        android:drawable="@drawable/radio_item_one" />
+
+</selector>

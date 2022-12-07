@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewBackground"
+        android:layout_width="800dp"
+        android:layout_height="378dp"
+        android:background="@drawable/shape_solid_f6f6f6_corners_20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewDeadlineBackground"
+        android:layout_width="800dp"
+        android:layout_height="203.9dp"
+        android:background="@drawable/ic_bg_deadline"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackground"
+        app:layout_constraintStart_toStartOf="@+id/viewBackground"
+        app:layout_constraintTop_toTopOf="@+id/viewBackground"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@color/color_1A49A8"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="8"
+        android:text="@string/expire_deadline"
+        android:textColor="@color/white"
+        android:textSize="@dimen/bigger_large_text_size"
+        android:letterSpacing="0.08"
+        app:layout_constraintBottom_toBottomOf="@+id/viewDeadlineBackground"
+        app:layout_constraintEnd_toEndOf="@+id/viewDeadlineBackground"
+        app:layout_constraintStart_toStartOf="@+id/viewDeadlineBackground"
+        app:layout_constraintTop_toTopOf="@+id/viewBackground"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="89dp"
+        android:includeFontPadding="false"
+        android:text="@string/please_contact_client_manager"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/mid_small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackground"
+        app:layout_constraintStart_toStartOf="@+id/viewBackground"
+        app:layout_constraintTop_toTopOf="@+id/viewBackground"
+        app:layout_constraintVertical_bias="1.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        tools:context=".view.fragment.AdjustFixMapFragment">
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="61dp"
+            android:text="@string/create_limit_speed_2"
+            android:textColor="@color/color_E2EBFE"
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="42dp"
+            android:layout_marginTop="123dp"
+            android:text="@string/str_laser"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/sp_28"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.sendi.deliveredrobot.view.widget.LaserPointsView
+            android:id="@+id/laserPointsView"
+            android:layout_width="960dp"
+            android:layout_height="576dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="184dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvStart"
+            android:layout_width="200dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/selector_bg_button"
+            android:gravity="center"
+            android:text="@string/str_start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/textViewPrevStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1129dp"
+            android:layout_marginTop="62dp"
+            android:text="@string/str_last_step"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/small_text_size"
+            app:drawableRightCompat="@drawable/ic_arrow_right"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="560dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="148dp"
+            android:background="@drawable/shape_bg_round_e2ebfe"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView" />
+
+        <TextView
+            android:layout_width="17dp"
+            android:layout_height="8.5dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/ic_down_triangle"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
+
+        <TextView
+            android:id="@+id/textViewLaser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/color_4D6FBE"
+            android:textColorHint="@color/color_4D6FBE"
+            android:textSize="@dimen/sp_16"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view"
+            tools:ignore="TextContrastCheck"
+            tools:text="白天鹅" />
+
+        <TextView
+            android:id="@+id/textViewGetDistance"
+            android:layout_width="72dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/shape_solid_ffffff_corners_8dp_stroke_a0baef"
+            android:gravity="center"
+            android:text="@string/get"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/laserPointsView"
+            app:layout_constraintEnd_toEndOf="@+id/laserPointsView"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/laserPointsView"
+            app:layout_constraintTop_toTopOf="@+id/laserPointsView"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="27dp"
+            android:textColor="@color/color_0E40A4"
+            android:textSize="@dimen/small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewGetDistance"
+            app:layout_constraintEnd_toStartOf="@+id/textViewGetDistance"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/laserPointsView"
+            app:layout_constraintTop_toTopOf="@+id/textViewGetDistance"
+            tools:ignore="TextContrastCheck"
+            tools:text="斜坡距离：--m" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1041dp"
+            android:layout_marginTop="185dp"
+            android:includeFontPadding="false"
+            android:text="@string/type"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1041dp"
+            android:layout_marginTop="283dp"
+            android:includeFontPadding="false"
+            android:text="@string/radius_and_unit"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1041dp"
+            android:layout_marginTop="373dp"
+            android:includeFontPadding="false"
+            android:text="@string/speed_and_unit"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/textViewVisibleRangeDescribe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1041dp"
+            android:layout_marginTop="473dp"
+            android:includeFontPadding="false"
+            android:text="@string/visible_range"
+            android:textColor="@color/color_A0BAEF"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TextContrastCheck" />
+
+        <com.sendi.deliveredrobot.view.widget.CustomSwitchTextView
+            android:id="@+id/customSwitchTextView"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="217dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:view_background="@drawable/shape_solid_e2ebfe_corners_4dp"
+            app:select_text_color="@color/color_E2EBFE"
+            app:default_text_color="@color/color_30333C"
+            app:left_text="@string/slope"
+            app:right_text="@string/other"
+            app:left_select_background="@drawable/shape_solid_216ee8_left_corners_4dp"
+            app:right_select_background="@drawable/shape_solid_216ee8_right_corners_4dp"
+            app:view_selected="false"
+            app:view_text_size="24"
+            />
+
+        <EditText
+            android:id="@+id/editTextRadius"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="315dp"
+            android:background="@drawable/shape_solid_e2ebfe_corners_4dp"
+            android:ems="10"
+            android:gravity="center_vertical"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:paddingStart="9dp"
+            android:paddingEnd="0dp"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Spinner
+            android:id="@+id/spinnerSpeed"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="405dp"
+            android:background="@drawable/shape_solid_e2ebfe_corners_4dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+        <EditText
+            android:id="@+id/editTextVisibleRange"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="505dp"
+            android:background="@drawable/shape_solid_e2ebfe_corners_4dp"
+            android:gravity="center_vertical"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:paddingStart="9dp"
+            android:paddingEnd="0dp"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/textViewReset"
+            android:layout_width="200dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="1040dp"
+            android:layout_marginTop="592dp"
+            android:background="@drawable/shape_stroke_e2ebfe_solid_transparency"
+            android:gravity="center"
+            android:text="@string/reset"
+            android:textColor="@color/color_E2EBFE"
+            android:textSize="@dimen/mid_small_small_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1041dp"
+            android:layout_marginTop="128dp"
+            android:textColor="@color/color_E2EBFE"
+            android:textSize="@dimen/mini_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="限速区：Line1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

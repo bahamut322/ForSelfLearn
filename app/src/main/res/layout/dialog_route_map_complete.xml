@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivClose"
+        android:layout_width="@dimen/dp_51"
+        android:layout_height="@dimen/dp_51"
+        android:layout_marginBottom="@dimen/dp_25"
+        android:background="@drawable/ic_close_circle"
+        app:layout_constraintBottom_toTopOf="@+id/viewRoutemap"
+        app:layout_constraintRight_toRightOf="@+id/viewRoutemap"
+        />
+
+    <View
+        android:id="@+id/viewRoutemap"
+        android:layout_width="700dp"
+        android:layout_height="@dimen/dp_300"
+        android:background="@drawable/selector_route_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvRouteName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_40"
+        android:text="@string/str_route_name"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/sp_30"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toTopOf="@+id/edtRouteName"
+        app:layout_constraintBottom_toBottomOf="@+id/edtRouteName"
+        />
+
+    <EditText
+        android:id="@+id/edtRouteName"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_56"
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:layout_marginLeft="@dimen/dp_270"
+        android:layout_marginRight="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_43"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/sp_30"
+        app:layout_constraintLeft_toLeftOf="@+id/viewRoutemap"
+        app:layout_constraintRight_toRightOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toTopOf="@+id/viewRoutemap"
+        android:background="@drawable/shape_stroke_a0baef_solid_transparency"
+        android:singleLine="true"
+        android:maxLength="30"
+        android:gravity="center"
+        android:hint="@string/str_input_route_name"
+        android:inputType="text"
+        />
+
+    <TextView
+        android:id="@+id/tvRouteConfirm"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_72"
+        android:layout_marginBottom="@dimen/dp_40"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="@dimen/dp_40"
+        android:text="@string/confirm"
+        android:textColor="@color/color_F6F6F6"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:background="@drawable/selector_btn_common"
+        app:layout_constraintBottom_toBottomOf="@+id/viewRoutemap"
+        app:layout_constraintEnd_toEndOf="@+id/viewRoutemap"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        />
+
+    <TextView
+        android:id="@+id/tvRoutetips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_20"
+        android:textSize="24sp"
+        android:textColor="@color/color_666666"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toBottomOf="@+id/edtRouteName"
+        app:layout_constraintVertical_bias="1.0"
+        android:text="名称最好包含酒店名字简写和楼层数字,便于[见名之意]"
+
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

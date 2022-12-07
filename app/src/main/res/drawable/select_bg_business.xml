@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape>
+            <corners android:radius="@dimen/dp_13" />
+            <gradient android:angle="-45" android:endColor="@color/color_E2EBFE" android:startColor="@color/color_E2EBFE" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="@dimen/dp_13" />
+            <gradient android:angle="-45" android:endColor="@color/col_tab_menu_line" android:startColor="@color/col_tab_menu_line" />
+        </shape>
+    </item>
+</selector>

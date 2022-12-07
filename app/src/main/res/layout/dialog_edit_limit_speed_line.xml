@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewBackGround"
+        android:layout_width="640dp"
+        android:layout_height="447dp"
+        android:layout_marginTop="212dp"
+        android:background="@drawable/shape_solid_ffffff_corners_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:text="@string/edit_limit_speed_params"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/type"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/customIndicatorTextView"
+        app:layout_constraintEnd_toStartOf="@+id/customIndicatorTextView"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/customIndicatorTextView"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <com.sendi.deliveredrobot.view.widget.CustomSwitchTextView
+        android:id="@+id/customIndicatorTextView"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="96dp"
+        app:view_background="@drawable/shape_solid_f6f6f6_corner_10dp"
+        app:left_select_background="@drawable/shape_solid_216ee8_left_corners_10dp"
+        app:left_text="@string/slope"
+        app:right_select_background="@drawable/shape_solid_216ee8_right_corners_10dp"
+        app:right_text="@string/other"
+        app:default_text_color="@color/color_666666"
+        app:select_text_color="@color/white"
+        app:view_selected="false"
+        app:view_text_size="28"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/radius_and_unit"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextRadius"
+        app:layout_constraintEnd_toStartOf="@+id/editTextRadius"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/editTextRadius"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <EditText
+        android:id="@+id/editTextRadius"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="168dp"
+        android:background="@drawable/shape_solid_dddddd_corners_4dp"
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="number|numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="DuplicateSpeakableTextCheck,LabelFor,SpeakableTextPresentCheck,TextContrastCheck" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/speed_and_unit"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextSpeed"
+        app:layout_constraintEnd_toStartOf="@+id/editTextSpeed"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/editTextSpeed"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <EditText
+        android:id="@+id/editTextSpeed"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="240dp"
+        android:background="@drawable/shape_solid_dddddd_corners_4dp"
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="number|numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/viewBackGround"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="DuplicateIds,DuplicateSpeakableTextCheck,LabelFor,SpeakableTextPresentCheck,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/textViewVisibleRangeDescribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/visible_range"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextVisibleRange"
+        app:layout_constraintEnd_toStartOf="@+id/editTextVisibleRange"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/editTextVisibleRange"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <EditText
+        android:id="@+id/editTextVisibleRange"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="210dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_solid_dddddd_corners_4dp"
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="number|numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSpeed"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="DuplicateIds,DuplicateSpeakableTextCheck,LabelFor,SpeakableTextPresentCheck,TextContrastCheck" />
+
+
+    <TextView
+        android:id="@+id/textViewConfirm"
+        android:layout_width="268dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="332dp"
+        android:layout_marginTop="39dp"
+        android:background="@drawable/selector_bg2_button"
+        android:gravity="center"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mid_small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewBackGround"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toBottomOf="@+id/editTextVisibleRange"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textViewCancel"
+        android:layout_width="268dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="40dp"
+        android:background="@drawable/shape_stroke_666666_solid_ffffff"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/mid_small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewConfirm"
+        app:layout_constraintEnd_toEndOf="@+id/viewBackGround"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/viewBackGround"
+        app:layout_constraintTop_toTopOf="@+id/textViewConfirm"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupSlope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="editTextVisibleRange,textViewVisibleRangeDescribe" />
+
+    <View
+        android:id="@+id/viewDismiss"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="909dp"
+        android:layout_marginTop="130dp"
+        android:background="@drawable/ic_close_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

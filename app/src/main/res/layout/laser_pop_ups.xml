@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/laser_pop_ups_view"
+        android:layout_width="700dp"
+        android:layout_height="392.6dp"
+        android:background="@drawable/shape_solid_ffffff_corners_10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+
+    <TextView
+        android:id="@+id/pop_ups_name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/laser_document_name"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/laser_pop_ups_view"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/laser_pop_ups_view"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/pop_ups_name_textview2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="159dp"
+        android:text="@string/floor_name"
+        android:textColor="@color/color_30333C"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/laser_pop_ups_view"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.002"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/laser_pop_ups_view"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/pop_ups_edittext"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="270dp"
+        android:background="@drawable/shape_stroke_666666_solid_ffffff"
+        android:ems="10"
+        android:hint="@string/create_laser_map_hint"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="@+id/pop_ups_name_textview"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/pop_ups_name_textview"
+        app:layout_constraintVertical_bias="0.5"
+        android:importantForAutofill="no" />
+
+    <Spinner
+        android:id="@+id/spinnerFloorName"
+        android:layout_width="390dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="270dp"
+        android:background="@color/white"
+        android:dropDownVerticalOffset="0dp"
+        android:overlapAnchor="false"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/pop_ups_name_textview2"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/pop_ups_name_textview2"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/pop_ups_hint_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="99dp"
+        android:gravity="center"
+        android:text="@string/laser_hint"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="@+id/laser_pop_ups_view"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/laser_pop_ups_view"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/laser_confirm_button"
+        android:layout_width="620dp"
+        android:layout_height="72dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/selector_bg2_button"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        android:textSize="@dimen/mid_small_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/laser_pop_ups_view"
+        app:layout_constraintEnd_toEndOf="@+id/laser_pop_ups_view"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/laser_pop_ups_view"
+        app:layout_constraintTop_toTopOf="@+id/laser_pop_ups_view"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageButton
+        android:id="@+id/back_imageButton"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="939dp"
+        android:layout_marginTop="132dp"
+        android:background="@drawable/ic_close_circle"
+        android:contentDescription="@string/image_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="ImageContrastCheck" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_64"
+    android:background="@color/color_0E40A4"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/dp_32"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        >
+
+    <TextView
+        android:id="@+id/tv_target_point_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="目标点:"
+        android:textSize="@dimen/sp_28"
+        android:textStyle="bold"
+        android:textColor="@color/color_A0BAEF"
+        android:layout_marginRight="@dimen/dp_24"
+        android:visibility="gone"
+        />
+
+    <CheckBox
+        android:id="@+id/cb_select"
+        android:padding="@dimen/dp_20"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:minWidth="@dimen/dp_10"
+        android:button="@null"
+        android:background="@drawable/checkbox"
+        android:visibility="visible"
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_marginRight="@dimen/dp_10"
+        />
+
+    <TextView
+        android:id="@+id/tv_sub_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_24"
+        android:textColor="@color/color_A0BAEF"
+        android:text="子数据"
+        />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

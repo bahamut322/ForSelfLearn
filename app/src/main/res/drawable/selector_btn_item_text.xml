@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/col_common_btn_bg_dark_text_color_press"  />
+    <item android:color="@color/col_common_btn_bg_dark_text_color_press" android:state_pressed="true" />
+    <item android:color="@color/white"  android:state_enabled="false" />
+</selector>

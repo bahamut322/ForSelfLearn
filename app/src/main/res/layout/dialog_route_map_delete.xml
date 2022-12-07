@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewRoutemap"
+        android:layout_width="@dimen/dp_640"
+        android:layout_height="@dimen/dp_265"
+        android:background="@drawable/selector_route_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgeRoutewarming"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_45"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toTopOf="@+id/viewRoutemap"
+        android:src="@drawable/ic_warming" />
+
+    <TextView
+        android:id="@+id/tvRoutecancel"
+        android:background="@drawable/selector_edt_route_bg"
+        android:layout_width="@dimen/dp_268"
+        android:layout_height="@dimen/dp_72"
+        android:layout_marginStart="@dimen/dp_40"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvRouteconfirm"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toTopOf="@+id/tvRouteconfirm"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvRouteconfirm"
+        android:layout_width="@dimen/dp_268"
+        android:layout_height="@dimen/dp_72"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="56dp"
+        android:textColor="@color/white"
+        android:text="@string/confirm"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:background="@drawable/selector_bt_route_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/viewRoutemap"
+        app:layout_constraintEnd_toEndOf="@+id/viewRoutemap" />
+
+    <TextView
+        android:id="@+id/tvRoutetip1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_95"
+        android:textColor="@color/color_30333C"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgeRoutewarming"
+        app:layout_constraintStart_toStartOf="@+id/viewRoutemap"
+        app:layout_constraintTop_toTopOf="@+id/imgeRoutewarming"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

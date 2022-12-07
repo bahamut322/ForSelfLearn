@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewRouteunbind"
+        android:layout_width="@dimen/dp_640"
+        android:layout_height="@dimen/dp_265"
+        android:background="@drawable/selector_route_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgeRoutewarn"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_45"
+        app:layout_constraintStart_toStartOf="@+id/viewRouteunbind"
+        app:layout_constraintTop_toTopOf="@+id/viewRouteunbind"
+        android:src="@drawable/ic_warn" />
+
+    <TextView
+        android:id="@+id/tvRoutetip"
+        android:layout_width="492dp"
+        android:layout_height="@dimen/dp_73"
+        android:layout_marginStart="@dimen/dp_96"
+        android:textColor="@color/color_30333C"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgeRoutewarn"
+        app:layout_constraintStart_toStartOf="@+id/viewRouteunbind"
+        app:layout_constraintTop_toTopOf="@+id/imgeRoutewarn"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvRouteunbindconfirm"
+        android:layout_width="560dp"
+        android:layout_height="@dimen/dp_72"
+        android:layout_marginEnd="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_40"
+        android:background="@drawable/selector_bt_route_bg"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/confirm"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewRouteunbind"
+        app:layout_constraintEnd_toEndOf="@+id/viewRouteunbind" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

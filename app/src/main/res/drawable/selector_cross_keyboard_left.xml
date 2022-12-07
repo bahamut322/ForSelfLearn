@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <size android:width="56dp" android:height="56dp"/>
+                    <corners android:radius="4dp" />
+                    <solid android:color="@color/color_216FE8" />
+                </shape>
+            </item>
+            <item android:width="20dp" android:height="28dp" android:gravity="center" android:drawable="@drawable/ic_arrow_left_pressed" tools:ignore="UnusedAttribute" />
+        </layer-list>
+    </item>
+    <item android:state_pressed="false">
+        <layer-list>
+            <item>
+                <shape>
+                    <size android:width="56dp" android:height="56dp"/>
+                    <corners android:radius="4dp" />
+                    <solid android:color="@color/color_E2EBFE" />
+                </shape>
+            </item>
+            <item android:width="20dp" android:height="28dp" android:gravity="center" android:drawable="@drawable/ic_arrow_left" tools:ignore="UnusedAttribute"/>
+        </layer-list>
+    </item>
+</selector>
