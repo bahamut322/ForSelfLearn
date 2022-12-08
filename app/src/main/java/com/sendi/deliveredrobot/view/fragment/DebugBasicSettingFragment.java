@@ -26,10 +26,7 @@ public class DebugBasicSettingFragment extends Fragment {
     FragmentBasicSettingBinding binding;
     private int musicVolume = 1; // 音乐音量
     private int voiceVolume = 1; // 语音音
-    //    private String newVersionUrl = ""; //新版本的下载地址
-//    private String newVersion = ""; //新的版本号
     private boolean flag = false;
-    //    private String chassisVersion = ""; //底盘版本号
     private CheckBox red, blue, yellow, orange, black, white, all;
     public StringBuffer stringBuffer = new StringBuffer();
     SharedPreferences sp;
@@ -38,6 +35,7 @@ public class DebugBasicSettingFragment extends Fragment {
     public AudioManager audiomanage;
     public String timbre = "男声";//默认音色
     public String expression = "是";//是否开启表情
+    View view;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -118,7 +116,8 @@ public class DebugBasicSettingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_basic_setting, container, false);
+        view =  inflater.inflate(R.layout.fragment_basic_setting, container, false);
+        return view;
     }
 
     class AllCheckListener implements View.OnClickListener {
@@ -185,73 +184,52 @@ public class DebugBasicSettingFragment extends Fragment {
         }
 
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        //统计勾线的ChexkBox，并且赋值给全局变量的StringBuffer
-        if (red.isChecked()) {
-            stringBuffer.append("礼仪迎宾 ");
-        }
-        if (blue.isChecked()) {
-            stringBuffer.append("智能引领 ");
-        }
-        if (yellow.isChecked()) {
-            stringBuffer.append("智能讲解 ");
-        }
-        if (orange.isChecked()) {
-            stringBuffer.append("智能问答 ");
-        }
-        if (black.isChecked()) {
-            stringBuffer.append("轻应用 ");
-        }
-        if (white.isChecked()) {
-            stringBuffer.append("功能模块 ");
-        }
-        if (binding.BoyVoice.isChecked()) {
-            timbre = "男声";
-        }
-        if (binding.FemaleVoice.isChecked()) {
-            timbre = "女声";
-        }
-        if (binding.ChildVoice.isChecked()) {
-            timbre = "童声";
-        }
-        if (binding.expressionYes.isChecked()) {
-            expression = "是";
-        }
-        if (binding.expressionNo.isChecked()) {
-            expression = "否";
-        }
-        editor.putString("SelectItem", stringBuffer.toString());// 存入String类型数据
-        editor.putString("timbre", timbre);//音色
-        editor.putString("expression", expression);//是否开启表情
-        editor.commit();// 提交修改
-    }
 
     @Override
     public void onPause() {
         super.onPause();
-        //清空原有数据
-        Log.d(TAG, ": onPause");
 
+        Log.d(TAG, ": onPause");
+        if (getActivity()!=null) {
+            //统计勾线的ChexkBox，并且赋值给全局变量的StringBuffer
+            if (red.isChecked()) {
+                stringBuffer.append("礼仪迎宾 ");
+            }
+            if (blue.isChecked()) {
+                stringBuffer.append("智能引领 ");
+            }
+            if (yellow.isChecked()) {
+                stringBuffer.append("智能讲解 ");
+            }
+            if (orange.isChecked()) {
+                stringBuffer.append("智能问答 ");
+            }
+            if (black.isChecked()) {
+                stringBuffer.append("轻应用 ");
+            }
+            if (white.isChecked()) {
+                stringBuffer.append("功能模块 ");
+            }
+            if (binding.BoyVoice.isChecked()) {
+                timbre = "男声";
+            }
+            if (binding.FemaleVoice.isChecked()) {
+                timbre = "女声";
+            }
+            if (binding.ChildVoice.isChecked()) {
+                timbre = "童声";
+            }
+            if (binding.expressionYes.isChecked()) {
+                expression = "是";
+            }
+            if (binding.expressionNo.isChecked()) {
+                expression = "否";
+            }
+            editor.putString("SelectItem", stringBuffer.toString());// 存入String类型数据
+            editor.putString("timbre", timbre);//音色
+            editor.putString("expression", expression);//是否开启表情
+            editor.commit();// 提交修改
+        }
     }
 }

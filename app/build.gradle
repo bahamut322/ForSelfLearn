@@ -6,18 +6,29 @@ plugins {
 }
 
 android {
+
+    externalNativeBuild {
+        cmake {
+            version "3.10.2"
+        }
+    }
     compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.sendi.fooddeliveryrobot"
-        minSdkVersion 19
+        minSdk 21
         targetSdkVersion 30
         versionCode 7
         versionName "1.7.0"
         setProperty("archivesBaseName", "deliveryrobot-v" + versionCode + "(" + versionName + ")")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared"
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        }
     }
 
     signingConfigs {
@@ -50,6 +61,7 @@ android {
 
         release {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("boolean", "IS_LOG", "false")
             buildConfigField("boolean", "IS_TOAST", "true")
             buildConfigField("boolean", "IS_SPEAK", "true")
@@ -61,9 +73,20 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -74,9 +97,19 @@ android {
     packagingOptions {
         exclude "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version"
     }
+    ndkVersion '20.0.5594570'
+    buildFeatures {
+        viewBinding true
+    }
+}
+repositories {
+    flatDir {
+        dirs 'libs'   // aar目录
+    }
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -85,6 +118,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation(name:'libusbcamera', ext:'aar')
     // =============== java 后台添加 ================
     implementation files('lib/RobotSDK-0.0.1.jar')
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
@@ -114,5 +148,7 @@ dependencies {
 //    implementation 'com.orhanobut:logger:2.2.0'
     implementation 'com.apkfuns.logutils:library:1.7.5'
     implementation 'com.apkfuns.log2file:log2file:1.3.1'
+    implementation 'com.tencent.bugly:crashreport:2.6.6.1'
+
 
 }

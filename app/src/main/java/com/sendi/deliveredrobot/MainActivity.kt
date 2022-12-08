@@ -26,12 +26,12 @@ import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueue
 import com.sendi.deliveredrobot.receiver.NavigationReceiver
 import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.FileUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
@@ -63,6 +63,8 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+        //初始化红外摄像头
+        AppUtils.checkPermission(this, 0)
         //检查日志
         FileUtil.checkAndDeleteLogFilesCache()
         //初始化ToastUtil

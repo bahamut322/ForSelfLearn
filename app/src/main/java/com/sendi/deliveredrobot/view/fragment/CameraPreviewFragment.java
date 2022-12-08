@@ -1,9 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,35 +12,36 @@ import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
-import android.hardware.display.DisplayManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.infisense.iruvc.utils.SynchronizedBitmap;
-import com.sendi.deliveredrobot.BaseActivity;
+import com.sendi.deliveredrobot.BaseFragment;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.camera.IRUVC;
+import com.sendi.deliveredrobot.databinding.ActivityCameraPreviewBinding;
 import com.sendi.deliveredrobot.entity.Abnormal;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.utils.AppUtils;
 import com.sendi.deliveredrobot.utils.DateUtil;
 import com.sendi.deliveredrobot.utils.ImgByteDealFunction;
-import com.sendi.deliveredrobot.view.widget.CameraView;
+import com.sendi.deliveredrobot.view.widget.ExitCameraDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,8 +49,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import jni.Usbcontorl;
 
@@ -59,91 +56,93 @@ import jni.Usbcontorl;
  * @author swn
  * 人脸测温统计页面
  */
-public class CameraPreviewActivity extends BaseActivity {
+public class CameraPreviewFragment extends BaseFragment {
 
-    CameraView cameraView;
+    ActivityCameraPreviewBinding binding;
     private int cameraWidth = 256;//160;//256;
     private int cameraHeight = 384;//240;//384;
+    NavController controller;
     IRUVC p2camera;
     public boolean isrun = false;
     private SynchronizedBitmap syncimage = new SynchronizedBitmap();
-    TextView time;//更新时间
     Camera.Parameters parameters;
     List<Abnormal> Abnormalbitmaps = new ArrayList();//用于统计异常人脸的数组
-
     Bitmap bm;//用于人脸识别的bitmap
     Camera c;
-    SurfaceView sv_camera;
-    MySurfaceView sv_camera_face;//自定义控件
     Info info = null;
     ArrayList<Info> infoArrayList = null;//传递人脸数据，用于人脸识别
     Bitmap bmt;//用于获取截取人脸位置之后的bitmap
-    private ImageView AbnormalImage1, AbnormalImage2, AbnormalImage3;//异常人脸ImageView
-    private TextView AbnormalTv1, AbnormalTv2, AbnormalTv3;//异常人脸温度情况
-    private TextView AbnormalMake1, AbnormalMake2, AbnormalMake3;//异常人脸口罩情况
-    private TextView AbnormalTv,textView7;
     int FaceAbnormal = 0;//异常人脸
     int TemperatureAbnormal = 0;//温度异常
     String TemperatureS = "";//体温异常
-    private TextView DetectedFaces;//人脸检测
     int face = 0;//人脸检测统计
-    private AudioManager audioMa;
-    private MediaPlayer player;//供上一个调用
-    final Timer timer = new Timer(true);
-    CheckBox checkBox;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera_preview);
-//        AppUtils.checkPermission(this, 0);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_camera_preview, container, false);
 
-        Toast.makeText(this, "OnCreate....", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        controller = Navigation.findNavController(view);
+        binding = DataBindingUtil.bind(view);
+        DialogHelper.loadingDialog.show();
         new TimeThread().start(); //启动新的线程
-        ShowPresentationByDisplaymanager();
-        // 横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        //设置窗体全屏，进行全屏显示。否则横屏时，会出现状态栏
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION| View.SYSTEM_UI_FLAG_IMMERSIVE;
-        getWindow().setAttributes(params);
-
         initViews();
         //红外显示的方法
         initEvents();
         Surface();
+        //双屏异显的方法
+        ShowPresentationByDisplaymanager();
+        //弹窗
+        ExitCameraDialog exitCameraDialog = new ExitCameraDialog(getContext());
+        binding.exitIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exitCameraDialog.show();
+                //弹窗点击事件。回到主页面
+                exitCameraDialog.YesExit.setOnClickListener(view1 -> {
+                    controller.navigate(R.id.action_cameraPreviewFragment_to_homeFragment);
+                    exitCameraDialog.dismiss();
+                });
+                //点击消除弹窗
+                exitCameraDialog.NoExit.setOnClickListener(view12 -> exitCameraDialog.dismiss());
+                exitCameraDialog.DialogClose.setOnClickListener(view13 -> exitCameraDialog.dismiss());
+            }
+        });
 
     }
-    TimerTask task = new TimerTask() {
-        public void run() {
-            player.start();
-            //当获取成功后释放timer对象
-            timer.cancel();
-        }
-    };
 
     @Override
-    protected void onStart() {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
         if (!isrun) {
             startUSB();
             //开启红外显示
-            cameraView.start();
+            binding.cameraView.start();
             isrun = true;
         }
     }
 
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
 
         if (p2camera != null) {
             p2camera.unregisterUSB();
             //停止红外显示
-            cameraView.stop();
+            binding.cameraView.stop();
 
             p2camera.stop();
         }
@@ -155,7 +154,7 @@ public class CameraPreviewActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (Usbcontorl.isload)
             Usbcontorl.usb3803_mode_setting(0);//打开5V
@@ -167,14 +166,14 @@ public class CameraPreviewActivity extends BaseActivity {
 
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
     }
 
     private void startUSB() {
         if (p2camera == null) {
-            p2camera = new IRUVC(Universal.cameraHeight, Universal.cameraWidth, CameraPreviewActivity.this, syncimage);
+            p2camera = new IRUVC(Universal.cameraHeight, Universal.cameraWidth, getActivity(), syncimage);
             p2camera.registerUSB();
         }
 
@@ -197,13 +196,6 @@ public class CameraPreviewActivity extends BaseActivity {
             @Override
             public void show(int[] colorBytes) {
 
-
-                //  ImgByteDealFunction.Template template = ImgByteDealFunction.getFaceTemplateInfo(index++,50,50,100,100);
-
-                //   Log.e("template",template.aval+"  "+template.min+"  "+template.max +" "+ ImgByteDealFunction.mENVTemparate +"  "+ImgByteDealFunction.FaceTemperatureInfoList.size());
-
-//                runOnUiThread(() -> {
-
                 int mode = ImgByteDealFunction.getRotateMode();
 
                 if (mode == ImgByteDealFunction.Rotate_0 || mode == ImgByteDealFunction.Rotate_180) {
@@ -212,10 +204,7 @@ public class CameraPreviewActivity extends BaseActivity {
                     bit = Bitmap.createBitmap(colorBytes, cameraHeight / 2, cameraWidth, Bitmap.Config.ARGB_8888);
                 }
 
-                cameraView.setBitmap(bit);
-
-
-//                });
+                binding.cameraView.setBitmap(bit);
 
 
             }
@@ -227,7 +216,10 @@ public class CameraPreviewActivity extends BaseActivity {
                 DecimalFormat decimalFormat=new DecimalFormat(".00");
                 String pri=decimalFormat.format(min);
                 String pri1=decimalFormat.format(max);
-//                tvTem.setText("最低:" + min + "  最大:" + max);
+                Log.d("wdasawdsawd", ": "+max);
+                if (max > 0.0) {
+                    DialogHelper.loadingDialog.dismiss();
+                }
 
             }
 
@@ -244,17 +236,17 @@ public class CameraPreviewActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     private void Surface() {
 
-        String faceDetectionModelPath = getCacheDir().getAbsolutePath() + File.separator + "yolov5n_shuffle_256x320_quan.mnn";//人脸
-        String ageAndGenderModelPath = getCacheDir().getAbsolutePath() + File.separator + "ageAndGender.mnn";//年纪
-        String faceRecognizermodelPath = getCacheDir().getAbsolutePath() + File.separator + "resnet18_110.mnn";
+        String faceDetectionModelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "yolov5n_shuffle_256x320_quan.mnn";//人脸
+        String ageAndGenderModelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "ageAndGender.mnn";//年纪
+        String faceRecognizermodelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "resnet18_110.mnn";
 
-        Utils.copyFileFromAsset(getApplicationContext(), "yolov5n_shuffle_256x320_quan.mnn", faceDetectionModelPath);
-        Utils.copyFileFromAsset(getApplicationContext(), "ageAndGender.mnn", ageAndGenderModelPath);
-        Utils.copyFileFromAsset(getApplicationContext(), "resnet18_110.mnn", faceRecognizermodelPath);
+        Utils.copyFileFromAsset(getContext(), "yolov5n_shuffle_256x320_quan.mnn", faceDetectionModelPath);
+        Utils.copyFileFromAsset(getContext(), "ageAndGender.mnn", ageAndGenderModelPath);
+        Utils.copyFileFromAsset(getContext(), "resnet18_110.mnn", faceRecognizermodelPath);
 
         FaceModule faceModule = new FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath);
 
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager)getActivity().getSystemService(Context.CAMERA_SERVICE);
         String[] cameraIds = new String[0];
         try {
             cameraIds = manager.getCameraIdList();
@@ -267,15 +259,11 @@ public class CameraPreviewActivity extends BaseActivity {
                 c = Camera.open(0);//1，0代表前后摄像头
             }
 
-//            if (cameraIds[1] != null) {
-//                c = Camera.open(1);//1，0代表前后摄像头
-//            }
         }
 
-//        c = Camera.open(0);//1，0代表前后摄像头
         c.setDisplayOrientation(0);//预览图与手机方向一致
 
-        SurfaceHolder sh = sv_camera.getHolder();// 绑定SurfaceView，取得SurfaceHolder对象
+        SurfaceHolder sh = binding.svCamera.getHolder();// 绑定SurfaceView，取得SurfaceHolder对象
         //启动预览，到这里就能正常预览
         sh.addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -288,11 +276,7 @@ public class CameraPreviewActivity extends BaseActivity {
                         parameters.setPictureSize(Universal.RGBWidth, Universal.RGBHeight);
                         //预览分辨率
                         parameters.setPreviewSize(Universal.RGBWidth, Universal.RGBHeight);
-//                        parameters.setPictureFormat(PixelFormat.JPEG);
-                        //parameters.setPictureSize(surfaceView.getWidth(), surfaceView.getHeight());  // 部分定制手机，无法正常识别该方法。
-//                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                         parameters.setFocusMode(Camera.Parameters.FLASH_MODE_AUTO); //对焦设置为自动
-//                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);//1连续对焦
                         c.setParameters(parameters);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -300,9 +284,7 @@ public class CameraPreviewActivity extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 c.startPreview();
-
 
             }
 
@@ -317,7 +299,7 @@ public class CameraPreviewActivity extends BaseActivity {
 
             }
         });
-        sv_camera.clearFocus();
+        binding.svCamera.clearFocus();
         //获取摄像实时数据传入人脸识别算法当中，并且接受算法返回的人脸数据
         c.setPreviewCallback((data, camera) -> {
             try {
@@ -348,7 +330,7 @@ public class CameraPreviewActivity extends BaseActivity {
                     //将方法放入子线程，防止主线程运行过载
 //                    new Thread(() -> {
                     //将数组值传入自定义控件中，方便绘图
-                    sv_camera_face.infoArrayList = infoArrayList;
+                    binding.svCameraFace.infoArrayList = infoArrayList;
                     //人脸检测方法
                     if (infoArrayList.size() != 0) {
                         for (Info info : infoArrayList) {
@@ -357,8 +339,8 @@ public class CameraPreviewActivity extends BaseActivity {
                                 //打印日志
                                 System.out.println("检测到人脸！！！" + info.getMaskState() + info.getRect());
                                 long T1 = System.currentTimeMillis();
-                                sv_camera_face.info = info;//将info值复给MySurfaceView
-                                sv_camera_face.run();
+                                binding.svCameraFace.info = info;//将info值复给MySurfaceView
+                                binding.svCameraFace.run();
                                 //打印日志，方便检测人脸识别的时间，单位为ms
                                 System.out.println("打印识别时间：" + (T1 - T0));
                                 System.out.println("************************************");
@@ -394,16 +376,16 @@ public class CameraPreviewActivity extends BaseActivity {
                                     //更具温度值判断温度是否异常
                                     if (ImgByteDealFunction.Temperature > Universal.TemperatureMax) {
                                         //异常
-                                        AbnormalTv1.setTextColor(Color.RED);
-                                        AbnormalTv2.setTextColor(Color.RED);
-                                        AbnormalTv3.setTextColor(Color.RED);
+                                        binding.AbnormalTv1.setTextColor(Color.RED);
+                                        binding.AbnormalTv2.setTextColor(Color.RED);
+                                        binding.AbnormalTv3.setTextColor(Color.RED);
                                         //如果温度值异常则计入异常显示数据中
                                         TemperatureAbnormal = TemperatureAbnormal + 1;
                                     } else {
                                         //正常
-                                        AbnormalTv1.setTextColor(Color.parseColor("#00EEFF"));
-                                        AbnormalTv2.setTextColor(Color.parseColor("#00EEFF"));
-                                        AbnormalTv3.setTextColor(Color.parseColor("#00EEFF"));
+                                        binding.AbnormalTv1.setTextColor(Color.parseColor("#00EEFF"));
+                                        binding.AbnormalTv2.setTextColor(Color.parseColor("#00EEFF"));
+                                        binding.AbnormalTv3.setTextColor(Color.parseColor("#00EEFF"));
 //                                        TemperatureS = "(正常)";
                                     }
                                     //判断是否带口罩，并且温度正常，如果是则也计入异常显示中
@@ -413,37 +395,37 @@ public class CameraPreviewActivity extends BaseActivity {
                                     //数组中添加数据
                                     Abnormalbitmaps.add(abnormal);
                                     //图1
-                                    AbnormalImage1.setImageBitmap(Abnormalbitmaps.get(0).getBitmap());//异常人脸图片
+                                    binding.AbnormalImage1.setImageBitmap(Abnormalbitmaps.get(0).getBitmap());//异常人脸图片
                                     String temperature = decimalFormat.format(Abnormalbitmaps.get(0).getTemperature());//将温度的folat类型只取小数点后两位
-                                    AbnormalTv1.setText(temperature + TemperatureS);
+                                    binding.AbnormalTv1.setText(temperature + TemperatureS);
                                     if (Abnormalbitmaps.get(0).getMask() == 0) {//更具数值判断是否佩戴口罩
-                                        AbnormalMake1.setText("未佩戴口罩");
+                                        binding.AbnormalMake1.setText("未佩戴口罩");
                                     } else if (Abnormalbitmaps.get(0).getMask() == 1) {
-                                        AbnormalMake1.setText("佩戴口罩不规范");
+                                        binding.AbnormalMake1.setText("佩戴口罩不规范");
                                     } else {
-                                        AbnormalMake1.setText("");
+                                        binding.AbnormalMake1.setText("");
                                     }
                                     //图2
-                                    AbnormalImage2.setImageBitmap(Abnormalbitmaps.get(1).getBitmap());//异常人脸图片
+                                    binding.AbnormalImage2.setImageBitmap(Abnormalbitmaps.get(1).getBitmap());//异常人脸图片
                                     String temperature1 = decimalFormat.format(Abnormalbitmaps.get(1).getTemperature());//将温度的folat类型只取小数点后两位
-                                    AbnormalTv2.setText(temperature + TemperatureS);
+                                    binding.AbnormalTv2.setText(temperature + TemperatureS);
                                     if (Abnormalbitmaps.get(1).getMask() == 0) {//更具数值判断是否佩戴口罩
-                                        AbnormalMake2.setText("未佩戴口罩");
+                                        binding.AbnormalMake2.setText("未佩戴口罩");
                                     } else if (Abnormalbitmaps.get(1).getMask() == 1) {
-                                        AbnormalMake2.setText("佩戴口罩不规范");
+                                        binding.AbnormalMake2.setText("佩戴口罩不规范");
                                     } else {
-                                        AbnormalMake2.setText("");
+                                        binding. AbnormalMake2.setText("");
                                     }
                                     //图3
-                                    AbnormalImage3.setImageBitmap(Abnormalbitmaps.get(2).getBitmap());//异常人脸图片
+                                    binding.AbnormalImage3.setImageBitmap(Abnormalbitmaps.get(2).getBitmap());//异常人脸图片
                                     String temperature2 = decimalFormat.format(Abnormalbitmaps.get(2).getTemperature());//将温度的folat类型只取小数点后两位
-                                    AbnormalTv3.setText(temperature2 + TemperatureS);
+                                    binding.AbnormalTv3.setText(temperature2 + TemperatureS);
                                     if (Abnormalbitmaps.get(2).getMask() == 0) {//更具数值判断是否佩戴口罩
-                                        AbnormalMake3.setText("未佩戴口罩");
+                                        binding.AbnormalMake3.setText("未佩戴口罩");
                                     } else if (Abnormalbitmaps.get(2).getMask() == 1) {
-                                        AbnormalMake3.setText("佩戴口罩不规范");
+                                        binding.AbnormalMake3.setText("佩戴口罩不规范");
                                     } else {
-                                        AbnormalMake3.setText("");
+                                        binding.AbnormalMake3.setText("");
                                     }
                                     //因为屏幕中只有三张图片显示，则Abnormalbitmaps大小大于3的时候则需要重新放入数据
                                     if (Abnormalbitmaps.size() > 3) {
@@ -455,8 +437,8 @@ public class CameraPreviewActivity extends BaseActivity {
                         }
                         //判断人脸是否有人脸，如果没有则取消自定义控件中方框的绘制
                     } else if (infoArrayList.size() == 0) {
-                        sv_camera_face.info = null;
-                        sv_camera_face.run();
+                        binding.svCameraFace.info = null;
+                        binding.svCameraFace.run();
                     }
 //                    }).start();
                     image = null;
@@ -471,35 +453,35 @@ public class CameraPreviewActivity extends BaseActivity {
     }
 
     private void initViews() {
-        //绑定红外控件
-        cameraView = findViewById(R.id.cameraView);
-        cameraView.setSyncimage(syncimage);
-//        tvTem = findViewById(R.id.tv_tem);
-        //异常人脸的ImageView
-        AbnormalTv = findViewById(R.id.AbnormalTv);
-        //异常人脸图
-        AbnormalImage1 = findViewById(R.id.AbnormalImage1);
-        AbnormalImage2 = findViewById(R.id.AbnormalImage2);
-        AbnormalImage3 = findViewById(R.id.AbnormalImage3);
-        //异常人脸温度
-        AbnormalTv1 = findViewById(R.id.AbnormalTv1);
-        AbnormalTv2 = findViewById(R.id.AbnormalTv2);
-        AbnormalTv3 = findViewById(R.id.AbnormalTv3);
-        //异常人脸口罩
-        AbnormalMake1 = findViewById(R.id.AbnormalMake1);
-        AbnormalMake2 = findViewById(R.id.AbnormalMake2);
-        AbnormalMake3 = findViewById(R.id.AbnormalMake3);
-        //检测人脸数：
-        DetectedFaces = findViewById(R.id.DetectedFaces);
-//        recyclerView= (RecyclerView) findViewById(R.id.AbnormalRV);
-        //时间
-        time = findViewById(R.id.time);
-        time.setAlpha(0.6f);//60%的透明度
-        textView7 = findViewById(R.id.textView7);
-        textView7.setAlpha(0.6f);//60%的透明度
+//        //绑定红外控件
+//        cameraView = view.findViewById(R.id.cameraView);
+//        cameraView.setSyncimage(syncimage);
+////        tvTem = findViewById(R.id.tv_tem);
+//        //异常人脸的ImageView
+//        AbnormalTv = view.findViewById(R.id.AbnormalTv);
+//        //异常人脸图
+//        AbnormalImage1 = view.findViewById(R.id.AbnormalImage1);
+//        AbnormalImage2 = view.findViewById(R.id.AbnormalImage2);
+//        AbnormalImage3 = view.findViewById(R.id.AbnormalImage3);
+//        //异常人脸温度
+//        AbnormalTv1 = view.findViewById(R.id.AbnormalTv1);
+//        AbnormalTv2 = view.findViewById(R.id.AbnormalTv2);
+//        AbnormalTv3 = view.findViewById(R.id.AbnormalTv3);
+//        //异常人脸口罩
+//        AbnormalMake1 = view.findViewById(R.id.AbnormalMake1);
+//        AbnormalMake2 = view.findViewById(R.id.AbnormalMake2);
+//        AbnormalMake3 = view.findViewById(R.id.AbnormalMake3);
+//        //检测人脸数：
+//        DetectedFaces = view.findViewById(R.id.DetectedFaces);
+////        recyclerView= (RecyclerView) findViewById(R.id.AbnormalRV);
+//        //时间
+//        time = view.findViewById(R.id.time);
+        binding.time.setAlpha(0.6f);//60%的透明度
 
-        sv_camera_face = findViewById(R.id.sv_camera_face);
-        sv_camera = findViewById(R.id.group_divider);
+        binding.textView7.setAlpha(0.6f);//60%的透明度
+
+//        sv_camera_face = view.findViewById(R.id.sv_camera_face);
+//        sv_camera =view.findViewById(R.id.group_divider);
 
         if (Usbcontorl.isload)
             Usbcontorl.usb3803_mode_setting(1);//打开5V
@@ -534,11 +516,11 @@ public class CameraPreviewActivity extends BaseActivity {
 //                    long sysTime = System.currentTimeMillis();//获取系统时间
 //                    CharSequence sysTimeStr = DateFormat.format("yyyy/MM/dd  HH:MM:ss", sysTime);//时间显示格式
 
-                    time.setText(DateUtil.getNowDateTime()); //更新时间
+                   binding.time.setText(DateUtil.getNowDateTime()); //更新时间
                     //更新异常人脸
-                    AbnormalTv.setText((TemperatureAbnormal + FaceAbnormal) + "");
+                    binding.AbnormalTv.setText((TemperatureAbnormal + FaceAbnormal) + "");
                     //更新人脸识别
-                    DetectedFaces.setText("检测数量：" + face);
+                    binding.DetectedFaces.setText("检测数量：" + face);
                     break;
                 default:
                     break;

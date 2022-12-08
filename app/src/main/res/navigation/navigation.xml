@@ -112,6 +112,9 @@
         <action
             android:id="@+id/action_homeFragment_to_settingHomeFragment"
             app:destination="@id/settingHomeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_cameraPreviewFragment"
+            app:destination="@id/cameraPreviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"
@@ -487,5 +490,13 @@
         android:id="@+id/commonHandleExceptionFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.CommonHandleExceptionFragment"
         android:label="CommonHandleExceptionFragment" />
+    <fragment
+        android:id="@+id/cameraPreviewFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CameraPreviewFragment"
+        android:label="CameraPreviewFragment" >
+        <action
+            android:id="@+id/action_cameraPreviewFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 
 </navigation>

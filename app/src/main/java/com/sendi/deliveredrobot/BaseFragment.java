@@ -22,7 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-public class BaseActivity extends Fragment {
+public class BaseFragment extends Fragment {
     public Presentation mPresentation;
     public Display mDisplay;
 

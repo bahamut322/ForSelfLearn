@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="horizontal"
+        android:keepScreenOn="true"
+        android:background="@drawable/bg"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_72"
+            android:text="@string/Sendi_Temperature"
+            android:textSize="@dimen/sp_40"
+            android:textStyle="bold"
+            android:textColor="@color/color_F0F0F8"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:textSize="@dimen/sp_25"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/time"
+            app:layout_constraintEnd_toStartOf="@+id/time"
+            app:layout_constraintTop_toTopOf="@+id/time" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_13"
+            android:text="@string/time_number"
+            android:textSize="@dimen/sp_25"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_25"
+            android:layout_marginStart="@dimen/dp_41"
+            android:layout_marginBottom="@dimen/dp_13"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintStart_toEndOf="@+id/DetectedFaces"
+            app:layout_constraintTop_toTopOf="@+id/DetectedFaces" />
+
+        <TextView
+            android:id="@+id/DetectedFaces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:text="@string/Number_of_detected_faces"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_25"
+            android:layout_marginBottom="@dimen/dp_13"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout" />
+
+        <TextView
+            android:id="@+id/AbnormalTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_25"
+            android:textColor="@color/color_FF6079"
+            app:layout_constraintBottom_toBottomOf="@+id/textView11"
+            app:layout_constraintStart_toEndOf="@+id/textView11"
+            app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:keepScreenOn="true"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="800dp"
+                android:layout_height="@dimen/dp_600"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginBottom="@dimen/dp_32">
+
+                <com.sendi.deliveredrobot.view.widget.CameraView
+                    android:id="@+id/cameraView"
+                    android:layout_width="@dimen/dp_320"
+                    android:layout_height="@dimen/dp_240"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SurfaceView
+                    android:id="@+id/sv_camera"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.sendi.deliveredrobot.view.fragment.MySurfaceView
+                    android:id="@+id/sv_camera_face"
+                    android:layout_width="750dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="392dp"
+            android:layout_height="@dimen/dp_600"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_32"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout">
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="392dp"
+                android:layout_height="@dimen/dp_72"
+                android:background="@color/color_29139B"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_22"
+                android:text="@string/Abnormal_face"
+                android:textSize="@dimen/sp_28"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/AbnormalImage1"
+                app:layout_constraintStart_toStartOf="@+id/AbnormalImage1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="392dp"
+                android:layout_height="@dimen/dp_168"
+                android:layout_marginTop="@dimen/dp_8"
+                android:background="@color/color_29139B"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+            <ImageView
+                android:id="@+id/AbnormalImage1"
+                android:layout_width="@dimen/dp_128"
+                android:layout_height="@dimen/dp_128"
+                android:layout_marginStart="@dimen/dp_25"
+                android:layout_marginTop="@dimen/dp_100"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/temperature"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_24"
+                android:layout_marginStart="@dimen/dp_17"
+                android:layout_marginTop="@dimen/dp_16"
+                app:layout_constraintStart_toEndOf="@+id/AbnormalImage1"
+                app:layout_constraintTop_toTopOf="@+id/AbnormalImage1" />
+
+            <TextView
+                android:id="@+id/AbnormalTv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_00EEFF"
+                android:textSize="@dimen/sp_32"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="@+id/textView" />
+
+            <TextView
+                android:id="@+id/AbnormalMake1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_32"
+                android:textColor="@color/color_FF6079"
+                android:textSize="@dimen/sp_24"
+                app:layout_constraintStart_toStartOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="392dp"
+                android:layout_height="@dimen/dp_168"
+                android:layout_marginTop="@dimen/dp_8"
+                android:background="@color/color_29139B"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view5" />
+
+            <ImageView
+                android:id="@+id/AbnormalImage2"
+                android:layout_width="@dimen/dp_128"
+                android:layout_height="@dimen/dp_128"
+                android:layout_marginTop="@dimen/dp_48"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@+id/AbnormalImage1"
+                app:layout_constraintTop_toBottomOf="@+id/AbnormalImage1" />
+
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/temperature"
+                android:layout_marginTop="@dimen/dp_16"
+                android:layout_marginStart="@dimen/dp_17"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_24"
+                app:layout_constraintStart_toEndOf="@+id/AbnormalImage2"
+                app:layout_constraintTop_toTopOf="@+id/AbnormalImage2" />
+
+            <TextView
+                android:id="@+id/AbnormalTv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_00EEFF"
+                android:textSize="@dimen/sp_32"
+                app:layout_constraintBottom_toBottomOf="@+id/textView2"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
+                app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/AbnormalMake2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_32"
+                android:textColor="@color/color_FF6079"
+                android:textSize="@dimen/sp_24"
+                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <View
+                android:layout_width="392dp"
+                android:layout_height="@dimen/dp_168"
+                android:background="@color/color_29139B"
+                android:layout_marginTop="@dimen/dp_8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+            <ImageView
+                android:id="@+id/AbnormalImage3"
+                android:layout_width="@dimen/dp_128"
+                android:layout_height="@dimen/dp_128"
+                android:layout_marginTop="@dimen/dp_48"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@+id/AbnormalImage2"
+                app:layout_constraintTop_toBottomOf="@+id/AbnormalImage2" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/temperature"
+                android:layout_marginTop="@dimen/dp_16"
+                android:layout_marginStart="@dimen/dp_17"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_24"
+                app:layout_constraintStart_toEndOf="@+id/AbnormalImage3"
+                app:layout_constraintTop_toTopOf="@+id/AbnormalImage3" />
+
+            <TextView
+                android:id="@+id/AbnormalMake3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_32"
+                android:textColor="@color/color_FF6079"
+                android:textSize="@dimen/sp_24"
+                app:layout_constraintStart_toStartOf="@+id/textView3"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+
+            <TextView
+                android:id="@+id/AbnormalTv3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_00EEFF"
+                android:textSize="@dimen/sp_32"
+                app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                app:layout_constraintStart_toEndOf="@+id/textView3"
+                app:layout_constraintTop_toTopOf="@+id/textView3" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ImageView
+            android:id="@+id/exitIV"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:src="@drawable/sign_out"
+            android:layout_marginBottom="@dimen/dp_33"
+            app:layout_constraintBottom_toTopOf="@+id/time"
+            app:layout_constraintEnd_toEndOf="@+id/time" />
+
+        <!--    <ImageView-->
+        <!--        android:id="@+id/ExitIV"-->
+        <!--        android:layout_width="@dimen/dp_32"-->
+        <!--        android:layout_height="@dimen/dp_32"-->
+        <!--        android:src="@drawable/exit"-->
+        <!--        android:layout_marginTop="@dimen/dp_60"-->
+        <!--        android:layout_marginEnd="@dimen/dp_32"-->
+        <!--        app:layout_constraintEnd_toEndOf="parent"-->
+        <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

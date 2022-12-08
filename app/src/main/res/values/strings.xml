@@ -436,6 +436,7 @@
     <string name="Upload_log">上传诊断日志</string>
     <string name="Version_Update">版本更新</string>
     <string name="Update_Tips">检测到新版本，最新版本号为</string>
+    <string name="exit_camera_tips">您要退出测温模式么？</string>
     <string name="Update_Now">立即更新</string>
     <string name="cancel1">取消</string>
     <string name="sure">确定</string>

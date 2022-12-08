@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -28,6 +29,7 @@ import com.sendi.deliveredrobot.model.RequestTenancyModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
@@ -207,6 +209,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        AppUtils.checkPermission(activity, 0)
         controller = Navigation.findNavController(view)
         view1 = view.findViewById(R.id.view1)
         view2 = view.findViewById(R.id.view2)
@@ -755,6 +758,8 @@ class HomeFragment : Fragment() {
             }
             "轻应用" -> {
 //                controller!!.navigate(R.id.action_smartFoodDeliveryFragment_to_lightApplicationFragment)
+                //跳转到测温模式
+                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d(TAG, "点击轻应用")
             }
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()

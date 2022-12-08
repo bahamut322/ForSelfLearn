@@ -73,9 +73,9 @@ public class BaiduTTSHelper {
         sn = Auth.getInstance(context).getSn();
         LogUtil.INSTANCE.d(sn);
         initialTts(); // 初始化TTS引擎
-        if (!isOnlineSDK) {
-            LogUtil.INSTANCE.i("BaiduTTSHelper so version:" + SynthesizerTool.getEngineInfo());
-        }
+//        if (!isOnlineSDK) {
+//            LogUtil.INSTANCE.i("BaiduTTSHelper so version:" + SynthesizerTool.getEngineInfo());
+//        }
     }
 
     protected void initialTts() {
