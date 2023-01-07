@@ -2,6 +2,8 @@ package com.sendi.deliveredrobot.ros.debug;
 
 import static com.sendi.deliveredrobot.ros.constant.ClientConstant.TARGET_POSE;
 
+import android.util.Log;
+
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.room.PointType;
@@ -10,12 +12,16 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 import com.sendi.deliveredrobot.room.entity.Point;
 import com.sendi.deliveredrobot.room.entity.PublicArea;
 import com.sendi.deliveredrobot.room.entity.SubMap;
+import com.sendi.deliveredrobot.room.entity.SubMapName;
 import com.sendi.deliveredrobot.ros.ClientManager;
 import com.sendi.deliveredrobot.ros.debug.dto.MapResult;
 import com.sendi.deliveredrobot.ros.debug.dto.MapResultUtil;
 import com.sendi.deliveredrobot.ros.dto.Client;
 
+import org.jboss.netty.util.internal.StringUtil;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +62,18 @@ public class MapTargetPointServiceImpl implements IMapTargetPointService {
         List<SubMap> res = dao.queryTargetPointMap();
         HashMap<String, Object> data = new HashMap<>();
         data.put("maps", res);
+        return MapResultUtil.success(data);
+    }
+    /*
+   获取目标点图文件名字
+    */
+    @Override
+    public MapResult getMapsName() {
+        List<SubMapName> res = dao.queryTargetPointMapName();
+        HashMap<String, Object> data = new HashMap<>();
+//        List<String> list = new ArrayList<>();
+//        list.add(res.toString());
+        data.put("mapsName", res);
         return MapResultUtil.success(data);
     }
 

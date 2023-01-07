@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.view.widget
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.text.Spannable
@@ -12,9 +11,9 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentGeneralViewListBinding
+import com.sendi.deliveredrobot.MyApplication
 
 class DeleteRouteErrorDialog : HideNavigationBarDialog {
     lateinit var binding: FragmentGeneralViewListBinding

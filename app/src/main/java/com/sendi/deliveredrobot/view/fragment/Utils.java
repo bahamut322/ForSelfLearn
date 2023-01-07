@@ -21,7 +21,7 @@ class Utils {
     public static final int mOutputColumn = 8; // left, top, right, bottom, score and 80 class probability
     public static final float mThreshold = 0.5f; // score above which a detection is generated
     public static final float mIoUThreshold = 0.30f; // used for IoU
-    public static final int mNmsLimit = 10;//识别最大人脸个数
+    public static int mNmsLimit = 10;//识别最大人脸个数
 
     public static final float[] NO_MEAN_RGB = {0.0f, 0.0f, 0.0f};
     public static final float[] NO_STD_RGB = {1.0f, 1.0f, 1.0f};

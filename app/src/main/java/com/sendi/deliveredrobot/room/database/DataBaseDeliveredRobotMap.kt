@@ -83,7 +83,8 @@ abstract class DataBaseDeliveredRobotMap : RoomDatabase() {
 
         }
         init {
-            MediaScannerConnection.scanFile(MyApplication.instance!!, arrayOf(file.absolutePath), arrayOf("text/plain")
+            MediaScannerConnection.scanFile(
+                MyApplication.instance!!, arrayOf(file.absolutePath), arrayOf("text/plain")
             ) { _, _ -> }
         }
 

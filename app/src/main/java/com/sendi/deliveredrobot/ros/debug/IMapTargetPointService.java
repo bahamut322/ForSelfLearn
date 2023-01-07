@@ -10,6 +10,11 @@ public interface IMapTargetPointService {
      */
     MapResult getMaps();
 
+    /*
+   获取目标点图文件名字
+    */
+    MapResult getMapsName();
+
     /**
      * 删除目标点图
      */

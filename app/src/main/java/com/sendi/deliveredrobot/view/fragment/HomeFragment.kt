@@ -3,33 +3,31 @@ package com.sendi.deliveredrobot.view.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.sendi.deliveredrobot.BaseFragment
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
+import com.sendi.deliveredrobot.entity.BasicSetting
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.model.RequestTenancyModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.AppUtils
+import com.sendi.deliveredrobot.view.inputfilter.IMainView
+import com.sendi.deliveredrobot.view.inputfilter.MainPresenter
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
@@ -37,6 +35,7 @@ import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
 import kotlinx.coroutines.*
+import org.litepal.LitePal.findAll
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,115 +43,52 @@ import java.util.*
 /**
  * @describe 主页面
  */
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() , IMainView {
     private lateinit var binding: FragmentHomeBinding
     private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
     private val viewModelBin1 by viewModels<SendPlaceBin1ViewModel>({ requireActivity() })
     private val viewModelBin2 by viewModels<SendPlaceBin2ViewModel>({ requireActivity() })
     private val dateViewModel by viewModels<DateViewModel>({ requireActivity() })
     private lateinit var mainScope: CoroutineScope
-    private var localDays:Int = Int.MIN_VALUE //记录上一次获取的使用剩余天数
+    private var localDays: Int = Int.MIN_VALUE //记录上一次获取的使用剩余天数
     private var remindDialog: Dialog? = null
-
+    var rescolors: Array<String>? = null
+    private var mPresenter: MainPresenter? = null
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
+    private var controller: NavController? = null
 
-    var controller: NavController? = null
-    private var view1: LinearLayout? = null
-    private var view2: LinearLayout? = null
-    private var view3: LinearLayout? = null
-    private var view4: LinearLayout? = null
-    private var view5: LinearLayout? = null
-    var rescolors: Array<String>? = null
-    private var view1_1_0: LinearLayout? = null
-    private var view1_2_0: LinearLayout? = null
-    private var view2_1_0: LinearLayout? = null
-    private var view2_2_0: LinearLayout? = null
-    private var view2_3_0: LinearLayout? = null
-    private var view3_1_0: LinearLayout? = null
-    private var view3_2_0: LinearLayout? = null
-    private var view3_3_0: ConstraintLayout? = null
-    private var view3_4_0: ConstraintLayout? = null
-    private var view4_1_0: LinearLayout? = null
-    private var view4_2_0: ConstraintLayout? = null
-    private var view4_3_0: ConstraintLayout? = null
-    private var view4_4_0: ConstraintLayout? = null
-    private var view4_5_0: ConstraintLayout? = null
-    private var view5_1_0: ConstraintLayout? = null
-    private var view5_2_0: ConstraintLayout? = null
-    private var view5_3_0: ConstraintLayout? = null
-    private var view5_4_0: ConstraintLayout? = null
-    private var view5_5_0: ConstraintLayout? = null
-    private var view5_6_0: ConstraintLayout? = null
 
-    //背景
-    private var view1_1_1: ImageView? = null
-    private var view1_2_1: ImageView? = null
-    private var view2_1_1: ImageView? = null
-    private var view2_2_1: ImageView? = null
-    private var view2_3_1: ImageView? = null
-    private var view3_1_1: ImageView? = null
-    private var view3_2_1: ImageView? = null
-    private var view3_3_1: ImageView? = null
-    private var view3_4_1: ImageView? = null
-    private var view4_1_1: ImageView? = null
-    private var view4_2_1: ImageView? = null
-    private var view4_3_1: ImageView? = null
-    private var view4_4_1: ImageView? = null
-    private var view4_5_1: ImageView? = null
-    private var view5_1_1: ImageView? = null
-    private var view5_2_1: ImageView? = null
-    private var view5_3_1: ImageView? = null
-    private var view5_4_1: ImageView? = null
-    private var view5_5_1: ImageView? = null
-    private var view5_6_1: ImageView? = null
+    override fun onResume() {
+        //启动默认开始计时
+        mPresenter?.startTipsTimer()
+        super.onResume()
+    }
 
-    //标题文字
-    private var view1_1_2: TextView? = null
-    private var view1_2_2: TextView? = null
-    private var view2_1_2: TextView? = null
-    private var view2_2_2: TextView? = null
-    private var view2_3_2: TextView? = null
-    private var view3_1_2: TextView? = null
-    private var view3_2_2: TextView? = null
-    private var view3_3_2: TextView? = null
-    private var view3_4_2: TextView? = null
-    private var view4_1_2: TextView? = null
-    private var view4_2_2: TextView? = null
-    private var view4_3_2: TextView? = null
-    private var view4_4_2: TextView? = null
-    private var view4_5_2: TextView? = null
-    private var view5_1_2: TextView? = null
-    private var view5_2_2: TextView? = null
-    private var view5_3_2: TextView? = null
-    private var view5_4_2: TextView? = null
-    private var view5_5_2: TextView? = null
-    private var view5_6_2: TextView? = null
+    override fun onPause() {
+        //有其他操作时结束计时
+        mPresenter?.endTipsTimer()
+        super.onPause()
+    }
 
-    //英文
-    private var view1_1_3: TextView? = null
-    private var view1_2_3: TextView? = null
-    private var view2_1_3: TextView? = null
-    private var view2_2_3: TextView? = null
-    private var view2_3_3: TextView? = null
-    private var view3_1_3: TextView? = null
-    private var view3_2_3: TextView? = null
-    private var view3_3_3: TextView? = null
-    private var view3_4_3: TextView? = null
-    private var view4_1_3: TextView? = null
-    private var view4_2_3: TextView? = null
-    private var view4_3_3: TextView? = null
-    private var view4_4_3: TextView? = null
-    private var view4_5_3: TextView? = null
-    private var view5_1_3: TextView? = null
-    private var view5_2_3: TextView? = null
-    private var view5_3_3: TextView? = null
-    private var view5_4_3: TextView? = null
-    private var view5_5_3: TextView? = null
-    private var view5_6_3: TextView? = null
-    var TAG = "Tag"
+    override fun onCreate(savedInstanceState: Bundle?) {
+        mPresenter = MainPresenter(this)
+        super.onCreate(savedInstanceState)
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        //重置计时
+        mPresenter?.resetTipsTimer()
+        return false
+    }
+
+    override fun showTipsView() {
+        //展示屏保界面
+//        Intent intent = new Intent(this, MyTimeActivity.class);
+//        startActivity(intent);
+        println("无操作")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -161,10 +97,8 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         binding = DataBindingUtil.bind(view)!!
-
         return view
     }
-
     override fun onStart() {
         super.onStart()
         mainScope = MainScope()
@@ -182,7 +116,7 @@ class HomeFragment : Fragment() {
             remindDialog = DialogHelper.getRemindDialog(message).apply { show() }
         }
         //查询使用期限
-        CloudMqttService.publish(RequestTenancyModel().toString())
+//        CloudMqttService.publish(RequestTenancyModel().toString())
         RobotStatus.tenancy.observe(viewLifecycleOwner){
             basicSettingViewModel?.basicConfig?.robotUseDeadLine = it.deadline
             MainScope().launch(Dispatchers.Default) {
@@ -210,211 +144,71 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
+//        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
+//        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
+
+        //双屏异显的方法
+        ShowPresentationByDisplaymanager()
         controller = Navigation.findNavController(view)
-        view1 = view.findViewById(R.id.view1)
-        view2 = view.findViewById(R.id.view2)
-        view3 = view.findViewById(R.id.view3)
-        view4 = view.findViewById(R.id.view4)
-        view5 = view.findViewById(R.id.view5)
-        //布局
-        view1_1_0 = view.findViewById(R.id.view1_1_0)
-        view1_2_0 = view.findViewById(R.id.view1_2_0)
-        //标题文字
-        view1_1_2 = view.findViewById(R.id.view1_1_2)
-        view1_2_2 = view.findViewById(R.id.view1_2_2)
-        //图片
-        view1_1_1 = view.findViewById(R.id.view1_1_1)
-        view1_2_1 = view.findViewById(R.id.view1_2_1)
-        //英文
-        view1_1_3 = view.findViewById(R.id.view1_1_3)
-        view1_2_3 = view.findViewById(R.id.view1_2_3)
 
-        //布局
-        view2_1_0 = view.findViewById(R.id.view2_1_0)
-        view2_2_0 = view.findViewById(R.id.view2_2_0)
-        view2_3_0 = view.findViewById(R.id.view2_3_0)
-        //标题文字
-        view2_1_2 = view.findViewById(R.id.view2_1_2)
-        view2_2_2 = view.findViewById(R.id.view2_2_2)
-        view2_3_2 = view.findViewById(R.id.view2_3_2)
-        //图片
-        view2_1_1 = view.findViewById(R.id.view2_1_1)
-        view2_2_1 = view.findViewById(R.id.view2_2_1)
-        view2_3_1 = view.findViewById(R.id.view2_3_1)
-        //英文
-        view2_1_3 = view.findViewById(R.id.view2_1_3)
-        view2_2_3 = view.findViewById(R.id.view2_2_3)
-        view2_3_3 = view.findViewById(R.id.view2_3_3)
 
-        //布局
-        view3_1_0 = view.findViewById(R.id.view3_1_0)
-        view3_2_0 = view.findViewById(R.id.view3_2_0)
-        view3_3_0 = view.findViewById(R.id.view3_3_0)
-        view3_4_0 = view.findViewById(R.id.view3_4_0)
-        //标题文字
-        view3_1_2 = view.findViewById(R.id.view3_1_2)
-        view3_2_2 = view.findViewById(R.id.view3_2_2)
-        view3_3_2 = view.findViewById(R.id.view3_3_2)
-        view3_4_2 = view.findViewById(R.id.view3_4_2)
-        //图片
-        view3_1_1 = view.findViewById(R.id.view3_1_1)
-        view3_2_1 = view.findViewById(R.id.view3_2_1)
-        view3_3_1 = view.findViewById(R.id.view3_3_1)
-        view3_4_1 = view.findViewById(R.id.view3_4_1)
-        //英文
-        view3_1_3 = view.findViewById(R.id.view3_1_3)
-        view3_2_3 = view.findViewById(R.id.view3_2_3)
-        view3_3_3 = view.findViewById(R.id.view3_3_3)
-        view3_4_3 = view.findViewById(R.id.view3_4_3)
+        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
+        val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
+        for (basicSettings in basicSetting) {
+            Universal.selectItem = basicSettings.defaultValue
+            Universal.RobotMode = basicSettings.robotMode
+            Log.d("MainActivity", "选择的功能展示模块： " + basicSettings.defaultValue)
+            Log.d("MainActivity", "机器人音色： " + basicSettings.robotMode)
+        }
+        val tempMode = sp.getInt("tempMode",0) // 测温模式
+        //改变人脸识别工具类，人脸识别数量的最大值
+        if (tempMode == 0) {
+            Log.d(TAG, "当前为单人测温")
+            Utils.mNmsLimit = 1
+        } else {
+            Log.d(TAG, "当前为多人测温")
+            Utils.mNmsLimit = 10
+        }
 
-        //布局
-        view4_1_0 = view.findViewById(R.id.view4_1_0)
-        view4_2_0 = view.findViewById(R.id.view4_2_0)
-        view4_3_0 = view.findViewById(R.id.view4_3_0)
-        view4_4_0 = view.findViewById(R.id.view4_4_0)
-        view4_5_0 = view.findViewById(R.id.view4_5_0)
-        //标题
-        view4_1_2 = view.findViewById(R.id.view4_1_2)
-        view4_2_2 = view.findViewById(R.id.view4_2_2)
-        view4_3_2 = view.findViewById(R.id.view4_3_2)
-        view4_4_2 = view.findViewById(R.id.view4_4_2)
-        view4_5_2 = view.findViewById(R.id.view4_5_2)
-        //图片
-        view4_1_1 = view.findViewById(R.id.view4_1_1)
-        view4_2_1 = view.findViewById(R.id.view4_2_1)
-        view4_3_1 = view.findViewById(R.id.view4_3_1)
-        view4_4_1 = view.findViewById(R.id.view4_4_1)
-        view4_5_1 = view.findViewById(R.id.view4_5_1)
-        //英文
-        view4_1_3 = view.findViewById(R.id.view4_1_3)
-        view4_2_3 = view.findViewById(R.id.view4_2_3)
-        view4_3_3 = view.findViewById(R.id.view4_3_3)
-        view4_4_3 = view.findViewById(R.id.view4_4_3)
-        view4_5_3 = view.findViewById(R.id.view4_5_3)
+        if (Universal.selectItem != null) {
+            rescolors = Universal.selectItem.split(" ").toTypedArray()
+            when (rescolors!!.size - 1) {
+                0 -> {
+                    allInvisible()
+                }
+                1 -> allInvisible()
+                2 -> {
+                    allInvisible()
+                    binding.include.view1.visibility = View.VISIBLE
+                    initView1()
+                }
+                3 -> {
+                    allInvisible()
+                    binding.include.view2.visibility = View.VISIBLE
+                    initView2()
+                }
+                4 -> {
+                    allInvisible()
+                    binding.include.view3.visibility = View.VISIBLE
+                    initView3()
+                }
+                5 -> {
+                    allInvisible()
+                    binding.include.view4.visibility = View.VISIBLE
+                    initView4()
+                }
+                6 -> {
+                    allInvisible()
+                    binding.include.view5.visibility = View.VISIBLE
+                    initView5()
+                }
+                else -> {}
+            }
+        }
 
-        //布局
-        view5_1_0 = view.findViewById(R.id.view5_1_0)
-        view5_2_0 = view.findViewById(R.id.view5_2_0)
-        view5_3_0 = view.findViewById(R.id.view5_3_0)
-        view5_4_0 = view.findViewById(R.id.view5_4_0)
-        view5_5_0 = view.findViewById(R.id.view5_5_0)
-        view5_6_0 = view.findViewById(R.id.view5_6_0)
-        //标题
-        view5_1_2 = view.findViewById(R.id.view5_1_2)
-        view5_2_2 = view.findViewById(R.id.view5_2_2)
-        view5_3_2 = view.findViewById(R.id.view5_3_2)
-        view5_4_2 = view.findViewById(R.id.view5_4_2)
-        view5_5_2 = view.findViewById(R.id.view5_5_2)
-        view5_6_2 = view.findViewById(R.id.view5_6_2)
-        //图片
-        view5_1_1 = view.findViewById(R.id.view5_1_1)
-        view5_2_1 = view.findViewById(R.id.view5_2_1)
-        view5_3_1 = view.findViewById(R.id.view5_3_1)
-        view5_4_1 = view.findViewById(R.id.view5_4_1)
-        view5_5_1 = view.findViewById(R.id.view5_5_1)
-        view5_6_1 = view.findViewById(R.id.view5_6_1)
-        //英文
-        view5_1_3 = view.findViewById(R.id.view5_1_3)
-        view5_2_3 = view.findViewById(R.id.view5_2_3)
-        view5_3_3 = view.findViewById(R.id.view5_3_3)
-        view5_4_3 = view.findViewById(R.id.view5_4_3)
-        view5_5_3 = view.findViewById(R.id.view5_5_3)
-        view5_6_3 = view.findViewById(R.id.view5_6_3)
-//        binding.buttonGuide.apply {
-//            setOnClickListener {
-//                mainScope.launch(Dispatchers.Default) {
-//                    DialogHelper.loadingDialog.show()
-//                    if (!judgeBeforeNavigate()) {
-//                        DialogHelper.loadingDialog.dismiss()
-//                        ToastUtil.show("请让机器人处于充电状态")
-//                        return@launch
-//                    }else{
-//                        val chargePoint = dao.queryChargePoint()
-//                        ROSHelper.setCalculateChargePose(chargePoint)
-//                    }
-//                    DialogHelper.loadingDialog.dismiss()
-//                    if (BillManager.billList().isNotEmpty()) {
-//                        return@launch
-//                    }
-//                    if (RobotStatus.originalLocation == null) {
-//                        ToastUtil.show(resources.getString(R.string.charge_point_not_set))
-//                        return@launch
-//                    }
-//                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
-//                        ToastUtil.show(getString(R.string.power_low_can_not_start_task))
-//                        return@launch
-//                    }
-//                    when (basicSettingViewModel?.basicConfig?.guideModeVerifyPassword) {
-//                        0 -> {
-//                            findNavController().navigate(
-//                                R.id.inputRoomNumberFragment,
-//                                Bundle().apply {
-//                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.HOME_GUIDE)
-//                                }
-//                            )
-//                        }
-//                        1 -> {
-//                            findNavController().navigate(
-//                                R.id.inputPasswordFragment,
-//                                Bundle().apply {
-//                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.HOME_GUIDE)
-//                                }
-//                            )
-//                        }
-//                    }
-//                    IdleGateDataHelper.reportIdleGateCount(0)
-//                }
-//            }
-//        }
 
-//        binding.buttonSend.apply {
-//            setOnClickListener {
-//                mainScope.launch(Dispatchers.Default) {
-//                DialogHelper.loadingDialog.show()
-//                if (!judgeBeforeNavigate()) {
-//                    ToastUtil.show("请让机器人处于充电状态")
-//                    DialogHelper.loadingDialog.dismiss()
-//                    return@launch
-//                }else{
-//                    val chargePoint = dao.queryChargePoint()
-//                    ROSHelper.setCalculateChargePose(chargePoint)
-//                }
-//                DialogHelper.loadingDialog.dismiss()
-//                if (BillManager.billList().isNotEmpty()) {
-//                    return@launch
-//                }
-//                if (RobotStatus.originalLocation == null) {
-//                    ToastUtil.show(resources.getString(R.string.charge_point_not_set))
-//                    return@launch
-//                }
-//                if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
-//                    ToastUtil.show(getString(R.string.power_low_can_not_start_task))
-//                    return@launch
-//                }
-//                when (basicSettingViewModel?.basicConfig?.sendModeVerifyPassword) {
-//                    0 -> {
-//                        findNavController().navigate(
-//                            R.id.putObjectFragment,
-//                            Bundle().apply {
-//                                putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.HOME_SEND)
-//                            }
-//                        )
-//                    }
-//                    1 -> {
-//                        findNavController().navigate(
-//                            R.id.inputPasswordFragment,
-//                            Bundle().apply {
-//                                putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.HOME_SEND)
-//                            }
-//                        )
-//                    }
-//                }
-//                IdleGateDataHelper.reportIdleGateCount(0)
-//            }
-//            }
-//        }
 
-        binding.imageViewSetting.setOnClickListener() {
+        binding.imageViewSetting.setOnClickListener {
                 controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
         }
         binding.textViewClock.apply {
@@ -430,38 +224,7 @@ class HomeFragment : Fragment() {
             text = dayOfWeekChinese[Calendar.getInstance()
                 .get(Calendar.DAY_OF_WEEK) - 1]
         }
-//        binding.groupSendButton.apply {
-//            when (basicSettingViewModel?.basicConfig?.sendModeOpen) {
-//                0 -> visibility = View.GONE
-//                1 -> {
-//                    visibility = View.VISIBLE
-//                    binding.imageViewVerifySend.apply {
-//                        visibility = when (basicSettingViewModel?.basicConfig?.sendModeVerifyPassword) {
-//                            0 -> View.GONE
-//                            1 -> View.VISIBLE
-//                            else -> View.GONE
-//                        }
-//                    }
-//                }
-//                else -> visibility = View.GONE
-//            }
-//        }
-//        binding.groupGuideButton.apply {
-//            when (basicSettingViewModel?.basicConfig?.guideModeOpen) {
-//                0 -> visibility = View.GONE
-//                1 -> {
-//                    visibility =  View.VISIBLE
-//                    binding.imageViewVerifyGuide.apply {
-//                        visibility = when (basicSettingViewModel?.basicConfig?.guideModeVerifyPassword) {
-//                            0 -> View.GONE
-//                            1 -> View.VISIBLE
-//                            else -> View.GONE
-//                        }
-//                    }
-//                }
-//                else -> visibility = View.GONE
-//            }
-//        }
+
         dateViewModel.date.observe(viewLifecycleOwner) {
             binding.textViewClock.apply {
                 text = it
@@ -484,280 +247,237 @@ class HomeFragment : Fragment() {
     //当有两个Item的时候
     private fun initView1() {
         //item1
-        view1_1_0!!.setBackgroundResource(calculateColor(rescolors!![0]))
-        view1_1_1!!.setImageResource(calculateImage(rescolors!![0]))
-        view1_1_2!!.text = rescolors!![0]
-        view1_1_0!!.setOnClickListener { view: View? ->
+        binding.include.view110.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view111.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view112.text = rescolors!![0]
+        binding.include.view110.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
             )
         }
-        view1_1_3!!.text = calculateEnglish(rescolors!![0])
+        binding.include.view113.text = calculateEnglish(rescolors!![0])
         //item2
-        view1_2_0!!.setBackgroundResource(calculateColor(rescolors!![1]))
-        view1_2_1!!.setImageResource(calculateImage(rescolors!![1]))
-        view1_2_2!!.text = rescolors!![1]
-        view1_2_0!!.setOnClickListener { view: View? ->
+        binding.include.view120.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view121.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view122.text = rescolors!![1]
+        binding.include.view120.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
             )
         }
-        view1_2_3!!.text = calculateEnglish(rescolors!![1])
+        binding.include.view123.text = calculateEnglish(rescolors!![1])
     }
 
     //当有三个Item的时候
     private fun initView2() {
         //item1
-        view2_1_0!!.setBackgroundResource(calculateColor(rescolors!![0]))
-        view2_1_1!!.setImageResource(calculateImage(rescolors!![0]))
-        view2_1_2!!.text = rescolors!![0]
-        view2_1_0!!.setOnClickListener { view: View? ->
+        binding.include.view210.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view211.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view212.text = rescolors!![0]
+        binding.include.view210.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
             )
         }
-        view2_1_3!!.text = calculateEnglish(rescolors!![0])
+        binding.include.view213.text = calculateEnglish(rescolors!![0])
         //item2
-        view2_2_0!!.setBackgroundResource(calculateColor(rescolors!![1]))
-        view2_2_1!!.setImageResource(calculateImage(rescolors!![1]))
-        view2_2_2!!.text = rescolors!![1]
-        view2_2_0!!.setOnClickListener { view: View? ->
+        binding.include.view220.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view221.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view222.text = rescolors!![1]
+        binding.include.view220.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
             )
         }
-        view2_2_3!!.text = calculateEnglish(rescolors!![1])
+        binding.include.view223.text = calculateEnglish(rescolors!![1])
         //item3
-        view2_3_0!!.setBackgroundResource(calculateColor(rescolors!![2]))
-        view2_3_1!!.setImageResource(calculateImage(rescolors!![2]))
-        view2_3_2!!.text = rescolors!![2]
-        view2_3_0!!.setOnClickListener { view: View? ->
+        binding.include.view230.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view231.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view232.text = rescolors!![2]
+        binding.include.view230.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
             )
         }
-        view2_3_3!!.text = calculateEnglish(rescolors!![2])
+        binding.include.view233.text = calculateEnglish(rescolors!![2])
     }
 
     //当有四个Item的时候
     private fun initView3() {
         //item1
-        view3_1_0!!.setBackgroundResource(calculateColor(rescolors!![0]))
-        view3_1_1!!.setImageResource(calculateImage(rescolors!![0]))
-        view3_1_2!!.text = rescolors!![0]
-        view3_1_0!!.setOnClickListener { view: View? ->
+        binding.include.view310.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view311.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view312.text = rescolors!![0]
+        binding.include.view310.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
             )
         }
-        view3_1_3!!.text = calculateEnglish(rescolors!![0])
+        binding.include.view313.text = calculateEnglish(rescolors!![0])
         //item2
-        view3_2_0!!.setBackgroundResource(calculateColor(rescolors!![1]))
-        view3_2_1!!.setImageResource(calculateImage(rescolors!![1]))
-        view3_2_2!!.text = rescolors!![1]
-        view3_2_0!!.setOnClickListener { view: View? ->
+        binding.include.view320.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view321.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view322.text = rescolors!![1]
+        binding.include.view320.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
             )
         }
-        view3_2_3!!.text = calculateEnglish(rescolors!![1])
+        binding.include.view323.text = calculateEnglish(rescolors!![1])
         //item3
-        view3_3_0!!.setBackgroundResource(calculateColor(rescolors!![2]))
-        view3_3_1!!.setImageResource(calculateImage(rescolors!![2]))
-        view3_3_2!!.text = rescolors!![2]
-        view3_3_0!!.setOnClickListener { view: View? ->
+        binding.include.view330.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view331.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view332.text = rescolors!![2]
+        binding.include.view330.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
             )
         }
-        view3_3_3!!.text = calculateEnglish(rescolors!![2])
+        binding.include.view333.text = calculateEnglish(rescolors!![2])
         //item4
-        view3_4_0!!.setBackgroundResource(calculateColor(rescolors!![3]))
-        view3_4_1!!.setImageResource(calculateImage(rescolors!![3]))
-        view3_4_2!!.text = rescolors!![3]
-        view3_4_0!!.setOnClickListener { view: View? ->
+        binding.include.view340.setBackgroundResource(calculateColor(rescolors!![3]))
+        binding.include.view341.setImageResource(calculateImage(rescolors!![3]))
+        binding.include.view342.text = rescolors!![3]
+        binding.include.view340.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
             )
         }
-        view3_4_3!!.text = calculateEnglish(rescolors!![3])
+        binding.include.view343.text = calculateEnglish(rescolors!![3])
     }
 
     //当有五个Item的时候
     private fun initView4() {
         //item1
-        view4_1_0!!.setBackgroundResource(calculateColor(rescolors!![0]))
-        view4_1_1!!.setImageResource(calculateImage(rescolors!![0]))
-        view4_1_2!!.text = rescolors!![0]
-        view4_1_0!!.setOnClickListener { view: View? ->
+        binding.include.view410.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view411.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view412.text = rescolors!![0]
+        binding.include.view410.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
             )
         }
-        view4_1_3!!.text = calculateEnglish(rescolors!![0])
+        binding.include.view413.text = calculateEnglish(rescolors!![0])
         //item2
-        view4_2_0!!.setBackgroundResource(calculateColor(rescolors!![1]))
-        view4_2_1!!.setImageResource(calculateImage(rescolors!![1]))
-        view4_2_2!!.text = rescolors!![1]
-        view4_2_0!!.setOnClickListener { view: View? ->
+        binding.include.view420.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view421.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view422.text = rescolors!![1]
+        binding.include.view420.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
             )
         }
-        view4_2_3!!.text = calculateEnglish(rescolors!![1])
+        binding.include.view423.text = calculateEnglish(rescolors!![1])
         //item3
-        view4_3_0!!.setBackgroundResource(calculateColor(rescolors!![2]))
-        view4_3_1!!.setImageResource(calculateImage(rescolors!![2]))
-        view4_3_2!!.text = rescolors!![2]
-        view4_3_0!!.setOnClickListener { view: View? ->
+        binding.include.view430.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view431.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view432.text = rescolors!![2]
+        binding.include.view430.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
             )
         }
-        view4_3_3!!.text = calculateEnglish(rescolors!![2])
+        binding.include.view433.text = calculateEnglish(rescolors!![2])
         //item4
-        view4_4_0!!.setBackgroundResource(calculateColor(rescolors!![3]))
-        view4_4_1!!.setImageResource(calculateImage(rescolors!![3]))
-        view4_4_2!!.text = rescolors!![3]
-        view4_4_0!!.setOnClickListener { view: View? ->
+        binding.include.view440.setBackgroundResource(calculateColor(rescolors!![3]))
+        binding.include.view441.setImageResource(calculateImage(rescolors!![3]))
+        binding.include.view442.text = rescolors!![3]
+        binding.include.view440.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
             )
         }
-        view4_4_3!!.text = calculateEnglish(rescolors!![3])
+        binding.include.view443.text = calculateEnglish(rescolors!![3])
         //item5
-        view4_5_0!!.setBackgroundResource(calculateColor(rescolors!![4]))
-        view4_5_1!!.setImageResource(calculateImage(rescolors!![4]))
-        view4_5_2!!.text = rescolors!![4]
-        view4_5_0!!.setOnClickListener { view: View? ->
+        binding.include.view450.setBackgroundResource(calculateColor(rescolors!![4]))
+        binding.include.view451.setImageResource(calculateImage(rescolors!![4]))
+        binding.include.view452.text = rescolors!![4]
+        binding.include.view450.setOnClickListener {
             itemOnclickListen(
                 rescolors!![4]
             )
         }
-        view4_5_3!!.text = calculateEnglish(rescolors!![4])
+        binding.include.view453.text = calculateEnglish(rescolors!![4])
     }
 
     //当选中所有Item的时候
     private fun initView5() {
         //item1
-        view5_1_0!!.setBackgroundResource(calculateColor(rescolors!![0]))
-        view5_1_1!!.setImageResource(calculateImage(rescolors!![0]))
-        view5_1_2!!.text = rescolors!![0]
-        view5_1_0!!.setOnClickListener { view: View? ->
+        binding.include.view510.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view511.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view512.text = rescolors!![0]
+        binding.include.view510.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
             )
         }
-        view5_1_3!!.text = calculateEnglish(rescolors!![0])
+        binding.include.view513.text = calculateEnglish(rescolors!![0])
         //item2
-        view5_2_0!!.setBackgroundResource(calculateColor(rescolors!![1]))
-        view5_2_1!!.setImageResource(calculateImage(rescolors!![1]))
-        view5_2_2!!.text = rescolors!![1]
-        view5_2_0!!.setOnClickListener { view: View? ->
+        binding.include.view520.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view521.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view522.text = rescolors!![1]
+        binding.include.view520.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
             )
         }
-        view5_2_3!!.text = calculateEnglish(rescolors!![1])
+        binding.include.view523.text = calculateEnglish(rescolors!![1])
         //item3
-        view5_3_0!!.setBackgroundResource(calculateColor(rescolors!![2]))
-        view5_3_1!!.setImageResource(calculateImage(rescolors!![2]))
-        view5_3_2!!.text = rescolors!![2]
-        view5_3_0!!.setOnClickListener { view: View? ->
+        binding.include.view530.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view531.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view532.text = rescolors!![2]
+        binding.include.view530.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
             )
         }
-        view5_3_3!!.text = calculateEnglish(rescolors!![2])
+        binding.include.view533.text = calculateEnglish(rescolors!![2])
         //item4
-        view5_4_0!!.setBackgroundResource(calculateColor(rescolors!![3]))
-        view5_4_1!!.setImageResource(calculateImage(rescolors!![3]))
-        view5_4_2!!.text = rescolors!![3]
-        view5_4_0!!.setOnClickListener { view: View? ->
+        binding.include.view540.setBackgroundResource(calculateColor(rescolors!![3]))
+        binding.include.view541.setImageResource(calculateImage(rescolors!![3]))
+        binding.include.view542.text = rescolors!![3]
+        binding.include.view540.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
             )
         }
-        view5_4_3!!.text = calculateEnglish(rescolors!![3])
+        binding.include.view543.text = calculateEnglish(rescolors!![3])
         //item5
-        view5_5_0!!.setBackgroundResource(calculateColor(rescolors!![4]))
-        view5_5_1!!.setImageResource(calculateImage(rescolors!![4]))
-        view5_5_2!!.text = rescolors!![4]
-        view5_5_0!!.setOnClickListener { view: View? ->
+        binding.include.view550.setBackgroundResource(calculateColor(rescolors!![4]))
+        binding.include.view551.setImageResource(calculateImage(rescolors!![4]))
+        binding.include.view552.text = rescolors!![4]
+        binding.include.view550.setOnClickListener {
             itemOnclickListen(
                 rescolors!![4]
             )
         }
-        view5_5_3!!.text = calculateEnglish(rescolors!![4])
+        binding.include.view553.text = calculateEnglish(rescolors!![4])
         //item6
-        view5_6_0!!.setBackgroundResource(calculateColor(rescolors!![5]))
-        view5_6_1!!.setImageResource(calculateImage(rescolors!![5]))
-        view5_6_2!!.text = rescolors!![5]
-        view5_6_0!!.setOnClickListener { view: View? ->
+        binding.include.view560.setBackgroundResource(calculateColor(rescolors!![5]))
+        binding.include.view561.setImageResource(calculateImage(rescolors!![5]))
+        binding.include.view562.text = rescolors!![5]
+        binding.include.view560.setOnClickListener {
             itemOnclickListen(
                 rescolors!![5]
             )
         }
-        view5_6_3!!.text = calculateEnglish(rescolors!![5])
+        binding.include.view563.text = calculateEnglish(rescolors!![5])
     }
 
-    override fun onResume() {
-        super.onResume()
-        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
-        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
-        if (selectItem != null) {
-            rescolors = selectItem.split(" ").toTypedArray()
-            when (rescolors!!.size-1) {
-                0 -> {
-                    allInvisible()
-                }
-                1 -> allInvisible()
-                2 -> {
-                    allInvisible()
-                    view1!!.visibility = View.VISIBLE
-                    initView1()
-                }
-                3 -> {
-                    allInvisible()
-                    view2!!.visibility = View.VISIBLE
-                    initView2()
-                }
-                4 -> {
-                    allInvisible()
-                    view3!!.visibility = View.VISIBLE
-                    initView3()
-                }
-                5 -> {
-                    allInvisible()
-                    view4!!.visibility = View.VISIBLE
-                    initView4()
-                }
-                6 -> {
-                    allInvisible()
-                    view5!!.visibility = View.VISIBLE
-                    initView5()
-                }
-                else -> {}
-            }
-        }
-    }
 
     /**
      * 不同标签的点击事件
      */
-    fun itemOnclickListen(Onclick: String?) {
+    private fun itemOnclickListen(Onclick: String?) {
         when (Onclick) {
             "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
-//                controller!!.navigate(R.id.action_smartFoodDeliveryFragment_to_guideFragment)
                 Log.d(TAG, "点击智能引领 ")
             }
             "智能讲解" -> {
-//                controller!!.navigate(R.id.action_smartFoodDeliveryFragment_to_explainFragment)
                 Log.d(TAG, "点击智能讲解 ")
             }
             "轻应用" -> {
-//                controller!!.navigate(R.id.action_smartFoodDeliveryFragment_to_lightApplicationFragment)
                 //跳转到测温模式
                 controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d(TAG, "点击轻应用")
@@ -768,17 +488,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun allInvisible() {
-        view1!!.visibility = View.GONE
-        view2!!.visibility = View.GONE
-        view3!!.visibility = View.GONE
-        view4!!.visibility = View.GONE
-        view5!!.visibility = View.GONE
+        binding.include.view1.visibility = View.GONE
+        binding.include.view2.visibility = View.GONE
+        binding.include.view3.visibility = View.GONE
+        binding.include.view4.visibility = View.GONE
+        binding.include.view5.visibility = View.GONE
     }
 
     /**
      * 不同标签不同英文
      */
-    fun calculateEnglish(String: String): String? {
+    private fun calculateEnglish(String: String): String {
         var str = "English"
         if ("礼仪迎宾" == String) {
             str = "GREET GUESTS"
@@ -799,7 +519,7 @@ class HomeFragment : Fragment() {
     /**
      * 不同标签背景
      */
-    fun calculateColor(colorstr: String): Int {
+    private fun calculateColor(colorstr: String): Int {
         var color = R.color.colorAccent
         if ("礼仪迎宾" == colorstr) {
             color = R.drawable.item3
@@ -820,7 +540,7 @@ class HomeFragment : Fragment() {
     /**
      * 不同标签的图片显示
      */
-    fun calculateImage(Imagestr: String): Int {
+    private fun calculateImage(Imagestr: String): Int {
         var image: Int = R.drawable.leadership
         if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.qa
@@ -837,6 +557,7 @@ class HomeFragment : Fragment() {
         }
         return image
     }
+
     /**
      * @describe 按照数据库的值做基础设置
      */
@@ -852,15 +573,16 @@ class HomeFragment : Fragment() {
      * 判断剩余天数
      */
     @SuppressLint("StringFormatMatches")
-    private fun judgeDays(days: Int){
+    private fun judgeDays(days: Int) {
         when {
             days <= 0 -> {
                 // 到期
                 ExpireDeadlineDialog(requireContext()).show()
             }
-            days in 0 .. 5 || days == 10 -> {
+            days in 0..5 || days == 10 -> {
                 // 1-5天到期提醒
-                val content = String.format(resources.getString(R.string.deadline_leave_days,"$days"))
+                val content =
+                    String.format(resources.getString(R.string.deadline_leave_days, "$days"))
                 val target = "$days"
                 val startOffset = content.indexOf(target)
                 val spannableStringBuilder = CommonHelper.getTipsSpan(
@@ -878,15 +600,15 @@ class HomeFragment : Fragment() {
     /**
      * @description 判断是否满足条件出发
      */
-    private suspend fun judgeBeforeNavigate(): Boolean{
+    private suspend fun judgeBeforeNavigate(): Boolean {
         val resultCode: Int
-        withContext(Dispatchers.Default){
-            resultCode = if(RobotStatus.chargeStatus.value == true){
+        withContext(Dispatchers.Default) {
+            resultCode = if (RobotStatus.chargeStatus.value == true) {
                 1
-            }else{
+            } else {
                 val chargePoint = dao.queryChargePoint()
                 ROSHelper.judgeBeforeNavigate(
-                    labelMapName = chargePoint?.subPath?:"",
+                    labelMapName = chargePoint?.subPath ?: "",
                     odomPose = RobotStatus.odomPose,
                     chargePoint = chargePoint
                 )

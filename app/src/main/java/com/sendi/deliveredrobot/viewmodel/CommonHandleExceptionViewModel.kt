@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.CommonHandleExceptionModel
-import com.sendi.deliveredrobot.model.SettingHomeModel
 
 /**
  * @author heky

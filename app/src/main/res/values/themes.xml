@@ -29,4 +29,6 @@
         <item name="android:progressDrawable">@drawable/layer_list_progress_bar_download</item>
     </style>
 
+    <style name="Theme.QMUIDemo" parent="QMUI.Compat.NoActionBar"/>
+
 </resources>

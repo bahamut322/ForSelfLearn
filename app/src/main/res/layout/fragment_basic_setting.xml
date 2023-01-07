@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginTop="@dimen/dp_14"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Home_function_display"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -72,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/allSelect"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -85,7 +85,7 @@
                     android:layout_width="946dp"
                     android:layout_height="@dimen/dp_1"
                     android:layout_marginTop="@dimen/dp_64"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:background="@color/white"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"
@@ -108,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Etiquette_welcome"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -132,7 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Intelligent_leadership"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -156,7 +156,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Intelligent_explanation"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dp_24"
@@ -179,7 +179,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Intelligent_QA"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dp_24"
@@ -202,7 +202,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Light_application"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -225,7 +225,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Special_explanation"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -249,7 +249,7 @@
                 <View
                     android:id="@+id/view3"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="@dimen/dp_264"
+                    android:layout_height="@dimen/dp_344"
                     android:layout_marginTop="@dimen/dp_24"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -261,8 +261,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
-                    android:layout_marginTop="@dimen/dp_50"
-                    android:alpha="0.6"
+                    android:layout_marginTop="@dimen/dp_32"
+                    android:alpha="0.7"
                     android:text="@string/Robot_voice"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -302,7 +302,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_92"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Video_volume"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -339,6 +339,49 @@
                     app:layout_constraintBottom_toBottomOf="@+id/seekbarVoice"
                     app:layout_constraintStart_toEndOf="@+id/seekbarVoice"
                     app:layout_constraintTop_toTopOf="@+id/seekbarVoice" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_92"
+                    android:alpha="0.7"
+                    android:text="音乐音量"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintEnd_toEndOf="@+id/textView14"
+                    app:layout_constraintStart_toStartOf="@+id/textView14"
+                    app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="@dimen/dp_46"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginTop="@dimen/dp_92"
+                    android:src="@drawable/no_sound"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView7"
+                    app:layout_constraintStart_toStartOf="@+id/imageView7"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+
+                <com.sendi.deliveredrobot.view.widget.MySeekBar
+                    android:id="@+id/musicSb"
+                    android:layout_width="@dimen/dp_600"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginStart="@dimen/dp_25"
+                    app:layout_constraintBottom_toBottomOf="@+id/image"
+                    app:layout_constraintStart_toEndOf="@+id/image"
+                    app:layout_constraintTop_toTopOf="@+id/image" />
+
+                <ImageView
+                    android:layout_width="@dimen/dp_46"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_marginStart="@dimen/dp_24"
+                    android:src="@drawable/have_sound"
+                    app:layout_constraintBottom_toBottomOf="@+id/musicSb"
+                    app:layout_constraintStart_toEndOf="@+id/musicSb"
+                    app:layout_constraintTop_toTopOf="@+id/musicSb" />
+
 
 
                 <TextView
@@ -388,7 +431,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="@dimen/dp_6"
-                        android:alpha="0.6"
+                        android:alpha="0.7"
                         android:text="@string/Male_voice"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_24" />
@@ -409,7 +452,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="@dimen/dp_6"
-                        android:alpha="0.6"
+                        android:alpha="0.7"
                         android:text="@string/Female_voice"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_24" />
@@ -430,7 +473,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="@dimen/dp_6"
-                        android:alpha="0.6"
+                        android:alpha="0.7"
                         android:text="@string/Child_voice"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_24" />
@@ -465,7 +508,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
-                    android:alpha="0.6"
+                    android:alpha="0.7"
                     android:text="@string/Whether"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -473,54 +516,16 @@
                     app:layout_constraintStart_toStartOf="@+id/view8"
                     app:layout_constraintTop_toTopOf="@+id/view8" />
 
-                <RadioGroup
-                    android:id="@+id/expression_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_104"
-                    android:orientation="horizontal"
+                <CheckBox
+                    android:id="@+id/expressionCB"
+                    android:layout_width="@dimen/dp_56"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:button="@drawable/selector_switch_track"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
-                    app:layout_constraintStart_toEndOf="@+id/textView17"
-                    app:layout_constraintTop_toTopOf="@+id/view8">
+                    app:layout_constraintEnd_toEndOf="@+id/view8"
+                    app:layout_constraintTop_toTopOf="@+id/view8" />
 
-                    <RadioButton
-                        android:id="@+id/expression_yes"
-                        android:layout_width="@dimen/dp_24"
-                        android:layout_height="@dimen/dp_24"
-                        android:layout_gravity="center"
-                        android:background="@drawable/selector_bg_select_btn"
-                        android:button="@null" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="@dimen/dp_6"
-                        android:alpha="0.6"
-                        android:text="@string/yes"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sp_24" />
-
-
-                    <RadioButton
-                        android:id="@+id/expression_no"
-                        android:layout_width="@dimen/dp_24"
-                        android:layout_height="@dimen/dp_24"
-                        android:layout_marginStart="@dimen/dp_128"
-                        android:background="@drawable/selector_bg_select_btn"
-                        android:button="@null" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="@dimen/dp_6"
-                        android:alpha="0.6"
-                        android:text="@string/no"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sp_24" />
-
-                </RadioGroup>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

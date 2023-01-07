@@ -34,13 +34,13 @@ object IdleGateDataHelper {
         accept: Boolean? = null,
         reportType: Int = 1
     ) {
-        CloudMqttService.publish(
-            IdleGateDataModel(
-                num = num,
-                orderId = orderId,
-                accept = accept,
-                reportType = reportType
-            ).toString()
-        )
+//        CloudMqttService.publish(
+//            IdleGateDataModel(
+//                num = num,
+//                orderId = orderId,
+//                accept = accept,
+//                reportType = reportType
+//            ).toString()
+//        )
     }
 }

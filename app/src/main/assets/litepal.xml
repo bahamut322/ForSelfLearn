@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <!--数据库名称-->
+    <dbname value="multifunction" />
+    <!--数据库版本-->
+    <version value="15" />
+
+    <!--映射模型-->
+    <list>
+        <!--添加实体类，此处必须映射完整路径-->
+        <mapping class="com.sendi.deliveredrobot.entity.BasicSetting" />
+        <mapping class="com.sendi.deliveredrobot.entity.RobotConfigSql"/>
+        <mapping class="com.sendi.deliveredrobot.entity.ReplyGateConfig"/>
+    </list>
+</litepal>

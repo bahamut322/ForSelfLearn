@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.view.widget
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.text.Spannable

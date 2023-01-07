@@ -1,7 +1,12 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,28 +14,41 @@ import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import chassis_msgs.SafeState
+import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.NAVIGATE_TO
+import com.sendi.deliveredrobot.BaseFragment.TAG
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
+import com.sendi.deliveredrobot.entity.ReplyGateConfig
+import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
 import com.sendi.deliveredrobot.model.QueryElevatorListModel
 import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueueFactory
+import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.room.entity.SubMapName
+import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.service.CloudMqttService
-import com.sendi.deliveredrobot.service.ReportRobotStateService
+import com.sendi.deliveredrobot.utils.DateUtil
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.inputfilter.DownloadUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
+import org.litepal.LitePal
+import org.litepal.LitePal.deleteAll
 import sensor_msgs.BatteryState
+import java.io.File
 import java.util.*
+
 
 /**
  * A simple [Fragment] subclass.
@@ -40,12 +58,13 @@ import java.util.*
 class SelfCheckFragment : Fragment() {
     private lateinit var binding: FragmentSelfCheckBinding
     private val basicSettingViewModel by viewModels<BasicSettingViewModel>({ requireActivity() })
-
     private lateinit var mView: View
+
 
     /** 充电点检测评分检测阈值 ,暂时写死检测分数为170*/
     private val scoreMin: Int = 100
 
+    private var controller: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +77,7 @@ class SelfCheckFragment : Fragment() {
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     fun initSelfCheck() {
         MainScope().launch {
             withContext(Dispatchers.Default) {
@@ -76,7 +96,7 @@ class SelfCheckFragment : Fragment() {
 
                 //-------------------自检---------------------
                 var mStartProgressBar = 0
-                var resCheck = 0
+                var resCheck = 0;
                 activity?.let {
                     resCheck = CheckSelfHelper.checkHardware(
                         90,
@@ -99,7 +119,7 @@ class SelfCheckFragment : Fragment() {
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
-                if (resCheck != 0x0F) {
+                if (resCheck != 0x0f) {
                     withContext(Dispatchers.Main) {
                         var errorCode = ""
                         if (BuildConfig.IS_DEBUG) {
@@ -120,9 +140,10 @@ class SelfCheckFragment : Fragment() {
                 } else {
                     //硬件自检通过
 //                    //初始化机器人序列号
-//                    RobotStatus.SERIAL_NUMBER = ROSHelper.getSerialNumber()
-//                    LogUtil.i("SERIAL_NUMBER:${RobotStatus.SERIAL_NUMBER}")
 //                    //设置底盘时间
+                    //查询地图名字
+                    RobotStatus.SERIAL_NUMBER = ROSHelper.getSerialNumber()
+                    LogUtil.i("SERIAL_NUMBER:${RobotStatus.SERIAL_NUMBER}")
 //                    ROSHelper.updateTime()
                     //缓存电梯指令
                     LiftCommand.getInstance(requireContext()).apply {
@@ -133,21 +154,22 @@ class SelfCheckFragment : Fragment() {
                         }
                     }
                     // 楼层
-                    CloudMqttService.publish(QueryFloorListModel().toString())
+//                    CloudMqttService.publish(QueryFloorListModel().toString())
                     // 电梯
-                    CloudMqttService.publish(QueryElevatorListModel().toString())
+//                    CloudMqttService.publish(QueryElevatorListModel().toString())
 //                    // ================================初始化云平台MQTT-SERVICE==============================
 //                    CloudMqttService.startService(requireActivity())
 //                    // ================================初始化上报机器人信息SERVICE=============================
 //                    if(BuildConfig.IS_REPORT){
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
-                    UploadMapHelper.uploadMap()
+//                    UploadMapHelper.uploadMap()
                     if (RobotStatus.bootLocation != null) {
-                        ROSHelper.setNavigationMap(
-                            labelMapName = RobotStatus.bootLocation!!.subPath!!,
-                            pathMapName = RobotStatus.bootLocation!!.routePath!!
-                        )
+//                        设置地图
+//                        ROSHelper.setNavigationMap(
+//                            labelMapName = RobotStatus.bootLocation!!.subPath!!,
+//                            pathMapName = RobotStatus.bootLocation!!.routePath!!
+//                        )
                         LogUtil.d("SelfCheck"+"开始设置默认充电桩的点")
                         var setPoseRes = ROSHelper.setPoseClient(RobotStatus.bootLocation!!)
                         LogUtil.d("SelfCheck"+"设置默认充电桩的点完成")
@@ -208,7 +230,7 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("已取消自动充电")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                findNavController().navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                                controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
                                             }
                                         }
                                         RobotStatus.batteryPower.observe(this@SelfCheckFragment) {
@@ -216,13 +238,13 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("电量已超过最小阈值")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                findNavController().navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                                controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
                                             }
                                         }
 //                                        findNavController().navigate(R.id.action_selfCheckFragment_to_chargeFragment)
                                     }else{
                                         findNavController().popBackStack()
-                                        findNavController().navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
                                     }
                                 }
                             } else {
@@ -259,8 +281,8 @@ class SelfCheckFragment : Fragment() {
 //            LogUtil.d("SelfCheck 获取到分数:$score")
 //        }
 //        if (score > scoreMin) {
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.homeFragment)
+        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+
 //        } else {
 //            MainScope().launch {
 //                withContext(Dispatchers.Main) {
@@ -297,6 +319,8 @@ class SelfCheckFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        controller = Navigation.findNavController(view)
+
         binding.bootIv.apply {
             Glide.with(this).asGif().load(R.raw.selfcheck_animation).into(this)
         }
@@ -328,6 +352,4 @@ class SelfCheckFragment : Fragment() {
         })
         animator.start()
     }
-
-
 }

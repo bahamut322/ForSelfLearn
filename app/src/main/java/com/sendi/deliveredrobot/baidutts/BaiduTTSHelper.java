@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
-import com.baidu.tts.client.SynthesizerTool;
 import com.baidu.tts.client.TtsMode;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.control.InitConfig;

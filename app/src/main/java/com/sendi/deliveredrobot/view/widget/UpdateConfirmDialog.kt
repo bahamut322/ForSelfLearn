@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.room.entity.QuerySubMapEntity
 
 /**
  *   @author: heky

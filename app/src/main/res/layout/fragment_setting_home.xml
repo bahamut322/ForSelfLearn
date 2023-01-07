@@ -11,7 +11,7 @@
         android:id="@+id/constraintLayoutSettingHome"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background3"
+        android:background="@drawable/bg"
         tools:context=".view.fragment.SettingHomeFragment">
 
         <FrameLayout
@@ -29,7 +29,7 @@
             android:id="@+id/view11"
             android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:background="@drawable/shape_gradient_072b7e_0e40a4"
+            android:background="@drawable/setting_bg_item"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline123"
             app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +87,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline146"
             app:layout_constraintTop_toTopOf="@+id/guideline145"
@@ -105,17 +106,15 @@
             android:id="@+id/textViewHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:letterSpacing="@dimen/text_letter_space"
             android:text="@string/home_page"
-            android:textColor="@color/color_4D6FBE"
+            android:textColor="@color/white"
             android:textSize="@dimen/small_text_size"
+            android:alpha="60"
             android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewHome"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline147"
-            app:layout_constraintTop_toTopOf="@+id/imageViewHome"
-            tools:targetApi="lollipop" />
+            app:layout_constraintTop_toTopOf="@+id/imageViewHome" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

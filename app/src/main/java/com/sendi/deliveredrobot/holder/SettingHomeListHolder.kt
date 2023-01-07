@@ -19,7 +19,7 @@ class SettingHomeListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
                     textSize = context.resources.getDimension(R.dimen.small_text_size)
                     background = ContextCompat.getDrawable(
                         context!!,
-                        R.drawable.shape_gradient_226ce9_0e40a4
+                        R.drawable.reslut_bg
                     )
                     setTextColor(ContextCompat.getColor(context!!, R.color.white))
                 }

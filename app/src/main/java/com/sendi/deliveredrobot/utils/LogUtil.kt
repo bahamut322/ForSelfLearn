@@ -6,7 +6,6 @@ import com.apkfuns.log2file.LogFileEngineFactory
 import com.apkfuns.logutils.LogUtils
 import com.apkfuns.logutils.file.LogFileEngine
 import com.sendi.deliveredrobot.MyApplication
-import java.text.SimpleDateFormat
 import java.util.*
 
 

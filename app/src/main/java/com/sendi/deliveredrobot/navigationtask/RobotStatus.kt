@@ -3,8 +3,10 @@ package com.sendi.deliveredrobot.navigationtask
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
+import com.sendi.deliveredrobot.model.Gatekeeper
 import com.sendi.deliveredrobot.model.VersionStatusModel
 import com.sendi.deliveredrobot.model.ResponseTenancyModel
+import com.sendi.deliveredrobot.model.RobotConfig
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
 
@@ -61,6 +63,8 @@ object RobotStatus {
     val versionStatusModel = MutableLiveData<VersionStatusModel>()//机器人版本状态
     val tenancy = MutableLiveData<ResponseTenancyModel>() //使用期限
     var odomPose: Pose2D? = null //里程计
+    val robotConfig = MutableLiveData<RobotConfig>()//X8机器人配置
+    val gatekeeper = MutableLiveData<Gatekeeper>()//X8门岗配置
 
     fun setStatus(status: Int){
         previousStatus = currentStatus

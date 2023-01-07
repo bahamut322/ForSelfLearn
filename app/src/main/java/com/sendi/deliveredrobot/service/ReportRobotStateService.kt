@@ -42,7 +42,7 @@ class ReportRobotStateService : Service() {
                     val data = generateData()
                     //3、上报
                     withContext(Dispatchers.Default){
-                        CloudMqttService.publish(message = data.toString(), needPrintLog = BuildConfig.IS_DEBUG)
+//                        CloudMqttService.publish(message = data.toString(), needPrintLog = BuildConfig.IS_DEBUG)
                     }
                 }
             }

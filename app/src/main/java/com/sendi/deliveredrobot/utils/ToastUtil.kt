@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.widget.Toast
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MainActivity
-import com.sendi.deliveredrobot.MyApplication
 import java.lang.Exception
 
 /**

@@ -55,7 +55,7 @@ object CheckSelfHelper {
         // 倒计时观察
         val seconds = MutableLiveData(time)
         var progress = 0;
-        var tempFlag = 0;
+        var tempFlag = 8;
         var initRosTopic = false;
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
@@ -65,7 +65,7 @@ object CheckSelfHelper {
             ClientConstant.NAVIGATION_STATE_TOPIC,
             ClientConstant.SCHEDULING_CHANGE_GOAL,
             ClientConstant.VOICE_PROMPT_TOPIC,
-            ClientConstant.DOOR_STATE,
+//            ClientConstant.DOOR_STATE,
             ClientConstant.DOCK_STATE,
             ClientConstant.NEAR_INDOOR_LIFT,
             ClientConstant.CHASSIS_MSGS_TOPIC,
@@ -142,9 +142,9 @@ object CheckSelfHelper {
 //                  infraredComplete.value = checkInfrared()
 //              }
 //          }
-            if (initRosTopic && RobotStatus.doorState.size == 0) {
+//            if (initRosTopic && RobotStatus.doorState.size == 0) {
 //                checkDoor()
-            }
+//            }
             if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
                 tempFlag = tempFlag or 0x01
                 progress++
@@ -163,15 +163,15 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("急停按钮检测通过")
             }
-            if(RobotStatus.doorState.size > 0 && tempFlag and 0x08 == 0){
-                tempFlag = tempFlag or 0x08
-                progress++
-                mOnCheckChangeListener.onCheckProgress(progress)
-                LogUtil.i("仓门检测通过")
-            }
+//            if(RobotStatus.doorState.size > 0 && tempFlag and 0x08 == 0){
+//                tempFlag = tempFlag or 0x08
+//                progress++
+//                mOnCheckChangeListener.onCheckProgress(progress)
+//                LogUtil.i("仓门检测通过")
+//            }
 
             if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
-                RobotStatus.stopButtonPressed.value == 0 && RobotStatus.doorState.size > 0){
+                RobotStatus.stopButtonPressed.value == 0){
                 checkSelfComplete = true
             }
             delay(1000L)

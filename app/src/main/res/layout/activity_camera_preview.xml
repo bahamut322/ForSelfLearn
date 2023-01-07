@@ -8,12 +8,12 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:orientation="horizontal"
-        android:keepScreenOn="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@drawable/bg"
         android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:keepScreenOn="true"
+        android:orientation="horizontal">
 
 
         <TextView
@@ -21,9 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_72"
             android:text="@string/Sendi_Temperature"
+            android:textColor="@color/color_F0F0F8"
             android:textSize="@dimen/sp_40"
             android:textStyle="bold"
-            android:textColor="@color/color_F0F0F8"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -32,9 +32,10 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="60"
             android:text="@string/time"
-            android:textSize="@dimen/sp_25"
             android:textColor="@color/white"
+            android:textSize="@dimen/sp_25"
             app:layout_constraintBottom_toBottomOf="@+id/time"
             app:layout_constraintEnd_toStartOf="@+id/time"
             app:layout_constraintTop_toTopOf="@+id/time" />
@@ -44,9 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_13"
+            android:alpha="60"
             android:text="@string/time_number"
-            android:textSize="@dimen/sp_25"
             android:textColor="@color/white"
+            android:textSize="@dimen/sp_25"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout" />
 
@@ -54,11 +56,11 @@
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_41"
+            android:layout_marginBottom="@dimen/dp_13"
             android:text="@string/error"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_25"
-            android:layout_marginStart="@dimen/dp_41"
-            android:layout_marginBottom="@dimen/dp_13"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toEndOf="@+id/DetectedFaces"
             app:layout_constraintTop_toTopOf="@+id/DetectedFaces" />
@@ -68,10 +70,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="31dp"
+            android:layout_marginBottom="@dimen/dp_13"
             android:text="@string/Number_of_detected_faces"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_25"
-            android:layout_marginBottom="@dimen/dp_13"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="@+id/linearLayout" />
 
@@ -79,8 +81,8 @@
             android:id="@+id/AbnormalTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/sp_25"
             android:textColor="@color/color_FF6079"
+            android:textSize="@dimen/sp_25"
             app:layout_constraintBottom_toBottomOf="@+id/textView11"
             app:layout_constraintStart_toEndOf="@+id/textView11"
             app:layout_constraintTop_toTopOf="@+id/textView11" />
@@ -158,8 +160,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_22"
                 android:text="@string/Abnormal_face"
-                android:textSize="@dimen/sp_28"
                 android:textColor="@color/white"
+                android:textSize="@dimen/sp_28"
                 app:layout_constraintEnd_toEndOf="@+id/AbnormalImage1"
                 app:layout_constraintStart_toStartOf="@+id/AbnormalImage1"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -189,11 +191,11 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_17"
+                android:layout_marginTop="@dimen/dp_16"
                 android:text="@string/temperature"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_24"
-                android:layout_marginStart="@dimen/dp_17"
-                android:layout_marginTop="@dimen/dp_16"
                 app:layout_constraintStart_toEndOf="@+id/AbnormalImage1"
                 app:layout_constraintTop_toTopOf="@+id/AbnormalImage1" />
 
@@ -241,9 +243,9 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/temperature"
-                android:layout_marginTop="@dimen/dp_16"
                 android:layout_marginStart="@dimen/dp_17"
+                android:layout_marginTop="@dimen/dp_16"
+                android:text="@string/temperature"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_24"
                 app:layout_constraintStart_toEndOf="@+id/AbnormalImage2"
@@ -272,8 +274,8 @@
             <View
                 android:layout_width="392dp"
                 android:layout_height="@dimen/dp_168"
-                android:background="@color/color_29139B"
                 android:layout_marginTop="@dimen/dp_8"
+                android:background="@color/color_29139B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view6" />
@@ -291,9 +293,9 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/temperature"
-                android:layout_marginTop="@dimen/dp_16"
                 android:layout_marginStart="@dimen/dp_17"
+                android:layout_marginTop="@dimen/dp_16"
+                android:text="@string/temperature"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_24"
                 app:layout_constraintStart_toEndOf="@+id/AbnormalImage3"
@@ -326,20 +328,19 @@
             android:id="@+id/exitIV"
             android:layout_width="@dimen/dp_32"
             android:layout_height="@dimen/dp_32"
-            android:src="@drawable/sign_out"
             android:layout_marginBottom="@dimen/dp_33"
+            android:src="@drawable/sign_out"
             app:layout_constraintBottom_toTopOf="@+id/time"
             app:layout_constraintEnd_toEndOf="@+id/time" />
 
-        <!--    <ImageView-->
-        <!--        android:id="@+id/ExitIV"-->
-        <!--        android:layout_width="@dimen/dp_32"-->
-        <!--        android:layout_height="@dimen/dp_32"-->
-        <!--        android:src="@drawable/exit"-->
-        <!--        android:layout_marginTop="@dimen/dp_60"-->
-        <!--        android:layout_marginEnd="@dimen/dp_32"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintTop_toTopOf="parent" />-->
+        <!--        <ImageView-->
+        <!--            android:id="@+id/ExitIV"-->
+        <!--            android:layout_width="@dimen/dp_200"-->
+        <!--            android:layout_height="@dimen/dp_200"-->
+        <!--            android:layout_marginTop="448dp"-->
+        <!--            android:layout_marginEnd="1004dp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

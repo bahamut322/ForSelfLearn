@@ -14,6 +14,7 @@ import com.sendi.deliveredrobot.room.entity.RelationshipPoint;
 import com.sendi.deliveredrobot.room.entity.RootMap;
 import com.sendi.deliveredrobot.room.entity.RouteMap;
 import com.sendi.deliveredrobot.room.entity.SubMap;
+import com.sendi.deliveredrobot.room.entity.SubMapName;
 
 import java.util.List;
 
@@ -109,6 +110,11 @@ public interface DebugDao {
             "ms.*" +
             " FROM map_sub AS ms LEFT JOIN map_point as mp ON mp.sub_map_id = ms.id order by ms.id DESC")
     List<SubMap> queryTargetPointMap();
+
+    @Query("SELECT DISTINCT " +
+            "ms.*" +
+            " FROM map_sub AS ms")
+    List<SubMapName> queryTargetPointMapName();
     // =========================================================== //
 
     @Insert(entity = SubMap.class)

@@ -1,24 +1,19 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.sendi.deliveredrobot.BuildConfig
-import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.databinding.FragmentDebuggingBinding
 import com.sendi.deliveredrobot.databinding.FragmentVerifyToDebugBinding
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
-import com.sendi.deliveredrobot.viewmodel.DebuggingViewModel
 
 
 /**

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/selfCheckFragment">
 
     <fragment
         android:id="@+id/guidingFragment"
@@ -345,13 +345,13 @@
         android:name="com.sendi.deliveredrobot.view.fragment.SelfCheckFragment"
         android:label="fragment_self_check"
         tools:layout="@layout/fragment_self_check">
-        <action
-            android:id="@+id/action_selfCheckFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
 
         <action
             android:id="@+id/action_selfCheckFragment_to_chargeFragment"
             app:destination="@id/chargeFragment" />
+        <action
+            android:id="@+id/action_selfCheckFragment_to_updateConfigurationFragment"
+            app:destination="@id/updateConfigurationFragment" />
 
     </fragment>
     <fragment
@@ -496,6 +496,14 @@
         android:label="CameraPreviewFragment" >
         <action
             android:id="@+id/action_cameraPreviewFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateConfigurationFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.UpdateConfigurationFragment"
+        android:label="UpdateConfigurationFragment" >
+        <action
+            android:id="@+id/action_updateConfigurationFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 

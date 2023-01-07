@@ -19,7 +19,6 @@ import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GuideModeSettingFragment : Fragment() {
     private lateinit var binding: FragmentGuideModeSettingBinding

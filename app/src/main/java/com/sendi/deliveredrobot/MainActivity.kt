@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import androidx.activity.ComponentActivity
@@ -40,8 +41,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.litepal.LitePal
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class
 MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
@@ -49,8 +52,6 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private val dateViewModel by viewModels<DateViewModel>()
-
-
     @SuppressLint("SimpleDateFormat")
     private val sdf2 = SimpleDateFormat("HH:mm")
     private lateinit var navigationReceiver: NavigationReceiver
@@ -64,6 +65,8 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         super.onCreate(savedInstanceState)
         instance = this
         //初始化红外摄像头
+        //创建LitePal数据库
+        LitePal.getDatabase()
         AppUtils.checkPermission(this, 0)
         //检查日志
         FileUtil.checkAndDeleteLogFilesCache()
@@ -94,7 +97,7 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED) //设置了系统时间
         timeChangeReceiver = TimeChangeReceiver()
         timeChangeReceiver.dateViewModel = dateViewModel
-        dateViewModel.date.observe(this){
+        dateViewModel.date.observe(this) {
             with(binding.textViewTime) {
                 text = it
             }
@@ -118,9 +121,9 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
         //-------------------TopicHandler--------------
         TopicHandler.create(navController)
-        MainScope().launch{
+        MainScope().launch {
             withContext(Dispatchers.Default) {
-                if(BillManager.billList().isEmpty()){
+                if (BillManager.billList().isEmpty()) {
                     val queryPoint =
                         DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
                             .queryChargePoint()
@@ -130,12 +133,12 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         initBatteryStatusListener()
-        RobotStatus.tenancy.observe(this){
+        RobotStatus.tenancy.observe(this) {
             binding.textViewRobotName.apply {
                 val robotName = it.robotName
-                visibility = if(TextUtils.isEmpty(robotName)){
+                visibility = if (TextUtils.isEmpty(robotName)) {
                     View.GONE
-                }else{
+                } else {
                     text = robotName
                     View.VISIBLE
                 }
@@ -162,7 +165,7 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         RobotStatus.batteryPower.observe(this) {
             val batteryPower = (it * 100).toInt()
             binding.textViewPowerStatus.text = "$batteryPower%"
-            when(RobotStatus.chargeStatus.value){
+            when (RobotStatus.chargeStatus.value) {
                 true -> {
                     binding.imageViewFlash.visibility = View.VISIBLE
                     with(binding.imageViewPowerStatus) {
@@ -343,8 +346,12 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
     }
 
+
+
+
     companion object {
         const val ACTION_SIM_STATE_CHANGED = "android.intent.action.SIM_STATE_CHANGED"
+
         @SuppressLint("StaticFieldLeak")
         lateinit var instance: ComponentActivity
     }

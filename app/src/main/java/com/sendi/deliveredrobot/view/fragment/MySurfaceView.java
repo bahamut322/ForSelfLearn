@@ -137,7 +137,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 //将folat数据只显示小数点后两位
                 DecimalFormat decimalFormat=new DecimalFormat(".00");
                 String pri=decimalFormat.format(ImgByteDealFunction.Temperature);
-                if(ImgByteDealFunction.Temperature != 0){
+                //判断温度是否大于0，防止红外还没启动，开始录入人脸
+                if(ImgByteDealFunction.Temperature > 0){
                     //绘制矩形
                     mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
                             infoArrayList.get(i).getRect().top*9/4,

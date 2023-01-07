@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import chassis_msgs.DoorState
 import chassis_msgs.VersionGetResponse
+import com.sendi.deliveredrobot.BaseFragment
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.adapter.SettingHomeListAdapter
@@ -23,7 +23,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.viewmodel.SettingHomeViewModel
 import kotlinx.coroutines.*
 
-class SettingHomeFragment : Fragment() {
+class SettingHomeFragment : BaseFragment() {
 
     var controller: NavController? = null
     private lateinit var binding: FragmentSettingHomeBinding
@@ -68,8 +68,10 @@ class SettingHomeFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         fragments.add(DebugBasicSettingFragment())
         fragments.add(ModeSettingFragment())
-        fragments.add(WifiSettingFragment())
+        fragments.add(NetworkFragment())
         fragments.add(AboutMeSettingFragment())
+        //开启双屏异显
+        ShowPresentationByDisplaymanager()
         binding.recyclerViewSettingHome.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = SettingHomeListAdapter(viewModel)
@@ -127,7 +129,7 @@ class SettingHomeFragment : Fragment() {
         binding.returnHome.setOnClickListener(View.OnClickListener {
             controller!!.navigate(R.id.action_settingHomeFragment_to_homeFragment)
             for (fragment in fragments) {
-                fragment.onPause()
+                fragment.onDestroy()
             }
         })
     }

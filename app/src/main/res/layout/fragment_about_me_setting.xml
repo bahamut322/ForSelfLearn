@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="version"
+            type="String" />
+        <variable
+            name="SerialNumber"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -89,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/dp_32"
                     android:alpha="0.6"
-                    android:text="@string/serial_number"
+                    android:text="@{SerialNumber}"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_28"
                     app:layout_constraintBottom_toBottomOf="@+id/textView42"
@@ -139,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/dp_32"
                     android:alpha="0.6"
-                    android:text="@string/version_number"
+                    android:text="@{version}"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_28"
                     app:layout_constraintBottom_toBottomOf="@+id/textView46"

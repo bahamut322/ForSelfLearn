@@ -1,20 +1,13 @@
 package com.sendi.deliveredrobot.view.widget
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
@@ -35,7 +28,8 @@ class AddAreaDialog : Dialog {
             .inflate(R.layout.dialog_add_area, null)
 
         setContentView(dialogView)
-        setCanceledOnTouchOutside(false)
+        //关闭外部点击
+        setCanceledOnTouchOutside(true)
         tvSortTips = findViewById<TextView>(R.id.tvSortTips)
         var edtRouteName = findViewById<TextView>(R.id.edtSortName)
         val window : Window? = this.window

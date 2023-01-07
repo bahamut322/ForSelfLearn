@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAboutMeSettingBinding
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -19,15 +19,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
+
 class AboutMeSettingFragment : Fragment() {
     lateinit var binding: FragmentAboutMeSettingBinding
     var controller: NavController? = null
-    private val viewModel by viewModels<BasicSettingViewModel>({requireActivity()})
-    var previousClickTime:Long = 0
+    private val viewModel by viewModels<BasicSettingViewModel>({ requireActivity() })
+    var previousClickTime: Long = 0
     lateinit var mainScope: CoroutineScope
+
     companion object {
         const val OPERATE_MAX = 7
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,18 +44,25 @@ class AboutMeSettingFragment : Fragment() {
         controller = Navigation.findNavController(view)
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
+        binding.serialNumber = RobotStatus.SERIAL_NUMBER
+        binding.version = "V " + BuildConfig.VERSION_NAME
         binding.viewProducer.apply {
             var count = 0
             setOnClickListener {
                 val currentTime = System.currentTimeMillis()
-                if(((currentTime - previousClickTime) / 1000) < 1){
+                if (((currentTime - previousClickTime) / 1000) < 1) {
                     count++
-                }else{
+                } else {
                     count = 1
                 }
                 previousClickTime = currentTime
                 if (count in 3 until OPERATE_MAX) {
-                    ToastUtil.show(String.format(getString(R.string.need_steps_to_into_debug_mode),"${OPERATE_MAX - count}"))
+                    ToastUtil.show(
+                        String.format(
+                            getString(R.string.need_steps_to_into_debug_mode),
+                            "${OPERATE_MAX - count}"
+                        )
+                    )
                 } else if (count == OPERATE_MAX) {
                     count = 0
                     controller!!.navigate(R.id.action_settingHomeFragment_to_verifyToDebugFragment)

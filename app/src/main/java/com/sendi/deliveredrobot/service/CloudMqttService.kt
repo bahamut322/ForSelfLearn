@@ -8,13 +8,19 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
+import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.BuildConfig
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
+import java.nio.charset.StandardCharsets
+import java.util.Locale.getDefault
+import java.util.TimeZone.getDefault
 
 
 /**
@@ -93,7 +99,13 @@ class CloudMqttService : Service() {
     }
 
     /**
-     * 连接MQTT服务器
+     *  val jsonObject = JSONObject()//实例话JsonObject()
+    //刚刚开机的时候发送一次时间搓
+    jsonObject.put("type", "queryConfigTime")
+    jsonObject.put("robotTimeStamp", Universal.timeStampRobotConfigSql)
+    jsonObject.put("gateTimeStamp", Universal.timeStampReplyGateConfig)
+    //发送Mqtt
+    CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)连接MQTT服务器
      */
     private fun doClientConnection() {
         if (!mqttAndroidClient!!.isConnected && isConnectIsNormal) {
@@ -134,6 +146,7 @@ class CloudMqttService : Service() {
             try {
                 mqttAndroidClient?.subscribe(
                     "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+//                    "$RESPONSE_TOPIC/#",
                     2
                 ) //订阅主题，参数：主题、服务质量
                 RobotStatus.mqttConnected = true
@@ -180,8 +193,8 @@ class CloudMqttService : Service() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var mqttAndroidClient: MqttAndroidClient? = null
-        const val PUBLISH_TOPIC = "/sendi/robot/delivery/server/android" //发布主题
-        const val RESPONSE_TOPIC = "/sendi/robot/delivery/client/android" //响应主题
+        const val PUBLISH_TOPIC = "/sendi/robot/x8/server/android" //发布主题
+        const val RESPONSE_TOPIC = "/sendi/robot/x8/client/android" //响应主题
 
         //        const val HOST = "tcp://103.215.45.135:1883" //测试环境服务器地址（协议+地址+端口号）
 //        const val HOST = "tcp://103.215.44.45:1883" //正式环境服务器地址（协议+地址+端口号）

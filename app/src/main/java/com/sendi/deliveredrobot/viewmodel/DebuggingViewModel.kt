@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.DebuggingModel
-import com.sendi.deliveredrobot.model.SettingHomeModel
 
 class DebuggingViewModel : ViewModel() {
     var currentSettingPosition = MutableLiveData(0)
