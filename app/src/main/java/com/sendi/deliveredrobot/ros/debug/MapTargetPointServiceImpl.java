@@ -18,10 +18,7 @@ import com.sendi.deliveredrobot.ros.debug.dto.MapResult;
 import com.sendi.deliveredrobot.ros.debug.dto.MapResultUtil;
 import com.sendi.deliveredrobot.ros.dto.Client;
 
-import org.jboss.netty.util.internal.StringUtil;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -67,7 +64,6 @@ public class MapTargetPointServiceImpl implements IMapTargetPointService {
     /*
    获取目标点图文件名字
     */
-    @Override
     public MapResult getMapsName() {
         List<SubMapName> res = dao.queryTargetPointMapName();
         HashMap<String, Object> data = new HashMap<>();

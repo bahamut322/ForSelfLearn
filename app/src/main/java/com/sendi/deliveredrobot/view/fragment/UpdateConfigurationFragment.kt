@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint
-import android.app.Notification
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.os.Handler
@@ -36,21 +35,22 @@ import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class UpdateConfigurationFragment : Fragment() {
 
     private lateinit var binding: FragmentUpdateconfigBinding
     private lateinit var mView: View
-    var FileName: Array<String>? = null//副屏内容
+    var fileName: Array<String>? = null//副屏内容
     var sleepName: Array<String>? = null//熄屏内容
     var passc: Int = 0
-    var pics: String? = ""//图片名字
-    var videoFile: String? = ""//视频名字
-    var sleepContentName: String? = ""//待机图片名字
+    private var pics: String? = ""//图片名字
+    private var videoFile: String? = ""//视频名字
+    private var sleepContentName: String? = ""//待机图片名字
     private var controller: NavController? = null
-    var timeStampReplyGateConfig: Long? = null
-    var timeStampRobotConfigSql: Long? = null
+    private var timeStampReplyGateConfig: Long? = null
+    private var timeStampRobotConfigSql: Long? = null
     var mHandler: Handler? = null
 
     lateinit var debugDao: DebugDao
@@ -103,19 +103,19 @@ class UpdateConfigurationFragment : Fragment() {
             }
             if (pics != "" || videoFile != "" || sleepContentName != "") {
                 if (pics != "") {
-                    Log.d(TAG, "名字： " + pics)
-                    FileName = pics?.split(",")?.toTypedArray()
+                    Log.d(TAG, "名字： $pics")
+                    fileName = pics?.split(",")?.toTypedArray()
                 } else if (videoFile != "") {
-                    FileName = videoFile?.split(",")?.toTypedArray()
+                    fileName = videoFile?.split(",")?.toTypedArray()
                 } else if (sleepContentName != "") {
                     sleepName = sleepContentName?.split(",")?.toTypedArray()
                 }
                 //副屏
-                if (FileName != null) {
-                    for (i in FileName!!) {
+                if (fileName != null) {
+                    for (i in fileName!!) {
                         Looper.prepare()
                         DownloadUtil.getInstance().download(
-                            "http://172.168.201.34:9055/management_res/" + i,
+                            "http://172.168.201.34:9055/management_res/$i",
                             Universal.Secondary,
                             object : DownloadUtil.OnDownloadListener {
                                 override fun onDownloadSuccess(path: String) {
@@ -126,9 +126,9 @@ class UpdateConfigurationFragment : Fragment() {
                                 override fun onDownloading(progress: Int) {
                                     if (progress == 100) {
                                         passc++
-                                        Log.d(TAG + "print passc", passc.toString())
+                                        Log.d(TAG + "pass:", passc.toString())
                                         if (sleepName == null) {
-                                            if (passc == FileName!!.size) {
+                                            if (passc == fileName!!.size) {
                                                 mHandler = @SuppressLint("HandlerLeak")
                                                 object : Handler() {
                                                     override fun handleMessage(msg: Message) {
@@ -138,7 +138,7 @@ class UpdateConfigurationFragment : Fragment() {
                                                 }
                                             }
                                         } else {
-                                            if (passc == FileName!!.size + sleepName!!.size) {
+                                            if (passc == fileName!!.size + sleepName!!.size) {
                                                 mHandler = @SuppressLint("HandlerLeak")
                                                 object : Handler() {
                                                     override fun handleMessage(msg: Message) {
@@ -165,7 +165,7 @@ class UpdateConfigurationFragment : Fragment() {
                     for (i in sleepName!!) {
                         Looper.prepare()
                         DownloadUtil.getInstance().download(
-                            "http://172.168.201.34:9055/management_res" + i,
+                            "http://172.168.201.34:9055/management_res$i",
                             Universal.Standby,
                             object : DownloadUtil.OnDownloadListener {
                                 override fun onDownloadSuccess(path: String) {
@@ -176,8 +176,8 @@ class UpdateConfigurationFragment : Fragment() {
                                 override fun onDownloading(progress: Int) {
                                     if (progress == 100) {
                                         passc++
-                                        Log.d(TAG + "print passc", passc.toString())
-                                        if (FileName == null) {
+                                        Log.d(TAG + "pass:", passc.toString())
+                                        if (fileName == null) {
                                             if (passc == sleepName!!.size) {
                                                 mHandler = @SuppressLint("HandlerLeak")
                                                 object : Handler() {
@@ -188,7 +188,7 @@ class UpdateConfigurationFragment : Fragment() {
                                                 }
                                             }
                                         } else {
-                                            if (passc == sleepName!!.size + FileName!!.size) {
+                                            if (passc == sleepName!!.size + fileName!!.size) {
                                                 mHandler = @SuppressLint("HandlerLeak")
                                                 object : Handler() {
                                                     override fun handleMessage(msg: Message) {
@@ -260,7 +260,7 @@ class UpdateConfigurationFragment : Fragment() {
         return try {
             if (file.isDirectory) { //判断是否是文件夹
                 val files = file.listFiles() //遍历文件夹里面的所有的
-                for (i in files.indices) {
+                for (i in files!!.indices) {
                     Log.e("SelfCheckFragment", "更新原有文件>>>>>> " + files[i].toString())
                     deleteFiles(files[i]) //删除
                 }
@@ -303,12 +303,14 @@ class UpdateConfigurationFragment : Fragment() {
                 ).getDebug()
 //                listData = debugDao.queryTargetPointMap()!!
                 val mMapResult = mapTargetPointServiceImpl.mapsName
-//                val listData = mMapResult.data["mapsName"] as List<*>
+                val listData = mMapResult.data["mapsName"] as List<*>
+                val mapList: ArrayList<String> = ArrayList()
+                for (i in listData.indices) { mapList.add(listData[i].toString()) }
                 val jsonObject = JSONObject()//实例话JsonObject()
-                jsonObject.put("type", "queryConfigTime")
-                jsonObject.put("robotTimeStamp", timeStampRobotConfigSql)
-                jsonObject.put("gateTimeStamp", timeStampReplyGateConfig)
-                jsonObject.put("maps", mMapResult.data["mapsName"] as List<*> )
+                jsonObject["type"] = "queryConfigTime"
+                jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
+                jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
+                jsonObject["maps"] = mapList
                 //发送Mqtt
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
             }

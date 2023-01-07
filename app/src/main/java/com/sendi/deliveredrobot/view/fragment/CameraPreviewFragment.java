@@ -66,8 +66,8 @@ import jni.Usbcontorl;
 public class CameraPreviewFragment extends BaseFragment {
 
     ActivityCameraPreviewBinding binding;
-    private int cameraWidth = 256;//160;//256;
-    private int cameraHeight = 384;//240;//384;
+    private final int cameraWidth = 256;//160;//256;
+    private final int cameraHeight = 384;//240;//384;
     NavController controller;
     IRUVC p2camera;
     public boolean isrun = false;
@@ -271,6 +271,8 @@ public class CameraPreviewFragment extends BaseFragment {
             //后置摄像头存在
             if (cameraIds[0] != null) {
                 c = Camera.open(0);//1，0代表前后摄像头
+            }else {
+                c = Camera.open(1);//1，0代表前后摄像头
             }
 
         }
@@ -489,7 +491,6 @@ public class CameraPreviewFragment extends BaseFragment {
 
     /**
      * bitmap转为base64
-     *
      * @param bitmap
      * @return
      */
@@ -500,7 +501,7 @@ public class CameraPreviewFragment extends BaseFragment {
         try {
             if (bitmap != null) {
                 baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
                 baos.flush();
                 baos.close();
@@ -592,7 +593,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
     //在主线程里面处理消息并更新UI界面
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @SuppressLint("SetTextI18n")
         @Override
         public void handleMessage(Message msg) {

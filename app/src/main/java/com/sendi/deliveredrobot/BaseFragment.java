@@ -1,9 +1,9 @@
 package com.sendi.deliveredrobot;
 
+import android.annotation.SuppressLint;
 import android.app.Presentation;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.hardware.display.DisplayManager;
 import android.media.MediaRouter;
@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -23,12 +22,11 @@ import androidx.fragment.app.Fragment;
 
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.view.inputfilter.IMainView;
-import com.sendi.deliveredrobot.view.inputfilter.MainPresenter;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
 import com.sendi.deliveredrobot.view.widget.VerticalTextView;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,17 +47,11 @@ public class BaseFragment extends Fragment {
     public TextView horizontalTV;//横向文字
     public VerticalTextView verticalTV;//纵向文字
     ConstraintLayout constraintLayout2;//布局
-    Float robotAudio;
     int videoAudio;
-    Float musicAudio;
-    MainActivity mainActivity;
-    Context context;
-    public int flag = 0;    //witch method used to show presentation 0.none 1. mediarouter 2.displaymanager
-    public static final String TAG = "BaseAcyivity";
+    public int flag = 0;    //用于双屏显示： 0.none 1. media—router 2.display-manager
+    public static final String TAG = "BaseActivity";
 
-
-
-    //onResume和onPause一般用来进行对presentsatoin中的内容进行额外的处理
+    //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
     public void onResume() {
         super.onResume();
@@ -116,7 +108,7 @@ public class BaseFragment extends Fragment {
             super.onCreate(savedInstanceState);
             // Get the resources for the context of the presentation.
             // Notice that we are getting the resources from the context of the presentation.
-            Resources r = getContext().getResources();
+//            Resources resources = getContext().getResources();
             mDisplayManager.getDisplay(90);
             // Inflate the layout.
             setContentView(R.layout.presentation_content);
@@ -128,12 +120,7 @@ public class BaseFragment extends Fragment {
 //            AdvancePagerAdapter.time = Universal.picPlayTime;
             //轮播时间
             AdvancePagerAdapter.time = Universal.picPlayTime;
-            Log.e(TAG, "oooooooo: "+Universal.bigScreenType );
             //将视频/图片放到数组中
-//            List<Advance> data = new ArrayList<>();
-//            //视频&图片数据
-//           data.add(new Advance("android.resource://" + getContext().getPackageName() + "/" + R.raw.test, "1"));
-//            advanceView.setData(data);//将数据传入到控件中显示
             if (Universal.videoAudio == 1) {
                 new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
             } else {
@@ -150,6 +137,7 @@ public class BaseFragment extends Fragment {
             Layout();
         }
 
+        @SuppressLint("RtlHardcoded")
         private void Layout() {
             //1-图片 2-视频 3-文字 4-图片+文字
             switch (Universal.bigScreenType) {
@@ -307,6 +295,7 @@ public class BaseFragment extends Fragment {
             }
         }
     }
+
     //MediaRouter检测HDMI线的拔出和插入用的。
     public final MediaRouter.SimpleCallback mMediaRouterCallback =
             new MediaRouter.SimpleCallback() {
@@ -330,42 +319,35 @@ public class BaseFragment extends Fragment {
             };
 
 
-    public List<String> getFilesAllName(String path) {
+    public void getFilesAllName(String path) {
         //传入指定文件夹的路径
         File file = new File(path);
         File[] files = file.listFiles();
         List<Advance> imagePaths = new ArrayList<>();
-        for (int i = 0; i < files.length; i++) {
-            if (checkIsImageFile(files[i].getPath())) {
+        assert files != null;
+        for (File value : files) {
+            if (checkIsImageFile(value.getPath())) {
                 //图片
-                imagePaths.add(new Advance(files[i].getPath(), "2"));
+                imagePaths.add(new Advance(value.getPath(), "2"));
             } else {
                 //视频
-                imagePaths.add(new Advance(files[i].getPath(), "1"));
+                imagePaths.add(new Advance(value.getPath(), "1"));
             }
             advanceView.setData(imagePaths);//将数据传入到控件中显示
         }
-        return null;
     }
 
     /**
      * 判断是否是照片
      */
     public static boolean checkIsImageFile(String fName) {
-        boolean isImageFile = false;
+        boolean isImageFile;
         //获取拓展名
-        String fileEnd = fName.substring(fName.lastIndexOf(".") + 1,
-                fName.length()).toLowerCase();
-        if (fileEnd.equals("jpg") || fileEnd.equals("png") || fileEnd.equals("gif")
-                || fileEnd.equals("jpeg") || fileEnd.equals("bmp")) {
-            isImageFile = true;
-        } else {
-            isImageFile = false;
-        }
+        String fileEnd = fName.substring(fName.lastIndexOf(".") + 1).toLowerCase();
+        isImageFile = fileEnd.equals("jpg") || fileEnd.equals("png") || fileEnd.equals("gif")
+                || fileEnd.equals("jpeg") || fileEnd.equals("bmp");
         return isImageFile;
     }
-
-
 }
 
 
