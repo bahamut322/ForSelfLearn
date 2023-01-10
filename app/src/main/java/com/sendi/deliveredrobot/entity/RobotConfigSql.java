@@ -8,11 +8,28 @@ public class RobotConfigSql extends LitePalSupport {
     private String wakeUpWord;//唤醒词
     private int sleep;//是否启动用待机
     private  int sleepTime;//多少分钟没操作进入待机
-    private int wakeUpType;//唤醒方式
+    private String wakeUpList;//唤醒方式
     private int sleepType;//待机内容
     private int picType;//图片布局
     private long timeStamp;//时间戳
-    private String mapName;
+    private String mapName;//地图名字
+    private String password;//密码
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getWakeUpList() {
+        return wakeUpList;
+    }
+
+    public void setWakeUpList(String wakeUpList) {
+        this.wakeUpList = wakeUpList;
+    }
 
     public String getMapName() {
         return mapName;
@@ -60,14 +77,6 @@ public class RobotConfigSql extends LitePalSupport {
 
     public void setSleepTime(int sleepTime) {
         this.sleepTime = sleepTime;
-    }
-
-    public int getWakeUpType() {
-        return wakeUpType;
-    }
-
-    public void setWakeUpType(int wakeUpType) {
-        this.wakeUpType = wakeUpType;
     }
 
     public int getSleepType() {

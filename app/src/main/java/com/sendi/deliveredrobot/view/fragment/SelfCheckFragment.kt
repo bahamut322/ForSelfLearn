@@ -34,10 +34,6 @@ import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.SubMapName
-import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
-import com.sendi.deliveredrobot.service.CloudMqttService
-import com.sendi.deliveredrobot.utils.DateUtil
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.inputfilter.DownloadUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
@@ -136,6 +132,7 @@ class SelfCheckFragment : Fragment() {
                             errorCode = resCheck.toHexString();
                         }
                         DialogHelper.selfCheckDialog("启动异常", "请尝试重启", errorCode, false, false, null).show()
+                        Log.d(TAG, "initSelfCheck: "+resCheck.toHexString())
                     }
                 } else {
                     //硬件自检通过
@@ -255,13 +252,9 @@ class SelfCheckFragment : Fragment() {
                         }
                     } else {
                         LogUtil.i("数据异常未设置默认充电桩")
-                        findNavController().popBackStack()
+//                        findNavController().popBackStack()
                         //默认充电桩点未设置
-//                        findNavController().navigate(R.id.inputPasswordFragment,
-//                            Bundle().apply {
-//                                putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.HOME_SETTING)
-//                            }
-//                        )
+                        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
                     }
                 }
             }

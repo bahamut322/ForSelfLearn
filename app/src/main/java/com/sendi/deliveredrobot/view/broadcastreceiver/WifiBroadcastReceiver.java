@@ -76,7 +76,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "wifi连接上了");
                 WifiInfo connectedWifiInfo = WifiUtils.getConnectedWifiInfo();
                 // 连接成功 跳转界面 传递ip地址
-                Toast.makeText(context, "wifi连接上了", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "wifi连接上了", Toast.LENGTH_SHORT).show();
                 mWiFiSettingActivity.mConnectType = 1;
                 mWiFiSettingActivity.wifiListSetView(connectedWifiInfo.getSSID(), mWiFiSettingActivity.mConnectType);
             } else if (NetworkInfo.State.CONNECTING == info.getState()) {

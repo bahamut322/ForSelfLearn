@@ -25,10 +25,11 @@ val audioType : Int? = 1,
 val wakeUpWord :String? = " ",
 val sleep : Int? = 1,
 val sleepTime : Int? = 10,
-val wakeUpType : Int? = 1,
+val wakeUpList : String? = "1",
 val sleepType : Int? = 1,
 val sleepContentName : String? = "",
 val picType : Int? = 1,
 val timeStamp : Long? = Date().time,
-val mapName : String? = ""
+val mapName : String? = "",
+val password : String? = ""
 )

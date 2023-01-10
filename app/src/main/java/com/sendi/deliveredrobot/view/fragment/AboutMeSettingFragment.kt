@@ -24,7 +24,7 @@ class AboutMeSettingFragment : Fragment() {
     lateinit var binding: FragmentAboutMeSettingBinding
     var controller: NavController? = null
     private val viewModel by viewModels<BasicSettingViewModel>({ requireActivity() })
-    var previousClickTime: Long = 0
+    private var previousClickTime: Long = 0
     lateinit var mainScope: CoroutineScope
 
     companion object {

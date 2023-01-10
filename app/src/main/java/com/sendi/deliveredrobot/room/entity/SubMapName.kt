@@ -5,9 +5,9 @@ import androidx.room.Entity
 import java.io.Serializable
 
 /**
- * @describe 子地图名字
+ * @describe 总图名字
  */
-@Entity(tableName = "map_sub")
+@Entity(tableName = "map_root")
 open class SubMapName(
     @ColumnInfo(name = "name") open val name: String?,
 ): Serializable {

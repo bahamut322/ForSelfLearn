@@ -73,7 +73,7 @@ public class CameraPreviewFragment extends BaseFragment {
     public boolean isrun = false;
     private SynchronizedBitmap syncimage = new SynchronizedBitmap();
     Camera.Parameters parameters;
-    List<Abnormal> Abnormalbitmaps = new ArrayList();//用于统计异常人脸的数组
+    List<Abnormal> Abnormalbitmaps = new ArrayList<>();//用于统计异常人脸的数组
     Bitmap bm;//用于人脸识别的bitmap
     Camera c;
     Info info = null;
@@ -227,7 +227,7 @@ public class CameraPreviewFragment extends BaseFragment {
 
             @Override
             public void showTemparate(float min, float max) {
-                //  Log.e("showTemparate",min+"  "+max);
+                //  Log.e("showTemplate",min+"  "+max);
                 DecimalFormat decimalFormat = new DecimalFormat(".00");
                 String pri = decimalFormat.format(min);
                 String pri1 = decimalFormat.format(max);
@@ -404,9 +404,9 @@ public class CameraPreviewFragment extends BaseFragment {
                                             abnormalNum = 1;
                                         } else {
                                             //正常
-                                            binding.AbnormalTv1.setTextColor(Color.parseColor("#00EEFF"));
-                                            binding.AbnormalTv2.setTextColor(Color.parseColor("#00EEFF"));
-                                            binding.AbnormalTv3.setTextColor(Color.parseColor("#00EEFF"));
+                                            binding.AbnormalTv1.setTextColor(Color.parseColor("#00EFF"));
+                                            binding.AbnormalTv2.setTextColor(Color.parseColor("#00EFF"));
+                                            binding.AbnormalTv3.setTextColor(Color.parseColor("#00EFF"));
 //                                        TemperatureS = "(正常)";
                                         }
                                         //判断是否带口罩，并且温度正常，如果是则也计入异常显示中
@@ -418,21 +418,22 @@ public class CameraPreviewFragment extends BaseFragment {
                                         if (info.getMaskState() == 2 && ImgByteDealFunction.Temperature < Universal.TemperatureMax) {
                                             abnormalNum = 0;
                                         }
+                                        DecimalFormat temperatureNumber = new DecimalFormat(".0");
                                         JSONObject jsonObject = new JSONObject();//实例话JsonObject()
-                                        long timeGetTime = new Date().getTime();//时间戳
+                                        String timeGetTime = new Date().getTime()+"";//时间戳
                                         jsonObject.put("type", "uploadGateRecord");//门岗记录type
-                                        jsonObject.put("face", bitmapToBase64(bmt));
-                                        jsonObject.put("timeStamp", timeGetTime);//事件发生时间(ms)(时间撮)
-                                        jsonObject.put("temperature", ImgByteDealFunction.Temperature);//温度
+                                        jsonObject.put("time", timeGetTime);//事件发生时间(ms)(时间撮)
+                                        jsonObject.put("temperature", temperatureNumber.format(ImgByteDealFunction.Temperature));//温度
                                         jsonObject.put("maskState", info.getMaskState());//口罩佩戴情况
                                         jsonObject.put("state", abnormalNum);//状态
+                                        jsonObject.put("face", bitmapToBase64(bmt));
                                         //发送Mqtt
                                         CloudMqttService.Companion.publish(JSONObject.toJSONString(jsonObject), true, 2);
                                         //数组中添加数据
                                         Abnormalbitmaps.add(abnormal);
                                         //图1
                                         binding.AbnormalImage1.setImageBitmap(Abnormalbitmaps.get(0).getBitmap());//异常人脸图片
-                                        String temperature = decimalFormat.format(Abnormalbitmaps.get(0).getTemperature());//将温度的folat类型只取小数点后两位
+                                        String temperature = decimalFormat.format(Abnormalbitmaps.get(0).getTemperature());//将温度的flat类型只取小数点后两位
                                         binding.AbnormalTv1.setText(temperature + TemperatureS);
                                         if (Abnormalbitmaps.get(0).getMask() == 0) {//更具数值判断是否佩戴口罩
                                             binding.AbnormalMake1.setText("未佩戴口罩");
@@ -443,8 +444,8 @@ public class CameraPreviewFragment extends BaseFragment {
                                         }
                                         //图2
                                         binding.AbnormalImage2.setImageBitmap(Abnormalbitmaps.get(1).getBitmap());//异常人脸图片
-                                        String temperature1 = decimalFormat.format(Abnormalbitmaps.get(1).getTemperature());//将温度的folat类型只取小数点后两位
-                                        binding.AbnormalTv2.setText(temperature + TemperatureS);
+                                        String temperature1 = decimalFormat.format(Abnormalbitmaps.get(1).getTemperature());//将温度的flat类型只取小数点后两位
+                                        binding.AbnormalTv2.setText(temperature1 + TemperatureS);
                                         if (Abnormalbitmaps.get(1).getMask() == 0) {//更具数值判断是否佩戴口罩
                                             binding.AbnormalMake2.setText("未佩戴口罩");
                                         } else if (Abnormalbitmaps.get(1).getMask() == 1) {
@@ -454,7 +455,7 @@ public class CameraPreviewFragment extends BaseFragment {
                                         }
                                         //图3
                                         binding.AbnormalImage3.setImageBitmap(Abnormalbitmaps.get(2).getBitmap());//异常人脸图片
-                                        String temperature2 = decimalFormat.format(Abnormalbitmaps.get(2).getTemperature());//将温度的folat类型只取小数点后两位
+                                        String temperature2 = decimalFormat.format(Abnormalbitmaps.get(2).getTemperature());//将温度的flat类型只取小数点后两位
                                         binding.AbnormalTv3.setText(temperature2 + TemperatureS);
                                         if (Abnormalbitmaps.get(2).getMask() == 0) {//更具数值判断是否佩戴口罩
                                             binding.AbnormalMake3.setText("未佩戴口罩");
@@ -463,7 +464,7 @@ public class CameraPreviewFragment extends BaseFragment {
                                         } else {
                                             binding.AbnormalMake3.setText("");
                                         }
-                                        //因为屏幕中只有三张图片显示，则Abnormalbitmaps大小大于3的时候则需要重新放入数据
+                                        //因为屏幕中只有三张图片显示，则Abnormality大小大于3的时候则需要重新放入数据
                                         if (Abnormalbitmaps.size() > 3) {
                                             Abnormalbitmaps.clear();
                                         }
@@ -472,7 +473,8 @@ public class CameraPreviewFragment extends BaseFragment {
                             }
                         }
                         //判断人脸是否有人脸，如果没有则取消自定义控件中方框的绘制
-                    } else if (infoArrayList.size() == 0) {
+                    } else {
+                        infoArrayList.size();
                         binding.svCameraFace.info = null;
                         binding.svCameraFace.run();
                     }
@@ -480,7 +482,7 @@ public class CameraPreviewFragment extends BaseFragment {
                     image = null;
                     stream.close();
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
 
             }
         });
@@ -598,16 +600,12 @@ public class CameraPreviewFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    binding.time.setText(DateUtil.getNowDateTime()); //更新时间
-                    //更新异常人脸
-                    binding.AbnormalTv.setText((TemperatureAbnormal + FaceAbnormal) + "");
-                    //更新人脸识别
-                    binding.DetectedFaces.setText("检测数量：" + face);
-                    break;
-                default:
-                    break;
+            if (msg.what == 1) {
+                binding.time.setText(DateUtil.getNowDateTime()); //更新时间
+                //更新异常人脸
+                binding.AbnormalTv.setText((TemperatureAbnormal + FaceAbnormal) + "");
+                //更新人脸识别
+                binding.DetectedFaces.setText("检测数量：" + face);
             }
         }
     };

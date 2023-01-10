@@ -150,7 +150,7 @@ class HomeFragment : BaseFragment() , IMainView {
         //双屏异显的方法
         ShowPresentationByDisplaymanager()
         controller = Navigation.findNavController(view)
-
+        Log.d(TAG, "onViewCreated: "+Universal.sleepTime)
 
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)

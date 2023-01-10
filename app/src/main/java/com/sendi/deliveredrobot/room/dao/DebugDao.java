@@ -36,6 +36,9 @@ public interface DebugDao {
     @Query("select * from map_root where name = :name")
     List<RootMap> searchMapRootName(String name);
 
+    /**
+     * @describe 根据id查询相对应的地图信息
+     */
     @Query("select * from map_sub where id = :id")
     SubMap querySubMap(int id);
 
@@ -71,6 +74,10 @@ public interface DebugDao {
 
     @Query("delete from map_route where id = :id")
     void deleteRoute(int id);
+
+    //根据总图名字查询总图ID
+    @Query("select id from map_root where name = :name")
+    int selectMapId (String name);
 
     // ===================== TargetPoint API ===================== //
     @Insert
@@ -111,10 +118,15 @@ public interface DebugDao {
             " FROM map_sub AS ms LEFT JOIN map_point as mp ON mp.sub_map_id = ms.id order by ms.id DESC")
     List<SubMap> queryTargetPointMap();
 
+    /**
+     *查询所以激光地图名字
+     */
     @Query("SELECT DISTINCT " +
             "ms.*" +
-            " FROM map_sub AS ms")
-    List<SubMapName> queryTargetPointMapName();
+            " FROM map_root AS ms")
+    default List<SubMapName> queryTargetPointMapName() {
+        return null;
+    }
     // =========================================================== //
 
     @Insert(entity = SubMap.class)

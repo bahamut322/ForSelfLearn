@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.entity;
 
-import com.sendi.deliveredrobot.room.entity.SubMapName;
 
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class Universal {
     //多少分钟没操作进入待机
     public static int sleepTime;
     //唤醒方式
-    public static int wakeUpType = 1;
+    public static String wakeUpType = "";
     //待机内容
     public static int sleepType = 1;
     //图片布局
@@ -80,6 +79,8 @@ public class Universal {
     public static long timeStampRobotConfigSql;
     //下发总图名字
     public static String mapName;
+    //密码
+    public static String password;
 
 }
 

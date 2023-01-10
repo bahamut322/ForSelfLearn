@@ -62,10 +62,10 @@ public class MapTargetPointServiceImpl implements IMapTargetPointService {
         return MapResultUtil.success(data);
     }
     /*
-   获取目标点图文件名字
+     *获取所有总图名字
     */
     public MapResult getMapsName() {
-        List<SubMapName> res = dao.queryTargetPointMapName();
+        List<String> res = dao.queryMapRootList();
         HashMap<String, Object> data = new HashMap<>();
 //        List<String> list = new ArrayList<>();
 //        list.add(res.toString());
