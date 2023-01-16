@@ -64,7 +64,7 @@ public class BaseFragment extends Fragment {
     public static final String TAG = "BaseActivity";
     private UpDataConfingViewModel upDataConfingViewModel;
     private DebugDao debugDao;
-    private MapTargetPointServiceImpl mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance();
+    private final MapTargetPointServiceImpl mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance();
     private DeliveredRobotDao dao;
     private int fileNamepassc = 0;
     private int sleepNamepassc = 0;
@@ -82,6 +82,8 @@ public class BaseFragment extends Fragment {
         mMediaRouter.addCallback(MediaRouter.ROUTE_TYPE_LIVE_VIDEO, mMediaRouterCallback);
         // Register to receive events from the display manager.
         mDisplayManager.registerDisplayListener(mDisplayListener, null);
+        RobotStatus.INSTANCE.setGatekeeper(null);
+        RobotStatus.INSTANCE.setRobotConfig(null);
         Show(flag);
         advanceView.setResume();
     }
@@ -150,8 +152,6 @@ public class BaseFragment extends Fragment {
             horizontalTV = findViewById(R.id.horizontalTV);//横向文字
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //            AdvancePagerAdapter.time = Universal.picPlayTime;
-            //轮播时间
-            AdvancePagerAdapter.time = Universal.picPlayTime;
             //将视频/图片放到数组中
             if (Universal.videoAudio == 1) {
                 new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
@@ -260,19 +260,19 @@ public class BaseFragment extends Fragment {
             new MediaRouter.SimpleCallback() {
                 @Override
                 public void onRouteSelected(MediaRouter router, int type, MediaRouter.RouteInfo info) {
-                    Log.d(TAG, "onRouteSelected: type=" + type + ", info=" + info);
+                    Log.d(TAG, "onRoute未选中: type=" + type + ", info=" + info);
                     Show(flag);
                 }
 
                 @Override
                 public void onRouteUnselected(MediaRouter router, int type, MediaRouter.RouteInfo info) {
-                    Log.d(TAG, "onRouteUnselected: type=" + type + ", info=" + info);
+                    Log.d(TAG, "onRoute未选中: type=" + type + ", info=" + info);
                     Show(flag);
                 }
 
                 @Override
                 public void onRoutePresentationDisplayChanged(MediaRouter router, MediaRouter.RouteInfo info) {
-                    Log.d(TAG, "onRoutePresentationDisplayChanged: info=" + info);
+                    Log.d(TAG, "onRoutePresentation显示已更改: info=" + info);
                     Show(flag);
                 }
             };
@@ -354,6 +354,8 @@ public class BaseFragment extends Fragment {
 
     @SuppressLint("RtlHardcoded")
     private void Layout() {
+        //轮播时间
+        AdvancePagerAdapter.time = Universal.picPlayTime;
         //1-图片 2-视频 3-文字 4-图片+文字
         switch (Universal.bigScreenType) {
             case 1:

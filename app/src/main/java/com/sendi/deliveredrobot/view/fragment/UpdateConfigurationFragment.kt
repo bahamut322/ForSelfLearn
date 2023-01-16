@@ -53,12 +53,12 @@ class UpdateConfigurationFragment : Fragment() {
     var fileNamepassc: Int = 0
     var sleepNamepassc: Int = 0
     var mHandler: Handler? = null
-    var pics: String? = ""//图片名字
-    var videoFile: String? = ""//视频名字
-    var sleepContentName: String? = ""//待机图片名字
-    var pointIdList: java.util.ArrayList<Int>? = java.util.ArrayList()
-    var timeStampReplyGateConfig: Long? = null
-    var timeStampRobotConfigSql: Long? = null
+    private var pics: String? = ""//图片名字
+    private var videoFile: String? = ""//视频名字
+    private var sleepContentName: String? = ""//待机图片名字
+    private var pointIdList: ArrayList<Int>? = ArrayList()
+    private var timeStampReplyGateConfig: Long? = null
+    private var timeStampRobotConfigSql: Long? = null
 
 
     override fun onCreateView(

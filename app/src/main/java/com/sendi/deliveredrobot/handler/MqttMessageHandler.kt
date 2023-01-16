@@ -78,75 +78,6 @@ object MqttMessageHandler {
 //                }
                 //机器人门岗配置
                 "replyGateConfig" -> {
-////                  val robotId: String
-//                    val temperatureThreshold: Float?
-//                    val bigScreenType: Int?
-//                    val pics: String?
-//                    val picPlayType: Int?
-//                    val picPlayTime: Int?
-//                    val videos: String?
-//                    val videoFrame: Int?
-//                    val videoAudio: Int?
-//                    val fontContent: String?
-//                    val fontColor: String?
-//                    val fontSize: Int?
-//                    val fontLayout: Int?
-//                    val fontBackGround: String?
-//                    val tipsTemperatureInfo: String?
-//                    val tipsTemperatureWarn: String?
-//                    val tipsMaskWarn: String?
-//                    val timeStamp: Long?
-//                    val picType: Int?
-//                    val textPosition: Int?
-//                    try {
-////                      robotId = jsonObject.get("robotId").asString
-//                        temperatureThreshold = jsonObject.get("temperatureThreshold").asFloat
-//                        bigScreenType = jsonObject.get("bigScreenType").asInt
-//                        picPlayType = jsonObject.get("picPlayType").asInt
-//                        picPlayTime = jsonObject.get("picPlayTime").asInt
-//                        videoFrame = jsonObject.get("videoFrame").asInt
-//                        videoAudio = jsonObject.get("videoAudio").asInt
-//                        fontColor = jsonObject.get("fontColor").asString
-//                        fontSize = jsonObject.get("fontSize").asInt
-//                        fontLayout = jsonObject.get("fontLayout").asInt
-//                        fontBackGround = jsonObject.get("fontBackGround").asString
-//                        tipsTemperatureInfo = jsonObject.get("tipsTemperatureInfo").asString
-//                        tipsTemperatureWarn = jsonObject.get("tipsTemperatureWarn").asString
-//                        tipsMaskWarn = jsonObject.get("tipsMaskWarn").asString
-//                        timeStamp = jsonObject.get("timeStamp").asLong
-//                        picType = jsonObject.get("picType").asInt
-//                        textPosition = jsonObject.get("textPosition").asInt
-//                        fontContent = jsonObject.get("fontContent").asString
-//                        videos= jsonObject.get("videos").asString
-//                        pics = jsonObject.get("pics").asString
-//                    } finally {
-//                        mainScope.launch {
-//                            withContext(Dispatchers.Main) {
-//                                RobotStatus.gatekeeper.value = Gatekeeper(
-////                                    robotId = robotId,
-//                                    temperatureThreshold = temperatureThreshold,
-//                                    bigScreenType = bigScreenType,
-//                                    pics = pics,
-//                                    picPlayType = picPlayType,
-//                                    picPlayTime = picPlayTime,
-//                                    videos = videos,
-//                                    videoFrame = videoFrame,
-//                                    videoAudio = videoAudio,
-//                                    fontContent = fontContent,
-//                                    fontColor = fontColor,
-//                                    fontSize = fontSize,
-//                                    fontLayout = fontLayout,
-//                                    fontBackGround = fontBackGround,
-//                                    tipsTemperatureInfo = tipsTemperatureInfo,
-//                                    tipsTemperatureWarn = tipsTemperatureWarn,
-//                                    tipsMaskWarn = tipsMaskWarn,
-//                                    timeStamp = timeStamp,
-//                                    picType = picType,
-//                                    textPosition = textPosition
-//                                )
-//                            }
-//                        }
-//                    }
                     val gson = Gson()
                     val gatekeeper  = gson.fromJson(message, Gatekeeper::class.java)
                     RobotStatus.gatekeeper?.value = gatekeeper
@@ -158,45 +89,6 @@ object MqttMessageHandler {
                     val robotConfig  = gson.fromJson(message, RobotConfig::class.java)
                     RobotStatus.robotConfig?.value = robotConfig
 
-//                    val robotId: String
-//                    val audioType: Int?
-//                    val wakeUpWord: String?
-//                    val sleep: Int?
-//                    val sleepTime: Int?
-//                    val wakeUpType: Int?
-//                    val sleepType: Int?
-//                    val sleepContentName: String ?
-//                    val picType: Int ?
-//                    val timeStamp: Long ?
-//                    try {
-////                        robotId = jsonObject.get("robotId").asString
-//                        audioType = jsonObject.get("audioType").asInt
-//                        wakeUpWord = jsonObject.get("wakeUpWord").asString
-//                        sleep = jsonObject.get("sleep").asInt
-//                        sleepTime = jsonObject.get("sleepTime").asInt
-//                        wakeUpType = jsonObject.get("wakeUpType").asInt
-//                        sleepType = jsonObject.get("sleepType").asInt
-//                        sleepContentName = jsonObject.get("sleepContentName").asString
-//                        picType = jsonObject.get("picType").asInt
-//                        timeStamp = jsonObject.get("timeStamp").asLong
-//                    } finally {
-//                        mainScope.launch {
-//                            withContext(Dispatchers.Main) {
-//                                RobotStatus.robotConfig.value = RobotConfig(
-////                                    robotId = robotId,
-//                                    audioType = audioType,
-//                                    wakeUpWord = wakeUpWord,
-//                                    sleep = sleep,
-//                                    sleepTime = sleepTime,
-//                                    wakeUpType = wakeUpType,
-//                                    sleepType = sleepType,
-//                                    sleepContentName = sleepContentName,
-//                                    picType = picType,
-//                                    timeStamp = timeStamp
-//                                )
-//                            }
-//                        }
-//                    }
                 }
 //                "sendVersionInfo" -> {
 //                    //版本更新信息
