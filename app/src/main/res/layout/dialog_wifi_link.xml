@@ -114,9 +114,9 @@
             <ImageView
                 android:layout_width="@dimen/dp_38"
                 android:layout_height="@dimen/dp_38"
-                android:src="@drawable/cancel_iv"
                 android:layout_marginEnd="@dimen/dp_4"
                 android:layout_marginBottom="@dimen/dp_19"
+                android:src="@drawable/cancel_iv"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageView4" />

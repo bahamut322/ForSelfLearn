@@ -129,5 +129,6 @@
     <color name="color_red">#FF5722</color>
     <color name="black_home">#484848</color>
     <color name="blue">#2BC7E5</color>
+    <color name="text_border_normal">#E5E5E5</color>
 
 </resources>

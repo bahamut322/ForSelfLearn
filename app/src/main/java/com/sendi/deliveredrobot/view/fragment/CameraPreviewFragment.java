@@ -394,7 +394,7 @@ public class CameraPreviewFragment extends BaseFragment {
                                         abnormal.setMask(info.getMaskState());
                                         abnormal.setTemperature(ImgByteDealFunction.Temperature);
                                         //更具温度值判断温度是否异常
-                                        if (ImgByteDealFunction.Temperature > Universal.TemperatureMax) {
+                                        if (ImgByteDealFunction.Temperature >= Universal.TemperatureMax) {
                                             //异常
                                             binding.AbnormalTv1.setTextColor(Color.RED);
                                             binding.AbnormalTv2.setTextColor(Color.RED);

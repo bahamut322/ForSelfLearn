@@ -27,7 +27,7 @@
 
         <View
             android:id="@+id/view11"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/dp_206"
             android:layout_height="match_parent"
             android:background="@drawable/setting_bg_item"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +72,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSettingHome"
-            android:layout_width="198dp"
+            android:layout_width="@dimen/dp_184"
             android:layout_height="664dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -93,14 +93,14 @@
             app:layout_constraintTop_toTopOf="@+id/guideline145"
             app:layout_constraintVertical_bias="0.0"
             >
-        <ImageView
-            android:id="@+id/imageViewHome"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/image_description"
-            android:src="@drawable/ic_home"
-             />
+
+            <ImageView
+                android:id="@+id/imageViewHome"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_gravity="center"
+                android:contentDescription="@string/image_description"
+                android:src="@drawable/ic_home" />
 
         <TextView
             android:id="@+id/textViewHome"
@@ -108,8 +108,9 @@
             android:layout_height="wrap_content"
             android:text="@string/home_page"
             android:textColor="@color/white"
-            android:textSize="@dimen/small_text_size"
-            android:alpha="60"
+            android:textSize="@dimen/sp_28"
+            android:alpha="70"
+            android:layout_marginStart="@dimen/dp_26"
             android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewHome"
             app:layout_constraintEnd_toEndOf="parent"

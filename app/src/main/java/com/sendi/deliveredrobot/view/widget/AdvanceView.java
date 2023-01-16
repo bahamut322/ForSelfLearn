@@ -4,6 +4,7 @@ package com.sendi.deliveredrobot.view.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.viewpager.widget.ViewPager;
@@ -31,9 +32,13 @@ public class AdvanceView extends RelativeLayout {
         initView();
     }
 
-    private void initView() {
+    public void clear() {
+        viewPager.setAdapter(null);
+    }
+
+    public void initView() {
         viewPager = new ViewPager(getContext());
-        adapter = new AdvancePagerAdapter(getContext(),viewPager);
+        adapter = new AdvancePagerAdapter(getContext(), viewPager);
         viewPager.setAdapter(adapter);
         addView(viewPager, new LayoutParams(-1, -1));
     }
@@ -43,10 +48,11 @@ public class AdvanceView extends RelativeLayout {
 
     }
 
-    public void setPause(){
+    public void setPause() {
         adapter.setPause();
     }
-    public void setResume(){
+
+    public void setResume() {
         adapter.setResume();
     }
 }

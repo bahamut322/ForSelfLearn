@@ -7,7 +7,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +32,7 @@ public class WifiLinkDialog extends Dialog {
 
 
     public WifiLinkDialog(@NonNull Context context, @StyleRes int themeResId, String wifiName, String capabilities) {
-        super(context, themeResId);
+        super(context, R.style.Dialog);
         this.wifiName = wifiName;
         this.capabilities = capabilities;
         mContext = context;
@@ -134,5 +136,32 @@ public class WifiLinkDialog extends Dialog {
             this.etValue = rootView.findViewById(R.id.edt_pwd);
         }
 
+    }
+
+    /**
+     * 调用弹窗全屏显示方法
+     */
+    @Override
+    public void show() {
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        super.show();
+        fullScreenImmersive(getWindow().getDecorView());
+        this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
+        this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+    }
+
+    /**
+     * 弹窗弹出时全屏显示
+     * @param view
+     */
+    private void fullScreenImmersive(View view) {
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        view.setSystemUiVisibility(uiOptions);
     }
 }

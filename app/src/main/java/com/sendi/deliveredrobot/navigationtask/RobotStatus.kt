@@ -63,8 +63,8 @@ object RobotStatus {
     val versionStatusModel = MutableLiveData<VersionStatusModel>()//机器人版本状态
     val tenancy = MutableLiveData<ResponseTenancyModel>() //使用期限
     var odomPose: Pose2D? = null //里程计
-    val robotConfig = MutableLiveData<RobotConfig>()//X8机器人配置
-    val gatekeeper = MutableLiveData<Gatekeeper>()//X8门岗配置
+    var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
+    var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
 
     fun setStatus(status: Int){
         previousStatus = currentStatus

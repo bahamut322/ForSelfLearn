@@ -30,6 +30,7 @@ import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.inputfilter.MainPresenter
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
+import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
@@ -43,7 +44,7 @@ import java.util.*
 /**
  * @describe 主页面
  */
-class HomeFragment : BaseFragment() , IMainView {
+class HomeFragment : BaseFragment(), IMainView {
     private lateinit var binding: FragmentHomeBinding
     private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
     private val viewModelBin1 by viewModels<SendPlaceBin1ViewModel>({ requireActivity() })
@@ -54,6 +55,7 @@ class HomeFragment : BaseFragment() , IMainView {
     private var remindDialog: Dialog? = null
     var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
+
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
@@ -77,6 +79,7 @@ class HomeFragment : BaseFragment() , IMainView {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
     }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         //重置计时
         mPresenter?.resetTipsTimer()
@@ -99,17 +102,22 @@ class HomeFragment : BaseFragment() , IMainView {
         binding = DataBindingUtil.bind(view)!!
         return view
     }
+
     override fun onStart() {
         super.onStart()
         mainScope = MainScope()
         resetConfig()
         //弹出送物任务提示窗
         val message = when {
-            (!viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished)) && (!viewModelBin2.previousTaskFinished  || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished)) -> resources.getString(
+            (!viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished)) && (!viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished)) -> resources.getString(
                 R.string.bin_1_bin_2_not_take
             )
-            !viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished) -> resources.getString(R.string.bin_1_not_take)
-            !viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished) -> resources.getString(R.string.bin_2_not_take)
+            !viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished) -> resources.getString(
+                R.string.bin_1_not_take
+            )
+            !viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished) -> resources.getString(
+                R.string.bin_2_not_take
+            )
             else -> ""
         }
         if (!TextUtils.isEmpty(message)) {
@@ -117,17 +125,17 @@ class HomeFragment : BaseFragment() , IMainView {
         }
         //查询使用期限
 //        CloudMqttService.publish(RequestTenancyModel().toString())
-        RobotStatus.tenancy.observe(viewLifecycleOwner){
+        RobotStatus.tenancy.observe(viewLifecycleOwner) {
             basicSettingViewModel?.basicConfig?.robotUseDeadLine = it.deadline
             MainScope().launch(Dispatchers.Default) {
                 dao.updateBasicConfig(basicSettingViewModel?.basicConfig!!)
             }
             when (it.useType) {
-                1,2 -> {
+                1, 2 -> {
                     //租赁
                     if (it.days == localDays) return@observe
-                    localDays = it.days?:0
-                    judgeDays(it.days?:0)
+                    localDays = it.days ?: 0
+                    judgeDays(it.days ?: 0)
                 }
             }
         }
@@ -150,7 +158,7 @@ class HomeFragment : BaseFragment() , IMainView {
         //双屏异显的方法
         ShowPresentationByDisplaymanager()
         controller = Navigation.findNavController(view)
-        Log.d(TAG, "onViewCreated: "+Universal.sleepTime)
+        Log.d(TAG, "onViewCreated:密码 " + Universal.password)
 
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
@@ -160,7 +168,7 @@ class HomeFragment : BaseFragment() , IMainView {
             Log.d("MainActivity", "选择的功能展示模块： " + basicSettings.defaultValue)
             Log.d("MainActivity", "机器人音色： " + basicSettings.robotMode)
         }
-        val tempMode = sp.getInt("tempMode",0) // 测温模式
+        val tempMode = sp.getInt("tempMode", 0) // 测温模式
         //改变人脸识别工具类，人脸识别数量的最大值
         if (tempMode == 0) {
             Log.d(TAG, "当前为单人测温")
@@ -206,10 +214,41 @@ class HomeFragment : BaseFragment() , IMainView {
             }
         }
 
-
-
+        val fromeSettingDialog = FromeSettingDialog(context)
         binding.imageViewSetting.setOnClickListener {
-                controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
+            //弹窗
+            fromeSettingDialog.show()
+            //弹窗点击事件。回到主页面
+            fromeSettingDialog.YesExit.setOnClickListener { view1: View? ->
+                if (fromeSettingDialog.passwordEt.content == Universal.password) {
+                    controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
+                    fromeSettingDialog.dismiss()
+                } else {
+                    fromeSettingDialog.passwordEt.clear()
+                    fromeSettingDialog.errorTv.visibility = View.VISIBLE
+                }
+            }
+            //点击消除弹窗
+            fromeSettingDialog.NoExit.setOnClickListener { view12: View? ->
+                fromeSettingDialog.passwordEt.clear()
+                fromeSettingDialog.errorTv.visibility = View.GONE
+                fromeSettingDialog.dismiss()
+            }
+//            fromeSettingDialog.passwordEt.onCodeFinishListener = object : OnCodeFinishListener {
+//                /**
+//                 * 文本改变
+//                 */
+//                override fun onTextChange(view: View, content: String) {
+//                    fromeSettingDialog.errorTv.visibility = View.GONE
+//                }
+//                /**
+//                 * 输入完成
+//                 */
+//                override fun onComplete(view: View, content: String) {
+//                    fromeSettingDialog.passwordNumber = content
+//                }
+//            }
+
         }
         binding.textViewClock.apply {
             val date = Date()

@@ -85,32 +85,31 @@
             android:id="@+id/imageView8"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
-            android:layout_marginEnd="@dimen/dp_48"
+            android:layout_marginStart="@dimen/dp_48"
             android:layout_marginBottom="@dimen/dp_28"
             android:src="@drawable/horn"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textView61"
             android:layout_width="@dimen/dp_320"
             android:layout_height="@dimen/dp_40"
-            android:layout_marginEnd="@dimen/dp_15"
             android:alpha="0.6"
             android:background="@drawable/rectangle"
             android:gravity="center"
             android:text="@string/ask"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_24"
+            android:layout_marginStart="@dimen/dp_14"
             app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-            app:layout_constraintEnd_toStartOf="@+id/imageView8"
-            app:layout_constraintTop_toTopOf="@+id/imageView8" />
+            app:layout_constraintStart_toEndOf="@+id/imageView8" />
 
         <ImageView
             android:layout_width="@dimen/dp_6"
             android:layout_height="@dimen/dp_7"
             android:src="@drawable/rt_horn"
             app:layout_constraintBottom_toBottomOf="@+id/textView61"
-            app:layout_constraintStart_toEndOf="@+id/textView61" />
+            app:layout_constraintEnd_toStartOf="@+id/textView61" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -28,7 +28,7 @@
     <string name="send_to_default">送往： ----</string>
     <string name="open_bin">开仓</string>
     <string name="close_bin">关仓</string>
-    <string name="home_page">主页</string>
+    <string name="home_page">返回</string>
     <string name="please_put_object_and_choose_place">（请放入物品并选择目的点）</string>
     <string name="bin1_opened">1号仓已打开</string>
     <string name="bin2_opened">2号仓已打开</string>
@@ -470,4 +470,6 @@
     <string name="Intelligent_temperature">智能测温</string>
     <string name="Temp_mode">测温模式</string>
     <string name="word">我</string>
+    <string name="password">请输入密码</string>
+    <string name="password_error">输入密码错误，请重新输入</string>
 </resources>

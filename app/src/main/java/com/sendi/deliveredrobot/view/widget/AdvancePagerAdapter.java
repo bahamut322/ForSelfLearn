@@ -16,12 +16,12 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     private ViewPager viewPager;
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
-
     private int current = 0;
     public static int time = 3000;
     private boolean pause;
     private Thread thread;
-
+    AdvanceImageView imageView;
+    AdvanceVideoView videoView;
     private int lastPosition = -1;
 
     public AdvancePagerAdapter(Context context, ViewPager viewPager) {
@@ -60,11 +60,15 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
 
     private void addView(Advance advance) {
         if (advance.type.equals("1")) {
-            AdvanceVideoView videoView = new AdvanceVideoView(context);
+            if (videoView == null) {
+                videoView = new AdvanceVideoView(context);
+            }
             videoView.setImage(advance.path);
             list.add(videoView);
         } else {
-            AdvanceImageView imageView = new AdvanceImageView(context);
+            if (imageView == null) {
+                imageView = new AdvanceImageView(context);
+            }
             imageView.setImage(advance.path);
             list.add(imageView);
         }

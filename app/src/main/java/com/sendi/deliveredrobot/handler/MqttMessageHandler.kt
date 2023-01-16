@@ -149,14 +149,14 @@ object MqttMessageHandler {
 //                    }
                     val gson = Gson()
                     val gatekeeper  = gson.fromJson(message, Gatekeeper::class.java)
-                    RobotStatus.gatekeeper.value = gatekeeper
+                    RobotStatus.gatekeeper?.value = gatekeeper
                 }
 
                 //机器人配置
                 "replyRobotConfig" -> {
                     val gson = Gson()
                     val robotConfig  = gson.fromJson(message, RobotConfig::class.java)
-                    RobotStatus.robotConfig.value = robotConfig
+                    RobotStatus.robotConfig?.value = robotConfig
 
 //                    val robotId: String
 //                    val audioType: Int?

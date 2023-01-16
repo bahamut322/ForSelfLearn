@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/view25"
+        android:layout_width="@dimen/dp_640"
+        android:layout_height="397dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/setting_item_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView63"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Service_Password"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/dp_64"
+        android:textSize="@dimen/sp_40"
+        app:layout_constraintEnd_toEndOf="@+id/verificationCodeView"
+        app:layout_constraintStart_toStartOf="@+id/verificationCodeView"
+        app:layout_constraintTop_toTopOf="@+id/view25" />
+
+
+    <com.sendi.deliveredrobot.view.widget.VerificationCodeView
+        android:id="@+id/verificationCodeView"
+        android:layout_width="@dimen/dp_328"
+        android:layout_height="@dimen/dp_64"
+        android:layout_marginTop="@dimen/dp_32"
+        app:layout_constraintEnd_toEndOf="@+id/view25"
+        app:layout_constraintStart_toStartOf="@+id/view25"
+        app:layout_constraintTop_toBottomOf="@+id/textView63"
+        app:vcv_code_bg_focus="@drawable/bg_from_setting_edit"
+        app:vcv_code_bg_normal="@drawable/bg_from_setting_edit"
+        app:vcv_code_color="@color/white"
+        app:vcv_code_input_style="true"
+        app:vcv_code_number="4"
+        app:vcv_code_size="@dimen/sp_40"
+        app:vcv_code_width="@dimen/dp_64" />
+
+    <TextView
+        android:id="@+id/errorhint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_error"
+        android:layout_marginTop="@dimen/dp_24"
+        android:textSize="@dimen/sp_20"
+        android:visibility="gone"
+        android:textColor="@color/color_FF6079"
+        app:layout_constraintEnd_toEndOf="@+id/verificationCodeView"
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toStartOf="@+id/verificationCodeView"
+        app:layout_constraintTop_toBottomOf="@+id/verificationCodeView" />
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="@dimen/dp_204"
+        android:layout_height="@dimen/dp_72"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/dialog_btn_true_bg"
+        android:padding="@dimen/dp_10"
+        android:text="@string/sure"
+        android:layout_marginTop="@dimen/dp_85"
+        android:layout_marginStart="@dimen/dp_100"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_24"
+        app:layout_constraintStart_toStartOf="@+id/view25"
+        app:layout_constraintTop_toBottomOf="@+id/verificationCodeView" />
+
+    <Button
+        android:id="@+id/cancelBtn"
+        android:layout_width="@dimen/dp_204"
+        android:layout_height="@dimen/dp_72"
+        android:background="@drawable/dialog_btn_false_bg"
+        android:text="@string/cancel1"
+        android:layout_marginTop="@dimen/dp_85"
+        android:layout_marginEnd="@dimen/dp_100"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_24"
+        app:layout_constraintEnd_toEndOf="@+id/view25"
+        app:layout_constraintTop_toBottomOf="@+id/verificationCodeView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

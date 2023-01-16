@@ -1,17 +1,18 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
@@ -43,21 +44,21 @@ class UpdateConfigurationFragment : Fragment() {
 
     private lateinit var binding: FragmentUpdateconfigBinding
     private lateinit var mView: View
+    private var controller: NavController? = null
+    lateinit var debugDao: DebugDao
+    private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
+    lateinit var dao: DeliveredRobotDao
     var fileName: Array<String>? = null//副屏内容
     var sleepName: Array<String>? = null//熄屏内容
     var fileNamepassc: Int = 0
     var sleepNamepassc: Int = 0
-    private var pics: String? = ""//图片名字
-    private var videoFile: String? = ""//视频名字
-    private var sleepContentName: String? = ""//待机图片名字
-    private var controller: NavController? = null
-    private var timeStampReplyGateConfig: Long? = null
-    private var timeStampRobotConfigSql: Long? = null
     var mHandler: Handler? = null
-    lateinit var dao: DeliveredRobotDao
-
-    lateinit var debugDao: DebugDao
-    private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
+    var pics: String? = ""//图片名字
+    var videoFile: String? = ""//视频名字
+    var sleepContentName: String? = ""//待机图片名字
+    var pointIdList: java.util.ArrayList<Int>? = java.util.ArrayList()
+    var timeStampReplyGateConfig: Long? = null
+    var timeStampRobotConfigSql: Long? = null
 
 
     override fun onCreateView(
@@ -77,124 +78,7 @@ class UpdateConfigurationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(view)
-        //这里必须过几秒钟后才能赋值，否者可能会将原来数据库中的值赋给变量
-        debugDao = DataBaseDeliveredRobotMap.getDatabase(
-            Objects.requireNonNull(
-                MyApplication.instance
-            )!!
-        ).getDebug()
-        dao = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao()
-        val assignmentThread = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(5000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-            println(threadName + "任务执行完毕")
-            assignment()
-        }, "assignment")
-        assignmentThread.start()
-
-        val thread = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(15000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-            println(threadName + "任务执行完毕")
-            if (pics == "" || videoFile == "" || sleepContentName == "") {
-                controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
-            }
-            if (pics != "" || videoFile != "" || sleepContentName != "") {
-                if (pics != "") {
-                    Log.d(TAG, "名字： $pics")
-                    fileName = pics?.split(",")?.toTypedArray()
-                } else if (videoFile != "") {
-                    fileName = videoFile?.split(",")?.toTypedArray()
-                }
-                if (sleepContentName != "") {
-                    sleepName = sleepContentName?.split(",")?.toTypedArray()
-                }
-//                try {
-                //副屏
-                if (fileName != null) {
-                    for (i in fileName!!) {
-                        Looper.prepare()
-                        DownloadUtil.getInstance().download(
-                            "http://172.168.201.34:9055/management_res/$i",
-                            Universal.Secondary,
-                            object : DownloadUtil.OnDownloadListener {
-                                override fun onDownloadSuccess(path: String) {
-                                    Log.e("TAG", "已保存：$path ")
-                                }
-
-                                @SuppressLint("LongLogTag")
-                                override fun onDownloading(progress: Int) {
-                                    if (progress == 100) {
-                                        fileNamepassc++
-                                        if (sleepName == null) {
-                                            if (fileNamepassc == fileSize(Universal.Secondary)) {
-                                                mHandler = @SuppressLint("HandlerLeak")
-                                                object : Handler() {
-                                                    override fun handleMessage(msg: Message) {
-                                                        // process incoming messages here
-                                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            if (fileNamepassc == fileSize(Universal.Secondary)) {
-                                                for (i in sleepName!!) {
-                                                    DownloadUtil.getInstance().download(
-                                                        "http://172.168.201.34:9055/management_res$i",
-                                                        Universal.Standby,
-                                                        object : DownloadUtil.OnDownloadListener {
-                                                            override fun onDownloadSuccess(path: String) {
-                                                                Log.e("TAG", "已保存：$path ")
-                                                            }
-
-                                                            @SuppressLint("LongLogTag")
-                                                            override fun onDownloading(progress: Int) {
-                                                                if (progress == 100) {
-                                                                    sleepNamepassc++
-                                                                    if (sleepNamepassc == fileSize(
-                                                                            Universal.Standby
-                                                                        )
-                                                                    ) {
-                                                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
-                                                                    }
-                                                                }
-                                                            }
-
-                                                            override fun onDownloadFailed() {
-                                                                Log.d(TAG, "下载失败: ")
-
-                                                            }
-                                                        })
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                }
-                                override fun onDownloadFailed() {
-                                    Log.d(BaseFragment.TAG, "下载失败: ")
-                                }
-                            })
-                        Looper.loop()
-                    }
-                }
-            }
-        }, "work")
-
-        thread.start()
-
+        updateConfig()
         binding.bootIv.apply {
             Glide.with(this).asGif().load(R.raw.selfcheck_animation).into(this)
         }
@@ -215,6 +99,142 @@ class UpdateConfigurationFragment : Fragment() {
         super.onDestroy()
         LogUtil.i("SelfCheckFragment onDestroy")
     }
+
+    private fun updateConfig() {
+        debugDao = DataBaseDeliveredRobotMap.getDatabase(
+            Objects.requireNonNull(
+                MyApplication.instance
+            )!!
+        ).getDebug()
+        dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
+        //这里必须过几秒钟后才能赋值，否者可能会将原来数据库中的值赋给变量
+        val assignmentThread = Thread({
+            val threadName = Thread.currentThread().name
+            println(threadName + "线程开始执行")
+            try {
+                Thread.sleep(5000)
+                //15000
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            println(threadName + "任务执行完毕")
+            assignment()
+        }, "assignment")
+        assignmentThread.start()
+
+        val thread = Thread({
+            val threadName = Thread.currentThread().name
+            println(threadName + "线程开始执行")
+            try {
+                Thread.sleep(10000)
+                //15000
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            println(threadName + "任务执行完毕")
+            if (pics == "" && videoFile == "" && sleepContentName == "") {
+                controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+            }
+            if (pics != "" || videoFile != "" || sleepContentName != "") {
+                if (pics != "") {
+                    fileName = pics?.split(",")?.toTypedArray()
+                } else if (videoFile != "") {
+                    fileName = videoFile?.split(",")?.toTypedArray()
+                }
+//                try {
+                //副屏
+                for (i in fileName!!) {
+                    Looper.prepare()
+                    DownloadUtil.getInstance().download(
+                        "http://172.168.201.34:9055/management_res/$i",
+                        Universal.Secondary,
+                        object : DownloadUtil.OnDownloadListener {
+                            override fun onDownloadSuccess(path: String) {
+                                Log.e("TAG", "已保存：$path ")
+                                if (sleepName == null) {
+                                    if (fileNamepassc == fileSize(Universal.Secondary)) {
+                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+                                    }
+                                } else {
+                                    if (fileNamepassc + sleepNamepassc == fileSize(Universal.Standby) + fileSize(
+                                            Universal.Secondary
+                                        )
+                                    ) {
+                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+                                    }
+                                }
+                            }
+                            @SuppressLint("LongLogTag")
+                            override fun onDownloading(progress: Int) {
+                                if (progress == 100) {
+                                    fileNamepassc++
+                                }
+                            }
+                            override fun onDownloadFailed() {
+                                Log.d(BaseFragment.TAG, "下载失败: ")
+                            }
+                        })
+                    Looper.loop()
+                }
+            }
+        }, "fileName")
+        thread.start()
+        val thread1 = Thread({
+            val threadName = Thread.currentThread().name
+            println(threadName + "线程开始执行")
+            try {
+                Thread.sleep(10000)
+                //15000
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            println(threadName + "任务执行完毕")
+            if (pics == "" && videoFile == "" && sleepContentName == "") {
+                Looper.prepare()
+                controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+                Looper.loop()
+            }
+            if (sleepContentName != "") {
+                sleepName = sleepContentName?.split(",")?.toTypedArray()
+            }
+            if (sleepName != null) {
+                for (i in sleepName!!) {
+                    Looper.prepare()
+                    DownloadUtil.getInstance().download(
+                        "http://172.168.201.34:9055/management_res$i",
+                        Universal.Standby,
+                        object : DownloadUtil.OnDownloadListener {
+                            override fun onDownloadSuccess(path: String) {
+                                Log.e("TAG", "已保存：$path ")
+                                if (fileName == null) {
+                                    if (sleepNamepassc == fileSize(Universal.Standby)) {
+                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+                                    }
+                                }else{
+                                    if (fileNamepassc+sleepNamepassc ==fileSize(Universal.Standby)+fileSize(Universal.Secondary)){
+                                        controller!!.navigate(R.id.action_updateConfigurationFragment_to_homeFragment)
+                                    }
+                                }
+                            }
+
+                            @SuppressLint("LongLogTag")
+                            override fun onDownloading(progress: Int) {
+                                if (progress == 100) {
+                                    sleepNamepassc++
+
+                                }
+                            }
+                            override fun onDownloadFailed() {
+                                Log.d(TAG, "下载失败: ")
+                            }
+                        })
+                    Looper.loop()
+                }
+            }
+        },"sleepName")
+        thread1.start()
+    }
+
 
     /**
      *创建文件
@@ -256,7 +276,7 @@ class UpdateConfigurationFragment : Fragment() {
     }
 
 
-    private fun time() {
+    fun time() {
         val replyGateConfigData: List<ReplyGateConfig> =
             LitePal.findAll(ReplyGateConfig::class.java)
         for (replyGateConfigDatas in replyGateConfigData) {
@@ -279,7 +299,7 @@ class UpdateConfigurationFragment : Fragment() {
 //                listData = debugDao.queryTargetPointMap()!!
                 val mMapResult = mapTargetPointServiceImpl.mapsName
                 val listData = mMapResult.data["mapsName"] as List<*>
-                val mapList: ArrayList<String> = ArrayList()
+                val mapList: java.util.ArrayList<String> = java.util.ArrayList()
                 for (i in listData.indices) {
                     mapList.add(listData[i].toString())
                 }
@@ -294,15 +314,77 @@ class UpdateConfigurationFragment : Fragment() {
         }
     }
 
+
+    private fun assignment() {
+        //机器人基础配置
+        val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
+        for (robotConfigDatas in robotConfigData) {
+            Universal.audioType = robotConfigDatas.audioType
+            Universal.wakeUpWord = robotConfigDatas.wakeUpWord
+            Universal.sleep = robotConfigDatas.sleep
+            Universal.sleepTime = robotConfigDatas.sleepTime
+            Universal.wakeUpType = robotConfigDatas.wakeUpList
+            Universal.sleepType = robotConfigDatas.sleepType
+            Universal.picType = robotConfigDatas.picType
+            Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
+            Universal.mapName = robotConfigDatas.mapName
+            Universal.password = robotConfigDatas.password
+            if (robotConfigDatas.mapName != "") {
+                val mapId = debugDao.selectMapId(robotConfigDatas.mapName)
+                Log.d(ContentValues.TAG, "地图ID： $mapId")
+                //设置总图
+                dao.updateMapConfig(MapConfig(1, mapId, null))
+                //查询充电桩
+                val pointId = dao.queryChargePointList()
+                pointId?.map {
+                    pointIdList?.add(it.pointId!!)
+                }
+                //设置充电桩；默认查询到的第一个数据
+                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
+            }
+            //设置默认密码
+            if (robotConfigDatas.password == "") {
+                Universal.password = "8888"
+            }
+        }
+        //门岗配置
+        val replyGateConfigData: List<ReplyGateConfig> =
+            LitePal.findAll(ReplyGateConfig::class.java)
+        for (replyGateConfigDatas in replyGateConfigData) {
+            Universal.picTypeNum = replyGateConfigDatas.picType
+            Universal.picPlayTime = replyGateConfigDatas.picPlayTime
+            Universal.videoAudio = replyGateConfigDatas.videoAudio
+            Universal.fontContent = replyGateConfigDatas.fontContent
+            Universal.fontColor = replyGateConfigDatas.fontColor
+            Universal.fontSize = replyGateConfigDatas.fontSize
+            Universal.fontLayout = replyGateConfigDatas.fontLayout
+            Universal.fontBackGround = replyGateConfigDatas.fontBackGround
+            Universal.tipsTemperatureInfo = replyGateConfigDatas.tipsTemperatureInfo
+            Universal.tipsTemperatureWarn = replyGateConfigDatas.tipsTemperatureWarn
+            Universal.tipsMaskWarn = replyGateConfigDatas.tipsMaskWarn
+            Universal.timeStampReplyGateConfig = replyGateConfigDatas.timeStamp
+            Universal.bigScreenType = replyGateConfigDatas.bigScreenType
+            Universal.textPosition = replyGateConfigDatas.textPosition
+            Universal.TemperatureMax = replyGateConfigDatas.temperatureThreshold
+        }
+    }
+
+    //查询文件目录中文件数量
+    fun fileSize(fileName: String): Int {
+        val file: File = File(fileName)
+        val files = file.listFiles()
+        return files.size
+    }
+
     private fun robotConfig() {
         //机器人基础配置
-        RobotStatus.robotConfig.observe(viewLifecycleOwner) {
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             LitePal.deleteAll(RobotConfigSql::class.java)
             //提交数据到数据库
             deleteFiles(File(Universal.Standby))
             //创建文件的方法
             createFolder()
-            Log.d(TAG, "obtain: 收到新的机器人配置信息")
+            Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
             val robotConfigSql = RobotConfigSql()
             robotConfigSql.audioType = it.audioType!!
             robotConfigSql.wakeUpWord = it.wakeUpWord
@@ -322,13 +404,13 @@ class UpdateConfigurationFragment : Fragment() {
 
     private fun gateConfig() {
         //门岗配置
-        RobotStatus.gatekeeper.observe(viewLifecycleOwner) {
+        RobotStatus.gatekeeper?.observe(viewLifecycleOwner) {
             LitePal.deleteAll(ReplyGateConfig::class.java)
             //提交到数据库
             deleteFiles(File(Universal.Secondary))
             //创建文件的方法
             createFolder()
-            Log.d(TAG, "obtain: 收到新的门岗配置信息")
+            Log.d(ContentValues.TAG, "obtain: 收到新的门岗配置信息")
             val replyGateConfig = ReplyGateConfig()
             replyGateConfig.temperatureThreshold = it.temperatureThreshold!!
             replyGateConfig.picPlayType = it.picPlayType!!
@@ -354,52 +436,6 @@ class UpdateConfigurationFragment : Fragment() {
 
     }
 
-    private fun assignment() {
-        val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
-        for (robotConfigDatas in robotConfigData) {
-            Universal.audioType = robotConfigDatas.audioType
-            Universal.wakeUpWord = robotConfigDatas.wakeUpWord
-            Universal.sleep = robotConfigDatas.sleep
-            Universal.sleepTime = robotConfigDatas.sleepTime
-            Universal.wakeUpType = robotConfigDatas.wakeUpList
-            Universal.sleepType = robotConfigDatas.sleepType
-            Universal.picType = robotConfigDatas.picType
-            Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
-            Universal.mapName = robotConfigDatas.mapName
-            Universal.password = robotConfigDatas.password
-            if (robotConfigDatas.mapName != "") {
-                val mapId = debugDao.selectMapId(robotConfigDatas.mapName)
-                Log.d(TAG, "地图ID： $mapId")
-                dao.updateMapConfig(MapConfig(1, mapId, null))
-            }
-        }
-
-        val replyGateConfigData: List<ReplyGateConfig> =
-            LitePal.findAll(ReplyGateConfig::class.java)
-        for (replyGateConfigDatas in replyGateConfigData) {
-            Universal.picTypeNum = replyGateConfigDatas.picType
-            Universal.picPlayTime = replyGateConfigDatas.picPlayTime
-            Universal.videoAudio = replyGateConfigDatas.videoAudio
-            Universal.fontContent = replyGateConfigDatas.fontContent
-            Universal.fontColor = replyGateConfigDatas.fontColor
-            Universal.fontSize = replyGateConfigDatas.fontSize
-            Universal.fontLayout = replyGateConfigDatas.fontLayout
-            Universal.fontBackGround = replyGateConfigDatas.fontBackGround
-            Universal.tipsTemperatureInfo = replyGateConfigDatas.tipsTemperatureInfo
-            Universal.tipsTemperatureWarn = replyGateConfigDatas.tipsTemperatureWarn
-            Universal.tipsMaskWarn = replyGateConfigDatas.tipsMaskWarn
-            Universal.timeStampReplyGateConfig = replyGateConfigDatas.timeStamp
-            Universal.bigScreenType = replyGateConfigDatas.bigScreenType
-            Universal.textPosition = replyGateConfigDatas.textPosition
-            Universal.TemperatureMax = replyGateConfigDatas.temperatureThreshold
-        }
-    }
-
-    private fun fileSize(fileName: String): Int {
-        val file: File = File(fileName)
-        val files = file.listFiles()
-        return files.size
-    }
 
 }
 

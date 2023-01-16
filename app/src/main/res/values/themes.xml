@@ -9,6 +9,19 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="Dialog" parent="@android:style/Theme.Holo.Dialog">
+
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+
+        <item name="android:windowFrame">@android:color/transparent</item><!-- 边框 -->
+        <item name="android:windowIsTranslucent">false</item><!-- 半透明 -->
+        <item name="android:backgroundDimEnabled">true</item><!-- 模糊 -->
+
+    </style>
+
     <style name="style_btn_common" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

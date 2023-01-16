@@ -35,34 +35,35 @@
                 app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
 
-            <!--90大 60中 40小 -->
+            <!--80大 60中 40小 -->
             <TextView
                 android:id="@+id/horizontalTV"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dp_30"
                 android:layout_marginTop="@dimen/dp_30"
+                android:layout_marginEnd="@dimen/dp_30"
                 android:layout_marginBottom="@dimen/dp_30"
-                android:ellipsize="end"
-                android:gravity="left|center"
+                android:gravity="center|left"
                 android:maxEms="6"
-                android:textSize="90sp"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
-                app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
 
             <!--80大 60中 40小 -->
             <com.sendi.deliveredrobot.view.widget.VerticalTextView
                 android:id="@+id/verticalTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:columnLength="10"
-                app:textSize="80sp"
                 android:visibility="gone"
+                app:columnLength="10"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
-                app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+                app:textSize="80sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
