@@ -9,6 +9,9 @@ public class MNNNetNative {
     // load libraries
     static {
         System.loadLibrary("MNN");
+        System.loadLibrary("bd_etts");
+        System.loadLibrary("BDSpeechDecoder_V1");
+        System.loadLibrary("gnustl_shared");
         try {
             System.loadLibrary("MNN_CL");
             System.loadLibrary("MNN_GL");

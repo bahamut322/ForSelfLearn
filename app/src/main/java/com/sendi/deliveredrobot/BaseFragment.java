@@ -24,6 +24,8 @@ import com.sendi.deliveredrobot.entity.RobotConfigSql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
+import com.sendi.deliveredrobot.model.Gatekeeper;
+import com.sendi.deliveredrobot.model.RobotConfig;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
@@ -64,7 +66,6 @@ public class BaseFragment extends Fragment {
     public static final String TAG = "BaseActivity";
     private UpDataConfingViewModel upDataConfingViewModel;
     private DebugDao debugDao;
-    private final MapTargetPointServiceImpl mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance();
     private DeliveredRobotDao dao;
     private int fileNamepassc = 0;
     private int sleepNamepassc = 0;
@@ -82,8 +83,6 @@ public class BaseFragment extends Fragment {
         mMediaRouter.addCallback(MediaRouter.ROUTE_TYPE_LIVE_VIDEO, mMediaRouterCallback);
         // Register to receive events from the display manager.
         mDisplayManager.registerDisplayListener(mDisplayListener, null);
-        RobotStatus.INSTANCE.setGatekeeper(null);
-        RobotStatus.INSTANCE.setRobotConfig(null);
         Show(flag);
         advanceView.setResume();
     }
@@ -116,6 +115,9 @@ public class BaseFragment extends Fragment {
         mDisplayManager = (DisplayManager) getActivity().getSystemService(Context.DISPLAY_SERVICE);
         SharedPreferences sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE);
         videoAudio = (int) sp.getFloat("videoAudio", 0); // 视频音量
+        Log.d(TAG, "onCreate001: "+videoAudio);
+        //TODO 稍后需要删除
+        new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
         DebugDao debugDao = DataBaseDeliveredRobotMap.Companion.getDatabase(
                 Objects.requireNonNull(
                         MyApplication.Companion.getInstance()
@@ -153,11 +155,12 @@ public class BaseFragment extends Fragment {
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //            AdvancePagerAdapter.time = Universal.picPlayTime;
             //将视频/图片放到数组中
-            if (Universal.videoAudio == 1) {
-                new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
-            } else {
-                new AudioMngHelper(requireContext()).setVoice100(0);//设置视频音量
-            }
+            //TODO 需要去取消注释
+//            if (Universal.videoAudio == 1) {
+//                new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
+//            } else {
+//                new AudioMngHelper(requireContext()).setVoice100(0);//设置视频音量
+//            }
             //将控件旋转270度
             constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();

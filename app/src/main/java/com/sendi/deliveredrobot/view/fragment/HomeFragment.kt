@@ -25,6 +25,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.topic.VoicePromptTopic
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.inputfilter.MainPresenter
@@ -154,6 +155,7 @@ class HomeFragment : BaseFragment(), IMainView {
         AppUtils.checkPermission(activity, 0)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
+//        SpeakHelper.speakWithoutStop("咳咳咳")
 
         //双屏异显的方法
         ShowPresentationByDisplaymanager()
@@ -234,20 +236,6 @@ class HomeFragment : BaseFragment(), IMainView {
                 fromeSettingDialog.errorTv.visibility = View.GONE
                 fromeSettingDialog.dismiss()
             }
-//            fromeSettingDialog.passwordEt.onCodeFinishListener = object : OnCodeFinishListener {
-//                /**
-//                 * 文本改变
-//                 */
-//                override fun onTextChange(view: View, content: String) {
-//                    fromeSettingDialog.errorTv.visibility = View.GONE
-//                }
-//                /**
-//                 * 输入完成
-//                 */
-//                override fun onComplete(view: View, content: String) {
-//                    fromeSettingDialog.passwordNumber = content
-//                }
-//            }
 
         }
         binding.textViewClock.apply {
@@ -535,7 +523,7 @@ class HomeFragment : BaseFragment(), IMainView {
     }
 
     /**
-     * 不同标签不同英文
+     * 标签下的英文
      */
     private fun calculateEnglish(String: String): String {
         var str = "English"

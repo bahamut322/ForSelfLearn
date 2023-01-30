@@ -12,7 +12,6 @@ class MyApplication : Application() {
         var instance: Application? = null
         lateinit var context: Context
     }
-
     fun getInstance(): MyApplication {
         checkNotNull(instance) { "Application is not created." }
         return instance as MyApplication

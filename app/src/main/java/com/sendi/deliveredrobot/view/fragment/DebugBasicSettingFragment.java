@@ -10,35 +10,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
 import com.sendi.deliveredrobot.entity.BasicSetting;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.view.widget.MySeekBar;
 
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 import org.litepal.LitePal;
-
-import java.util.List;
 
 public class DebugBasicSettingFragment extends Fragment {
     String TAG = "TAGDebugBasicSettingFragment";
     FragmentBasicSettingBinding binding;
-    private int musicVolume = 1; // 音乐音量
-    private int voiceVolume = 1; // 语音音
-    private boolean flag = false;
-    private CheckBox red, blue, yellow, orange, black, white, all;
+    private final int musicVolume = 1; // 音乐音量
+    private final int voiceVolume = 1; // 语音音
+    private final boolean flag = false;
+    private CheckBox Welcome, leaderShip, explanation, QA, Special, application, all;
     public StringBuffer stringBuffer = new StringBuffer();
     SharedPreferences sp;
     SharedPreferences.Editor editor;
@@ -56,19 +47,19 @@ public class DebugBasicSettingFragment extends Fragment {
         binding = DataBindingUtil.bind(view);
 
         all = view.findViewById(R.id.all);
-        red = view.findViewById(R.id.red);
-        blue = view.findViewById(R.id.blue);
-        yellow = view.findViewById(R.id.yellow);
-        orange = view.findViewById(R.id.orange);
-        black = view.findViewById(R.id.black);
-        white = view.findViewById(R.id.white);
+        Welcome = view.findViewById(R.id.red);
+        leaderShip = view.findViewById(R.id.blue);
+        explanation = view.findViewById(R.id.yellow);
+        QA = view.findViewById(R.id.orange);
+        Special = view.findViewById(R.id.black);
+        application = view.findViewById(R.id.white);
         binding.seekbarMusic.setRange(0, 100,0);//设置机器人语音调节范围
         binding.seekbarVoice.setRange(0, 100,0);//设置视频音量调节范围
         binding.musicSb.setRange(0, 100,0);//设置音乐音量调节范围
 
         //转换StringBuffer变量，去判断那些数据存在
 //        String selectItem = sp.getString("SelectItem", "");//获取选中数据
-        Boolean expressionApply = sp.getBoolean("expression",true);//从临时文件中获取是否开启动画
+        boolean expressionApply = sp.getBoolean("expression",true);//从临时文件中获取是否开启动画
         robotAudio = sp.getFloat("robotAudio",0);//机器人语音
         videoAudio = sp.getFloat("videoAudio",0);//视频音量
         musicAudio = sp.getFloat("musicAudio",0);//音乐音量
@@ -96,12 +87,12 @@ public class DebugBasicSettingFragment extends Fragment {
 
 
         BoxCheckListener boxCheckListener = new BoxCheckListener();
-        red.setOnCheckedChangeListener(boxCheckListener);
-        blue.setOnCheckedChangeListener(boxCheckListener);
-        yellow.setOnCheckedChangeListener(boxCheckListener);
-        orange.setOnCheckedChangeListener(boxCheckListener);
-        black.setOnCheckedChangeListener(boxCheckListener);
-        white.setOnCheckedChangeListener(boxCheckListener);
+        Welcome.setOnCheckedChangeListener(boxCheckListener);
+        leaderShip.setOnCheckedChangeListener(boxCheckListener);
+        explanation.setOnCheckedChangeListener(boxCheckListener);
+        QA.setOnCheckedChangeListener(boxCheckListener);
+        Special.setOnCheckedChangeListener(boxCheckListener);
+        application.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
         binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> {
             editor.putBoolean("expression", b);
@@ -155,12 +146,12 @@ public class DebugBasicSettingFragment extends Fragment {
         @Override
         public void onClick(View v) {
             CheckBox all = (CheckBox) v;
-            red.setChecked(all.isChecked());
-            blue.setChecked(all.isChecked());
-            yellow.setChecked(all.isChecked());
-            orange.setChecked(all.isChecked());
-            black.setChecked(all.isChecked());
-            white.setChecked(all.isChecked());
+            Welcome.setChecked(all.isChecked());
+            leaderShip.setChecked(all.isChecked());
+            explanation.setChecked(all.isChecked());
+            QA.setChecked(all.isChecked());
+            Special.setChecked(all.isChecked());
+            application.setChecked(all.isChecked());
 
         }
     }
@@ -169,10 +160,10 @@ public class DebugBasicSettingFragment extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (!isChecked) {
-                all.setChecked(isChecked);
+                all.setChecked(false);
             }
-            if (red.isChecked() && blue.isChecked() && yellow.isChecked() &&
-                    orange.isChecked() && black.isChecked() && white.isChecked()) {
+            if (Welcome.isChecked() && leaderShip.isChecked() && explanation.isChecked() &&
+                    QA.isChecked() && Special.isChecked() && application.isChecked()) {
                 all.setChecked(true);
             }
 
@@ -193,17 +184,17 @@ public class DebugBasicSettingFragment extends Fragment {
     //解析StringBuffer中的数据用来保存勾选
     private void check(String checkName) {
         if ("礼仪迎宾".equals(checkName)) {
-            red.setChecked(true);
+            Welcome.setChecked(true);
         } else if ("智能引领".equals(checkName)) {
-            blue.setChecked(true);
+            leaderShip.setChecked(true);
         } else if ("智能讲解".equals(checkName)) {
-            yellow.setChecked(true);
+            explanation.setChecked(true);
         } else if ("智能问答".equals(checkName)) {
-            orange.setChecked(true);
+            QA.setChecked(true);
         } else if ("功能模块".equals(checkName)) {
-            black.setChecked(true);
+            Special.setChecked(true);
         } else if ("轻应用".equals(checkName)) {
-            white.setChecked(true);
+            application.setChecked(true);
         }
 
     }
@@ -218,22 +209,22 @@ public class DebugBasicSettingFragment extends Fragment {
             timbre = null;
             LitePal.deleteAll(BasicSetting.class);
             //统计勾线的ChexkBox，并且赋值给全局变量的StringBuffer
-            if (red.isChecked()) {
+            if (Welcome.isChecked()) {
                 stringBuffer.append("礼仪迎宾 ");
             }
-            if (blue.isChecked()) {
+            if (leaderShip.isChecked()) {
                 stringBuffer.append("智能引领 ");
             }
-            if (yellow.isChecked()) {
+            if (explanation.isChecked()) {
                 stringBuffer.append("智能讲解 ");
             }
-            if (orange.isChecked()) {
+            if (QA.isChecked()) {
                 stringBuffer.append("智能问答 ");
             }
-            if (white.isChecked()) {
+            if (application.isChecked()) {
                 stringBuffer.append("轻应用 ");
             }
-            if (black.isChecked()) {
+            if (Special.isChecked()) {
                 stringBuffer.append("功能模块 ");
             }
 

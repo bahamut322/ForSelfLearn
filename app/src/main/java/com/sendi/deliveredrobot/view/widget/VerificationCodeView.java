@@ -70,11 +70,11 @@ public class VerificationCodeView extends RelativeLayout {
 
     /**
      * 初始化View
-     *
      * @param context
      * @param attrs
      * @param defStyleAttr
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.VerificationCodeView, defStyleAttr, 0);
         codeNum = array.getInteger(R.styleable.VerificationCodeView_vcv_code_number, 4);
@@ -278,7 +278,6 @@ public class VerificationCodeView extends RelativeLayout {
 
     /**
      * 暴露公共方法，设置光标颜色
-     *
      * @param drawableRes
      */
     public void setCursorRes(@DrawableRes int drawableRes) {
@@ -292,8 +291,6 @@ public class VerificationCodeView extends RelativeLayout {
 
     /**
      * 获取输入的验证码
-     *
-     * @return
      */
     public String getContent() {
         StringBuilder builder = new StringBuilder();
@@ -305,8 +302,6 @@ public class VerificationCodeView extends RelativeLayout {
 
     /**
      * 判断是否验证码输入完毕
-     *
-     * @return
      */
     public boolean isFinish() {
         for (TextView tv : textViews) {

@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -63,8 +64,8 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         instance = this
-        //初始化红外摄像头
         //创建LitePal数据库
         LitePal.getDatabase()
         AppUtils.checkPermission(this, 0)
