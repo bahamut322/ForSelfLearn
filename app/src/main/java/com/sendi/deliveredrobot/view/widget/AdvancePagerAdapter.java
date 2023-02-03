@@ -66,9 +66,9 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
             videoView.setImage(advance.path);
             list.add(videoView);
         } else {
-            if (imageView == null) {
+//            if (imageView == null) {
                 imageView = new AdvanceImageView(context);
-            }
+//            }
             imageView.setImage(advance.path);
             list.add(imageView);
         }
@@ -111,10 +111,15 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView(list.get(position));
     }
-
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem( ViewGroup container, int position) {
         View view = list.get(position);
+        //判断其父容器是否存在，如存在，先和此子控件解除关系
+        ViewPager parent = (ViewPager) view.getParent();
+        if (parent != null){
+            parent.removeView(view);
+        }
+
         container.addView(view);
         return view;
     }

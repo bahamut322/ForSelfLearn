@@ -115,6 +115,9 @@
         <action
             android:id="@+id/action_homeFragment_to_cameraPreviewFragment"
             app:destination="@id/cameraPreviewFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_standbyFragment"
+            app:destination="@id/standbyFragment" />
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"
@@ -350,8 +353,8 @@
             android:id="@+id/action_selfCheckFragment_to_chargeFragment"
             app:destination="@id/chargeFragment" />
         <action
-            android:id="@+id/action_selfCheckFragment_to_updateConfigurationFragment"
-            app:destination="@id/updateConfigurationFragment" />
+            android:id="@+id/action_selfCheckFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
 
     </fragment>
     <fragment
@@ -499,11 +502,11 @@
             app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/updateConfigurationFragment"
-        android:name="com.sendi.deliveredrobot.view.fragment.UpdateConfigurationFragment"
-        android:label="UpdateConfigurationFragment" >
+        android:id="@+id/standbyFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.StandbyFragment"
+        android:label="StandbyFragment" >
         <action
-            android:id="@+id/action_updateConfigurationFragment_to_homeFragment"
+            android:id="@+id/action_standbyFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 

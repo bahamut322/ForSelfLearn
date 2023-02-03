@@ -6,5 +6,5 @@ public interface IMainView
 {
     boolean onKeyDown(int keyCode, KeyEvent event);
 
-    public void showTipsView();
+    void showTipsView();
 }

@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -17,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.BaseFragment
+import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
@@ -25,10 +24,9 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.topic.VoicePromptTopic
 import com.sendi.deliveredrobot.utils.AppUtils
+import com.sendi.deliveredrobot.utils.MainPresenter
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
-import com.sendi.deliveredrobot.view.inputfilter.MainPresenter
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
@@ -62,6 +60,7 @@ class HomeFragment : BaseFragment(), IMainView {
     private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var controller: NavController? = null
+    public var fromeSettingDialog: FromeSettingDialog? = null
 
 
     override fun onResume() {
@@ -82,17 +81,16 @@ class HomeFragment : BaseFragment(), IMainView {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        //重置计时
-        mPresenter?.resetTipsTimer()
         return false
     }
 
     override fun showTipsView() {
-        //展示屏保界面
-//        Intent intent = new Intent(this, MyTimeActivity.class);
-//        startActivity(intent);
         println("无操作")
+        fromeSettingDialog!!.dismiss()
+        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,7 +99,22 @@ class HomeFragment : BaseFragment(), IMainView {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         binding = DataBindingUtil.bind(view)!!
+        // 将myTouchListener注册到分发列表
+        (this.activity as MainActivity?)!!.registerMyTouchListener(myTouchListener)
         return view
+    }
+    //监听屏幕触摸事件
+    val myTouchListener: MainActivity.MyTouchListener = object : MainActivity.MyTouchListener {
+        override fun onTouchEvent(event: MotionEvent?) {
+            mPresenter?.startTipsTimer()
+        }
+    }
+
+    /**取消触摸监听以及屏幕计时*/
+    override fun onDestroyView() {
+        (this.activity as MainActivity?)!!.unRegisterMyTouchListener(myTouchListener)
+        mPresenter?.endTipsTimer()
+        super.onDestroyView()
     }
 
     override fun onStart() {
@@ -153,17 +166,22 @@ class HomeFragment : BaseFragment(), IMainView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
+        fromeSettingDialog = FromeSettingDialog(context)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
-//        SpeakHelper.speakWithoutStop("咳咳咳")
-
         //双屏异显的方法
         ShowPresentationByDisplaymanager()
         controller = Navigation.findNavController(view)
-        Log.d(TAG, "onViewCreated:密码 " + Universal.password)
-
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
+        //通过观察者模式观察弹窗触摸
+        RobotStatus.onTouch.observe(viewLifecycleOwner) {
+            if (RobotStatus.onTouch.value == true) {
+                mPresenter?.endTipsTimer()
+            } else {
+                mPresenter?.startTipsTimer()
+            }
+        }
         for (basicSettings in basicSetting) {
             Universal.selectItem = basicSettings.defaultValue
             Universal.RobotMode = basicSettings.robotMode
@@ -179,7 +197,6 @@ class HomeFragment : BaseFragment(), IMainView {
             Log.d(TAG, "当前为多人测温")
             Utils.mNmsLimit = 10
         }
-
         if (Universal.selectItem != null) {
             rescolors = Universal.selectItem.split(" ").toTypedArray()
             when (rescolors!!.size - 1) {
@@ -216,25 +233,24 @@ class HomeFragment : BaseFragment(), IMainView {
             }
         }
 
-        val fromeSettingDialog = FromeSettingDialog(context)
         binding.imageViewSetting.setOnClickListener {
-            //弹窗
-            fromeSettingDialog.show()
+            //密码弹窗
+            fromeSettingDialog!!.show()
             //弹窗点击事件。回到主页面
-            fromeSettingDialog.YesExit.setOnClickListener { view1: View? ->
-                if (fromeSettingDialog.passwordEt.content == Universal.password) {
+            fromeSettingDialog!!.YesExit.setOnClickListener {
+                if (fromeSettingDialog!!.passwordEt.content == Universal.password) {
                     controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
-                    fromeSettingDialog.dismiss()
+                    fromeSettingDialog!!.dismiss()
                 } else {
-                    fromeSettingDialog.passwordEt.clear()
-                    fromeSettingDialog.errorTv.visibility = View.VISIBLE
+                    fromeSettingDialog!!.passwordEt.clear()
+                    fromeSettingDialog!!.errorTv.visibility = View.VISIBLE
                 }
             }
             //点击消除弹窗
-            fromeSettingDialog.NoExit.setOnClickListener { view12: View? ->
-                fromeSettingDialog.passwordEt.clear()
-                fromeSettingDialog.errorTv.visibility = View.GONE
-                fromeSettingDialog.dismiss()
+            fromeSettingDialog!!.NoExit.setOnClickListener {
+                fromeSettingDialog!!.passwordEt.clear()
+                fromeSettingDialog!!.errorTv.visibility = View.GONE
+                fromeSettingDialog!!.dismiss()
             }
 
         }

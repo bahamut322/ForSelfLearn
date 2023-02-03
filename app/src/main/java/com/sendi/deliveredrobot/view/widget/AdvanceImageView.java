@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.view.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,8 +12,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.sendi.deliveredrobot.entity.Universal;
 
 public class AdvanceImageView extends RelativeLayout {
@@ -36,9 +41,7 @@ public class AdvanceImageView extends RelativeLayout {
 
 
     public void initView() {
-        if (imageView == null) {
-            imageView = new ImageView(getContext());
-        }
+        imageView = new ImageView(getContext());
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(-1, -1);
         /*
          *设置Imageview占满父view播放

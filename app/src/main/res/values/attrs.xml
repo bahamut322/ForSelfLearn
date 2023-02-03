@@ -77,4 +77,10 @@
         <attr name="vcv_code_input_style" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MyImageView">
+        <attr name="auto_play" format="boolean">
+
+        </attr>
+    </declare-styleable>
+
 </resources>

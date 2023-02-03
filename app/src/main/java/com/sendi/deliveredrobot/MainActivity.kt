@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -33,10 +32,7 @@ import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.utils.AppUtils
-import com.sendi.deliveredrobot.utils.FileUtil
-import com.sendi.deliveredrobot.utils.NavigationBarUtil
-import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.utils.*
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -346,10 +342,38 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
             e.printStackTrace()
         }
     }
+    interface MyTouchListener {
+        fun onTouchEvent(event: MotionEvent?)
+    }
 
+    // 保存MyTouchListener接口的列表
+    private val myTouchListeners = ArrayList<MyTouchListener>()
 
+    /**
+     * 提供给Fragment通过getActivity()方法来注册自己的触摸事件的方法
+     * @param listener
+     */
+    fun registerMyTouchListener(listener: MyTouchListener) {
+        myTouchListeners.add(listener)
+    }
 
+    /**
+     * 提供给Fragment通过getActivity()方法来取消注册自己的触摸事件的方法
+     * @param listener
+     */
+    fun unRegisterMyTouchListener(listener: MyTouchListener) {
+        myTouchListeners.remove(listener)
+    }
 
+    /**
+     * 分发触摸事件给所有注册了MyTouchListener的接口
+     */
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        for (listener in myTouchListeners) {
+            listener.onTouchEvent(ev)
+        }
+        return super.dispatchTouchEvent(ev)
+    }
     companion object {
         const val ACTION_SIM_STATE_CHANGED = "android.intent.action.SIM_STATE_CHANGED"
 

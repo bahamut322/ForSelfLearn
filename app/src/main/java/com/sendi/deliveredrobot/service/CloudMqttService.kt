@@ -12,13 +12,22 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.BuildConfig
+import com.sendi.deliveredrobot.entity.ReplyGateConfig
+import com.sendi.deliveredrobot.entity.RobotConfigSql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
+import org.litepal.LitePal
 import java.nio.charset.StandardCharsets
+import java.util.*
 import java.util.Locale.getDefault
 import java.util.TimeZone.getDefault
 
@@ -29,6 +38,10 @@ import java.util.TimeZone.getDefault
  */
 class CloudMqttService : Service() {
     private var mMqttConnectOptions: MqttConnectOptions? = null
+    private var timeStampReplyGateConfig: Long? = null
+    private var timeStampRobotConfigSql: Long? = null
+    private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         init()
@@ -142,6 +155,7 @@ class CloudMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
+            UpdateReturn().method()
             LogUtil.i("MQTT:连接成功 ")
             try {
                 mqttAndroidClient?.subscribe(
@@ -249,4 +263,5 @@ class CloudMqttService : Service() {
             }
         }
     }
+
 }

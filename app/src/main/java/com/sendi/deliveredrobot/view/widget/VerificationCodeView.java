@@ -134,7 +134,7 @@ public class VerificationCodeView extends RelativeLayout {
     /**
      * 监听EditText输入字符，监听键盘删除键
      */
-    private void initListener() {
+    public void initListener() {
         watcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

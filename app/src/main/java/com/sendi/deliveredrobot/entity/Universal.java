@@ -28,6 +28,12 @@ public class Universal {
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby";
     //存放正常情况下的图片/视频
     public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary";
+    //待机图片名字
+    public static String sleepContentName = "";
+    //图片名字
+    public static String pics = "";
+    //视频名字
+    public static String videoFile = "";
 
 
     //TODO 门岗管理

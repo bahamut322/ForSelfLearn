@@ -65,7 +65,8 @@ object RobotStatus {
     var odomPose: Pose2D? = null //里程计
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
-
+    var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
+    var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status

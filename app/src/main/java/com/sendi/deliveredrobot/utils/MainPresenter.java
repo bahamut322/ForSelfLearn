@@ -1,7 +1,11 @@
-package com.sendi.deliveredrobot.view.inputfilter;
+package com.sendi.deliveredrobot.utils;
+
 
 import android.os.Handler;
 import android.os.Message;
+
+import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.view.inputfilter.IMainView;
 
 public class MainPresenter {
     public final static int MSG_SHOW_TIPS = 0x01;
@@ -48,6 +52,7 @@ public class MainPresenter {
     public void resetTipsTimer() {
         tipsIsShowed = false;
         mMainHandler.removeCallbacks(tipsShowRunable);
+//        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*6);
         mMainHandler.postDelayed(tipsShowRunable, 5000);
     }
 

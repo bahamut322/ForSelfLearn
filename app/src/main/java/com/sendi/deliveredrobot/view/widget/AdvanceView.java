@@ -4,7 +4,6 @@ package com.sendi.deliveredrobot.view.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.viewpager.widget.ViewPager;

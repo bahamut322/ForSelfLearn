@@ -227,7 +227,7 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("已取消自动充电")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+                                                controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
                                             }
                                         }
                                         RobotStatus.batteryPower.observe(this@SelfCheckFragment) {
@@ -235,13 +235,13 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("电量已超过最小阈值")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+                                                controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
                                             }
                                         }
 //                                        findNavController().navigate(R.id.action_selfCheckFragment_to_chargeFragment)
                                     }else{
                                         findNavController().popBackStack()
-                                        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+                                        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
                                     }
                                 }
                             } else {
@@ -254,7 +254,7 @@ class SelfCheckFragment : Fragment() {
                         LogUtil.i("数据异常未设置默认充电桩")
 //                        findNavController().popBackStack()
                         //默认充电桩点未设置
-                        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+                        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
                     }
                 }
             }
@@ -274,7 +274,7 @@ class SelfCheckFragment : Fragment() {
 //            LogUtil.d("SelfCheck 获取到分数:$score")
 //        }
 //        if (score > scoreMin) {
-        controller!!.navigate(R.id.action_selfCheckFragment_to_updateConfigurationFragment)
+        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
 
 //        } else {
 //            MainScope().launch {

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,7 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import androidx.annotation.NonNull;
+
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 
 
 public class FromeSettingDialog extends Dialog {
@@ -39,6 +44,17 @@ public class FromeSettingDialog extends Dialog {
         passwordEt = findViewById(R.id.verificationCodeView);
         errorTv = findViewById(R.id.errorhint);
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            RobotStatus.INSTANCE.getOnTouch().postValue(true);
+            return false;
+        }else {
+            RobotStatus.INSTANCE.getOnTouch().postValue(false);
+        }
+        return super.onTouchEvent(event);
     }
 
 

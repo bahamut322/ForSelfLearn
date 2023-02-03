@@ -52,10 +52,7 @@ public class AdvanceVideoView extends RelativeLayout {
     }
 
     public void setVideo(MediaPlayer.OnCompletionListener onCompletionListener) {
-        if (videoView != null) {
-            videoRela.removeView(videoView);
-            videoView = null;
-        }
+        videoRela.removeView(videoView);videoView = null;
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
         //        videoView.setBackgroundColor(Color.TRANSPARENT);
