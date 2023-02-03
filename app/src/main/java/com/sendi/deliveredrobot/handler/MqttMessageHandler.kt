@@ -47,10 +47,6 @@ import kotlin.concurrent.thread
 object MqttMessageHandler {
     private val dao =
         DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
-    private val mainScope = MainScope()
-    lateinit var debugDao: DebugDao
-    private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
-    lateinit var daos: DeliveredRobotDao
     private val basicSettingViewModel = ViewModelLazy(
         BasicSettingViewModel::class,
         { MainActivity.instance.viewModelStore },
@@ -58,7 +54,6 @@ object MqttMessageHandler {
     )
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
-    private var pointIdList: ArrayList<Int>? = ArrayList()
     var fileName: Array<String>? = null//副屏内容
     var sleepName: Array<String>? = null//熄屏内容
     var fileNamepassc: Int = 0
@@ -268,12 +263,6 @@ object MqttMessageHandler {
     }
 
     private fun updateConfig() {
-        debugDao = DataBaseDeliveredRobotMap.getDatabase(
-            Objects.requireNonNull(
-                MyApplication.instance
-            )!!
-        ).getDebug()
-        daos = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
         //这里必须过几秒钟后才能赋值，否者可能会将原来数据库中的值赋给变量
         val assignmentThread = Thread({
             fileNamepassc = 0
@@ -287,7 +276,7 @@ object MqttMessageHandler {
                 e.printStackTrace()
             }
             println(threadName + "任务执行完毕")
-            assignment()
+            UpdateReturn().assignment()
         }, "assignment")
         assignmentThread.start()
 
@@ -438,59 +427,5 @@ object MqttMessageHandler {
             }
         }, "sleepName")
         thread1.start()
-    }
-
-    private fun assignment() {
-        //机器人基础配置
-        val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
-        for (robotConfigDatas in robotConfigData) {
-            Universal.audioType = robotConfigDatas.audioType
-            Universal.wakeUpWord = robotConfigDatas.wakeUpWord
-            Universal.sleep = robotConfigDatas.sleep
-            Universal.sleepTime = robotConfigDatas.sleepTime
-            Universal.wakeUpType = robotConfigDatas.wakeUpList
-            Universal.sleepType = robotConfigDatas.sleepType
-            Universal.picType = robotConfigDatas.picType
-            Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
-            Universal.mapName = robotConfigDatas.mapName
-            Universal.password = robotConfigDatas.password
-            if (robotConfigDatas.mapName != "") {
-                val mapId = debugDao.selectMapId(robotConfigDatas.mapName)
-                Log.d(ContentValues.TAG, "地图ID： $mapId")
-                //设置总图
-                dao.updateMapConfig(MapConfig(1, mapId, null))
-                //查询充电桩
-                val pointId = dao.queryChargePointList()
-                pointId?.map {
-                    pointIdList?.add(it.pointId!!)
-                }
-                //设置充电桩；默认查询到的第一个数据
-                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
-            }
-            //设置默认密码
-            if (robotConfigDatas.password == null) {
-                Universal.password = "8888"
-            }
-        }
-        //门岗配置
-        val replyGateConfigData: List<ReplyGateConfig> =
-            LitePal.findAll(ReplyGateConfig::class.java)
-        for (replyGateConfigDatas in replyGateConfigData) {
-            Universal.picTypeNum = replyGateConfigDatas.picType
-            Universal.picPlayTime = replyGateConfigDatas.picPlayTime
-            Universal.videoAudio = replyGateConfigDatas.videoAudio
-            Universal.fontContent = replyGateConfigDatas.fontContent
-            Universal.fontColor = replyGateConfigDatas.fontColor
-            Universal.fontSize = replyGateConfigDatas.fontSize
-            Universal.fontLayout = replyGateConfigDatas.fontLayout
-            Universal.fontBackGround = replyGateConfigDatas.fontBackGround
-            Universal.tipsTemperatureInfo = replyGateConfigDatas.tipsTemperatureInfo
-            Universal.tipsTemperatureWarn = replyGateConfigDatas.tipsTemperatureWarn
-            Universal.tipsMaskWarn = replyGateConfigDatas.tipsMaskWarn
-            Universal.timeStampReplyGateConfig = replyGateConfigDatas.timeStamp
-            Universal.bigScreenType = replyGateConfigDatas.bigScreenType
-            Universal.textPosition = replyGateConfigDatas.textPosition
-            Universal.TemperatureMax = replyGateConfigDatas.temperatureThreshold
-        }
     }
 }

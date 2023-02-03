@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.alibaba.fastjson.JSONObject
@@ -156,6 +157,7 @@ class CloudMqttService : Service() {
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
             UpdateReturn().method()
+            Thread { UpdateReturn().assignment() }.start()
             LogUtil.i("MQTT:连接成功 ")
             try {
                 mqttAndroidClient?.subscribe(

@@ -52,15 +52,14 @@ class HomeFragment : BaseFragment(), IMainView {
     private lateinit var mainScope: CoroutineScope
     private var localDays: Int = Int.MIN_VALUE //记录上一次获取的使用剩余天数
     private var remindDialog: Dialog? = null
-    var rescolors: Array<String>? = null
+    private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
-
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var controller: NavController? = null
-    public var fromeSettingDialog: FromeSettingDialog? = null
+    private var fromeSettingDialog: FromeSettingDialog? = null
 
 
     override fun onResume() {
@@ -90,8 +89,6 @@ class HomeFragment : BaseFragment(), IMainView {
         controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
     }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -103,12 +100,14 @@ class HomeFragment : BaseFragment(), IMainView {
         (this.activity as MainActivity?)!!.registerMyTouchListener(myTouchListener)
         return view
     }
+
     //监听屏幕触摸事件
-    val myTouchListener: MainActivity.MyTouchListener = object : MainActivity.MyTouchListener {
-        override fun onTouchEvent(event: MotionEvent?) {
-            mPresenter?.startTipsTimer()
+    private val myTouchListener: MainActivity.MyTouchListener =
+        object : MainActivity.MyTouchListener {
+            override fun onTouchEvent(event: MotionEvent?) {
+                mPresenter?.startTipsTimer()
+            }
         }
-    }
 
     /**取消触摸监听以及屏幕计时*/
     override fun onDestroyView() {

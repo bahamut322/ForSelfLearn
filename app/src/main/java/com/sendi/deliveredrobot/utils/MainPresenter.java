@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.utils;
 
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
@@ -36,7 +37,7 @@ public class MainPresenter {
      * @see [类、类#方法、类#成员]
      */
     public void startTipsTimer() {
-        mMainHandler.postDelayed(tipsShowRunable, 5000);
+        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*60);
     }
 
     /**
@@ -52,8 +53,7 @@ public class MainPresenter {
     public void resetTipsTimer() {
         tipsIsShowed = false;
         mMainHandler.removeCallbacks(tipsShowRunable);
-//        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*6);
-        mMainHandler.postDelayed(tipsShowRunable, 5000);
+        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*60);
     }
 
     public class MainHandler extends Handler {
