@@ -31,13 +31,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.infisense.iruvc.utils.SynchronizedBitmap;
-import com.sendi.deliveredrobot.BaseFragment;
 import com.sendi.deliveredrobot.BuildConfig;
-import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.RobotCommand;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
@@ -46,8 +45,6 @@ import com.sendi.deliveredrobot.databinding.ActivityCameraPreviewBinding;
 import com.sendi.deliveredrobot.entity.Abnormal;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
-import com.sendi.deliveredrobot.helpers.SpeakHelper;
-import com.sendi.deliveredrobot.model.Gatekeeper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.CloudMqttService;
 import com.sendi.deliveredrobot.utils.DateUtil;
@@ -71,7 +68,7 @@ import jni.Usbcontorl;
  * @author swn
  * 人脸测温统计页面
  */
-public class CameraPreviewFragment extends BaseFragment {
+public class CameraPreviewFragment extends Fragment {
 
     ActivityCameraPreviewBinding binding;
     private final int cameraWidth = 256;//160;//256;
@@ -112,9 +109,6 @@ public class CameraPreviewFragment extends BaseFragment {
         //红外显示的方法
         initEvents();
         Surface();
-        //双屏异显的方法
-        ShowPresentationByDisplaymanager();
-//        read();
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             System.out.println("ok");

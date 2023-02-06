@@ -11,13 +11,13 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
 import com.sendi.deliveredrobot.receiver.NavigationReceiver
 import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
@@ -44,7 +45,7 @@ import java.util.*
 
 
 class
-MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
+MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     OnWifiStateChangeListener {
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -60,7 +61,6 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         instance = this
         //创建LitePal数据库
         LitePal.getDatabase()
@@ -73,6 +73,8 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
         statusBarDisable(!BuildConfig.IS_DEBUG, this)
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
+        //双屏异显的方法
+        ShowPresentationByDisplaymanager()
         with(binding.textViewTime) {
             val date = Date()
             text = sdf2.format(date)
@@ -139,6 +141,14 @@ MainActivity : AppCompatActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     text = robotName
                     View.VISIBLE
                 }
+            }
+        }
+        //监听观察者更新
+        newUpdata.observe(this){
+            if (newUpdata.value == 1) {
+                Layout()
+                newUpdata.postValue(0)
+                Log.e(TAG, "onCreate: " + "副屏收到新配置，更新UI显示")
             }
         }
     }

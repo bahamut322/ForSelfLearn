@@ -2,10 +2,7 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,31 +15,18 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import chassis_msgs.SafeState
-import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.BaseFragment.TAG
-import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
-import com.sendi.deliveredrobot.model.QueryElevatorListModel
-import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.inputfilter.DownloadUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
-import org.litepal.LitePal
-import org.litepal.LitePal.deleteAll
 import sensor_msgs.BatteryState
-import java.io.File
 import java.util.*
 
 
@@ -132,7 +116,7 @@ class SelfCheckFragment : Fragment() {
                             errorCode = resCheck.toHexString();
                         }
                         DialogHelper.selfCheckDialog("启动异常", "请尝试重启", errorCode, false, false, null).show()
-                        Log.d(TAG, "initSelfCheck: "+resCheck.toHexString())
+                        Log.d("TAG", "initSelfCheck: "+resCheck.toHexString())
                     }
                 } else {
                     //硬件自检通过

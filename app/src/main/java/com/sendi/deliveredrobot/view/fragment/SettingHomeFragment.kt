@@ -13,7 +13,6 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import chassis_msgs.DoorState
 import chassis_msgs.VersionGetResponse
-import com.sendi.deliveredrobot.BaseFragment
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.adapter.SettingHomeListAdapter
@@ -23,7 +22,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.viewmodel.SettingHomeViewModel
 import kotlinx.coroutines.*
 
-class SettingHomeFragment : BaseFragment() {
+class SettingHomeFragment : Fragment() {
 
     var controller: NavController? = null
     private lateinit var binding: FragmentSettingHomeBinding
@@ -70,8 +69,6 @@ class SettingHomeFragment : BaseFragment() {
         fragments.add(ModeSettingFragment())
         fragments.add(NetworkFragment())
         fragments.add(AboutMeSettingFragment())
-        //开启双屏异显
-        ShowPresentationByDisplaymanager()
         binding.recyclerViewSettingHome.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = SettingHomeListAdapter(viewModel)

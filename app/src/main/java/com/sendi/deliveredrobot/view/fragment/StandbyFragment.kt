@@ -5,22 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BaseFragment
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.view.widget.Advance
-import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
 import java.io.File
 import java.util.*
 
 
-class StandbyFragment : BaseFragment() {
+class StandbyFragment : Fragment() {
 
     private lateinit var binding: FragmentStandbyBinding
     private var imagePaths: List<Advance> = ArrayList()
@@ -52,7 +51,6 @@ class StandbyFragment : BaseFragment() {
         controller = Navigation.findNavController(view)
         baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         getFilesAllNames(Universal.Standby)
-        ShowPresentationByDisplaymanager()
         //返回主页面
         binding.imageButton.setOnClickListener {
             controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)

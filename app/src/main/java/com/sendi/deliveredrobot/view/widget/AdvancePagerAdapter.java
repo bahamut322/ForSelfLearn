@@ -17,7 +17,7 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
     private int current = 0;
-    public static int time = 3000;
+    public static int time = 10000;
     private boolean pause;
     private Thread thread;
     AdvanceImageView imageView;

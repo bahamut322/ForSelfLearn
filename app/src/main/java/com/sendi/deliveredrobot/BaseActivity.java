@@ -10,20 +10,16 @@ import android.media.MediaRouter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
@@ -44,7 +40,7 @@ import java.util.Objects;
  * @author swn
  * 用于副屏显示
  */
-public class BaseFragment extends Fragment {
+public class BaseActivity extends AppCompatActivity {
 
     public Presentation mPresentation;
     public Display mDisplay;
@@ -98,9 +94,9 @@ public class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMediaRouter = (MediaRouter) getActivity().getSystemService(Context.MEDIA_ROUTER_SERVICE);
-        mDisplayManager = (DisplayManager) getActivity().getSystemService(Context.DISPLAY_SERVICE);
-        SharedPreferences sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE);
+        mMediaRouter = (MediaRouter) this.getSystemService(Context.MEDIA_ROUTER_SERVICE);
+        mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
+        SharedPreferences sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
         videoAudio = (int) sp.getFloat("videoAudio", 0); // 视频音量
         DebugDao debugDao = DataBaseDeliveredRobotMap.Companion.getDatabase(
                 Objects.requireNonNull(
@@ -136,18 +132,11 @@ public class BaseFragment extends Fragment {
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
             if (Universal.videoAudio == 1) {
-                new AudioMngHelper(requireContext()).setVoice100(videoAudio);//设置视频音量
+                new AudioMngHelper(getContext()).setVoice100(videoAudio);//设置视频音量
             } else {
-                new AudioMngHelper(requireContext()).setVoice100(0);//设置视频音量
+                new AudioMngHelper(getContext()).setVoice100(0);//设置视频音量
             }
-            //监听观察者更新
-            RobotStatus.INSTANCE.getNewUpdata().observe(getViewLifecycleOwner(), integer -> {
-                if (RobotStatus.INSTANCE.getNewUpdata().getValue() == 1){
-                    Layout();
-                    RobotStatus.INSTANCE.getNewUpdata().postValue(0);
-                    Log.e(TAG, "onCreate: "+"副屏收到新配置，更新UI显示" );
-                }
-            });
+
             //机器人基础配置
             constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();
@@ -233,7 +222,7 @@ public class BaseFragment extends Fragment {
         // Show a new presentation if needed.
         if (mPresentation == null && presentationDisplay != null) {
             Log.i(TAG, "Showing presentation on display: " + presentationDisplay);
-            mPresentation = new MyPresentation(getContext(), presentationDisplay);
+            mPresentation = new MyPresentation(getApplicationContext(), presentationDisplay);
             //  mPresentation.setOnDismissListener(mOnDismissListener);
             try {
                 mPresentation.show();
@@ -335,7 +324,7 @@ public class BaseFragment extends Fragment {
     @SuppressLint("RtlHardcoded")
     public  void Layout() {
         //轮播时间
-        AdvancePagerAdapter.time =10000;
+        AdvancePagerAdapter.time = Universal.picPlayTime*1000;
         //1-图片 2-视频 3-文字 4-图片+文字
         switch (Universal.bigScreenType) {
             case 1:

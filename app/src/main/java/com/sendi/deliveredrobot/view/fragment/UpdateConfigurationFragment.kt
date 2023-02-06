@@ -175,7 +175,7 @@
 //                                }
 //                            }
 //                            override fun onDownloadFailed() {
-//                                Log.d(BaseFragment.TAG, "下载失败: ")
+//                                Log.d(BaseActivity.TAG, "下载失败: ")
 //                            }
 //                        })
 //                    Looper.loop()

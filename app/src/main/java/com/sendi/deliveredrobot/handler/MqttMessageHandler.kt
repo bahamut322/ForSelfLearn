@@ -1,11 +1,9 @@
 package com.sendi.deliveredrobot.handler
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModelLazy
-import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -18,24 +16,19 @@ import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.room.dao.DebugDao
-import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.MapConfig
-import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
-import com.sendi.deliveredrobot.view.inputfilter.DownloadUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -54,12 +47,8 @@ object MqttMessageHandler {
     )
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
-    var fileName: Array<String>? = null//副屏内容
-    var sleepName: Array<String>? = null//熄屏内容
-    var fileNamepassc: Int = 0
-    var sleepNamepassc: Int = 0
-    private var timeStampReplyGateConfig: Long? = null
-    private var timeStampRobotConfigSql: Long? = null
+    private var fileNames: Array<String?>? = null//副屏内容
+
 
     /**
      * @describe 接收消息
@@ -100,7 +89,7 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
                     RobotStatus.gatekeeper?.value = gatekeeper
-                    DialogHelper.loadingDialog.show();
+                    DialogHelper.loadingDialog.show()
                     LitePal.deleteAll(ReplyGateConfig::class.java)
                     //提交到数据库
                     deleteFiles(File(Universal.Secondary))
@@ -136,7 +125,7 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
                     RobotStatus.robotConfig?.value = robotConfig
-                    DialogHelper.loadingDialog.show();
+                    DialogHelper.loadingDialog.show()
                     LitePal.deleteAll(RobotConfigSql::class.java)
                     //提交数据到数据库
                     deleteFiles(File(Universal.Standby))
@@ -262,11 +251,10 @@ object MqttMessageHandler {
         }
     }
 
+
     private fun updateConfig() {
         //这里必须过几秒钟后才能赋值，否者可能会将原来数据库中的值赋给变量
         val assignmentThread = Thread({
-            fileNamepassc = 0
-            sleepNamepassc = 0
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
@@ -289,7 +277,6 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            println(threadName + "任务执行完毕")
             if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "") {
                 DialogHelper.loadingDialog.dismiss()
                 Universal.pics = ""
@@ -300,56 +287,22 @@ object MqttMessageHandler {
             }
             if (Universal.pics != "" || Universal.videoFile != "" || Universal.sleepContentName != "") {
                 if (Universal.pics != "") {
-                    fileName = Universal.pics?.split(",")?.toTypedArray()
+                    fileNames = null
+                    fileNames = UpdateReturn().splitStr(Universal.pics)
                 } else if (Universal.videoFile != "") {
-                    fileName = Universal.videoFile?.split(",")?.toTypedArray()
+                    fileNames = null
+                    fileNames = UpdateReturn().splitStr(Universal.videoFile)
                 }
 //                try {
                 //副屏
-                for (i in fileName!!) {
-                    Looper.prepare()
-                    DownloadUtil.getInstance().download(
-                        "http://172.168.201.34:9055/management_res/$i",
-                        Universal.Secondary,
-                        object : DownloadUtil.OnDownloadListener {
-                            override fun onDownloadSuccess(path: String) {
-                                Log.e("TAG", "已保存：$path ")
-                                if (sleepName == null) {
-                                    if (fileNamepassc == UpdateReturn().fileSize(Universal.Secondary)) {
-                                        DialogHelper.loadingDialog.dismiss()
-                                        Universal.pics = ""
-                                        Universal.sleepContentName = ""
-                                        Universal.videoFile = ""
-                                        RobotStatus.newUpdata.postValue(1)
-                                        UpdateReturn().method()
-                                    }
-                                } else {
-                                    if (fileNamepassc + sleepNamepassc == UpdateReturn().fileSize(Universal.Standby) + UpdateReturn().fileSize(
-                                            Universal.Secondary
-                                        )
-                                    ) {
-                                        DialogHelper.loadingDialog.dismiss()
-                                        Universal.pics = ""
-                                        Universal.sleepContentName = ""
-                                        Universal.videoFile = ""
-                                        RobotStatus.newUpdata.postValue(1)
-                                        UpdateReturn().method()
-                                    }
-                                }
-                            }
-
-                            @SuppressLint("LongLogTag")
-                            override fun onDownloading(progress: Int) {
-                                if (progress == 100) {
-                                    fileNamepassc++
-                                }
-                            }
-
-                            override fun onDownloadFailed() {
-                                Log.d(BaseFragment.TAG, "下载失败: ")
-                            }
-                        })
-                    Looper.loop()
+                Log.d("TAG", "updateConfig: " + fileNames!!.size)
+                if (fileNames!!.isNotEmpty()) {
+                    for (i in 0 until fileNames!!.size) {
+                        downloadFile(
+                            "http://172.168.201.34:9055/management_res/" + fileNames!![i],
+                            Universal.Secondary
+                        )
+                    }
                 }
             }
         }, "fileName")
@@ -363,7 +316,6 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            println(threadName + "任务执行完毕")
             if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "") {
                 Looper.prepare()
                 DialogHelper.loadingDialog.dismiss()
@@ -375,57 +327,93 @@ object MqttMessageHandler {
                 Looper.loop()
             }
             if (Universal.sleepContentName != "") {
-                sleepName = Universal.sleepContentName?.split(",")?.toTypedArray()
+                UpdateReturn().splitStr(Universal.sleepContentName)
             }
-            if (sleepName != null) {
-                for (i in sleepName!!) {
-                    Looper.prepare()
-                    DownloadUtil.getInstance().download(
-                        "http://172.168.201.34:9055/management_res$i",
-                        Universal.Standby,
-                        object : DownloadUtil.OnDownloadListener {
-                            override fun onDownloadSuccess(path: String) {
-                                Log.e("TAG", "已保存：$path ")
-                                if (fileName == null) {
-                                    if (sleepNamepassc == UpdateReturn().fileSize(Universal.Standby)) {
-                                        DialogHelper.loadingDialog.dismiss()
-                                        Universal.pics = ""
-                                        Universal.sleepContentName = ""
-                                        Universal.videoFile = ""
-                                        RobotStatus.newUpdata.postValue(1)
-                                        UpdateReturn().method()
-                                    }
-                                } else {
-                                    if (fileNamepassc + sleepNamepassc ==  UpdateReturn().fileSize(Universal.Standby) + UpdateReturn().fileSize(
-                                            Universal.Secondary
-                                        )
-                                    ) {
-                                        DialogHelper.loadingDialog.dismiss()
-                                        Universal.pics = ""
-                                        Universal.sleepContentName = ""
-                                        Universal.videoFile = ""
-                                        RobotStatus.newUpdata.postValue(1)
-                                        UpdateReturn().method()
-                                    }
-                                }
-                            }
-
-                            @SuppressLint("LongLogTag")
-                            override fun onDownloading(progress: Int) {
-                                if (progress == 100) {
-                                    sleepNamepassc++
-
-                                }
-                            }
-
-                            override fun onDownloadFailed() {
-                                Log.d(ContentValues.TAG, "下载失败: ")
-                            }
-                        })
-                    Looper.loop()
+            if (UpdateReturn().splitStr(Universal.sleepContentName) != null) {
+                for (i in 0 until UpdateReturn().splitStr(Universal.sleepContentName)!!.size) {
+                    downloadFile(
+                        "http://172.168.201.34:9055/management_res/" + fileNames!![i],
+                        Universal.Standby
+                    )
                 }
             }
         }, "sleepName")
         thread1.start()
     }
+
+    //下载
+    private fun downloadFile(url: String, savePath: String) {
+//        final String url = "http://172.168.201.34:9055/management_res/";
+        val startTime = System.currentTimeMillis()
+        Log.i("DOWNLOAD", "开始下载：$url")
+        val okHttpClient = OkHttpClient()
+        val request: Request = Request.Builder().url(url).build()
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // 下载失败
+                e.printStackTrace()
+                Log.e("DOWNLOAD", "下载失败：$url ")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                var `is`: InputStream? = null
+                val buf = ByteArray(2048)
+                var len = 0
+                var fos: FileOutputStream? = null
+                // 储存下载文件的目录
+//                val savePath = Universal.Secondary
+                try {
+                    `is` = response.body!!.byteStream()
+                    val total = response.body!!.contentLength()
+                    val file = File(savePath, url.substring(url.lastIndexOf("/") + 1))
+                    fos = FileOutputStream(file)
+                    var sum: Long = 0
+                    while (`is`.read(buf).also { len = it } != -1) {
+                        fos.write(buf, 0, len)
+                        sum += len.toLong()
+                        val progress = (sum * 1.0f / total * 100).toInt()
+                        // 下载中
+                        Log.i("DOWNLOAD", "下载中：$file: $progress %")
+                    }
+                    fos.flush()
+                    // 下载完成
+//                    listener.onDownloadSuccess();
+                    if (UpdateReturn().splitStr(Universal.sleepContentName)!!.isEmpty()) {
+                        if (fileNames!!.size  == UpdateReturn().fileSize(Universal.Secondary)) {
+                            DialogHelper.loadingDialog.dismiss()
+                            Universal.pics = ""
+                            Universal.sleepContentName = ""
+                            Universal.videoFile = ""
+                            RobotStatus.newUpdata.postValue(1)
+                            UpdateReturn().method()
+                        }
+                    }else{
+                        if (fileNames!!.size + UpdateReturn().splitStr(Universal.sleepContentName)!!.size == UpdateReturn().fileSize(Universal.Secondary)+UpdateReturn().fileSize(Universal.Standby)) {
+                            DialogHelper.loadingDialog.dismiss()
+                            Universal.pics = ""
+                            Universal.sleepContentName = ""
+                            Universal.videoFile = ""
+                            RobotStatus.newUpdata.postValue(1)
+                            UpdateReturn().method()
+                        }
+                    }
+                    Log.e("DOWNLOAD", "下载成功：$file,下载耗时= ${(System.currentTimeMillis() - startTime)} ms")
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                    Log.e("DOWNLOAD", "下载失败!!")
+                } finally {
+                    try {
+                        `is`?.close()
+                    } catch (_: IOException) {
+                    }
+                    try {
+                        fos?.close()
+                    } catch (_: IOException) {
+                    }
+                }
+            }
+        })
+    }
+
 }

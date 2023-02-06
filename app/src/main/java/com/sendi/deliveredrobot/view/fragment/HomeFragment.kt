@@ -4,17 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BaseFragment
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
@@ -43,7 +42,7 @@ import java.util.*
 /**
  * @describe 主页面
  */
-class HomeFragment : BaseFragment(), IMainView {
+class HomeFragment : Fragment(), IMainView {
     private lateinit var binding: FragmentHomeBinding
     private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
     private val viewModelBin1 by viewModels<SendPlaceBin1ViewModel>({ requireActivity() })
@@ -165,11 +164,9 @@ class HomeFragment : BaseFragment(), IMainView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
-        fromeSettingDialog = FromeSettingDialog(context)
+        fromeSettingDialog = FromeSettingDialog(activity)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
-        //双屏异显的方法
-        ShowPresentationByDisplaymanager()
         controller = Navigation.findNavController(view)
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
@@ -190,10 +187,10 @@ class HomeFragment : BaseFragment(), IMainView {
         val tempMode = sp.getInt("tempMode", 0) // 测温模式
         //改变人脸识别工具类，人脸识别数量的最大值
         if (tempMode == 0) {
-            Log.d(TAG, "当前为单人测温")
+            Log.d("TAG", "当前为单人测温")
             Utils.mNmsLimit = 1
         } else {
-            Log.d(TAG, "当前为多人测温")
+            Log.d("TAG", "当前为多人测温")
             Utils.mNmsLimit = 10
         }
         if (Universal.selectItem != null) {
@@ -514,15 +511,15 @@ class HomeFragment : BaseFragment(), IMainView {
         when (Onclick) {
             "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
-                Log.d(TAG, "点击智能引领 ")
+                Log.d("TAG", "点击智能引领 ")
             }
             "智能讲解" -> {
-                Log.d(TAG, "点击智能讲解 ")
+                Log.d("TAG", "点击智能讲解 ")
             }
             "轻应用" -> {
                 //跳转到测温模式
                 controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
-                Log.d(TAG, "点击轻应用")
+                Log.d("TAG", "点击轻应用")
             }
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
             "功能模块" -> Toast.makeText(context, "功能模块", Toast.LENGTH_SHORT).show()

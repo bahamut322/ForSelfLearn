@@ -1,25 +1,29 @@
 package com.sendi.deliveredrobot.service
 
 import android.content.ContentValues
+import android.os.Environment
 import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.MapConfig
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
+import com.wislie.charging.helper.Builder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.litepal.LitePal
 import java.io.File
 import java.util.*
+
 
 class UpdateReturn {
 
@@ -135,4 +139,13 @@ class UpdateReturn {
         }
     }
 
+    /**
+     * 将以逗号分隔的字符串转换为字符串数组；
+     * 第二种方法：
+     * @param str
+     * @return
+     */
+    fun splitStr(str: String): Array<String?>? {
+        return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    }
 }
