@@ -38,7 +38,7 @@ public class Universal {
 
     //TODO 门岗管理
     //副屏轮播间隔时间
-    public static int picPlayTime = 3;
+    public static int picPlayTime = 10;
     //副屏视频是否播放声音
     public static int videoAudio = 1;
     //副屏文字

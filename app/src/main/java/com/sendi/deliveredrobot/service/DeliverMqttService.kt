@@ -8,27 +8,41 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.BuildConfig
-import com.sendi.deliveredrobot.handler.MqttMessageHandler
+import com.sendi.deliveredrobot.entity.ReplyGateConfig
+import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.handler.DeliveMqttMessageHandler
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
+import org.litepal.LitePal
+import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.Locale.getDefault
+import java.util.TimeZone.getDefault
 
 
 /**
  * @describe    与云平台交互的MQTT
  * Github       https://github.com/wildma
  */
-class CloudMqttService : Service() {
-    private var mMqttConnectOptions: MqttConnectOptions? = null
-    private var timeStampReplyGateConfig: Long? = null
-    private var timeStampRobotConfigSql: Long? = null
-    private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
+class DeliverMqttService : Service() {
+    private var mMqttConnectOptions_deliver: MqttConnectOptions? = null
+    private var timeStampReplyGateConfig_deliver: Long? = null
+    private var timeStampRobotConfigSql_deliver: Long? = null
+    private val mapTargetPointServiceImpl_deliver = MapTargetPointServiceImpl.getInstance()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         init()
@@ -45,14 +59,14 @@ class CloudMqttService : Service() {
      * @param message 消息
      */
     fun response(message: String) {
-        val topic = RESPONSE_TOPIC
-        val qos = 2
-        val retained = false
+        val topic_deliver = RESPONSE_TOPIC_DELIVER
+        val qos_deliver = 2
+        val retained_deliver = false
         try {
             //参数分别为：主题、消息的字节数组、服务质量、是否在服务器保留断开连接后的最后一条消息
-            mqttAndroidClient?.publish(
-                topic, message.toByteArray(),
-                qos, retained
+            mqttAndroidClient_deliver?.publish(
+                topic_deliver, message.toByteArray(),
+                qos_deliver, retained_deliver
             )
         } catch (e: MqttException) {
             e.printStackTrace()
@@ -64,36 +78,36 @@ class CloudMqttService : Service() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun init() {
-        val serverURI = BuildConfig.MQTT_HOST //服务器地址（协议+地址+端口号）
-        mqttAndroidClient = MqttAndroidClient(this, serverURI, RobotStatus.SERIAL_NUMBER)
-        mqttAndroidClient?.setCallback(mqttCallback) //设置监听订阅消息的回调
-        mMqttConnectOptions = MqttConnectOptions()
-        mMqttConnectOptions?.isCleanSession = true //设置是否清除缓存
-        mMqttConnectOptions?.connectionTimeout = 10 //设置超时时间，单位：秒
-        mMqttConnectOptions?.keepAliveInterval = 20 //设置心跳包发送间隔，单位：秒
-        mMqttConnectOptions?.userName = USERNAME //设置用户名
-        mMqttConnectOptions?.password = PASSWORD.toCharArray() //设置密码
+        val serverURI_deliver = BuildConfig.MQTT_HOST //服务器地址（协议+地址+端口号）
+        mqttAndroidClient_deliver = MqttAndroidClient(this, serverURI_deliver, RobotStatus.SERIAL_NUMBER)
+        mqttAndroidClient_deliver?.setCallback(mqttCallback_devliver) //设置监听订阅消息的回调
+        mMqttConnectOptions_deliver = MqttConnectOptions()
+        mMqttConnectOptions_deliver?.isCleanSession = true //设置是否清除缓存
+        mMqttConnectOptions_deliver?.connectionTimeout = 10 //设置超时时间，单位：秒
+        mMqttConnectOptions_deliver?.keepAliveInterval = 20 //设置心跳包发送间隔，单位：秒
+        mMqttConnectOptions_deliver?.userName = USERNAME //设置用户名
+        mMqttConnectOptions_deliver?.password = PASSWORD.toCharArray() //设置密码
 
         // last will message
-        var doConnect = true
-        val message = "{\"terminal_uid\":\"$CLIENTSIDE\"}"
-        val topic = PUBLISH_TOPIC
-        val qos = 2
-        val retained = false
+        var doConnect_deliver = true
+        val message_deliver = "{\"terminal_uid\":\"$CLIENTSIDE\"}"
+        val topic_deliver = PUBLISH_TOPIC_DELIVER
+        val qos_deliver = 2
+        val retained_deliver = false
         // 最后的遗嘱
         try {
-            mMqttConnectOptions?.setWill(
-                topic,
-                message.toByteArray(),
-                qos,
-                retained
+            mMqttConnectOptions_deliver?.setWill(
+                topic_deliver,
+                message_deliver.toByteArray(),
+                qos_deliver,
+                retained_deliver
             )
         } catch (e: Exception) {
             LogUtil.i("MQTT:Exception Occurred$e")
-            doConnect = false
+            doConnect_deliver = false
             iMqttActionListener.onFailure(null, e)
         }
-        if (doConnect) {
+        if (doConnect_deliver) {
             doClientConnection()
         }
     }
@@ -108,9 +122,9 @@ class CloudMqttService : Service() {
     CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)连接MQTT服务器
      */
     private fun doClientConnection() {
-        if (!mqttAndroidClient!!.isConnected && isConnectIsNormal) {
+        if (!mqttAndroidClient_deliver!!.isConnected && isConnectIsNormal) {
             try {
-                mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
+                mqttAndroidClient_deliver?.connect(mMqttConnectOptions_deliver, null, iMqttActionListener)
             } catch (e: MqttException) {
                 e.printStackTrace()
             }
@@ -142,12 +156,9 @@ class CloudMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
-            UpdateReturn().method()
-            Thread { UpdateReturn().assignment() }.start()
-            LogUtil.i("MQTT:连接成功 ")
             try {
-                mqttAndroidClient?.subscribe(
-                    "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+                mqttAndroidClient_deliver?.subscribe(
+                    "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
 //                    "$RESPONSE_TOPIC/#",
                     2
                 ) //订阅主题，参数：主题、服务质量
@@ -166,12 +177,12 @@ class CloudMqttService : Service() {
     }
 
     //订阅主题的回调
-    private val mqttCallback: MqttCallback = object : MqttCallback {
+    private val mqttCallback_devliver: MqttCallback = object : MqttCallback {
         @Throws(Exception::class)
-        override fun messageArrived(topic: String, message: MqttMessage) {
-            if (topic == "${RESPONSE_TOPIC}/${RobotStatus.SERIAL_NUMBER}") {
-                MqttMessageHandler.receive(message)
-                LogUtil.i("{MQTT:$topic}收到消息:" + String(message.payload))
+        override fun messageArrived(topic_deliver: String, message_deliver: MqttMessage) {
+            if (topic_deliver == "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}") {
+                DeliveMqttMessageHandler.receive(message_deliver)
+                LogUtil.i("{MQTT:$topic_deliver}收到消息:" + String(message_deliver.payload))
             }
         }
 
@@ -187,7 +198,7 @@ class CloudMqttService : Service() {
 
     override fun onDestroy() {
         try {
-            mqttAndroidClient?.disconnect() //断开连接
+            mqttAndroidClient_deliver?.disconnect() //断开连接
         } catch (e: MqttException) {
             e.printStackTrace()
         }
@@ -196,11 +207,9 @@ class CloudMqttService : Service() {
 
     companion object {
         @SuppressLint("StaticFieldLeak")
-        private var mqttAndroidClient: MqttAndroidClient? = null
-        const val  PUBLISH_TOPIC = "/sendi/robot/x8/server/android" //发布主题
-        const val  RESPONSE_TOPIC = "/sendi/robot/x8/client/android" //响应主题
-//        const val PUBLISH_TOPIC_DELIVER = "/sendi/robot/delivery/server/android" //发布主题
-//        const val RESPONSE_TOPIC_DELIVER = "/sendi/robot/delivery/client/android" //响应主题
+        private var mqttAndroidClient_deliver: MqttAndroidClient? = null
+        const val  PUBLISH_TOPIC_DELIVER = "/sendi/robot/delivery/server/android" //发布主题
+        const val  RESPONSE_TOPIC_DELIVER = "/sendi/robot/delivery/client/android" //响应主题
 
 
         //        const val HOST = "tcp://103.215.45.135:1883" //测试环境服务器地址（协议+地址+端口号）
@@ -217,14 +226,14 @@ class CloudMqttService : Service() {
          * 开启服务
          */
         fun startService(mContext: Context) {
-            mContext.startService(Intent(mContext, CloudMqttService::class.java))
+            mContext.startService(Intent(mContext, DeliverMqttService::class.java))
         }
 
         /**
          * 关闭服务
          */
         fun stopService(mContext: Context) {
-            mContext.stopService(Intent(mContext, CloudMqttService::class.java))
+            mContext.stopService(Intent(mContext, DeliverMqttService::class.java))
         }
 
         /**
@@ -234,18 +243,18 @@ class CloudMqttService : Service() {
          * @param needPrintLog 是否打印日志
          */
         fun publish(message: String, needPrintLog: Boolean = true, qos: Int = 2) {
-            val topic = PUBLISH_TOPIC
+            val topic_deliver = PUBLISH_TOPIC_DELIVER
             val retained = false
             try {
-                if (mqttAndroidClient?.isConnected == false) return
+                if (mqttAndroidClient_deliver?.isConnected == false) return
                 //参数分别为：主题、消息的字节数组、服务质量、是否在服务器保留断开连接后的最后一条消息
-                mqttAndroidClient?.publish(
-                    "$topic/${RobotStatus.SERIAL_NUMBER}", message.toByteArray(),
+                mqttAndroidClient_deliver?.publish(
+                    "$topic_deliver/${RobotStatus.SERIAL_NUMBER}", message.toByteArray(),
                     qos, retained
                 )
                 if (!needPrintLog) return
                 LogUtil.i(
-                    "MQTT：开始发送：{topic:${topic}/${RobotStatus.SERIAL_NUMBER}},message:${
+                    "MQTT：开始发送：{topic:${topic_deliver}/${RobotStatus.SERIAL_NUMBER}},message:${
                         String(
                             message.toByteArray()
                         )

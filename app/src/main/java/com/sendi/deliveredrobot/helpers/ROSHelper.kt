@@ -110,7 +110,7 @@ object ROSHelper {
         val speedClient = Client(ClientConstant.SET_PARAM, clientParamSpeed)
         val rosResultSpeed = ClientManager.sendClientMsg(speedClient)
         if (rosResultSpeed.isFlag) {
-            LogUtil.i("设置速度成功")
+            LogUtil.i("设置速度成功：$speed")
         }
     }
 
@@ -157,7 +157,7 @@ object ROSHelper {
                     "导航异常-其他错误"
                 }
             }
-            LogUtil.i(msg)
+            LogUtil.i(msg+"："+response.result)
         }
     }
 
@@ -625,7 +625,7 @@ object ROSHelper {
                     "导航异常-其他错误"
                 }
             }
-            LogUtil.i(msg)
+            LogUtil.i(msg+":"+response.result)
         }
     }
 

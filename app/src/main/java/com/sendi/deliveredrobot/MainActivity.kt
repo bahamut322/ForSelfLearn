@@ -148,7 +148,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             if (newUpdata.value == 1) {
                 Layout()
                 newUpdata.postValue(0)
-                Log.e(TAG, "onCreate: " + "副屏收到新配置，更新UI显示")
+                Log.e(TAG, "onCreate: " + "更新副屏内容")
             }
         }
     }

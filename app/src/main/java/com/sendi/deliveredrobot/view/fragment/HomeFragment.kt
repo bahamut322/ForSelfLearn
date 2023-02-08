@@ -21,7 +21,8 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -53,6 +54,7 @@ class HomeFragment : Fragment(), IMainView {
     private var remindDialog: Dialog? = null
     private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
+
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
@@ -76,6 +78,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
+        RobotStatus.newUpdata.postValue(1)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -170,6 +173,8 @@ class HomeFragment : Fragment(), IMainView {
         controller = Navigation.findNavController(view)
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
+        //设置速度
+        ROSHelper.setSpeed("${AbstractTask.basicSettingViewModel.value.basicConfig.guideSpeed}")
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -177,6 +182,18 @@ class HomeFragment : Fragment(), IMainView {
             } else {
                 mPresenter?.startTipsTimer()
             }
+        }
+        //返回充电桩
+        binding.returnHome.setOnClickListener {
+            Log.d("TAG", "onViewCreated: dianji")
+            val taskId = BillManager.currentBill()?.taskId()?:""
+//            BillManager.removeBill()
+            // 如果后续没有任务，则返回充电桩
+            val bill = GoBackTaskBillFactory.createBill(TaskModel(
+                taskId = taskId
+            ))
+            BillManager.addAllAtIndex(bill)
+        BillManager.currentBill()?.executeNextTask()
         }
         for (basicSettings in basicSetting) {
             Universal.selectItem = basicSettings.defaultValue

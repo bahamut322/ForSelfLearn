@@ -20,8 +20,13 @@ import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
+import com.sendi.deliveredrobot.model.QueryElevatorListModel
+import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.service.DeliverMqttService
+import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
@@ -134,17 +139,17 @@ class SelfCheckFragment : Fragment() {
                             RobotCommand.LIFT_CONTROL_TIME = this.liftControlTime.toInt()
                         }
                     }
-                    // 楼层
-//                    CloudMqttService.publish(QueryFloorListModel().toString())
+                    DeliverMqttService.publish(QueryFloorListModel().toString())
                     // 电梯
-//                    CloudMqttService.publish(QueryElevatorListModel().toString())
+                    DeliverMqttService.publish(QueryElevatorListModel().toString())
 //                    // ================================初始化云平台MQTT-SERVICE==============================
-//                    CloudMqttService.startService(requireActivity())
+//                    DeliverMqttService.startService(requireActivity())
+//                    CloudMqttService.startService(requireContext())
 //                    // ================================初始化上报机器人信息SERVICE=============================
 //                    if(BuildConfig.IS_REPORT){
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
-//                    UploadMapHelper.uploadMap()
+                    UploadMapHelper.uploadMap()
                     if (RobotStatus.bootLocation != null) {
 //                        设置地图
 //                        ROSHelper.setNavigationMap(

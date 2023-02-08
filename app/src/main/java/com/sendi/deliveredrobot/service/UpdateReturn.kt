@@ -79,7 +79,7 @@ class UpdateReturn {
     }
 
     fun assignment() {
-        Log.d("TAG", "LitePal数据库数据获取")
+        Log.d("TAG", "数据库数据获取")
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
         debugDao = DataBaseDeliveredRobotMap.getDatabase(
             Objects.requireNonNull(

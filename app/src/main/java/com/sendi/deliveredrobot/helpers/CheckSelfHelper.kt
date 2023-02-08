@@ -11,6 +11,7 @@ import com.sendi.deliveredrobot.ros.constant.ClientConstant
 import com.sendi.deliveredrobot.ros.constant.Constant.CMD
 import com.sendi.deliveredrobot.ros.dto.Client
 import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.service.DeliverMqttService
 import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.*
@@ -91,6 +92,7 @@ object CheckSelfHelper {
         ROSHelper.updateTime()
         // ================================初始化云平台MQTT-SERVICE==============================
         CloudMqttService.startService(MainActivity.instance)
+        DeliverMqttService.startService(MainActivity.instance)
         // ================================初始化上报机器人信息SERVICE=============================
         if(BuildConfig.IS_REPORT){
             ReportRobotStateService.startService(MainActivity.instance)

@@ -35,7 +35,7 @@ import kotlin.concurrent.thread
 /**
  *   @author: heky
  *   @date: 2021/8/18 12:01
- *   @describe: MQTT消息处理
+ *   @describe: MQTT消息处理(订阅X8)
  */
 object MqttMessageHandler {
     private val dao =
@@ -295,7 +295,6 @@ object MqttMessageHandler {
                 }
 //                try {
                 //副屏
-                Log.d("TAG", "updateConfig: " + fileNames!!.size)
                 if (fileNames!!.isNotEmpty()) {
                     for (i in 0 until fileNames!!.size) {
                         downloadFile(

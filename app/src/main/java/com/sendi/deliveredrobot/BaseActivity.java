@@ -24,6 +24,7 @@ import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 
+import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
@@ -137,7 +138,7 @@ public class BaseActivity extends AppCompatActivity {
                 new AudioMngHelper(getContext()).setVoice100(0);//设置视频音量
             }
 
-            //机器人基础配置
+            //将控件设置成副屏尺寸，并且旋转270度
             constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();
                 params.height = 1920;
@@ -324,7 +325,8 @@ public class BaseActivity extends AppCompatActivity {
     @SuppressLint("RtlHardcoded")
     public  void Layout() {
         //轮播时间
-        AdvancePagerAdapter.time = Universal.picPlayTime*1000;
+        AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
+        this.advanceView.initView();
         //1-图片 2-视频 3-文字 4-图片+文字
         switch (Universal.bigScreenType) {
             case 1:

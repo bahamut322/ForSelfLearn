@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.sendi.deliveredrobot.entity.Universal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
     private int current = 0;
-    public static int time = 10000;
+    public static int time = Universal.picPlayTime * 1000;
     private boolean pause;
     private Thread thread;
     AdvanceImageView imageView;
@@ -67,7 +69,7 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
             list.add(videoView);
         } else {
 //            if (imageView == null) {
-                imageView = new AdvanceImageView(context);
+            imageView = new AdvanceImageView(context);
 //            }
             imageView.setImage(advance.path);
             list.add(imageView);
