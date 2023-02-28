@@ -36,63 +36,134 @@
                 <View
                     android:id="@+id/view"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="@dimen/dp_209"
-                    android:layout_marginTop="@dimen/dp_24"
+                    android:layout_height="408dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                 <TextView
-                    android:id="@+id/displayTv"
+                    android:id="@+id/tvEtiquette"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
-                    android:layout_marginTop="@dimen/dp_14"
+                    android:layout_marginTop="@dimen/dp_48"
+                    android:alpha="0.7"
+                    android:text="@string/Etiquette_welcome"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_28"
+                    app:layout_constraintStart_toStartOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/view" />
+
+                <CheckBox
+                    android:id="@+id/cbEtiquette"
+                    android:layout_width="@dimen/dp_56"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:button="@drawable/selector_switch_track"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvEtiquette"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/tvEtiquette" />
+
+
+                <TextView
+                    android:id="@+id/tvIntelligent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_66"
+                    android:alpha="0.7"
+                    android:text="@string/Intelligent_voice"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_28"
+                    app:layout_constraintStart_toStartOf="@+id/tvEtiquette"
+                    app:layout_constraintTop_toBottomOf="@+id/tvEtiquette" />
+
+                <CheckBox
+                    android:id="@+id/cbIntelligent"
+                    android:layout_width="@dimen/dp_56"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:button="@drawable/selector_switch_track"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvIntelligent"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/tvIntelligent" />
+
+
+                <TextView
+                    android:id="@+id/displayTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_66"
                     android:alpha="0.7"
                     android:text="@string/Home_function_display"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintStart_toStartOf="@+id/view"
-                    app:layout_constraintTop_toTopOf="@+id/view" />
+                    android:textSize="@dimen/sp_28"
+                    app:layout_constraintStart_toStartOf="@+id/tvIntelligent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvIntelligent" />
 
                 <CheckBox
                     android:id="@+id/all"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
-                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginEnd="@dimen/dp_8"
                     android:background="@drawable/checkbox"
                     android:button="@null"
-                    app:layout_constraintBottom_toBottomOf="@+id/displayTv"
-                    app:layout_constraintStart_toEndOf="@+id/displayTv"
-                    app:layout_constraintTop_toTopOf="@+id/displayTv" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView55"
+                    app:layout_constraintEnd_toStartOf="@+id/textView55"
+                    app:layout_constraintTop_toTopOf="@+id/textView55" />
 
                 <TextView
                     android:id="@+id/textView55"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_6"
+                    android:layout_marginEnd="@dimen/dp_32"
                     android:alpha="0.7"
                     android:text="@string/allSelect"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/all"
-                    app:layout_constraintStart_toEndOf="@+id/all"
-                    app:layout_constraintTop_toTopOf="@+id/all" />
+                    app:layout_constraintBottom_toBottomOf="@+id/displayTv"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintTop_toTopOf="@+id/displayTv" />
 
                 <View
                     android:id="@+id/view2"
                     android:layout_width="946dp"
                     android:layout_height="@dimen/dp_1"
-                    android:layout_marginTop="@dimen/dp_64"
+                    android:layout_marginTop="@dimen/dp_22"
                     android:alpha="0.7"
                     android:background="@color/white"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintStart_toStartOf="@+id/view"
-                    app:layout_constraintTop_toTopOf="@+id/view" />
+                    app:layout_constraintTop_toBottomOf="@+id/displayTv" />
+
+                <!--                <CheckBox-->
+                <!--                    android:id="@+id/red"-->
+                <!--                    android:layout_width="24dp"-->
+                <!--                    android:layout_height="24dp"-->
+                <!--                    android:layout_marginStart="32dp"-->
+                <!--                    android:layout_marginTop="31dp"-->
+                <!--                    android:background="@drawable/checkbox"-->
+                <!--                    android:button="@null"-->
+                <!--                    app:layout_constraintStart_toStartOf="@+id/view"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/view2"-->
+                <!--                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/textView5"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginStart="@dimen/dp_6"-->
+                <!--                    android:alpha="0.7"-->
+                <!--                    android:text="@string/Etiquette_welcome"-->
+                <!--                    android:textColor="@color/white"-->
+                <!--                    android:textSize="@dimen/sp_24"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="@+id/red"-->
+                <!--                    app:layout_constraintStart_toEndOf="@+id/red"-->
+                <!--                    app:layout_constraintTop_toTopOf="@+id/red" />-->
 
                 <CheckBox
-                    android:id="@+id/red"
+                    android:id="@+id/leaderShip"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="32dp"
@@ -104,30 +175,6 @@
                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                 <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.7"
-                    android:text="@string/Etiquette_welcome"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/red"
-                    app:layout_constraintStart_toEndOf="@+id/red"
-                    app:layout_constraintTop_toTopOf="@+id/red" />
-
-                <CheckBox
-                    android:id="@+id/blue"
-                    android:layout_width="@dimen/dp_24"
-                    android:layout_height="@dimen/dp_24"
-                    android:layout_marginStart="@dimen/dp_88"
-                    android:background="@drawable/checkbox"
-                    android:button="@null"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView5"
-                    app:layout_constraintStart_toEndOf="@+id/textView5"
-                    app:layout_constraintTop_toTopOf="@+id/textView5" />
-
-                <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,12 +183,12 @@
                     android:text="@string/Intelligent_leadership"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/blue"
-                    app:layout_constraintStart_toEndOf="@+id/blue"
-                    app:layout_constraintTop_toTopOf="@+id/blue" />
+                    app:layout_constraintBottom_toBottomOf="@+id/leaderShip"
+                    app:layout_constraintStart_toEndOf="@+id/leaderShip"
+                    app:layout_constraintTop_toTopOf="@+id/leaderShip" />
 
                 <CheckBox
-                    android:id="@+id/yellow"
+                    android:id="@+id/explanation"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
                     android:layout_marginStart="@dimen/dp_88"
@@ -160,12 +207,12 @@
                     android:text="@string/Intelligent_explanation"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/yellow"
-                    app:layout_constraintStart_toEndOf="@+id/yellow"
-                    app:layout_constraintTop_toTopOf="@+id/yellow" />
+                    app:layout_constraintBottom_toBottomOf="@+id/explanation"
+                    app:layout_constraintStart_toEndOf="@+id/explanation"
+                    app:layout_constraintTop_toTopOf="@+id/explanation" />
 
                 <CheckBox
-                    android:id="@+id/orange"
+                    android:id="@+id/QA"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
                     android:layout_marginStart="@dimen/dp_88"
@@ -176,6 +223,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView8" />
 
                 <TextView
+                    android:id="@+id/textView5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
@@ -183,19 +231,20 @@
                     android:text="@string/Intelligent_QA"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/orange"
-                    app:layout_constraintStart_toEndOf="@+id/orange"
-                    app:layout_constraintTop_toTopOf="@+id/orange" />
+                    app:layout_constraintBottom_toBottomOf="@+id/QA"
+                    app:layout_constraintStart_toEndOf="@+id/QA"
+                    app:layout_constraintTop_toTopOf="@+id/QA" />
 
                 <CheckBox
-                    android:id="@+id/white"
+                    android:id="@+id/application"
                     android:layout_width="@dimen/dp_24"
                     android:layout_height="@dimen/dp_24"
-                    android:layout_marginTop="@dimen/dp_36"
+                    android:layout_marginStart="88dp"
                     android:background="@drawable/checkbox"
                     android:button="@null"
-                    app:layout_constraintStart_toStartOf="@+id/red"
-                    app:layout_constraintTop_toBottomOf="@+id/red" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView5"
+                    app:layout_constraintStart_toEndOf="@+id/textView5"
+                    app:layout_constraintTop_toTopOf="@+id/textView5" />
 
                 <TextView
                     android:id="@+id/textView15"
@@ -206,32 +255,32 @@
                     android:text="@string/Light_application"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/white"
-                    app:layout_constraintStart_toEndOf="@+id/white"
-                    app:layout_constraintTop_toTopOf="@+id/white" />
+                    app:layout_constraintBottom_toBottomOf="@+id/application"
+                    app:layout_constraintStart_toEndOf="@+id/application"
+                    app:layout_constraintTop_toTopOf="@+id/application" />
 
-                <CheckBox
-                    android:id="@+id/black"
-                    android:layout_width="@dimen/dp_24"
-                    android:layout_height="@dimen/dp_24"
-                    android:layout_marginTop="@dimen/dp_36"
-                    android:background="@drawable/checkbox"
-                    android:button="@null"
-                    app:layout_constraintStart_toStartOf="@+id/blue"
-                    app:layout_constraintTop_toBottomOf="@+id/blue" />
+<!--                <CheckBox-->
+<!--                    android:id="@+id/black"-->
+<!--                    android:layout_width="@dimen/dp_24"-->
+<!--                    android:layout_height="@dimen/dp_24"-->
+<!--                    android:layout_marginTop="@dimen/dp_32"-->
+<!--                    android:background="@drawable/checkbox"-->
+<!--                    android:button="@null"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/blue"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/blue" />-->
 
-                <TextView
-                    android:id="@+id/textView56"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.7"
-                    android:text="@string/Special_explanation"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/black"
-                    app:layout_constraintStart_toEndOf="@+id/black"
-                    app:layout_constraintTop_toTopOf="@+id/black" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textView56"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="@dimen/dp_6"-->
+<!--                    android:alpha="0.7"-->
+<!--                    android:text="@string/Special_explanation"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="@dimen/sp_24"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/black"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/black"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/black" />-->
 
                 <TextView
                     android:id="@+id/textView9"
@@ -249,7 +298,7 @@
                 <View
                     android:id="@+id/view3"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="@dimen/dp_344"
+                    android:layout_height="@dimen/dp_232"
                     android:layout_marginTop="@dimen/dp_24"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -273,15 +322,15 @@
                     android:id="@+id/imageView5"
                     android:layout_width="46dp"
                     android:layout_height="@dimen/dp_34"
-                    android:layout_marginStart="@dimen/dp_38"
-                    android:src="@drawable/no_sound"
+                    android:layout_marginStart="@dimen/dp_132"
+                    android:src="@drawable/no_sound_svg"
                     app:layout_constraintBottom_toBottomOf="@+id/textView10"
                     app:layout_constraintStart_toEndOf="@+id/textView10"
                     app:layout_constraintTop_toTopOf="@+id/textView10" />
 
                 <com.sendi.deliveredrobot.view.widget.MySeekBar
                     android:id="@+id/seekbarMusic"
-                    android:layout_width="@dimen/dp_600"
+                    android:layout_width="560dp"
                     android:layout_height="@dimen/dp_48"
                     android:layout_marginStart="@dimen/dp_25"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView5"
@@ -292,7 +341,7 @@
                     android:layout_width="@dimen/dp_46"
                     android:layout_height="@dimen/dp_34"
                     android:layout_marginStart="@dimen/dp_24"
-                    android:src="@drawable/have_sound"
+                    android:src="@drawable/have_sound_svg"
                     app:layout_constraintBottom_toBottomOf="@+id/seekbarMusic"
                     app:layout_constraintStart_toEndOf="@+id/seekbarMusic"
                     app:layout_constraintTop_toTopOf="@+id/seekbarMusic" />
@@ -301,7 +350,7 @@
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_92"
+                    android:layout_marginTop="@dimen/dp_84"
                     android:alpha="0.7"
                     android:text="@string/Video_volume"
                     android:textColor="@color/white"
@@ -315,15 +364,15 @@
                     android:id="@+id/imageView7"
                     android:layout_width="@dimen/dp_46"
                     android:layout_height="@dimen/dp_34"
-                    android:layout_marginTop="@dimen/dp_92"
-                    android:src="@drawable/no_sound"
+                    android:layout_marginTop="@dimen/dp_78"
+                    android:src="@drawable/no_sound_svg"
                     app:layout_constraintEnd_toEndOf="@+id/imageView5"
                     app:layout_constraintStart_toStartOf="@+id/imageView5"
                     app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
                 <com.sendi.deliveredrobot.view.widget.MySeekBar
                     android:id="@+id/seekbarVoice"
-                    android:layout_width="@dimen/dp_600"
+                    android:layout_width="560dp"
                     android:layout_height="@dimen/dp_48"
                     android:layout_marginStart="@dimen/dp_25"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView7"
@@ -335,52 +384,11 @@
                     android:layout_width="@dimen/dp_46"
                     android:layout_height="@dimen/dp_34"
                     android:layout_marginStart="@dimen/dp_24"
-                    android:src="@drawable/have_sound"
+                    android:src="@drawable/have_sound_svg"
                     app:layout_constraintBottom_toBottomOf="@+id/seekbarVoice"
                     app:layout_constraintStart_toEndOf="@+id/seekbarVoice"
                     app:layout_constraintTop_toTopOf="@+id/seekbarVoice" />
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_92"
-                    android:alpha="0.7"
-                    android:text="音乐音量"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintEnd_toEndOf="@+id/textView14"
-                    app:layout_constraintStart_toStartOf="@+id/textView14"
-                    app:layout_constraintTop_toBottomOf="@+id/textView14" />
-
-
-                <ImageView
-                    android:id="@+id/image"
-                    android:layout_width="@dimen/dp_46"
-                    android:layout_height="@dimen/dp_34"
-                    android:layout_marginTop="@dimen/dp_92"
-                    android:src="@drawable/no_sound"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView7"
-                    app:layout_constraintStart_toStartOf="@+id/imageView7"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView7" />
-
-                <com.sendi.deliveredrobot.view.widget.MySeekBar
-                    android:id="@+id/musicSb"
-                    android:layout_width="@dimen/dp_600"
-                    android:layout_height="@dimen/dp_48"
-                    android:layout_marginStart="@dimen/dp_25"
-                    app:layout_constraintBottom_toBottomOf="@+id/image"
-                    app:layout_constraintStart_toEndOf="@+id/image"
-                    app:layout_constraintTop_toTopOf="@+id/image" />
-
-                <ImageView
-                    android:layout_width="@dimen/dp_46"
-                    android:layout_height="@dimen/dp_34"
-                    android:layout_marginStart="@dimen/dp_24"
-                    android:src="@drawable/have_sound"
-                    app:layout_constraintBottom_toBottomOf="@+id/musicSb"
-                    app:layout_constraintStart_toEndOf="@+id/musicSb"
-                    app:layout_constraintTop_toTopOf="@+id/musicSb" />
 
 
 
@@ -417,7 +425,6 @@
                     app:layout_constraintTop_toTopOf="@+id/view7">
 
 
-
                     <RadioButton
                         android:id="@+id/Boy_voice"
                         android:layout_width="@dimen/dp_24"
@@ -435,7 +442,6 @@
                         android:text="@string/Male_voice"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_24" />
-
 
 
                     <RadioButton
@@ -456,7 +462,6 @@
                         android:text="@string/Female_voice"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_24" />
-
 
 
                     <RadioButton

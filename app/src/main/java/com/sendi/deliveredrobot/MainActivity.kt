@@ -69,6 +69,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         FileUtil.checkAndDeleteLogFilesCache()
         //初始化ToastUtil
         ToastUtil.initial(this)
+        RobotStatus.ready.postValue(0)
         //隐藏状态栏按钮
         statusBarDisable(!BuildConfig.IS_DEBUG, this)
         binding =
@@ -128,6 +129,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                             .queryChargePoint()
                     RobotStatus.originalLocation = queryPoint
                     RobotStatus.currentLocation = RobotStatus.originalLocation
+                    LogUtil.d("当前所在楼层"+RobotStatus.currentLocation!!.floorName)
                 }
             }
         }
@@ -143,12 +145,14 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 }
             }
         }
-        //监听观察者更新
+        //监听观察者更新副屏内容
         newUpdata.observe(this){
             if (newUpdata.value == 1) {
-                Layout()
+                mPresentation.dismiss()
+                ShowPresentationByMediarouter()
+                ShowPresentationByDisplaymanager()
                 newUpdata.postValue(0)
-                Log.e(TAG, "onCreate: " + "更新副屏内容")
+               LogUtil.d("更新副屏 $this")
             }
         }
     }

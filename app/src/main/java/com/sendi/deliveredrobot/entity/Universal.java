@@ -50,7 +50,7 @@ public class Universal {
     //副屏文字布局
     public static int fontLayout = 1;
     //副屏背景颜色
-    public static String fontBackGround = "#226DE8";
+    public static String fontBackGround = "#FFFFFF";
     //温度正常提示音
     public static String tipsTemperatureInfo = "";
     //温度异常提示音

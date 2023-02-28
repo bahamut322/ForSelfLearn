@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
-    private Context context;
+    private final Context context;
     private ViewPager viewPager;
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
@@ -22,8 +22,6 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     public static int time = Universal.picPlayTime * 1000;
     private boolean pause;
     private Thread thread;
-    AdvanceImageView imageView;
-    AdvanceVideoView videoView;
     private int lastPosition = -1;
 
     public AdvancePagerAdapter(Context context, ViewPager viewPager) {
@@ -62,15 +60,11 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
 
     private void addView(Advance advance) {
         if (advance.type.equals("1")) {
-            if (videoView == null) {
-                videoView = new AdvanceVideoView(context);
-            }
+            AdvanceVideoView videoView = new AdvanceVideoView(context);
             videoView.setImage(advance.path);
             list.add(videoView);
         } else {
-//            if (imageView == null) {
-            imageView = new AdvanceImageView(context);
-//            }
+            AdvanceImageView imageView = new AdvanceImageView(context);
             imageView.setImage(advance.path);
             list.add(imageView);
         }
@@ -113,15 +107,10 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView(list.get(position));
     }
-    @Override
-    public Object instantiateItem( ViewGroup container, int position) {
-        View view = list.get(position);
-        //判断其父容器是否存在，如存在，先和此子控件解除关系
-        ViewPager parent = (ViewPager) view.getParent();
-        if (parent != null){
-            parent.removeView(view);
-        }
 
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        View view = list.get(position);
         container.addView(view);
         return view;
     }

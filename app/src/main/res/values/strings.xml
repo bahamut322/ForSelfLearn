@@ -381,8 +381,8 @@
     <string name="Light_application">轻应用</string>
     <string name="Special_explanation">功能模块</string>
     <string name="audio_setup">音频设置</string>
-    <string name="Robot_voice">机器人语音</string>
-    <string name="Video_volume">视屏音量</string>
+    <string name="Robot_voice">语音音量</string>
+    <string name="Video_volume">音频音量</string>
     <string name="timbre">机器音色设置</string>
     <string name="Male_voice">男声</string>
     <string name="Female_voice">女声</string>
@@ -474,6 +474,10 @@
     <string name="password_error">输入密码错误，请重新输入</string>
     <string name="body_temperature">体温异常</string>
     <string name="mask_standard">请佩戴好口罩</string>
+    <string name="Intelligent_voice">智能语音</string>
+    <string name="home">首页</string>
+    <string name="get_into">进入</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="speaking">下面开始讲解：%s</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.widget
 
+import android.R.attr.bitmap
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.utils.PxUtil
+
 
 @SuppressLint("ResourceType")
 class BottomAlarmTextView(context: Context?, attrs: AttributeSet?) :
@@ -47,6 +49,7 @@ class BottomAlarmTextView(context: Context?, attrs: AttributeSet?) :
 //
 //    }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         bitmapArrowUp = BitmapFactory.decodeResource(
@@ -64,6 +67,7 @@ class BottomAlarmTextView(context: Context?, attrs: AttributeSet?) :
                 )
             }
             Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+
         }
 
         bitmapArrowDown = BitmapFactory.decodeResource(
@@ -85,7 +89,6 @@ class BottomAlarmTextView(context: Context?, attrs: AttributeSet?) :
     }
 
     @SuppressLint("DrawAllocation")
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas?) {
         //draw background
         paint.color = Color.WHITE
@@ -118,7 +121,13 @@ class BottomAlarmTextView(context: Context?, attrs: AttributeSet?) :
         setTextColor(ContextCompat.getColor(context, R.color.color_4D6FBE))
         textSize = textSizePx
         gravity = Gravity.CENTER
-        setText(CommonHelper.getBottomTextSpan(bottomAlarmText1,bottomAlarmText2,ContextCompat.getColor(context,R.color.color_216FE8)))
+        setText(
+            CommonHelper.getBottomTextSpan(
+                bottomAlarmText1,
+                bottomAlarmText2,
+                ContextCompat.getColor(context, R.color.color_216FE8)
+            )
+        )
         if (upAnim) {
             canvas?.save()
             canvas?.clipRect(

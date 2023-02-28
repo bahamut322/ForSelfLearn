@@ -1,11 +1,16 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import com.sendi.deliveredrobot.BuildConfig
+import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.TYPE_GUIDE
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
 

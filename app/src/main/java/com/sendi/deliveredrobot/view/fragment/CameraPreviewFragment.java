@@ -339,7 +339,6 @@ public class CameraPreviewFragment extends Fragment {
                         face = 0;
                         TemperatureAbnormal = 0;
                         FaceAbnormal = 0;
-                        //将视频流的每一帧数据传入算法中
                         infoArrayList = faceModule.preidct(bm, xScal, yScal, false, false);
                     } catch (Exception e) {
                         e.printStackTrace();

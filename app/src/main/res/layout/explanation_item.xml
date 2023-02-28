@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="400dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="320dp"
+        android:layout_height="448dp"
+        android:background="@drawable/bg_explanation_item"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.sendi.deliveredrobot.view.widget.RoundImageView
+        android:id="@+id/imageView"
+        android:layout_width="287dp"
+        android:layout_height="@dimen/dp_334"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/img"
+        android:scaleType="fitStart"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <ImageView
+        android:id="@+id/imgBottom"
+        android:layout_width="@dimen/dp_240"
+        android:layout_height="@dimen/dp_4"
+        android:src="@drawable/img_explanation_bottom"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view" />
+
+    <ImageView
+        android:id="@+id/imgStart"
+        android:layout_width="4dp"
+        android:layout_height="@dimen/dp_280"
+        android:src="@drawable/img_explanation_item_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <ImageView
+        android:id="@+id/imgEnd"
+        android:layout_width="4dp"
+        android:layout_height="@dimen/dp_280"
+        android:src="@drawable/img_explanation_item_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+
+    <ImageView
+        android:id="@+id/name_bg_img"
+        android:layout_width="@dimen/dp_288"
+        android:layout_height="@dimen/dp_128"
+        android:src="@drawable/explanation_item_name"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="32sp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:text="你好" />
+</androidx.constraintlayout.widget.ConstraintLayout>

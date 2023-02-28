@@ -25,6 +25,7 @@ import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 
 import com.sendi.deliveredrobot.service.UpdateReturn;
+import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
@@ -158,6 +159,13 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         protected void onStart() {
             super.onStart();
+        }
+
+        public void aready(){
+            finish();
+            overridePendingTransition(0, 0);
+            startActivity(getIntent());
+            overridePendingTransition(0, 0);
         }
     }
 
@@ -326,8 +334,8 @@ public class BaseActivity extends AppCompatActivity {
     public  void Layout() {
         //轮播时间
         AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
-        this.advanceView.initView();
-        //1-图片 2-视频 3-文字 4-图片+文字
+//        this.advanceView.initView();
+        //1-图片 2-视频 6-文字 7-图片+文字
         switch (Universal.bigScreenType) {
             case 1:
             case 2:
@@ -337,20 +345,22 @@ public class BaseActivity extends AppCompatActivity {
                 horizontalTV.setVisibility(View.GONE);
                 advanceView.setVisibility(View.VISIBLE);
                 break;
-            case 3:
+            case 6:
                 advanceView.setVisibility(View.GONE);
                 textLayout();
                 break;
-            case 4:
+            case 7:
                 //读取文件
                 getFilesAllName(Universal.Secondary);
                 advanceView.setVisibility(View.VISIBLE);
-                textLayout();
                 if (Universal.textPosition == 0) {
+                    textLayout();
                     horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
                 } else if (Universal.textPosition == 1) {
+                    textLayout();
                     horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
                 } else if (Universal.textPosition == 2) {
+                    textLayout();
                     horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
                 }
                 break;

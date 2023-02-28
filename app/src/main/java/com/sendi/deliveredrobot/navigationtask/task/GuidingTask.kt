@@ -7,6 +7,7 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.service.TaskStageEnum

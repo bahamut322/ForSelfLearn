@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        tools:context=".view.fragment.CatalogueExplantionFragment">
+
+        <ImageView
+            android:id="@+id/returnHome"
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:src="@drawable/ic_return_deep"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_68"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/selectName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_68"
+            android:text="@string/Sendi"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_40"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <View
+            android:id="@+id/view27"
+            android:layout_width="428dp"
+            android:layout_height="480dp"
+            android:layout_marginStart="@dimen/dp_64"
+            android:background="@drawable/bg_explanation_acceptstation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/pointImage"
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="@dimen/dp_272"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_32"
+            android:layout_marginEnd="@dimen/dp_32"
+            android:scaleType="fitXY"
+            tools:src="@tools:sample/avatars"
+            app:layout_constraintEnd_toEndOf="@+id/view27"
+            app:layout_constraintStart_toStartOf="@+id/view27"
+            app:layout_constraintTop_toTopOf="@+id/view27" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_32"
+            app:layout_constraintBottom_toTopOf="@+id/imageView9"
+            app:layout_constraintEnd_toEndOf="@+id/view27"
+            app:layout_constraintHorizontal_bias="0.603"
+            app:layout_constraintStart_toStartOf="@+id/view27">
+        <TextView
+            android:id="@+id/pointCatalogue"
+            android:layout_width="@dimen/dp_365"
+            android:layout_height="@dimen/dp_74"
+            android:alpha="0.7"
+            android:text="长城，是中国标志之一，世界最高大城墙，人类八大奇迹之一"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_24"
+            />
+        </ScrollView>
+        <TextView
+            android:id="@+id/pointNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Sendi"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_32"
+            android:layout_marginBottom="@dimen/dp_17"
+            app:layout_constraintBottom_toTopOf="@+id/scrollView"
+            app:layout_constraintStart_toStartOf="@+id/pointImage" />
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="@dimen/dp_280"
+            android:layout_height="@dimen/dp_4"
+            android:src="@drawable/img_explanation_bottom_false"
+            app:layout_constraintBottom_toBottomOf="@+id/view27"
+            app:layout_constraintEnd_toEndOf="@+id/view27"
+            app:layout_constraintStart_toStartOf="@+id/view27" />
+
+
+        <View
+            android:id="@+id/view28"
+            android:layout_width="692dp"
+            android:layout_height="480dp"
+            android:layout_marginStart="@dimen/dp_32"
+            android:background="@drawable/bg_explanation_acceptstation"
+            app:layout_constraintBottom_toBottomOf="@+id/view27"
+            app:layout_constraintStart_toEndOf="@+id/view27"
+            app:layout_constraintTop_toTopOf="@+id/view27" />
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="520dp"
+            android:layout_height="@dimen/dp_4"
+            android:src="@drawable/img_explanation_bottom_false"
+            app:layout_constraintBottom_toBottomOf="@+id/view28"
+            app:layout_constraintEnd_toEndOf="@+id/view28"
+            app:layout_constraintStart_toStartOf="@+id/view28" />
+
+        <TextView
+            android:id="@+id/textView65"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_28"
+            android:text="参观路线"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_32"
+            app:layout_constraintStart_toStartOf="@+id/view28"
+            app:layout_constraintTop_toTopOf="@+id/view28" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_1"
+            android:alpha="0.7"
+            android:background="@color/white"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="@+id/view28"
+            app:layout_constraintStart_toStartOf="@+id/view28"
+            app:layout_constraintTop_toBottomOf="@+id/textView65" />
+
+        <ListView
+            android:id="@+id/CatalogueList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView11"
+            app:layout_constraintEnd_toEndOf="@+id/view28"
+            app:layout_constraintStart_toStartOf="@+id/view28"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginStart="@dimen/dp_48"
+            android:layout_marginBottom="@dimen/dp_28"
+            android:src="@drawable/horn_svg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView61"
+            android:layout_width="@dimen/dp_320"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginStart="@dimen/dp_14"
+            android:alpha="0.6"
+            android:background="@drawable/rectangle"
+            android:gravity="center"
+            android:text="@string/ask"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_24"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView8"
+            app:layout_constraintStart_toEndOf="@+id/imageView8" />
+
+        <Button
+            android:id="@+id/toCatalog"
+            android:layout_width="204dp"
+            android:layout_height="@dimen/dp_72"
+            android:background="@drawable/dialog_btn_true_bg"
+            android:text="开始参观"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_32"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view28"
+            app:layout_constraintTop_toBottomOf="@+id/view28" />
+
+        <ImageView
+            android:layout_width="@dimen/dp_6"
+            android:layout_height="@dimen/dp_7"
+            android:src="@drawable/rt_horn"
+            app:layout_constraintBottom_toBottomOf="@+id/textView61"
+            app:layout_constraintEnd_toStartOf="@+id/textView61" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

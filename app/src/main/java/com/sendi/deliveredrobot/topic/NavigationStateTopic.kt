@@ -10,6 +10,7 @@ import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.PhoneCallModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -30,7 +31,6 @@ object NavigationStateTopic {
     private val mainScope = MainScope()
     private val mutex = Mutex()
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
-
     fun handle(rosResult: RosResult<*>?) {
         mainScope.launch(Dispatchers.Default) {
             mutex.withLock {
@@ -42,6 +42,7 @@ object NavigationStateTopic {
 //                    //判断isNotEmpty是因为底盘不知何时会上传这个状态，避免影响逻辑，只在任务栈内有任务时才走这段代码
                     if (RobotStatus.currentStatus == TYPE_EXCEPTION) return@launch
                     if (RobotStatus.callingLift) return@launch
+                    RobotStatus.ready.postValue(1)
                     BillManager.currentBill()?.executeNextTask()
                 } else if (state.state == -1) {
                     val msg = when (state.infoCode) {

@@ -47,11 +47,10 @@ public class AdvanceView extends RelativeLayout {
 
     }
 
-    public void setPause() {
+    public void setPause(){
         adapter.setPause();
     }
-
-    public void setResume() {
+    public void setResume(){
         adapter.setResume();
     }
 }

@@ -2,11 +2,9 @@ package com.sendi.deliveredrobot.navigationtask
 
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
+import com.sendi.deliveredrobot.RobotCommand.MANAGE_STATUS_STOP
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
-import com.sendi.deliveredrobot.model.Gatekeeper
-import com.sendi.deliveredrobot.model.VersionStatusModel
-import com.sendi.deliveredrobot.model.ResponseTenancyModel
-import com.sendi.deliveredrobot.model.RobotConfig
+import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
 
@@ -53,6 +51,7 @@ object RobotStatus {
     var twoSamePlace = false //双送物任务同地点
     var autoCruise = false //自动巡航
     var liftState = true //电梯可用状态
+    var ready : MutableLiveData<Int> = MutableLiveData<Int>()
     val stopButtonPressed = MutableLiveData(STOP_BUTTON_UNPRESSED) //急停按钮是否按下
     var manageStatus: Int = -1 //状态机状态
     var needDelay = false //需要一定的延时
@@ -67,6 +66,7 @@ object RobotStatus {
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
     var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    var explanationList : MutableLiveData<ExplanationTraceModel> = MutableLiveData<ExplanationTraceModel>()
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status

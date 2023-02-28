@@ -26,12 +26,9 @@ class GuideArriveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        Glide.with(this).asGif().load(R.raw.guide_arrive).into(binding.imgArrive)
+        Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
 
-        binding.bottomAlarmTextViewArrive.apply {
-            bottomAlarmText1 = getString(R.string.arrived)
-            bottomAlarmText2 = BillManager.currentBill()?.endTarget()?:""
-        }
+        binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget()?:""
         binding.motionLayoutGuideArrive.apply {
             transitionToState(R.id.state2)
         }

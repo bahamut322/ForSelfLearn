@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.model
 
 import com.sendi.deliveredrobot.navigationtask.ITaskBill
+import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 
 data class TaskModel(
@@ -11,5 +12,6 @@ data class TaskModel(
     var endTarget: String = "",
     var taskId: String = "",
     var bill: ITaskBill? = null,
-    var elevator: String? = null
+    var elevator: String? = null,
+    var speakString : String? = null
 )

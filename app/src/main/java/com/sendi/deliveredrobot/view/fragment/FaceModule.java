@@ -78,7 +78,7 @@ public class FaceModule {
             }
         }
 
-        System.out.println(System.currentTimeMillis()-T0);
+        System.out.println("识别时间："+(System.currentTimeMillis()-T0));
         return infoArrayList;
     }
 

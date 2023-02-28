@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
@@ -48,6 +49,7 @@ object MqttMessageHandler {
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
     private var fileNames: Array<String?>? = null//副屏内容
+    private var houseFile: Array<String?>? = null//主屏内容
 
 
     /**
@@ -88,6 +90,7 @@ object MqttMessageHandler {
                 "replyGateConfig" -> {
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
+
                     RobotStatus.gatekeeper?.value = gatekeeper
                     DialogHelper.loadingDialog.show()
                     LitePal.deleteAll(ReplyGateConfig::class.java)
@@ -98,23 +101,47 @@ object MqttMessageHandler {
                     Log.d(ContentValues.TAG, "obtain: 收到新的门岗配置信息")
                     val replyGateConfig = ReplyGateConfig()
                     replyGateConfig.temperatureThreshold = gatekeeper.temperatureThreshold!!
-                    replyGateConfig.picPlayType = gatekeeper.picPlayType!!
-                    replyGateConfig.picPlayTime = gatekeeper.picPlayTime!!
-                    replyGateConfig.videoAudio = gatekeeper.videoAudio!!
-                    replyGateConfig.fontContent = gatekeeper.fontContent
-                    replyGateConfig.fontColor = gatekeeper.fontColor
-                    replyGateConfig.fontSize = gatekeeper.fontSize!!
-                    replyGateConfig.fontBackGround = gatekeeper.fontBackGround
                     replyGateConfig.tipsTemperatureInfo = gatekeeper.tipsTemperatureInfo
                     replyGateConfig.tipsTemperatureWarn = gatekeeper.tipsTemperatureWarn
                     replyGateConfig.tipsMaskWarn = gatekeeper.tipsMaskWarn
                     replyGateConfig.timeStamp = gatekeeper.timeStamp!!
-                    replyGateConfig.picType = gatekeeper.picType!!
-                    replyGateConfig.fontLayout = gatekeeper.fontLayout!!
-                    replyGateConfig.bigScreenType = gatekeeper.bigScreenType!!
-                    replyGateConfig.textPosition = gatekeeper.textPosition!!
-                    Universal.pics = gatekeeper.pics
-                    Universal.videoFile = gatekeeper.videos
+                    replyGateConfig.bigScreenType = gatekeeper.argConfig!!.type
+                    if (gatekeeper.argConfig.screen == 1) {
+                        if (gatekeeper.argConfig.argPic != null) {
+                            println("收到：argPic")
+                            Universal.pics = gatekeeper.argConfig.argPic.pics
+                            replyGateConfig.picType = gatekeeper.argConfig.argPic.picType
+                            replyGateConfig.picPlayType =
+                                gatekeeper.argConfig.argPic.picPlayType
+                            replyGateConfig.picPlayTime =
+                                gatekeeper.argConfig.argPic.picPlayTime
+                        }
+                        if (gatekeeper.argConfig.argFont != null) {
+                            println("收到：argFont")
+                            replyGateConfig.fontContent =
+                                gatekeeper.argConfig.argFont.fontContent
+                            replyGateConfig.fontColor = gatekeeper.argConfig.argFont.fontColor
+                            replyGateConfig.fontSize = gatekeeper.argConfig.argFont.fontSize
+                            replyGateConfig.fontLayout =
+                                gatekeeper.argConfig.argFont.fontLayout
+                            replyGateConfig.fontBackGround =
+                                gatekeeper.argConfig.argFont.fontBackGround
+                            replyGateConfig.textPosition =
+                                gatekeeper.argConfig.argFont.textPosition
+                        }
+                        if (gatekeeper.argConfig.argVideo != null) {
+                            println("收到：argVideo")
+                            Universal.videoFile = gatekeeper.argConfig.argVideo.videos
+                            replyGateConfig.videoAudio =
+                                gatekeeper.argConfig.argVideo.videoAudio!!
+                        }
+                        if (gatekeeper.argConfig.argRadio != null) {
+                            println("收到：argRadio 暂无")
+                        }
+                        if (gatekeeper.argConfig.argPicGroup != null) {
+                            println("收到 argPicGroup")
+                        }
+                    }
                     replyGateConfig.save()
                     updateConfig()
 
@@ -138,15 +165,34 @@ object MqttMessageHandler {
                     robotConfigSql.sleep = robotConfig.sleep!!
                     robotConfigSql.sleepTime = robotConfig.sleepTime!!
                     robotConfigSql.wakeUpList = robotConfig.wakeUpList!!
-                    robotConfigSql.sleepType = robotConfig.sleepType!!
-                    robotConfigSql.picType = robotConfig.picType!!
+                    robotConfigSql.sleepType = robotConfig.argConfig!!.type
                     robotConfigSql.mapName = robotConfig.mapName
                     robotConfigSql.timeStamp = robotConfig.timeStamp!!
-                    Universal.sleepContentName = robotConfig.sleepContentName
                     robotConfigSql.password = robotConfig.password
+                    if (robotConfig.argConfig.screen == 0) {
+                       if(robotConfig.argConfig.argPic != null) {
+                                println("收到：argPic")
+                                Universal.sleepContentName = robotConfig.argConfig.argPic.pics
+                                robotConfigSql.picType = robotConfig.argConfig.argPic.picType
+                            }
+                            if(robotConfig.argConfig.argFont != null) {
+                                println("收到：小屏幕无argFont")
+                            }
+                           if(robotConfig.argConfig.argVideo != null){
+                                Universal.sleepContentName = robotConfig.argConfig.argVideo.videos
+                                println("收到：argVideo")
+                            }
+                            if(robotConfig.argConfig.argRadio != null){
+                                println("收到：argRadio 暂无")
+                            }
+                            if(robotConfig.argConfig.argPicGroup != null) {
+                                println("收到 未编写argPicGroup")
+                            }
+                    }
                     robotConfigSql.save()
                     updateConfig()
                 }
+
                 "sendAppletTask" -> {
                     // 小程序下发任务
                     ToastUtil.show("收到远程任务..")
@@ -193,6 +239,7 @@ object MqttMessageHandler {
         }
     }
 
+
     private fun handleReplyElevatorListModel(replyElevatorListModel: ReplyElevatorListModel) {
         for (elevatorModel in replyElevatorListModel.elevatorList) {
             val floorList =
@@ -237,7 +284,7 @@ object MqttMessageHandler {
             if (file.isDirectory) { //判断是否是文件夹
                 val files = file.listFiles() //遍历文件夹里面的所有的
                 for (i in files!!.indices) {
-                    Log.e("SelfCheckFragment", "更新原有文件>>>>>> " + files[i].toString())
+                    LogUtil.e("更新原有文件>>>>>> " + files[i].toString())
                     deleteFiles(files[i]) //删除
                 }
             } else {
@@ -246,7 +293,7 @@ object MqttMessageHandler {
             System.gc() //系统回收垃圾
             true
         } catch (e: Exception) {
-            Log.e("SelfCheckFragment", "更新报错！！！: $e")
+            LogUtil.e("更新报错！！！: $e")
             false
         }
     }
@@ -277,6 +324,7 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+            UpdateReturn().mapSetting()
             if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "") {
                 DialogHelper.loadingDialog.dismiss()
                 Universal.pics = ""
@@ -306,6 +354,7 @@ object MqttMessageHandler {
             }
         }, "fileName")
         thread.start()
+
         val thread1 = Thread({
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
@@ -326,12 +375,12 @@ object MqttMessageHandler {
                 Looper.loop()
             }
             if (Universal.sleepContentName != "") {
-                UpdateReturn().splitStr(Universal.sleepContentName)
+                houseFile = UpdateReturn().splitStr(Universal.sleepContentName)
             }
-            if (UpdateReturn().splitStr(Universal.sleepContentName) != null) {
-                for (i in 0 until UpdateReturn().splitStr(Universal.sleepContentName)!!.size) {
+            if (houseFile != null) {
+                for (i in 0 until houseFile!!.size) {
                     downloadFile(
-                        "http://172.168.201.34:9055/management_res/" + fileNames!![i],
+                        "http://172.168.201.34:9055/management_res/" + houseFile!![i],
                         Universal.Standby
                     )
                 }
@@ -344,14 +393,14 @@ object MqttMessageHandler {
     private fun downloadFile(url: String, savePath: String) {
 //        final String url = "http://172.168.201.34:9055/management_res/";
         val startTime = System.currentTimeMillis()
-        Log.i("DOWNLOAD", "开始下载：$url")
+        LogUtil.e("开始下载：$url")
         val okHttpClient = OkHttpClient()
         val request: Request = Request.Builder().url(url).build()
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 // 下载失败
                 e.printStackTrace()
-                Log.e("DOWNLOAD", "下载失败：$url ")
+                LogUtil.e("下载失败：$url ")
             }
 
             @Throws(IOException::class)
@@ -365,7 +414,7 @@ object MqttMessageHandler {
                 try {
                     `is` = response.body!!.byteStream()
                     val total = response.body!!.contentLength()
-                    val file = File(savePath, url.substring(url.lastIndexOf("/") + 1))
+                    val file = File(savePath, url.substring(url.lastIndexOf(".") - 10))
                     fos = FileOutputStream(file)
                     var sum: Long = 0
                     while (`is`.read(buf).also { len = it } != -1) {
@@ -373,13 +422,13 @@ object MqttMessageHandler {
                         sum += len.toLong()
                         val progress = (sum * 1.0f / total * 100).toInt()
                         // 下载中
-                        Log.i("DOWNLOAD", "下载中：$file: $progress %")
+                        LogUtil.e("下载中：$file: $progress %")
                     }
                     fos.flush()
                     // 下载完成
 //                    listener.onDownloadSuccess();
                     if (UpdateReturn().splitStr(Universal.sleepContentName)!!.isEmpty()) {
-                        if (fileNames!!.size  == UpdateReturn().fileSize(Universal.Secondary)) {
+                        if (fileNames!!.size == UpdateReturn().fileSize(Universal.Secondary)) {
                             DialogHelper.loadingDialog.dismiss()
                             Universal.pics = ""
                             Universal.sleepContentName = ""
@@ -387,8 +436,11 @@ object MqttMessageHandler {
                             RobotStatus.newUpdata.postValue(1)
                             UpdateReturn().method()
                         }
-                    }else{
-                        if (fileNames!!.size + UpdateReturn().splitStr(Universal.sleepContentName)!!.size == UpdateReturn().fileSize(Universal.Secondary)+UpdateReturn().fileSize(Universal.Standby)) {
+                    } else {
+                        if (fileNames!!.size + UpdateReturn().splitStr(Universal.sleepContentName)!!.size == UpdateReturn().fileSize(
+                                Universal.Secondary
+                            ) + UpdateReturn().fileSize(Universal.Standby)
+                        ) {
                             DialogHelper.loadingDialog.dismiss()
                             Universal.pics = ""
                             Universal.sleepContentName = ""
@@ -397,10 +449,10 @@ object MqttMessageHandler {
                             UpdateReturn().method()
                         }
                     }
-                    Log.e("DOWNLOAD", "下载成功：$file,下载耗时= ${(System.currentTimeMillis() - startTime)} ms")
+                    LogUtil.e("下载成功：$file,下载耗时= ${(System.currentTimeMillis() - startTime)} ms")
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
-                    Log.e("DOWNLOAD", "下载失败!!")
+                    LogUtil.e("下载失败!!")
                 } finally {
                     try {
                         `is`?.close()

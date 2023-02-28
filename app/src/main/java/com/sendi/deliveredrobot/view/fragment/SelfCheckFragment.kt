@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.service.DeliverMqttService
 import com.sendi.deliveredrobot.service.ReportRobotStateService
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
@@ -149,13 +150,14 @@ class SelfCheckFragment : Fragment() {
 //                    if(BuildConfig.IS_REPORT){
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
+                    UpdateReturn().assignment()
                     UploadMapHelper.uploadMap()
                     if (RobotStatus.bootLocation != null) {
-//                        设置地图
-//                        ROSHelper.setNavigationMap(
-//                            labelMapName = RobotStatus.bootLocation!!.subPath!!,
-//                            pathMapName = RobotStatus.bootLocation!!.routePath!!
-//                        )
+                       //设置地图
+                        ROSHelper.setNavigationMap(
+                            labelMapName = RobotStatus.bootLocation!!.subPath!!,
+                            pathMapName = RobotStatus.bootLocation!!.routePath!!
+                        )
                         LogUtil.d("SelfCheck"+"开始设置默认充电桩的点")
                         var setPoseRes = ROSHelper.setPoseClient(RobotStatus.bootLocation!!)
                         LogUtil.d("SelfCheck"+"设置默认充电桩的点完成")

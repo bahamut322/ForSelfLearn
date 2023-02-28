@@ -21,19 +21,17 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.model.ExplanationTraceModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
-import com.sendi.deliveredrobot.viewmodel.DateViewModel
-import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
-import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
+import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
 import org.litepal.LitePal.findAll
 import java.text.SimpleDateFormat
@@ -78,7 +76,6 @@ class HomeFragment : Fragment(), IMainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
-        RobotStatus.newUpdata.postValue(1)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -88,7 +85,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun showTipsView() {
         println("无操作")
         fromeSettingDialog!!.dismiss()
-        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+//        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
     }
 
     override fun onCreateView(
@@ -170,11 +167,13 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(activity)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
+        RobotStatus.newUpdata.postValue(1)
         controller = Navigation.findNavController(view)
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
+        LogUtil.i("待机时间：" + Universal.sleepTime)
         //设置速度
-        ROSHelper.setSpeed("${AbstractTask.basicSettingViewModel.value.basicConfig.guideSpeed}")
+        ROSHelper.setSpeed("0.4")
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -183,18 +182,7 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
-        //返回充电桩
-        binding.returnHome.setOnClickListener {
-            Log.d("TAG", "onViewCreated: dianji")
-            val taskId = BillManager.currentBill()?.taskId()?:""
-//            BillManager.removeBill()
-            // 如果后续没有任务，则返回充电桩
-            val bill = GoBackTaskBillFactory.createBill(TaskModel(
-                taskId = taskId
-            ))
-            BillManager.addAllAtIndex(bill)
-        BillManager.currentBill()?.executeNextTask()
-        }
+
         for (basicSettings in basicSetting) {
             Universal.selectItem = basicSettings.defaultValue
             Universal.RobotMode = basicSettings.robotMode
@@ -231,16 +219,6 @@ class HomeFragment : Fragment(), IMainView {
                     allInvisible()
                     binding.include.view3.visibility = View.VISIBLE
                     initView3()
-                }
-                5 -> {
-                    allInvisible()
-                    binding.include.view4.visibility = View.VISIBLE
-                    initView4()
-                }
-                6 -> {
-                    allInvisible()
-                    binding.include.view5.visibility = View.VISIBLE
-                    initView5()
                 }
                 else -> {}
             }
@@ -402,123 +380,6 @@ class HomeFragment : Fragment(), IMainView {
         binding.include.view343.text = calculateEnglish(rescolors!![3])
     }
 
-    //当有五个Item的时候
-    private fun initView4() {
-        //item1
-        binding.include.view410.setBackgroundResource(calculateColor(rescolors!![0]))
-        binding.include.view411.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view412.text = rescolors!![0]
-        binding.include.view410.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![0]
-            )
-        }
-        binding.include.view413.text = calculateEnglish(rescolors!![0])
-        //item2
-        binding.include.view420.setBackgroundResource(calculateColor(rescolors!![1]))
-        binding.include.view421.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view422.text = rescolors!![1]
-        binding.include.view420.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![1]
-            )
-        }
-        binding.include.view423.text = calculateEnglish(rescolors!![1])
-        //item3
-        binding.include.view430.setBackgroundResource(calculateColor(rescolors!![2]))
-        binding.include.view431.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view432.text = rescolors!![2]
-        binding.include.view430.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![2]
-            )
-        }
-        binding.include.view433.text = calculateEnglish(rescolors!![2])
-        //item4
-        binding.include.view440.setBackgroundResource(calculateColor(rescolors!![3]))
-        binding.include.view441.setImageResource(calculateImage(rescolors!![3]))
-        binding.include.view442.text = rescolors!![3]
-        binding.include.view440.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![3]
-            )
-        }
-        binding.include.view443.text = calculateEnglish(rescolors!![3])
-        //item5
-        binding.include.view450.setBackgroundResource(calculateColor(rescolors!![4]))
-        binding.include.view451.setImageResource(calculateImage(rescolors!![4]))
-        binding.include.view452.text = rescolors!![4]
-        binding.include.view450.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![4]
-            )
-        }
-        binding.include.view453.text = calculateEnglish(rescolors!![4])
-    }
-
-    //当选中所有Item的时候
-    private fun initView5() {
-        //item1
-        binding.include.view510.setBackgroundResource(calculateColor(rescolors!![0]))
-        binding.include.view511.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view512.text = rescolors!![0]
-        binding.include.view510.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![0]
-            )
-        }
-        binding.include.view513.text = calculateEnglish(rescolors!![0])
-        //item2
-        binding.include.view520.setBackgroundResource(calculateColor(rescolors!![1]))
-        binding.include.view521.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view522.text = rescolors!![1]
-        binding.include.view520.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![1]
-            )
-        }
-        binding.include.view523.text = calculateEnglish(rescolors!![1])
-        //item3
-        binding.include.view530.setBackgroundResource(calculateColor(rescolors!![2]))
-        binding.include.view531.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view532.text = rescolors!![2]
-        binding.include.view530.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![2]
-            )
-        }
-        binding.include.view533.text = calculateEnglish(rescolors!![2])
-        //item4
-        binding.include.view540.setBackgroundResource(calculateColor(rescolors!![3]))
-        binding.include.view541.setImageResource(calculateImage(rescolors!![3]))
-        binding.include.view542.text = rescolors!![3]
-        binding.include.view540.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![3]
-            )
-        }
-        binding.include.view543.text = calculateEnglish(rescolors!![3])
-        //item5
-        binding.include.view550.setBackgroundResource(calculateColor(rescolors!![4]))
-        binding.include.view551.setImageResource(calculateImage(rescolors!![4]))
-        binding.include.view552.text = rescolors!![4]
-        binding.include.view550.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![4]
-            )
-        }
-        binding.include.view553.text = calculateEnglish(rescolors!![4])
-        //item6
-        binding.include.view560.setBackgroundResource(calculateColor(rescolors!![5]))
-        binding.include.view561.setImageResource(calculateImage(rescolors!![5]))
-        binding.include.view562.text = rescolors!![5]
-        binding.include.view560.setOnClickListener {
-            itemOnclickListen(
-                rescolors!![5]
-            )
-        }
-        binding.include.view563.text = calculateEnglish(rescolors!![5])
-    }
 
 
     /**
@@ -526,11 +387,12 @@ class HomeFragment : Fragment(), IMainView {
      */
     private fun itemOnclickListen(Onclick: String?) {
         when (Onclick) {
-            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
+//            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
-                Log.d("TAG", "点击智能引领 ")
+                controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
             }
             "智能讲解" -> {
+                controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                 Log.d("TAG", "点击智能讲解 ")
             }
             "轻应用" -> {
@@ -539,7 +401,7 @@ class HomeFragment : Fragment(), IMainView {
                 Log.d("TAG", "点击轻应用")
             }
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
-            "功能模块" -> Toast.makeText(context, "功能模块", Toast.LENGTH_SHORT).show()
+//            "功能模块" -> Toast.makeText(context, "功能模块", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -556,9 +418,7 @@ class HomeFragment : Fragment(), IMainView {
      */
     private fun calculateEnglish(String: String): String {
         var str = "English"
-        if ("礼仪迎宾" == String) {
-            str = "GREET GUESTS"
-        } else if ("智能引领" == String) {
+        if ("智能引领" == String) {
             str = "GUIDACE"
         } else if ("智能讲解" == String) {
             str = "COMMENTARY"
@@ -566,8 +426,6 @@ class HomeFragment : Fragment(), IMainView {
             str = "Q & A"
         } else if ("轻应用" == String) {
             str = "APPLICATION"
-        } else if ("功能模块" == String) {
-            str = "MODULE"
         }
         return str
     }
@@ -577,9 +435,7 @@ class HomeFragment : Fragment(), IMainView {
      */
     private fun calculateColor(colorstr: String): Int {
         var color = R.color.colorAccent
-        if ("礼仪迎宾" == colorstr) {
-            color = R.drawable.item3
-        } else if ("智能引领" == colorstr) {
+        if ("智能引领" == colorstr) {
             color = R.drawable.item2
         } else if ("智能讲解" == colorstr) {
             color = R.drawable.item1
@@ -587,8 +443,6 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item4
         } else if ("轻应用" == colorstr) {
             color = R.drawable.item3
-        } else if ("功能模块" == colorstr) {
-            color = R.drawable.item1
         }
         return color
     }
@@ -597,19 +451,15 @@ class HomeFragment : Fragment(), IMainView {
      * 不同标签的图片显示
      */
     private fun calculateImage(Imagestr: String): Int {
-        var image: Int = R.drawable.leadership
-        if ("礼仪迎宾" == Imagestr) {
-            image = R.drawable.qa
-        } else if ("智能引领" == Imagestr) {
-            image = R.drawable.leadership
+        var image: Int = R.drawable.leadership_svg
+        if ("智能引领" == Imagestr) {
+            image = R.drawable.leadership_svg
         } else if ("智能讲解" == Imagestr) {
-            image = R.drawable.explain
+            image = R.drawable.explain_svg
         } else if ("智能问答" == Imagestr) {
-            image = R.drawable.qa
+            image = R.drawable.qa_svg
         } else if ("轻应用" == Imagestr) {
-            image = R.drawable.application
-        } else if ("功能模块" == Imagestr) {
-            image = R.drawable.explain
+            image = R.drawable.application_svg
         }
         return image
     }

@@ -44,7 +44,7 @@ public class FaceDetector {
             mNetInstance = MNNNetInstance.createFromFile(modelPath);
             MNNNetInstance.Config config = new MNNNetInstance.Config();
             config.numThread = Utils.NUM_THREADS;
-            config.forwardType = MNNForwardType.FORWARD_CPU.type;
+            config.forwardType = MNNForwardType.FORWARD_OPENGL.type;
             mSession = mNetInstance.createSession(config);
             mInputTensor = mSession.getInput(null);
         } catch (Exception e) {

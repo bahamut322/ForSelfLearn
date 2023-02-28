@@ -72,6 +72,23 @@
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/explanArriveFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ExplanArriveFragment"
+        android:label="fragment_explan_arrive"
+        tools:layout="@layout/fragment_explan_arrive">
+        <action
+            android:id="@+id/action_explanArriveFragment_to_goBackFragment"
+            app:destination="@id/goBackFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
     <fragment
         android:id="@+id/placeListFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.GuidePlaceListFragment"
@@ -118,6 +135,12 @@
         <action
             android:id="@+id/action_homeFragment_to_standbyFragment"
             app:destination="@id/standbyFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_guideFragment"
+            app:destination="@+id/GuideFragment"/>
+        <action
+            android:id="@+id/action_homeFragment_to_explanationFragment"
+            app:destination="@+id/ExplanationFragment"/>
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"
@@ -508,6 +531,47 @@
         <action
             android:id="@+id/action_standbyFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/GuideFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuideFragment"
+        android:label="GuideFragment">
+        <action
+            android:id="@+id/action_guideFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ExplanationFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ExplanationFragment"
+        android:label="ExplanationFragment">
+        <action
+            android:id="@+id/action_explanationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_explanationFragment_to_CatalogueExplantionFragment"
+            app:destination="@id/CatalogueExplantionFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/StartExplantionFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.StartExplantionFragment"
+        android:label="StartExplantionFragment">
+<!--        <action-->
+<!--            android:id="@+id/action_StartExplantionFragment_to_CatalogueExplantionFragment"-->
+<!--            app:destination="@id/CatalogueExplantionFragment" />-->
+    </fragment>
+
+    <fragment
+        android:id="@+id/CatalogueExplantionFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CatalogueExplantionFragment"
+        android:label="CatalogueExplantionFragment">
+        <action
+            android:id="@+id/action_CatalogueExplantionFragment_to_StartExplantionFragment"
+            app:destination="@id/StartExplantionFragment" />
+        <action
+            android:id="@+id/action_CatalogueExplantionFragment_to_ExplanationFragment"
+            app:destination="@id/ExplanationFragment" />
     </fragment>
 
 </navigation>

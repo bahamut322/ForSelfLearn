@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo
  * @describe 按数据库结构定义的目标点
  */
 class QueryPointEntity (
+    @ColumnInfo(name= "name") val name  : String? = null,
     @ColumnInfo(name= "public_area_id")val publicAreaId:Int?,
     @ColumnInfo(name = "root_map_id") val rootMapId: Int?,
     @ColumnInfo(name= "public_area_name")val publicAreaName:String?,
@@ -24,5 +25,6 @@ class QueryPointEntity (
     @ColumnInfo(name = "type")val type:Int?,
     @ColumnInfo(name = "elevator")val elevator: String?,
     var binMark:Int? = 0,
-    var selected:Boolean? = false
+    var selected:Boolean? = false,
+    var speakString:String? = ""
 )

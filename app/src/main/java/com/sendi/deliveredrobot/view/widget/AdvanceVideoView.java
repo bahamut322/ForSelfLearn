@@ -38,7 +38,7 @@ public class AdvanceVideoView extends RelativeLayout {
         initView();
     }
 
-    private void initView() {
+    public void initView() {
         videoRela = new RelativeLayout(getContext());
         addView(videoRela, new LayoutParams(-1, -1));
         imageView = new ImageView(getContext());
@@ -52,7 +52,10 @@ public class AdvanceVideoView extends RelativeLayout {
     }
 
     public void setVideo(MediaPlayer.OnCompletionListener onCompletionListener) {
-        videoRela.removeView(videoView);videoView = null;
+        if (videoView != null) {
+            videoRela.removeView(videoView);
+            videoView = null;
+        }
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
         //        videoView.setBackgroundColor(Color.TRANSPARENT);
@@ -64,6 +67,7 @@ public class AdvanceVideoView extends RelativeLayout {
         videoView.setOnCompletionListener(onCompletionListener);
         videoView.start();
         videoView.setOnPreparedListener(mediaPlayer -> {
+            mediaPlayer.setLooping(true);
             new Handler().postDelayed(() -> {
                 imageView.setVisibility(GONE);
             }, 400);//防止videoview播放视频前有个闪烁的黑屏

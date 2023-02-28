@@ -14,6 +14,7 @@ import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentDebuggingBinding
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.DebuggingViewModel
@@ -65,7 +66,7 @@ class DebuggingFragment : Fragment() {
         initData()
     }
 
-    fun initData() {
+    private fun initData() {
         if (BuildConfig.IS_DEBUG) {
             binding.edtAccount.setText("admin")
             binding.edtPwd.setText("sendirobot")
@@ -113,6 +114,7 @@ class DebuggingFragment : Fragment() {
 
         binding.llayoutReturn.apply {
             setOnClickListener {
+                UpdateReturn().method()
                 controller!!.navigate(R.id.action_debuggingFragment_to_settingHomeFragment)
             }
         }

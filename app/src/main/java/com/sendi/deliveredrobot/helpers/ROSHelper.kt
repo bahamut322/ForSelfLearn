@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.helpers
 
 import android.annotation.SuppressLint
+import android.util.Log
 import chassis_msgs.*
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
@@ -9,6 +10,7 @@ import com.sendi.deliveredrobot.model.LiftControlLoraModel
 import com.sendi.deliveredrobot.model.LineInfoModel
 import com.sendi.deliveredrobot.model.PointCompat
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecuteFloat
+import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.ros.ClientManager
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
@@ -85,6 +87,8 @@ object ROSHelper {
         val clientParam = HashMap<String, Any>()
         clientParam["label_map_name"] = labelMapName
         clientParam["path_map_name"] = pathMapName
+        LogUtil.i("设置地图的labelMapName：$labelMapName")
+        LogUtil.i("设置地图的pathMapName: $pathMapName")
         val setLocationMapClient = Client(ClientConstant.SET_NAVIGATION_MAP, clientParam)
         val rosResultSetNavigationMap = ClientManager.sendClientMsg(setLocationMapClient)
         if (rosResultSetNavigationMap.isFlag) {
@@ -118,6 +122,53 @@ object ROSHelper {
      * @describe 导航到
      */
     fun navigateTo(location: QueryPointEntity) {
+        val clientPara = HashMap<String, Any>()
+        // target_pose
+        val targetPose = JSONObject()
+        val position = JSONObject()
+        position[Constant.X] = location.x
+        position[Constant.Y] = location.y
+        position[Constant.Z] = 0.0
+        val orientation = JSONObject()
+        val quaternion = Quaternion.fromAxisAngle(Vector3.zAxis(), location.w!!)
+        orientation[Constant.X] = quaternion.x
+        orientation[Constant.Y] = quaternion.y
+        orientation[Constant.Z] = quaternion.z
+        orientation[Constant.W] = quaternion.w
+        targetPose[Constant.POSITION] = position
+        targetPose[Constant.ORIENTATION] = orientation
+        // clientPara
+        clientPara[Constant.TARGET_POSE] = targetPose
+        clientPara[Constant.DOCK_DIRECTION] = 0
+        val clientMoveTo = Client(ClientConstant.MOVE_TO, clientPara)
+        val rosResultMoveTo = ClientManager.sendClientMsg(clientMoveTo)
+        if (rosResultMoveTo.isFlag) {
+            val response = rosResultMoveTo.response as MoveToResponse
+            val msg = when (response.result) {
+                1 -> {
+                    "导航成功"
+                }
+                -2 -> {
+                    "导航异常-状态错误"
+                }
+                -3 -> {
+                    "导航异常-已经运行"
+                }
+                -24 -> {
+                    "导航异常-看不到地图对应的标签"
+                }
+                else -> {
+                    "导航异常-其他错误"
+                }
+            }
+            LogUtil.i(msg+"："+response.result)
+        }
+    }
+
+    /**
+     * @describe 导航到
+     */
+    fun navigateToPointList(location: QueryAllPointEntity) {
         val clientPara = HashMap<String, Any>()
         // target_pose
         val targetPose = JSONObject()

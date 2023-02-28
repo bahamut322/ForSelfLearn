@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentVerifyToDebugBinding
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil

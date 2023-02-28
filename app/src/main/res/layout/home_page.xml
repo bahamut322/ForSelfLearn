@@ -20,10 +20,11 @@
 
             <LinearLayout
                 android:id="@+id/view1_1_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="432dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:layout_marginStart="@dimen/dp_306"
                 android:background="@drawable/select_item_bg"
                 android:orientation="vertical">
 
@@ -59,10 +60,12 @@
 
             <LinearLayout
                 android:id="@+id/view1_2_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="432dp"
                 android:layout_marginStart="@dimen/dp_80"
                 android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/dp_270"
                 android:background="@drawable/select_item_bg"
                 android:orientation="vertical"
                 android:paddingTop="10dp">
@@ -107,9 +110,11 @@
 
             <LinearLayout
                 android:id="@+id/view2_1_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="428dp"
                 android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dp_140"
                 android:background="@color/color_0F0250"
                 android:orientation="vertical"
                 android:paddingTop="10dp">
@@ -145,10 +150,11 @@
 
             <LinearLayout
                 android:id="@+id/view2_2_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="428dp"
+                android:layout_marginStart="@dimen/dp_32"
                 android:layout_weight="1"
+                android:layout_gravity="center"
                 android:background="@color/color_0F0250"
                 android:orientation="vertical">
 
@@ -183,10 +189,12 @@
 
             <LinearLayout
                 android:id="@+id/view2_3_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="428dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dp_32"
                 android:layout_weight="1"
+                android:layout_marginEnd="@dimen/dp_140"
                 android:background="@color/color_0F0250"
                 android:orientation="vertical">
 
@@ -230,9 +238,10 @@
 
             <LinearLayout
                 android:id="@+id/view3_1_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="428dp"
+                android:layout_marginStart="@dimen/dp_140"
+                android:layout_gravity="center"
                 android:background="@color/color_0F0250"
                 android:orientation="vertical">
 
@@ -267,10 +276,10 @@
 
             <LinearLayout
                 android:id="@+id/view3_2_0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1"
+                android:layout_width="@dimen/dp_312"
+                android:layout_height="428dp"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_gravity="center"
                 android:background="@color/color_0F0250"
                 android:orientation="vertical">
 
@@ -304,17 +313,16 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_gravity="center"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/view3_3_0"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="@dimen/dp_336"
+                    android:layout_height="@dimen/dp_200"
                     android:background="@color/color_0F0250">
 
                     <ImageView
@@ -334,7 +342,7 @@
                         android:layout_marginTop="@dimen/dp_11"
                         android:text="标题"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sp_22"
+                        android:textSize="@dimen/sp_32"
                         app:layout_constraintStart_toEndOf="@+id/view3_3_1"
                         app:layout_constraintTop_toTopOf="@+id/view3_3_1" />
 
@@ -354,10 +362,9 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/view3_4_0"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/dp_20"
-                    android:layout_weight="1"
+                    android:layout_width="@dimen/dp_336"
+                    android:layout_height="@dimen/dp_200"
+                    android:layout_marginTop="@dimen/dp_28"
                     android:background="@color/color_0F0250">
 
                     <ImageView
@@ -378,7 +385,7 @@
                         android:layout_marginTop="@dimen/dp_11"
                         android:text="标题"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sp_22"
+                        android:textSize="@dimen/sp_32"
                         app:layout_constraintStart_toEndOf="@+id/view3_4_1"
                         app:layout_constraintTop_toTopOf="@+id/view3_4_1" />
 

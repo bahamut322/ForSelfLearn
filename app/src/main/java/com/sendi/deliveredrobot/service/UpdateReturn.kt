@@ -1,28 +1,29 @@
 package com.sendi.deliveredrobot.service
 
-import android.content.ContentValues
-import android.os.Environment
 import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.Maps
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.MapConfig
+import com.sendi.deliveredrobot.room.entity.*
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
-import com.wislie.charging.helper.Builder
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.litepal.LitePal
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class UpdateReturn {
@@ -33,6 +34,8 @@ class UpdateReturn {
     private lateinit var debugDao: DebugDao
     lateinit var dao: DeliveredRobotDao
     private var pointIdList: ArrayList<Int>? = ArrayList()
+    private val queryAllMapPointsDao =
+        DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
 
     fun method() {
         val replyGateConfigData: List<ReplyGateConfig> =
@@ -53,6 +56,11 @@ class UpdateReturn {
         }
         //查询地图名字
         MainScope().launch {
+            debugDao = DataBaseDeliveredRobotMap.getDatabase(
+                Objects.requireNonNull(
+                    MyApplication.instance
+                )!!
+            ).getDebug()
             withContext(Dispatchers.Default) {
 //                listData = debugDao.queryTargetPointMap()!!
                 val mMapResult = mapTargetPointServiceImpl.mapsName
@@ -61,16 +69,50 @@ class UpdateReturn {
                 for (i in listData.indices) {
                     mapList.add(listData[i].toString())
                 }
+
+                val mapPoint: ArrayList<SendMapPoint> = ArrayList()
+
+                for (i in 0 until mapList.size ){
+                    val mapId = debugDao.selectMapId(mapList[i])
+
+                    val query = queryAllMapPointsDao.queryAllMapPoints(mapId).groupBy { it.name as String }
+                        .mapValues { (_, maps) ->
+                            maps.groupBy { it.floorName as String }
+                        }
+                    var sendFloor: ArrayList<SendFloor> = ArrayList()
+                    val iterator = query.iterator()
+                    //解析query
+                    while (iterator.hasNext()) {
+                        val (key, value) = iterator.next()
+                        //解析query的value
+                        val iterator1 = value.iterator()
+                        while (iterator1.hasNext()) {
+                            sendFloor = ArrayList()
+                            val (key1, value1) = iterator1.next()
+                            val sendFloor1 = SendFloor(key1, value1)
+                            sendFloor.add(sendFloor1)
+                        }
+                        //添加数据
+                        val sendMapPoint = SendMapPoint(key, sendFloor)
+                        mapPoint.add(sendMapPoint)
+                    }
+                }
+
+
+
                 val jsonObject = JSONObject()//实例话JsonObject()
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
-                jsonObject["maps"] = mapList
+                jsonObject["maps"] = mapPoint
                 //发送Mqtt
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
+
+
             }
         }
     }
+
 
     fun fileSize(fileName: String): Int {
         val file: File = File(fileName)
@@ -78,14 +120,46 @@ class UpdateReturn {
         return files.size
     }
 
-    fun assignment() {
-        Log.d("TAG", "数据库数据获取")
+    fun mapSetting() {
+        val mapSettingBoolean: Boolean
+        DialogHelper.loadingDialog.show()
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
         debugDao = DataBaseDeliveredRobotMap.getDatabase(
             Objects.requireNonNull(
                 MyApplication.instance
             )!!
         ).getDebug()
+        if (Universal.mapName != "") {
+//            val mapId = debugDao.selectMapId(Universal.mapName)
+            val mapId = debugDao.selectMapId("map-0209-1")
+            LogUtil.d("地图ID： $mapId")
+            //设置总图
+            dao.updateMapConfig(MapConfig(1, mapId, null))
+            //查询充电桩
+            val pointId = dao.queryChargePointList()
+            pointId?.map {
+                pointIdList?.add(it.pointId!!)
+            }
+            //设置充电桩；默认查询到的第一个数据
+            dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
+            val queryPoint =
+                dao.queryChargePoint()
+            RobotStatus.originalLocation = queryPoint
+            mapSettingBoolean = ROSHelper.setNavigationMap(
+                labelMapName = RobotStatus.bootLocation!!.subPath!!,
+                pathMapName = RobotStatus.bootLocation!!.routePath!!
+            )
+            if (mapSettingBoolean) {
+                LogUtil.d("mapSetting: 地图设置成功")
+                DialogHelper.loadingDialog.dismiss()
+            } else {
+                LogUtil.d("mapSetting: 地图设置失败")
+                DialogHelper.loadingDialog.dismiss()
+            }
+        }
+    }
+
+    fun assignment() {
         //机器人基础配置
         val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
         for (robotConfigDatas in robotConfigData) {
@@ -99,19 +173,6 @@ class UpdateReturn {
             Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
             Universal.mapName = robotConfigDatas.mapName
             Universal.password = robotConfigDatas.password
-            if (robotConfigDatas.mapName != "") {
-                val mapId = debugDao.selectMapId(robotConfigDatas.mapName)
-                Log.d(ContentValues.TAG, "地图ID： $mapId")
-                //设置总图
-                dao.updateMapConfig(MapConfig(1, mapId, null))
-                //查询充电桩
-                val pointId = dao.queryChargePointList()
-                pointId?.map {
-                    pointIdList?.add(it.pointId!!)
-                }
-                //设置充电桩；默认查询到的第一个数据
-                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
-            }
             //设置默认密码
             if (robotConfigDatas.password == null) {
                 Universal.password = "8888"

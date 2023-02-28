@@ -11,29 +11,49 @@
         android:id="@+id/motionLayoutGuideArrive"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/bg"
         app:layoutDescription="@xml/fragment_guide_arrive_scene"
         tools:context=".view.fragment.GuideArriveFragment">
 
         <ImageView
             android:id="@+id/imgArrive"
+            android:layout_width="800dp"
+            android:layout_height="@dimen/dp_400"
+            android:layout_marginTop="@dimen/dp_252"
+            android:contentDescription="@string/image_description"
+            app:layout_constraintBottom_toBottomOf="@+id/lin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/img_arrive" />
+        <LinearLayout
+            android:id="@+id/lin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/image_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
-
-        <com.sendi.deliveredrobot.view.widget.BottomAlarmTextView
+            app:layout_constraintVertical_bias="0.0">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="引领结束"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_48"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/dp_128"/>
+        <TextView
             android:id="@+id/bottomAlarmTextViewArrive"
             android:layout_width="match_parent"
-            android:layout_height="179dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            />
+            android:layout_height="wrap_content"
+            android:text="@string/Sendi"
+            android:textColor="@color/white"
+            android:alpha="0.6"
+            android:textSize="@dimen/sp_32"
+            android:gravity="center"/>
+        </LinearLayout>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
