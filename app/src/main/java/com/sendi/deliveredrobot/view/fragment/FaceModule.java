@@ -2,6 +2,9 @@ package com.sendi.deliveredrobot.view.fragment;
 
 import android.graphics.Bitmap;
 
+import com.sendi.deliveredrobot.view.fragment.AgeAndGender;
+import com.sendi.deliveredrobot.view.fragment.FaceDetector;
+
 import java.util.ArrayList;
 
 
@@ -24,11 +27,11 @@ public class FaceModule {
 
     }
 
-    public ArrayList<Info> preidct(Bitmap mBitmap, float xScal, float yScal, boolean ageAndGenderFlag, boolean faceRecognitionFlag) throws Exception {
+    public ArrayList<Info> preidct(Bitmap mBitmap, float xScal, float yScal, boolean ageAndGenderFlag, boolean faceRecognitionFlag, float [][] features) throws Exception {
         ArrayList<Info> infoArrayList;
 
         infoArrayList = faceDetector.predict(mBitmap);
-        System.out.println("#################################################");
+//        System.out.println("#################################################");
         long T0 = System.currentTimeMillis();
         if (ageAndGenderFlag & (!faceRecognitionFlag)){
             for (int i=0; i < infoArrayList.size(); i++) {
@@ -55,9 +58,7 @@ public class FaceModule {
 
                 Bitmap faceROI = Bitmap.createBitmap(mBitmap, x, y, w, h);
 
-                int ID = faceRecognizer.predict(faceROI);
-
-                info.setID(ID);
+                faceRecognizer.predict(faceROI, features, info);
             }
         }else if (ageAndGenderFlag & ageAndGenderFlag) {
             for (int i = 0; i < infoArrayList.size(); i++) {
@@ -70,15 +71,14 @@ public class FaceModule {
                 Bitmap faceROI = Bitmap.createBitmap(mBitmap, x, y, w, h);
 
                 AgeGender AG = ageAndGender.predict(faceROI);
-                int ID = faceRecognizer.predict(faceROI);
-
                 info.setAge(AG.getAge());
                 info.setGender(AG.getGender());
-                info.setID(ID);
+
+                faceRecognizer.predict(faceROI, features, info);
             }
         }
 
-        System.out.println("识别时间："+(System.currentTimeMillis()-T0));
+//        System.out.println("age gender rec:"+(System.currentTimeMillis()-T0));
         return infoArrayList;
     }
 

@@ -8,10 +8,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homeClay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg">
-
 
         <include
             android:id="@+id/include"
@@ -34,10 +34,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/imageView2"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
-            android:src="@drawable/timeoclick_svg"
             android:layout_marginStart="@dimen/dp_32"
+            android:src="@drawable/timeoclick_svg"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
             app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
             app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
@@ -90,7 +91,12 @@
             android:textSize="@dimen/sp_20"
             app:layout_constraintStart_toStartOf="@+id/textViewDayOfWeek"
             app:layout_constraintTop_toBottomOf="@+id/textViewDayOfWeek" />
-
+        <SurfaceView
+            android:id="@+id/SurfaceView"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="@+id/imageView8"
+            app:layout_constraintTop_toTopOf="@+id/imageView8" />
         <ImageView
             android:id="@+id/imageView8"
             android:layout_width="@dimen/dp_40"
@@ -121,5 +127,7 @@
             android:src="@drawable/rt_horn"
             app:layout_constraintBottom_toBottomOf="@+id/textView61"
             app:layout_constraintEnd_toStartOf="@+id/textView61" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

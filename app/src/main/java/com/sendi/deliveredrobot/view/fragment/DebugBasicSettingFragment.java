@@ -14,10 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
 import com.sendi.deliveredrobot.entity.BasicSetting;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
+import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
 import org.litepal.LitePal;
 
@@ -25,6 +29,8 @@ public class DebugBasicSettingFragment extends Fragment {
     String TAG = "TAGDebugBasicSettingFragment";
     FragmentBasicSettingBinding binding;
     public StringBuffer stringBuffer = new StringBuffer();
+
+    SettingViewModel viewModel;
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     public String timbre = "男声";//默认音色
@@ -37,7 +43,7 @@ public class DebugBasicSettingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = DataBindingUtil.bind(view);
-
+        viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
         assert binding != null;
         binding.seekbarMusic.setRange(0, 100, 0);//设置机器人语音调节范围
         binding.seekbarVoice.setRange(0, 100, 0);//设置视频音量调节范围

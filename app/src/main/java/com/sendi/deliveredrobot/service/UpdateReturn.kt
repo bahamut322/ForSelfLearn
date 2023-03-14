@@ -1,29 +1,32 @@
 package com.sendi.deliveredrobot.service
 
-import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.entity.MapRevise
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.RouteDB
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.model.Maps
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.*
+import com.sendi.deliveredrobot.room.entity.MapConfig
+import com.sendi.deliveredrobot.room.entity.SendFloor
+import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
+import javassist.bytecode.stackmap.TypeData.ClassName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
+import org.litepal.LitePal.where
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class UpdateReturn {
@@ -93,17 +96,28 @@ class UpdateReturn {
                             sendFloor.add(sendFloor1)
                         }
                         //添加数据
-                        val sendMapPoint = SendMapPoint(key, sendFloor)
-                        mapPoint.add(sendMapPoint)
+                        //查询地图修改的时间戳
+                        val isExist = where("mapName = ?", key).count(MapRevise::class.java) > 0
+                        if (!isExist){
+                            val sendMapPoint = SendMapPoint(0, key, sendFloor)
+                            mapPoint.add(sendMapPoint)
+                        }else {
+                            val tipsList: List<MapRevise> = where(
+                                "mapName = ?", key
+                            ).find(MapRevise::class.java)
+                            val sendMapPoint = SendMapPoint(tipsList[0].time, key, sendFloor)
+                            mapPoint.add(sendMapPoint)
+                        }
                     }
                 }
 
-
+                Universal.MapName = queryAllMapPointsDao.queryCurrentMapName();
 
                 val jsonObject = JSONObject()//实例话JsonObject()
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
+                jsonObject["curMapName"] = queryAllMapPointsDao.queryCurrentMapName()
                 jsonObject["maps"] = mapPoint
                 //发送Mqtt
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
@@ -115,7 +129,7 @@ class UpdateReturn {
 
 
     fun fileSize(fileName: String): Int {
-        val file: File = File(fileName)
+        val file = File(fileName)
         val files = file.listFiles()
         return files.size
     }
@@ -130,8 +144,8 @@ class UpdateReturn {
             )!!
         ).getDebug()
         if (Universal.mapName != "") {
-//            val mapId = debugDao.selectMapId(Universal.mapName)
-            val mapId = debugDao.selectMapId("map-0209-1")
+            val mapId = debugDao.selectMapId(Universal.mapName)
+//            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
             //设置总图
             dao.updateMapConfig(MapConfig(1, mapId, null))

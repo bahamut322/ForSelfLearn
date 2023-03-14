@@ -1,6 +1,9 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,16 +28,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.ExplanationItemBinding;
 import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
+import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.model.ExplanationTraceModel;
+import com.sendi.deliveredrobot.model.MyResultModel;
+import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
+import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
+import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity;
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +73,7 @@ public class ExplanationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         controller = Navigation.findNavController(view);
+        binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().get(0).getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> controller.navigate(R.id.action_explanationFragment_to_homeFragment));
         init();
@@ -69,22 +83,22 @@ public class ExplanationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_explanation, container, false);
+        View view = inflater.inflate(R.layout.fragment_explanation, container, false);
         binding = DataBindingUtil.bind(view);
         return view;
     }
 
     private void init() {
-        binding.explainRv.setLayoutManager(new LinearLayoutManager(getContext() , LinearLayoutManager.HORIZONTAL , false));
+        binding.explainRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.explainRv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 binding.explainRv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                centerToLiftDistance =  binding.explainRv.getWidth() / 2;
+                centerToLiftDistance = binding.explainRv.getWidth() / 2;
 
                 int childViewHeight = UiUtils.dip2px(getContext(), 400); //43是当前已知的 Item的高度
-                childViewHalfCount = ( binding.explainRv.getWidth() / childViewHeight + 1) / 2;
+                childViewHalfCount = (binding.explainRv.getWidth() / childViewHeight + 1) / 2;
                 initData();
                 findView();
 
@@ -93,13 +107,12 @@ public class ExplanationFragment extends Fragment {
         binding.explainRv.postDelayed(() -> scrollToCenter(childViewHalfCount), 100L);
     }
 
-    private List<String> mDatas;
+    private List<RouteMapList> mDatas;
 
     private void initData() {
-        if (mDatas == null) mDatas = new ArrayList<>();
-        for (int i = 0; i < 55; i++) {
-            mDatas.add("条目" + i);
-        }
+        if (mDatas == null)
+            //查询当前设置的总图下所有的路线
+            mDatas = QuerySql.queryRoute(Universal.MapName);
         for (int j = 0; j < childViewHalfCount; j++) { //头部的空布局
             mDatas.add(0, null);
         }
@@ -132,11 +145,11 @@ public class ExplanationFragment extends Fragment {
                         int centerChildViewPosition = fi + centerPositionDiffer; //获取当前所有条目中中间的一个条目索引
                         centerViewItems.clear();
                         //遍历循环，获取到和中线相差最小的条目索引(精准查找最居中的条目)
-                        if (centerChildViewPosition != 0){
-                            for (int i = centerChildViewPosition -1 ; i < centerChildViewPosition+2; i++) {
+                        if (centerChildViewPosition != 0) {
+                            for (int i = centerChildViewPosition - 1; i < centerChildViewPosition + 2; i++) {
                                 View cView = recyclerView.getLayoutManager().findViewByPosition(i);
-                                int viewLeft = cView.getLeft()+(cView.getWidth()/2);
-                                centerViewItems.add(new CenterItemUtils.CenterViewItem(i ,Math.abs(centerToLiftDistance - viewLeft)));
+                                int viewLeft = cView.getLeft() + (cView.getWidth() / 2);
+                                centerViewItems.add(new CenterItemUtils.CenterViewItem(i, Math.abs(centerToLiftDistance - viewLeft)));
                             }
 
                             CenterItemUtils.CenterViewItem centerViewItem = CenterItemUtils.getMinDifferItem(centerViewItems);
@@ -164,15 +177,17 @@ public class ExplanationFragment extends Fragment {
     }
 
     private DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+
     /**
      * 移动指定索引到中心处 ， 只可以移动可见区域的内容
+     *
      * @param position
      */
-    private void scrollToCenter(int position){
+    private void scrollToCenter(int position) {
         position = position < childViewHalfCount ? childViewHalfCount : position;
-        position = position < mAdapter.getItemCount() - childViewHalfCount -1 ? position : mAdapter.getItemCount() - childViewHalfCount -1;
+        position = position < mAdapter.getItemCount() - childViewHalfCount - 1 ? position : mAdapter.getItemCount() - childViewHalfCount - 1;
 
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager)  binding.explainRv.getLayoutManager();
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) binding.explainRv.getLayoutManager();
         View childView = linearLayoutManager.findViewByPosition(position);
         Log.i("ccb", "滑动后中间View的索引: " + position);
         //把当前View移动到居中位置
@@ -185,10 +200,10 @@ public class ExplanationFragment extends Fragment {
                 + "\n当前居中控件距离左部距离: " + childViewLeft
                 + "\n当前居中控件的一半高度: " + childVhalf
                 + "\n滑动后再次移动距离: " + smoothDistance);
-        binding.explainRv.smoothScrollBy(smoothDistance, 0,decelerateInterpolator);
+        binding.explainRv.smoothScrollBy(smoothDistance, 0, decelerateInterpolator);
         mAdapter.setSelectPosition(position);
 
-       LogUtil.INSTANCE.d("当前选中:" + mDatas.get(position));
+        LogUtil.INSTANCE.d("当前选中:" + mDatas.get(position));
     }
 
 
@@ -207,7 +222,7 @@ public class ExplanationFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             VH vh = (VH) holder;
             //第一次进入的时候，不改变第一个的宽高
-            if (position == 0){
+            if (position == 0) {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
                 vh.tv.setTextSize(32);
                 vh.imgBottom.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_explanation_bottom));
@@ -215,7 +230,7 @@ public class ExplanationFragment extends Fragment {
                 vh.imgStart.setVisibility(View.VISIBLE);
                 vh.imgEnd.setVisibility(View.VISIBLE);
                 vh.textNameImg.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 //居中item的布局样式
                 if (selectPosition == position) {
                     vh.tv.setTextColor(getResources().getColor(R.color.white));
@@ -241,17 +256,19 @@ public class ExplanationFragment extends Fragment {
                     vh.textNameImg.setVisibility(View.GONE);
                 }
             }
-            if (TextUtils.isEmpty(mDatas.get(position))){
+            if (mDatas.get(position) == null) {
                 vh.itemView.setVisibility(View.INVISIBLE);
-            }else {
+            } else {
                 vh.itemView.setVisibility(View.VISIBLE);
-                vh.tv.setText(mDatas.get(position));
+                vh.tv.setText(mDatas.get(position).getRouteName());
+                Glide.with(getContext()).load(mDatas.get(position).getBackGroundPic()).into(vh.imageView);
+//                imageFile(vh.imageView, new File(mDatas.get(position).getBackGroundPic()));
             }
             final int fp = position;
             //item点击
             vh.view.setOnClickListener(v -> {
                 scrollToCenter(fp);
-                Toast.makeText(getContext(), "点击" + mDatas.get(fp), Toast.LENGTH_SHORT).show();
+                RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                 controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
             });
         }
@@ -273,7 +290,7 @@ public class ExplanationFragment extends Fragment {
 
             public TextView tv;
             public View view;
-            public ImageView imageView,imgBottom,imgStart,imgEnd,textNameImg;
+            public ImageView imageView, imgBottom, imgStart, imgEnd, textNameImg;
 
             public VH(@NonNull View itemView) {
                 super(itemView);
@@ -290,15 +307,40 @@ public class ExplanationFragment extends Fragment {
 
     /**
      * 设置控件大小
-     * @param view  控件
-     * @param width 宽度，单位：像素
+     *
+     * @param view   控件
+     * @param width  宽度，单位：像素
      * @param height 高度，单位：像素
      */
-    public static void setViewSize(View view,int width,int height){
+    public static void setViewSize(View view, int width, int height) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.width = width;
         params.height = height;
         view.setLayoutParams(params);
     }
 
+
+    /**
+     * 异步加载图片
+     * @param imageView 图片控件
+     * @param imageFile 图片路径
+     */
+    @SuppressLint("StaticFieldLeak")
+    private void imageFile(ImageView imageView, File imageFile) {
+        new AsyncTask<File, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(File... files) {
+                File imageFile = files[0];
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                bmOptions.inJustDecodeBounds = false;
+                bmOptions.inSampleSize = 4;
+                bmOptions.inPurgeable = true;
+                return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
+            }
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                imageView.setImageBitmap(bitmap);
+            }
+        }.execute(imageFile);
+    }
 }

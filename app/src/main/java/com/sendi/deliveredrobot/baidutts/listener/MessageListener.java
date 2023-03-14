@@ -4,7 +4,11 @@ import android.util.Log;
 
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+
+import java.util.Objects;
 
 /**
  * SpeechSynthesizerListener 简单地实现，仅仅记录日志
@@ -13,6 +17,8 @@ import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
 
 public class MessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
     private static final String TAG = "MessageListener";
+
+    private int progressSpeak;
 
     /**
      * 播放开始，每句播放开始都会回调
@@ -67,7 +73,11 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
      */
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
-        //  Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId );
+        Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
+        if (utteranceId.equals("explantion")) {
+            progressSpeak = progress;
+            Log.e(TAG, "onSpeechProgressChanged: " + progressSpeak);
+        }
     }
 
     /**
@@ -78,6 +88,15 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
+        if (utteranceId.equals("0")) {
+            RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
+            if (progressSpeak != RobotStatus.INSTANCE.getSpeakNumber().getValue().length()) {
+                RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
+                RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
+//                BaiduTTSHelper.getInstance().speaks(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak), "explantion");
+//                progressSpeak = 0;
+            }
+        }
     }
 
     /**

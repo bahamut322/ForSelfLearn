@@ -14,12 +14,20 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
@@ -31,6 +39,9 @@ import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
 import com.sendi.deliveredrobot.view.widget.VerticalTextView;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
+
+import org.litepal.LitePal;
+import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,6 +70,7 @@ public class BaseActivity extends AppCompatActivity {
     public static final String TAG = "BaseActivity";
     private BaseViewModel baseViewModel;
     private DeliveredRobotDao dao;
+    AdvertisingConfigDB advertisingConfigDB;
 
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
@@ -100,6 +112,7 @@ public class BaseActivity extends AppCompatActivity {
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
         SharedPreferences sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
         videoAudio = (int) sp.getFloat("videoAudio", 0); // 视频音量
+        advertisingConfigDB = LitePal.findFirst(AdvertisingConfigDB.class); //查询副屏第一条数据
         DebugDao debugDao = DataBaseDeliveredRobotMap.Companion.getDatabase(
                 Objects.requireNonNull(
                         MyApplication.Companion.getInstance()
@@ -107,6 +120,33 @@ public class BaseActivity extends AppCompatActivity {
         ).getDebug();
         dao = DataBaseDeliveredRobotMap.Companion.getDatabase(MyApplication.Companion.getInstance()).getDao();
         baseViewModel = new ViewModelProvider(this).get(BaseViewModel.class);
+        //监听观察者更新副屏内容
+        RobotStatus.INSTANCE.getNewUpdata().observe(this,integer ->{
+            if (integer == 1) {
+                mPresentation.dismiss();
+                ShowPresentationByMediarouter();
+                ShowPresentationByDisplaymanager();
+                RobotStatus.INSTANCE.getNewUpdata().postValue(0);
+                LogUtil.INSTANCE.d("更新副屏 $this");
+            }
+        });
+
+        RobotStatus.INSTANCE.getSdScreenStatus().observe(this, integer ->{
+            if (integer == 0){
+                mPresentation.dismiss();
+                ShowPresentationByMediarouter();
+                ShowPresentationByDisplaymanager();
+                LogUtil.INSTANCE.d("更新副屏 $this");
+                layoutFree();
+            }
+            if (integer == 1){
+                mPresentation.dismiss();
+                ShowPresentationByMediarouter();
+                ShowPresentationByDisplaymanager();
+                LogUtil.INSTANCE.d("更新副屏 $this");
+                Layout();
+            }
+        });
 
     }
 
@@ -161,7 +201,10 @@ public class BaseActivity extends AppCompatActivity {
             super.onStart();
         }
 
-        public void aready(){
+        /**
+         * 重新加载Activity
+         */
+        public void aReady(){
             finish();
             overridePendingTransition(0, 0);
             startActivity(getIntent());
@@ -271,7 +314,7 @@ public class BaseActivity extends AppCompatActivity {
         File file = new File(path);
         File[] files = file.listFiles();
         assert files != null;
-        imagePaths  = new ArrayList<>();
+        imagePaths = new ArrayList<>();
         advanceView.initView();
         for (File value : files) {
             if (baseViewModel.checkIsImageFile(value.getPath())) {
@@ -286,84 +329,160 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
     private void textLayout() {
-        //横向
-        if (Universal.fontLayout == 1) {
-            //隐藏纵向文字，显示横向文字
-            verticalTV.setVisibility(View.GONE);
-            horizontalTV.setVisibility(View.VISIBLE);
-            //显示内容
-            horizontalTV.setText(baseViewModel.getLength(Universal.fontContent));
-            //背景颜色&图片
-            constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
-            //文字颜色
-            horizontalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
-            //字体大小
-            if (Universal.fontSize == 1) {
-                horizontalTV.setTextSize(90);
-            } else if (Universal.fontSize == 2) {
-                horizontalTV.setTextSize(70);
-            } else if (Universal.fontSize == 3) {
-                horizontalTV.setTextSize(50);
+            //横向
+            if (Universal.fontLayout == 1) {
+                //隐藏纵向文字，显示横向文字
+                verticalTV.setVisibility(View.GONE);
+                horizontalTV.setVisibility(View.VISIBLE);
+                //显示内容
+                horizontalTV.setText(baseViewModel.getLength(Universal.fontContent));
+                //背景颜色&图片
+                constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+                //文字颜色
+                horizontalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
+                //字体大小
+                if (Universal.fontSize == 1) {
+                    horizontalTV.setTextSize(90);
+                } else if (Universal.fontSize == 2) {
+                    horizontalTV.setTextSize(70);
+                } else if (Universal.fontSize == 3) {
+                    horizontalTV.setTextSize(50);
+                }
+            } else if (Universal.fontLayout == 2) {
+                //纵向
+                //隐藏横向文字，显示纵向文字
+                verticalTV.setVisibility(View.VISIBLE);
+                horizontalTV.setVisibility(View.GONE);
+                //显示内容
+                verticalTV.setText(Universal.fontContent);
+                //背景颜色
+                constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+                //文字颜色
+                verticalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
+                //字体大小
+                if (Universal.fontSize == 1) {
+                    verticalTV.setTextSize(80);
+                } else if (Universal.fontSize == 2) {
+                    verticalTV.setTextSize(60);
+                } else if (Universal.fontSize == 3) {
+                    verticalTV.setTextSize(40);
+                }
             }
-        } else if (Universal.fontLayout == 2) {
-            //纵向
-            //隐藏横向文字，显示纵向文字
-            verticalTV.setVisibility(View.VISIBLE);
-            horizontalTV.setVisibility(View.GONE);
-            //显示内容
-            verticalTV.setText(Universal.fontContent);
-            //背景颜色
-            constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
-            //文字颜色
-            verticalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
-            //字体大小
-            if (Universal.fontSize == 1) {
-                verticalTV.setTextSize(80);
-            } else if (Universal.fontSize == 2) {
-                verticalTV.setTextSize(60);
-            } else if (Universal.fontSize == 3) {
-                verticalTV.setTextSize(40);
-            }
-        }
     }
 
 
     @SuppressLint("RtlHardcoded")
-    public  void Layout() {
+    public void Layout() {
+            //轮播时间
+            AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
+//        this.advanceView.initView();
+            //1-图片 2-视频 6-文字 7-图片+文字
+            switch (Universal.bigScreenType) {
+                case 1:
+                case 2:
+                    //读取文件
+                    getFilesAllName(Universal.Secondary);
+                    verticalTV.setVisibility(View.GONE);
+                    horizontalTV.setVisibility(View.GONE);
+                    advanceView.setVisibility(View.VISIBLE);
+                    break;
+                case 6:
+                    advanceView.setVisibility(View.GONE);
+                    textLayout();
+                    break;
+                case 7:
+                    //读取文件
+                    getFilesAllName(Universal.Secondary);
+                    if (Universal.textPosition == 0) {
+                        textLayout();
+                        horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
+                    } else if (Universal.textPosition == 1) {
+                        textLayout();
+                        horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
+                    } else if (Universal.textPosition == 2) {
+                        textLayout();
+                        horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
+                    }
+                    advanceView.setVisibility(View.VISIBLE);
+                    break;
+            }
+    }
+    private void layoutFree(){
         //轮播时间
-        AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
+        AdvancePagerAdapter.time = advertisingConfigDB.getPicPlayTime() * 1000;
 //        this.advanceView.initView();
         //1-图片 2-视频 6-文字 7-图片+文字
-        switch (Universal.bigScreenType) {
+        switch (advertisingConfigDB.getType()) {
             case 1:
             case 2:
                 //读取文件
-                getFilesAllName(Universal.Secondary);
+                getFilesAllName(Universal.advertisement);
                 verticalTV.setVisibility(View.GONE);
                 horizontalTV.setVisibility(View.GONE);
                 advanceView.setVisibility(View.VISIBLE);
                 break;
             case 6:
                 advanceView.setVisibility(View.GONE);
-                textLayout();
+                textLayoutFree();
                 break;
             case 7:
                 //读取文件
-                getFilesAllName(Universal.Secondary);
-                advanceView.setVisibility(View.VISIBLE);
-                if (Universal.textPosition == 0) {
-                    textLayout();
+                getFilesAllName(Universal.advertisement);
+                if (advertisingConfigDB.getTextPosition() == 0) {
+                    textLayoutFree();
                     horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
                 } else if (Universal.textPosition == 1) {
-                    textLayout();
+                    textLayoutFree();
                     horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
                 } else if (Universal.textPosition == 2) {
-                    textLayout();
+                    textLayoutFree();
                     horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
                 }
+                advanceView.setVisibility(View.VISIBLE);
                 break;
+        }
+    }
+    private void textLayoutFree(){
+
+        //横向
+        if (advertisingConfigDB.getFontLayout() == 1) {
+            //隐藏纵向文字，显示横向文字
+            verticalTV.setVisibility(View.GONE);
+            horizontalTV.setVisibility(View.VISIBLE);
+            //显示内容
+            horizontalTV.setText(baseViewModel.getLength(advertisingConfigDB.getFontContent()));
+            //背景颜色&图片
+            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+            //文字颜色
+            horizontalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+            //字体大小
+            if (advertisingConfigDB.getFontSize() == 1) {
+                horizontalTV.setTextSize(90);
+            } else if (advertisingConfigDB.getFontSize() == 2) {
+                horizontalTV.setTextSize(70);
+            } else if (advertisingConfigDB.getFontSize() == 3) {
+                horizontalTV.setTextSize(50);
+            }
+        } else {
+            //纵向
+            //隐藏横向文字，显示纵向文字
+            verticalTV.setVisibility(View.VISIBLE);
+            horizontalTV.setVisibility(View.GONE);
+            //显示内容
+            verticalTV.setText(advertisingConfigDB.getFontContent());
+            //背景颜色
+            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+            //文字颜色
+            verticalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+            //字体大小
+            if (advertisingConfigDB.getFontSize() == 1) {
+                verticalTV.setTextSize(80);
+            } else if (advertisingConfigDB.getFontSize() == 2) {
+                verticalTV.setTextSize(60);
+            } else if (advertisingConfigDB.getFontSize() == 3) {
+                verticalTV.setTextSize(40);
+            }
         }
     }
 }

@@ -12,8 +12,8 @@ package com.sendi.deliveredrobot.model
  * argPicGroup：表情组配置参数
  */
 data class TopLevelConfig(
-    val screen: Int,
-    val type: Int,
+    val screen: Int?,
+    val type: Int?,
     val argPic: PictureConfiguration? = null,
     val argFont: TextConfiguration? = null,
     val argVideo: VideoConfiguration? = null,

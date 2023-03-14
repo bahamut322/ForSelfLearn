@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
+import com.baidu.tts.client.SynthesizerTool;
 import com.baidu.tts.client.TtsMode;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.control.InitConfig;
@@ -15,6 +16,7 @@ import com.sendi.deliveredrobot.baidutts.listener.MessageListener;
 import com.sendi.deliveredrobot.baidutts.util.Auth;
 import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 
 import java.io.IOException;
@@ -72,9 +74,9 @@ public class BaiduTTSHelper {
         sn = Auth.getInstance(context).getSn();
         LogUtil.INSTANCE.d(sn);
         initialTts(); // 初始化TTS引擎
-//        if (!isOnlineSDK) {
-//            LogUtil.INSTANCE.i("BaiduTTSHelper so version:" + SynthesizerTool.getEngineInfo());
-//        }
+        if (!isOnlineSDK) {
+            LogUtil.INSTANCE.i("BaiduTTSHelper so version:" + SynthesizerTool.getEngineInfo());
+        }
     }
 
     protected void initialTts() {
@@ -178,6 +180,7 @@ public class BaiduTTSHelper {
         // Map<String, String> params = getParams();
         // params.put(SpeechSynthesizer.PARAM_SPEAKER, "3"); // 设置为度逍遥
         // synthesizer.setParams(params);
+        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         int result = synthesizer.speak(text);
 //        LogUtil.INSTANCE.i(text);
     }
@@ -186,4 +189,16 @@ public class BaiduTTSHelper {
         synthesizer.stop();
     }
 
+    public void pause(){
+        synthesizer.pause();
+    }
+
+    public void speaks(String text, String utteranceId) {
+        synthesizer.speak(text, utteranceId);
+    }
+
 }
+
+
+
+

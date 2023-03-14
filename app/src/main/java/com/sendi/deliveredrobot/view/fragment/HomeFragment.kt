@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
+import android.database.Cursor
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -17,13 +18,17 @@ import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.model.ExplanationTraceModel
+import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -52,6 +57,7 @@ class HomeFragment : Fragment(), IMainView {
     private var remindDialog: Dialog? = null
     private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
+    private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
 
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
@@ -158,6 +164,9 @@ class HomeFragment : Fragment(), IMainView {
         super.onStop()
         mainScope.cancel()
         remindDialog?.dismiss()
+        //释放人脸识别资源
+        faceViewModel?.onDestroy()
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -167,7 +176,7 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(activity)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
-        RobotStatus.newUpdata.postValue(1)
+        RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(view)
         val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
         val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
@@ -183,11 +192,23 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
 
+        val open = sp.getBoolean("Etiquette", false) // 是否开启人脸识别
+
         for (basicSettings in basicSetting) {
             Universal.selectItem = basicSettings.defaultValue
             Universal.RobotMode = basicSettings.robotMode
             Log.d("MainActivity", "选择的功能展示模块： " + basicSettings.defaultValue)
             Log.d("MainActivity", "机器人音色： " + basicSettings.robotMode)
+        }
+        if (open == true) {
+            faceViewModel?.suerfaceInit(binding.SurfaceView)
+            if (Universal.selectItem != "") {
+                binding.homeClay.setBackgroundResource(R.drawable.guests_open_bg)
+            }else{
+                binding.homeClay.setBackgroundResource(R.drawable.once_guests_bg)
+            }
+        }else{
+            binding.homeClay.setBackgroundResource(R.drawable.bg)
         }
         val tempMode = sp.getInt("tempMode", 0) // 测温模式
         //改变人脸识别工具类，人脸识别数量的最大值
@@ -379,7 +400,6 @@ class HomeFragment : Fragment(), IMainView {
         }
         binding.include.view343.text = calculateEnglish(rescolors!![3])
     }
-
 
 
     /**

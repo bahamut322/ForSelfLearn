@@ -37,6 +37,7 @@ import androidx.navigation.Navigation;
 
 import com.infisense.iruvc.utils.SynchronizedBitmap;
 import com.sendi.deliveredrobot.BuildConfig;
+import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.RobotCommand;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
@@ -90,6 +91,7 @@ public class CameraPreviewFragment extends Fragment {
     int face = 0;//人脸检测统计
     int abnormalNum = 0;//0正常 1异常
 
+    float[][] features;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,6 +108,9 @@ public class CameraPreviewFragment extends Fragment {
         DialogHelper.loadingDialog.show();
         new TimeThread().start(); //启动新的线程
         initViews();
+        //副屏状态
+        RobotStatus.INSTANCE.getSdScreenStatus().postValue(1);
+        features = new float[1][512];
         //红外显示的方法
         initEvents();
         Surface();
@@ -251,16 +256,6 @@ public class CameraPreviewFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     private void Surface() {
 
-        String faceDetectionModelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "yolov5n_shuffle_256x320_quan.mnn";//人脸
-        String ageAndGenderModelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "ageAndGender.mnn";//年纪
-        String faceRecognizermodelPath = getActivity().getCacheDir().getAbsolutePath() + File.separator + "resnet18_110.mnn";
-
-        Utils.copyFileFromAsset(getContext(), "yolov5n_shuffle_256x320_quan.mnn", faceDetectionModelPath);
-        Utils.copyFileFromAsset(getContext(), "ageAndGender.mnn", ageAndGenderModelPath);
-        Utils.copyFileFromAsset(getContext(), "resnet18_110.mnn", faceRecognizermodelPath);
-
-        FaceModule faceModule = new FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath);
-
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         String[] cameraIds = new String[0];
         try {
@@ -339,7 +334,7 @@ public class CameraPreviewFragment extends Fragment {
                         face = 0;
                         TemperatureAbnormal = 0;
                         FaceAbnormal = 0;
-                        infoArrayList = faceModule.preidct(bm, xScal, yScal, false, false);
+                        infoArrayList = MyApplication.Companion.getFaceModule().preidct(bm, xScal, yScal, false, false,features);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

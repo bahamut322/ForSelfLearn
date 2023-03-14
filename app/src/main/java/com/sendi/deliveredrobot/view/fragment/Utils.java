@@ -12,14 +12,14 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
-class Utils {
+public class Utils {
     public static final int inputWidth = 320;
     public static final int inputHeight = 256;
     public static final int NUM_THREADS = 4;
 
-    public static final int mOutputRow = 5040; //9984, 4420, 1118, 18900
+    public static final int mOutputRow = 5040; //9984, 4420, 1118, 640x480-18900, 320x256-5040
     public static final int mOutputColumn = 8; // left, top, right, bottom, score and 80 class probability
-    public static final float mThreshold = 0.5f; // score above which a detection is generated
+    public static final float mThreshold = 0.7f; // score above which a detection is generated
     public static final float mIoUThreshold = 0.30f; // used for IoU
     public static int mNmsLimit = 10;//识别最大人脸个数
 
@@ -94,16 +94,18 @@ class Utils {
 class Info {
     private int age;
     private String gender;
-    private int ID;
     private Rect rect;
     private int maskState;
+    private float[] feature;
+    private float[] confList;
 
-    public Info(int age, String gender, int ID, Rect rect, int maskState) {
+    public Info(int age, String gender, Rect rect, int maskState, float[] feature, float[] confList) {
         this.age = age;
         this.gender = gender;
-        this.ID = ID;
         this.rect = rect;
         this.maskState = maskState;
+        this.feature = feature;
+        this.confList = confList;
     }
 
     public Info(Rect rect, int maskState) {
@@ -115,40 +117,48 @@ class Info {
         return age;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public String getGender() {
         return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
     }
 
     public Rect getRect() {
         return rect;
     }
 
-    public void setRect(Rect rect) {
-        this.rect = rect;
-    }
-
     public int getMaskState() {
         return maskState;
     }
 
+    public float[] getFeature() {
+        return feature;
+    }
+
+    public float[] getConfList() {
+        return confList;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setRect(Rect rect) {
+        this.rect = rect;
+    }
+
     public void setMaskState(int maskState) {
         this.maskState = maskState;
+    }
+
+    public void setFeature(float[] feature) {
+        this.feature = feature;
+    }
+
+    public void setConfList(float[] confList) {
+        this.confList = confList;
     }
 }
 
@@ -186,7 +196,7 @@ class Result {
     private Rect rect;
 
     public Result(int maskState, Float score, Rect rect) {
-        this.maskState = maskState;//0未佩戴，1未正确佩戴，2正确佩戴
+        this.maskState = maskState;
         this.score = score;
         this.rect = rect;
     }

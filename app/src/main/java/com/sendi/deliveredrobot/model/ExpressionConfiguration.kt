@@ -1,5 +1,7 @@
 package com.sendi.deliveredrobot.model
 
+import org.litepal.crud.LitePalSupport
+
 /**
  * @author swn
  * @describe 表情组配置参数

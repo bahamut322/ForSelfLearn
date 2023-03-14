@@ -1,8 +1,13 @@
 package com.sendi.deliveredrobot.viewmodel
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.text.SpannableStringBuilder
+import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
@@ -12,14 +17,13 @@ import com.sendi.deliveredrobot.model.ExplanationTraceModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager.addAllAtIndex
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
-import com.sendi.deliveredrobot.navigationtask.ConsumptionTask
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
-import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.io.File
 import kotlin.math.pow
 
 
@@ -51,12 +55,12 @@ class StartExplanViewModel : ViewModel() {
             publicAreaName = null,
             publicAreaId = null,
             type = 0,
-            speakString ="山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？"
+            speakString = "广州市申迪计算机系统有限公司于1998年10月在广州市创立，是一家专业从事计算机软件开发、系统集成和技术服务的民营企业。公司已通过ISO9001质量管理体系认证、ISO20000 IT服务管理体系认证、ISO27001信息安全管理系统认证、ISO14001环境管理体系认证和ISO45001职业健康安全管理体系认证；被评定为国家高新技术企业，具有中国电子工业标准化技术协会颁发的ITSS等级资质和广东省网络空间安全协会颁发的计算机信息系统安全服务等级资质，并被认定为省市软件企业、广东省大数据培育企业，具有国际机构颁发的CMMI5认证证书。"
         )
         explanation.acceptStation =
-            "山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？"
+            "广州市申迪计算机系统有限公司于1998年10月在广州市创立，是一家专业从事计算机软件开发、系统集成和技术服务的民营企业。公司已通过ISO9001质量管理体系认证、ISO20000 IT服务管理体系认证、ISO27001信息安全管理系统认证、ISO14001环境管理体系认证和ISO45001职业健康安全管理体系认证；被评定为国家高新技术企业，具有中国电子工业标准化技术协会颁发的ITSS等级资质和广东省网络空间安全协会颁发的计算机信息系统安全服务等级资质，并被认定为省市软件企业、广东省大数据培育企业，具有国际机构颁发的CMMI5认证证书。"
         explanation.pointImage =
-            "http://172.168.201.34:9055/management_res//6/NDA1NTMz5bGP5bmV5oiq5Zu-XzIwMjIxMTI5XzE0MjA0My5wbmcxNjc2NTQ2ODQ1Njgz.png"
+            "http://172.168.201.34:9055/management_res//68/NDg1MDk2NDA4NTYzZGU5ZTYxZTA1MWUyMDY2YTE2YzU1ZDM0ODEuanBlZzE2Nzc4MTM3Nzg5Njk.jpeg"
         mDatas!!.add(explanation)
 
     }

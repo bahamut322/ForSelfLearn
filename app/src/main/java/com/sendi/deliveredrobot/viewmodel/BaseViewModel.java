@@ -46,4 +46,5 @@ public class BaseViewModel extends ViewModel {
                 || fileEnd.equals("jpeg") || fileEnd.equals("bmp");
         return isImageFile;
     }
+
 }

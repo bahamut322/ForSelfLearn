@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.CheckBox
 import androidx.databinding.DataBindingUtil
@@ -16,12 +17,13 @@ import com.sendi.deliveredrobot.MyApplication.Companion.instance
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.NAVIGATE_MAP_NAME
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.adapter.RouteFoldAdapter
 import com.sendi.deliveredrobot.adapter.AllBindingFoldAdapter
 import com.sendi.deliveredrobot.adapter.PointFoldAdapter
+import com.sendi.deliveredrobot.adapter.RouteFoldAdapter
 import com.sendi.deliveredrobot.adapter.SelLaserAdapter
 import com.sendi.deliveredrobot.adapter.base.i.OnItemClickListener2
 import com.sendi.deliveredrobot.databinding.FragmentCreateGeneralViewBinding
+import com.sendi.deliveredrobot.entity.MapRevise
 import com.sendi.deliveredrobot.model.AllMapRelationshipModel
 import com.sendi.deliveredrobot.model.FoldSelMapModel
 import com.sendi.deliveredrobot.model.SelectPointModel
@@ -33,12 +35,16 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.CreateGeneralViewViewModel
+import javassist.bytecode.stackmap.TypeData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.litepal.LitePal.where
 import java.util.*
-import kotlin.collections.ArrayList
+import java.util.logging.Logger
+import kotlin.math.log
+
 
 /**
  * @author lsz
@@ -57,12 +63,14 @@ class CreateGeneralViewFragment : Fragment() {
     lateinit var mDeliveredRobotDao: DeliveredRobotDao
     lateinit var debugDao: DebugDao
     var isCreate: Boolean = true
+
     /** 总图id */
     var myRootMapId: Int = -1
     var hasSelectCount: Int = 0
     var isCheck: Boolean = false
+
     /** 编辑的总图名字 */
-    var myRootMapName:String = ""
+    var myRootMapName: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,7 +85,7 @@ class CreateGeneralViewFragment : Fragment() {
         if (arguments?.get(NAVIGATE_ID) != -1) {
             isCreate = false
             myRootMapId = arguments?.getInt(NAVIGATE_ID)!!
-            myRootMapName = arguments?.getString(NAVIGATE_MAP_NAME)?:""
+            myRootMapName = arguments?.getString(NAVIGATE_MAP_NAME) ?: ""
             binding.edtGeneralViewName.setText(myRootMapName)
         }
         initView(view)
@@ -139,9 +147,9 @@ class CreateGeneralViewFragment : Fragment() {
                         debugDao.selectRelationshipPointByMapId(myRootMapId)
                     for (item in mRelationshipPointList) {
                         select_sub_map_data[item.subMapId!!] = item.routeId!!
-                        if(item.routeName != null){
+                        if (item.routeName != null) {
                             select_route_name[item.routeId!!] = item.routeName!!
-                        }else{
+                        } else {
                             select_route_name[item.routeId!!] = ""
                         }
                         select_point_data[item.pointId!!] = item.subMapId!!
@@ -189,7 +197,8 @@ class CreateGeneralViewFragment : Fragment() {
                             if (tempRouteId != null) {
                                 mAllMapRelationship.selected = true
                                 mAllMapRelationship.selectRouteId = tempRouteId
-                                mAllMapRelationship.selectRouteName = select_route_name[tempRouteId]?:""
+                                mAllMapRelationship.selectRouteName =
+                                    select_route_name[tempRouteId] ?: ""
                             }
                         }
 
@@ -407,13 +416,15 @@ class CreateGeneralViewFragment : Fragment() {
         binding.tvStepOneText.setTextColor(Color.parseColor("#E2EBFE"))
 
 
-        binding.clCreateGeneralView.viewTreeObserver.addOnGlobalLayoutListener( object : ViewTreeObserver.OnGlobalLayoutListener{
+        binding.clCreateGeneralView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 //监听到了就注销监听
 //                binding.llayoutLogin.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 var rect: Rect = Rect()
                 binding.clCreateGeneralView.getWindowVisibleDisplayFrame(rect)
-                var  rootInvisibleHeight:Int = binding.clCreateGeneralView.getRootView().getHeight() - rect.bottom;
+                var rootInvisibleHeight: Int =
+                    binding.clCreateGeneralView.getRootView().getHeight() - rect.bottom;
 //                LogUtil.d( "getRootView().getHeight()=" + binding.clCreateGeneralView.getRootView().getHeight() + ",rect.bottom=" + rect.bottom + ",rootInvisibleHeight=" + rootInvisibleHeight);
                 if (rootInvisibleHeight <= 100) {
                     //软键盘隐藏啦
@@ -421,7 +432,7 @@ class CreateGeneralViewFragment : Fragment() {
                 } else {
                     //软键盘弹出啦  隐藏状态栏
                     val window: Window = activity?.window!!
-                    if(window != null){
+                    if (window != null) {
                         NavigationBarUtil.hideNavigationBar(window)
                     }
                 }
@@ -580,6 +591,7 @@ class CreateGeneralViewFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NewApi")
     fun completeBinding() {
         var generalViewName = binding.edtGeneralViewName.getText().toString().trim { it <= ' ' }
         if ("" == generalViewName) {
@@ -590,7 +602,10 @@ class CreateGeneralViewFragment : Fragment() {
         MainScope().launch {
             withContext(Dispatchers.Default) {
                 var mMyRootMap = debugDao.searchMapRootName(generalViewName)
-                if (mMyRootMap.size > 0 && !(myRootMapId != -1 && myRootMapName.equals(generalViewName))) {
+                if (mMyRootMap.size > 0 && !(myRootMapId != -1 && myRootMapName.equals(
+                        generalViewName
+                    ))
+                ) {
                     ToastUtil.show(resources.getString(R.string.str_map_name_repetition_tip))
                 } else {
                     if (isCreate) {
@@ -616,6 +631,28 @@ class CreateGeneralViewFragment : Fragment() {
                     } else {
                         debugDao.delteRelationshipPointByMapId(myRootMapId)
                         debugDao.updateMapRoot(myRootMapId, generalViewName)
+
+
+                        Log.d("修改过的总图", "名字: ${generalViewName},修改时间: ${Date().time}")
+                        val isExist = where("mapName = ?", generalViewName).count(MapRevise::class.java) > 0
+                        if (!isExist){
+                            var newMapRevise = MapRevise()
+                            newMapRevise.mapName = generalViewName;
+                            newMapRevise.time = Date().time
+                            newMapRevise.save()
+                        } else {
+                            var mapRevise: MapRevise = where("mapName = ?", generalViewName)
+                                .findFirst(MapRevise::class.java)
+                            LogUtil.d("原数据: $mapRevise")
+                            mapRevise.time = Date().time //更新isMale字段为false
+                            val isUpdateSucc: Boolean = mapRevise.save() //改成用save()保存字段
+                            LogUtil.d("更新time是否成功：$isUpdateSucc")
+                            mapRevise = where("mapName = ?", "mapRevise")
+                                .findFirst(MapRevise::class.java)
+                            LogUtil.d("新数据: $mapRevise")
+                            mapRevise.save()
+                        }
+
                         for (item in viewModel.relationshipData) {
                             if (item.mPoint != null && item.selected) {
                                 for (itemPoint in item.mPoint!!) {

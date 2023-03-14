@@ -1,6 +1,8 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentStartExplantionBinding;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.ConsumptionTask;
 import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
@@ -74,11 +81,20 @@ public class StartExplantionFragment extends Fragment {
         controller = Navigation.findNavController(view);
         viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
         viewModel.videoAudio();
+        new AudioMngHelper(getContext()).setVoice100(7);//设置视频音量
+        RobotStatus.INSTANCE.getSpeakContinue().observe(getViewLifecycleOwner(), integer -> {
+            if (RobotStatus.INSTANCE.getSpeakContinue().getValue() == 1){
+                if(lineUpTaskHelp.checkTask()){lineUpTaskHelp.deletePlanNoAll("speakNumber");}
+                getLength(RobotStatus.INSTANCE.getSpeakNumber().getValue());
+                RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
+            }
+        });
         init();
         viewModel.mainScope();
         binding.finishBtn.setOnClickListener(v -> {
             //返回
             viewModel.finish();
+            BaiduTTSHelper.getInstance().stop();
             //删除讲解队列
             if(lineUpTaskHelp.checkTask()){
                 lineUpTaskHelp.deletePlanNoAll("speakNumber");
@@ -109,7 +125,7 @@ public class StartExplantionFragment extends Fragment {
 
                 centerToTopDistance = binding.pointList.getHeight() / 2;
 
-//                int childViewHeight = UiUtils.dip2px(getContext(), 72); //72是当前已知的 Item的高度
+                int childViewHeight = UiUtils.dip2px(getContext(), 72); //72是当前已知的 Item的高度
 //                childViewHalfCount = (recyclerView.getHeight() / childViewHeight + 1) / 2;
                 initData();
                 findView();
@@ -245,6 +261,7 @@ public class StartExplantionFragment extends Fragment {
                 binding.nowExplanation.setText("当前讲解：" + viewModel.getMDatas().get(position).getPointName().getPointName());
                 //讲解
                 getLength(viewModel.getMDatas().get(position).getPointName().getSpeakString());
+                RobotStatus.INSTANCE.getSpeakNumber().postValue(viewModel.getMDatas().get(position).getPointName().getSpeakString());
             } else {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first);
@@ -305,12 +322,12 @@ public class StartExplantionFragment extends Fragment {
             // 获取一个字符
             String temp = string.substring(i, i + 1);
             // 判断是否为中文字符
-            valueLength +=1;
-            remainNum +=1;
+            valueLength += 1;
+            remainNum += 1;
             //每个数据放入StringBuffer中
             stringBuffer.append(temp);
             //如果长度为5，开始换行
-            if (valueLength >= 45){
+            if (valueLength >= 45) {
                 ConsumptionTask task = new ConsumptionTask();
                 task.explantinSpeaking = stringBuffer.toString(); // 队列数据
                 task.planNo = "speakNumber"; // 将数据分组，可以不进行设置
@@ -320,7 +337,7 @@ public class StartExplantionFragment extends Fragment {
                 valueLength = 0;
             }
             //将剩余的字添加到队列中
-            if (remainNum == remainSize){
+            if (remainNum == remainSize) {
                 ConsumptionTask task = new ConsumptionTask();
                 task.explantinSpeaking = remainText; // 队列数据
                 task.planNo = "speakNumber"; // 将数据分组，可以不进行设置
@@ -331,7 +348,7 @@ public class StartExplantionFragment extends Fragment {
         }
     }
 
-    private void initListener(){
+    private void initListener() {
         lineUpTaskHelp.setOnTaskListener(new LineUpTaskHelp.OnTaskListener() {
             @Override
             public void exNextTask(ConsumptionTask task) {
@@ -341,24 +358,23 @@ public class StartExplantionFragment extends Fragment {
 
             @Override
             public void noTask() {
-                Log.e("Post","所有任务执行完成");
+                Log.e("Post", "所有任务执行完成");
             }
         });
     }
 
-    public void exTask(final ConsumptionTask task){
-        new Thread(){
+    public void exTask(final ConsumptionTask task) {
+        new Thread() {
             @Override
             public void run() {
                 super.run();
                 //子线程执行队列任务
-                BaiduTTSHelper.getInstance().speak(task.explantinSpeaking);
-                Log.e("Post","开始执行任务" + task.explantinSpeaking);
+                BaiduTTSHelper.getInstance().speaks(task.explantinSpeaking, "explantion");
+                Log.e("Post", "开始执行任务" + task.explantinSpeaking);
                 // 检查列队
                 lineUpTaskHelp.exOk(task);
             }
         }.start();
     }
-
 
 }

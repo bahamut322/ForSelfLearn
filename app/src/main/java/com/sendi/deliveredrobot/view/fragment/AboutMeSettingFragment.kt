@@ -19,7 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
-
+//Android 怎么封装百度TTS,能监听播放状态以及暂停播放或者继续播放
 class AboutMeSettingFragment : Fragment() {
     lateinit var binding: FragmentAboutMeSettingBinding
     var controller: NavController? = null

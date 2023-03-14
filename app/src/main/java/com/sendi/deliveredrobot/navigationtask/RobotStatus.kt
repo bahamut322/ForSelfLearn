@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.navigationtask
 
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.RobotCommand.MANAGE_STATUS_STOP
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
@@ -64,9 +63,17 @@ object RobotStatus {
     var odomPose: Pose2D? = null //里程计
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
+    var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
+    var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
+    var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
     var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var explanationList : MutableLiveData<ExplanationTraceModel> = MutableLiveData<ExplanationTraceModel>()
+    var speakNumber : MutableLiveData<String> = MutableLiveData();//记录智能讲解中断的之前朗读的文字个数
+    var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>();//记录智能讲解朗读的内容
+    var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
+    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 默认:空闲 1:测温 2:讲解
+    var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status

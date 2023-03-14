@@ -17,13 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.sendi.deliveredrobot.view.widget.RoundImageView
+    <ImageView
         android:id="@+id/imageView"
         android:layout_width="287dp"
         android:layout_height="@dimen/dp_334"
         android:layout_marginTop="14dp"
-        android:src="@drawable/img"
-        android:scaleType="fitStart"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />

@@ -28,12 +28,24 @@ public class Universal {
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby";
     //存放正常情况下的图片/视频
     public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary";
+    //存放副屏广告图
+    public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV";
+    //下载地址
+    public static String pathDownload = "http://172.168.201.34:9055/management_res/";
+    //机器人主要存放的路径
+    public static String robotFile = "/mnt/sdcard/X8ROBOT/";
     //待机图片名字
     public static String sleepContentName = "";
     //图片名字
     public static String pics = "";
     //视频名字
     public static String videoFile = "";
+    //广告图片名字
+    public static String advPics = "";
+    //广告视频名字
+    public static String advVideoFile = "";
+    //当前使用的总图
+    public static String MapName = "";
 
 
     //TODO 门岗管理

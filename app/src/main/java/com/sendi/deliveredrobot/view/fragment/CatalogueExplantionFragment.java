@@ -2,6 +2,8 @@ package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,12 +26,18 @@ import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
+import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.model.ExplanationTraceModel;
+import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.ConsumptionTask;
 import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +50,7 @@ public class CatalogueExplantionFragment extends Fragment {
     private FragmentCatalogueExplantionBinding binding;
     private NavController controller;
     private CatalogueAdapter mAdapter;
-
+    private List<MyResultModel>  result;
 
 
     @Override
@@ -56,12 +64,11 @@ public class CatalogueExplantionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         controller = Navigation.findNavController(view);
         binding = DataBindingUtil.bind(view);
+        result =  QuerySql.queryMyData(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue());
         viewModel.videoAudio();
-        viewModel.infoList();
-        mAdapter = new CatalogueAdapter(viewModel.getMDatas(), getContext());
+        mAdapter = new CatalogueAdapter(result, getContext());
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> viewModel.start());
-
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
 
     }
@@ -78,10 +85,10 @@ public class CatalogueExplantionFragment extends Fragment {
 
     class CatalogueAdapter extends BaseAdapter {
 
-        private final List<ExplanationTraceModel> mData;
+        private final List<MyResultModel> mData;
         private final Context mContext;
 
-        public CatalogueAdapter(List<ExplanationTraceModel> mData, Context mContext) {
+        public CatalogueAdapter(List<MyResultModel> mData, Context mContext) {
             this.mData = mData;
             this.mContext = mContext;
         }
@@ -109,16 +116,11 @@ public class CatalogueExplantionFragment extends Fragment {
             TextView txt_aNum = (TextView) convertView.findViewById(R.id.pointNum);
             TextView txt_aName = (TextView) convertView.findViewById(R.id.pointName);
             txt_aNum.setText("第" + viewModel.intToChinese(position + 1) + "站");
-            txt_aName.setText(mData.get(position).getPointName().getPointName());
-            Glide.with(getContext()).load(mData.get(position).getPointImage()).into(binding.pointImage);
-            binding.pointCatalogue.setText(mData.get(position).getAcceptStation());
-            binding.pointNameTv.setText(mData.get(position).getPointName().getPointName());
-            conLayout.setOnClickListener(v -> {
-                Glide.with(getContext()).load(mData.get(position).getPointImage()).into(binding.pointImage);
-                binding.pointCatalogue.setText(mData.get(position).getAcceptStation());
-                binding.pointNameTv.setText(mData.get(position).getPointName().getPointName());
-            });
-
+            txt_aName.setText(mData.get(position).getName());
+            Glide.with(getContext()).load(mData.get(position).getBackgroundpic()).into(binding.pointImage);
+            binding.pointCatalogue.setText(mData.get(position).getIntroduction());
+            binding.pointNameTv.setText(mData.get(position).getRoutename());
+            binding.selectName.setText(mData.get(position).getRoutename());
             return convertView;
         }
 

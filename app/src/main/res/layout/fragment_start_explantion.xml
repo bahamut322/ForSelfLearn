@@ -68,6 +68,7 @@
                 android:layout_height="414dp"
                 android:layout_marginStart="@dimen/dp_32"
                 android:scaleType="fitXY"
+                android:src="@drawable/have_sound_svg"
                 app:layout_constraintBottom_toBottomOf="@+id/view26"
                 app:layout_constraintStart_toStartOf="@+id/view26"
                 app:layout_constraintTop_toTopOf="@+id/view26"

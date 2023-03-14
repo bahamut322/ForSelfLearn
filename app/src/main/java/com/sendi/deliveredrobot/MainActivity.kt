@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -23,11 +22,13 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
+import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.receiver.NavigationReceiver
 import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
@@ -40,6 +41,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
+import org.litepal.LitePal.findAll
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,6 +66,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         instance = this
         //创建LitePal数据库
         LitePal.getDatabase()
+        val basicSettings = findAll(BasicSetting::class.java)
+        val basicSetting = BasicSetting()
+        if (basicSettings.size == 0) {
+            basicSetting.setId(1)
+            basicSetting.save()
+        }
         AppUtils.checkPermission(this, 0)
         //检查日志
         FileUtil.checkAndDeleteLogFilesCache()
@@ -143,16 +151,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     text = robotName
                     View.VISIBLE
                 }
-            }
-        }
-        //监听观察者更新副屏内容
-        newUpdata.observe(this){
-            if (newUpdata.value == 1) {
-                mPresentation.dismiss()
-                ShowPresentationByMediarouter()
-                ShowPresentationByDisplaymanager()
-                newUpdata.postValue(0)
-               LogUtil.d("更新副屏 $this")
             }
         }
     }

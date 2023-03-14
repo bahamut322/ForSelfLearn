@@ -48,7 +48,11 @@ public class AdvanceImageView extends RelativeLayout {
             if (Objects.equals(Universal.fontBackGround, "")){
                 imageView.setBackgroundColor(Color.WHITE);
             }else {
-                imageView.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+                if (Universal.fontBackGround == null){
+                    imageView.setBackgroundColor(Color.WHITE);
+                }else {
+                    imageView.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+                }
             }
             imageView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));//设置整个布局的参数
         } else {//全图(铺满整个屏幕)

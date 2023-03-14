@@ -3,13 +3,22 @@
     <!--数据库名称-->
     <dbname value="multifunction" />
     <!--数据库版本-->
-    <version value="20" />
-
+    <version value="25" />
+    <!--指定路径-->
+    <storage value="/database" />
     <!--映射模型-->
     <list>
         <!--添加实体类，此处必须映射完整路径-->
         <mapping class="com.sendi.deliveredrobot.entity.BasicSetting" />
-        <mapping class="com.sendi.deliveredrobot.entity.RobotConfigSql"/>
-        <mapping class="com.sendi.deliveredrobot.entity.ReplyGateConfig"/>
+        <mapping class="com.sendi.deliveredrobot.entity.RobotConfigSql" />
+        <mapping class="com.sendi.deliveredrobot.entity.ReplyGateConfig" />
+        <mapping class="com.sendi.deliveredrobot.entity.FaceTips" />
+        <mapping class="com.sendi.deliveredrobot.entity.MapRevise" />
+        <mapping class="com.sendi.deliveredrobot.entity.TouchScreenConfigDB" />
+        <mapping class="com.sendi.deliveredrobot.entity.BigScreenConfigDB" />
+        <mapping class="com.sendi.deliveredrobot.entity.AdvertisingConfigDB" />
+        <mapping class="com.sendi.deliveredrobot.entity.PointConfigVODB" />
+        <mapping class="com.sendi.deliveredrobot.entity.ExplainConfigDB" />
+        <mapping class="com.sendi.deliveredrobot.entity.RouteDB" />
     </list>
 </litepal>
