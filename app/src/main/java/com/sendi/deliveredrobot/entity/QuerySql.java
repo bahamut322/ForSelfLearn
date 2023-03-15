@@ -2,15 +2,21 @@ package com.sendi.deliveredrobot.entity;
 
 import android.database.Cursor;
 
+import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.RouteMapList;
+import com.sendi.deliveredrobot.model.SendRoutesModel;
 
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  * @author swn
+ *  * @describe  查询数据
+ */
 public class QuerySql {
     /**
      * 笛卡尔积查询数据库中讲解配置
@@ -68,6 +74,29 @@ public class QuerySql {
         return list;
     }
 
+
+    /**
+     * 机器人当前总图下配置路线列表(用于发送MQTT)
+     * @param rootMapName 当前总图名字
+     * @return
+     */
+    public static List<SendRoutesModel> QueryRoutesSendMessage(String rootMapName) {
+        List<SendRoutesModel> list = new ArrayList<>();
+        String sql = "SELECT * FROM routedb route "
+                + "LEFT JOIN pointconfigvodb point ON (SELECT id FROM routedb WHERE routedb.rootmapname = "+"'"+rootMapName +"'"+" )  = point.routedb_id  ";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // 构造实体对象
+                SendRoutesModel model = new SendRoutesModel();
+                model.setRouteName(cursor.getString(cursor.getColumnIndex("routename")));
+                model.setRouteTimeStamp(cursor.getLong(cursor.getColumnIndex("timestamp")));
+                list.add(model);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
 
     /**
      * 查询某个总图下所有的路线
@@ -172,4 +201,88 @@ public class QuerySql {
         return list;
     }
 
+    /**
+     * 查询时间戳
+     * @return
+     */
+    public static long advTimeStamp(){
+        long timestamp = 0;
+        String sql = "SELECT timestamp FROM advertisingconfigdb";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                timestamp = cursor.getLong(cursor.getColumnIndex("timestamp"));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return timestamp;
+    }
+
+    public static int QueryBasicId(){
+        int basic_id = 0;
+        String sql = "SELECT id FROM basicsetting";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                basic_id = cursor.getInt(cursor.getColumnIndex("id"));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return basic_id;
+    }
+    public static List<BasicModel> QueryBasic() {
+        List<BasicModel> list = new ArrayList<>();
+        String sql = "SELECT * FROM basicsetting";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // 构造实体对象
+                BasicModel model = new BasicModel();
+                model.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                boolean etique = intToBoolean(cursor.getInt(cursor.getColumnIndex("etiquette")));
+                model.setEtiquette(etique);
+                model.setExplanationFinish(cursor.getInt(cursor.getColumnIndex("explanationfinish")));
+                model.setGoExplanationPoint(cursor.getFloat(cursor.getColumnIndex("goexplanationpoint")));
+                model.setVoiceVolume(cursor.getFloat(cursor.getColumnIndex("voicevolume")));
+                boolean IdentifyVip = intToBoolean(cursor.getInt(cursor.getColumnIndex("identifyvip")));
+                model.setIdentifyVip(IdentifyVip);
+                model.setPatrolStayTime(cursor.getInt(cursor.getColumnIndex("patrolstaytime")));
+                model.setUnArrive(cursor.getInt(cursor.getColumnIndex("unarrive")));
+                boolean whetherInterrupt = intToBoolean(cursor.getInt(cursor.getColumnIndex("whetherinterrupt")));
+                model.setWhetherInterrupt(whetherInterrupt);
+                model.setDefaultValue(cursor.getString(cursor.getColumnIndex("defaultvalue")));
+                model.setPatrolSpeed(cursor.getFloat(cursor.getColumnIndex("patrolspeed")));
+                model.setWhetherTime(cursor.getInt(cursor.getColumnIndex("whethertime")));
+                model.setError(cursor.getString(cursor.getColumnIndex("error")));
+                model.setTempMode(cursor.getInt(cursor.getColumnIndex("tempmode")));
+                boolean Intelligent = intToBoolean(cursor.getInt(cursor.getColumnIndex("intelligent")));
+                model.setIntelligent(Intelligent);
+                model.setVideoVolume(cursor.getFloat(cursor.getColumnIndex("videovolume")));
+                model.setLeadingSpeed(cursor.getFloat(cursor.getColumnIndex("leadingspeed")));
+                model.setRobotMode(cursor.getString(cursor.getColumnIndex("robotmode")));
+                model.setPatrolContent(cursor.getString(cursor.getColumnIndex("patrolcontent")));
+                model.setStayTime(cursor.getInt(cursor.getColumnIndex("staytime")));
+                model.setSpeechSpeed(cursor.getInt(cursor.getColumnIndex("speechspeed")));
+                boolean VoiceAnnouncements = intToBoolean(cursor.getInt(cursor.getColumnIndex("voiceannouncements")));
+                model.setVoiceAnnouncements(VoiceAnnouncements);
+                boolean Expression = intToBoolean(cursor.getInt(cursor.getColumnIndex("expression")));
+                model.setExpression(Expression);
+                list.add(model);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
+
+    /**
+     * 将查询到的int转为Boolean
+     * @param data 数据
+     */
+    private static Boolean  intToBoolean(int data){
+        if (data == 1){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

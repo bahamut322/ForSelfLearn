@@ -120,13 +120,10 @@ public class CatalogueExplantionFragment extends Fragment {
             Glide.with(getContext()).load(mData.get(position).getBackgroundpic()).into(binding.pointImage);
             binding.pointCatalogue.setText(mData.get(position).getIntroduction());
             binding.pointNameTv.setText(mData.get(position).getRoutename());
-            binding.selectName.setText(mData.get(position).getRoutename());
+            binding.selectName.setText("参观路线：" + mData.get(position).getRoutename());
             return convertView;
         }
 
     }
-
-
-
 
 }

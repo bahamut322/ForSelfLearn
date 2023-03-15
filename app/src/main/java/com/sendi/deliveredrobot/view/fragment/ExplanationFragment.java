@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.ExplanationItemBinding;
 import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
 import com.sendi.deliveredrobot.entity.QuerySql;
@@ -270,6 +271,7 @@ public class ExplanationFragment extends Fragment {
                 scrollToCenter(fp);
                 RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                 controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
+                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().get(0).getPointListText());
             });
         }
 

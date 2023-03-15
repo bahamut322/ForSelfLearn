@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,11 +19,14 @@ import androidx.fragment.app.Fragment;
 import com.sendi.deliveredrobot.R;
 
 import com.sendi.deliveredrobot.databinding.FragmentModeSettingBinding;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.UpDataSQL;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ModeSettingFragment extends Fragment {
 
@@ -43,11 +47,12 @@ public class ModeSettingFragment extends Fragment {
     float patrolSpeedNum;
     float suspensionNum;
     int tempMode;
-
+    ContentValues values;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        values = new ContentValues();
         //引领速度
         binding.LeadingSpeed.setRange(0.3f, 1.2f, 1);
         //去往讲解点速度
@@ -64,68 +69,52 @@ public class ModeSettingFragment extends Fragment {
         binding.suspension.setRange(1, 180, 0);
 
 
-        Boolean etWelcome = sp.getBoolean("etiquetteWelcome", false);
-        inaccessiblePoint = sp.getInt("inaccessiblePoint", 0);//不能到达点：0：直接下一个;1：重复第二次到达
-        float leadSpeed = sp.getFloat("LeadingSpeed", 0.3f);//读取引领速度值
-        float explanationspeed = sp.getFloat("ExplanationSpeed", 0.3f);//读取去往讲解点速度值
-        float explainspeed = sp.getFloat("explain", 1);//读取讲解语速值
-        float stayspeed = sp.getFloat("stay", 1);//读取逗留时间值
-        float BreakTaskspeed = sp.getFloat("BreakTask", 1);//读取暂停时间值
-        boolean interrupt = sp.getBoolean("interrupted", false);//读取引领过程中是否可以被打断
-        boolean InExplanation = sp.getBoolean("InterruptionExplanation", false);//读取讲解过程中是否允许被打断
-        int endNumber = sp.getInt("endOfExplanation", 0);//讲解结束允许
-        String patrolContent = sp.getString("patrolContent", "1 ");//巡逻内容: 0：口罩检测;1：体温检测;2：人脸识别;
-        abnormalWarning = sp.getInt("abnormalWarning", 1);//异常警告方式：0：语音播报;1：就近跟随;
-        patrolSpeedNum = sp.getFloat("patrolSpeed", 0.3f);//巡逻速度
-        suspensionNum = sp.getFloat("suspension", 1);//巡逻过程中暂停时间
-        tempMode = sp.getInt("tempMode", 0);//测温模式选择：0：单人测温;1：多人测温
-        boolean VoiceAnnouncements = sp.getBoolean("VoiceAnnouncements", false);//智能测温语音播报
         //讲解结束方式判断
-        if (endNumber == 0) {
+        if (QuerySql.QueryBasic().get(0).getExplanationFinish() == 0) {
             binding.AgainCB.setChecked(true);
         } else {
             binding.otherCB.setChecked(true);
         }
         //测温模式选择判断
-        if (tempMode == 0) {
+        if (QuerySql.QueryBasic().get(0).getTempMode() == 0) {
             binding.singleTemp.setChecked(true);
         } else {
             binding.multipleTemp.setChecked(true);
         }
         //异常警告方式判断
-        if (abnormalWarning == 1) {
+        if (Objects.equals(QuerySql.QueryBasic().get(0).getError(), "1")) {
             binding.followNearby.setChecked(true);
         } else {
             binding.Announcements.setChecked(true);
         }
-        if (inaccessiblePoint == 0) {
+        if (QuerySql.QueryBasic().get(0).getUnArrive() == 0) {
             binding.skip.setChecked(true);
         } else {
             binding.repeat.setChecked(true);
         }
         //巡逻方式判断
-        if (patrolContent != null) {
-            for (int i = 0; i < patrolContent.split(" ").length; i++) {
-                check(patrolContent.split(" ")[i]);
+        if ( QuerySql.QueryBasic().get(0).getPatrolContent()!= null) {
+            for (int i = 0; i < QuerySql.QueryBasic().get(0).getPatrolContent().split(" ").length; i++) {
+                check(QuerySql.QueryBasic().get(0).getPatrolContent().split(" ")[i]);
             }
         }
-        binding.suspension.setCur(suspensionNum);
-        binding.patrolSpeed.setCur(patrolSpeedNum);
-        binding.etiquette.setChecked(etWelcome);
-        binding.InterruptionExplanation.setChecked(InExplanation);
-        binding.VoiceAnnouncements.setChecked(VoiceAnnouncements);
-        binding.interrupted.setChecked(interrupt);
-        binding.LeadingSpeed.setCur(leadSpeed);
-        binding.ExplanationSpeed.setCur(explanationspeed);
-        binding.explain.setCur(explainspeed);
-        binding.stay.setCur(stayspeed);
-        binding.BreakTask.setCur(BreakTaskspeed);
+        binding.suspension.setCur(QuerySql.QueryBasic().get(0).getPatrolStayTime());
+        binding.patrolSpeed.setCur(QuerySql.QueryBasic().get(0).getPatrolSpeed());
+        binding.etiquette.setChecked(QuerySql.QueryBasic().get(0).getIdentifyVip());
+        binding.InterruptionExplanation.setChecked(QuerySql.QueryBasic().get(0).getWhetherInterrupt());
+        binding.VoiceAnnouncements.setChecked(QuerySql.QueryBasic().get(0).getVoiceAnnouncements());
+        binding.LeadingSpeed.setCur(QuerySql.QueryBasic().get(0).getLeadingSpeed());
+        binding.ExplanationSpeed.setCur(QuerySql.QueryBasic().get(0).getGoExplanationPoint());
+        binding.explain.setCur(QuerySql.QueryBasic().get(0).getSpeechSpeed());
+        binding.stay.setCur(QuerySql.QueryBasic().get(0).getStayTime());
+        binding.BreakTask.setCur(QuerySql.QueryBasic().get(0).getWhetherTime());
 
 
         //VIP人脸识别
         binding.etiquette.setOnCheckedChangeListener((compoundButton, b) -> {
-            editor.putBoolean("etiquetteWelcome", b);
-            editor.commit();
+//            editor.putBoolean("etiquetteWelcome", b);
+//            editor.commit();
+            values.put("identifyvip",BooleanToInt(b));
         });
 
         //不能到达点的radioGroup点击事件
@@ -148,72 +137,51 @@ public class ModeSettingFragment extends Fragment {
         binding.LeadingSpeed.setOnSeekBarChangeListener(current -> {
             leadingSpeedNum = binding.LeadingSpeed.getCur();
             Log.d(TAG, "设置引领速度：" + leadingSpeedNum);
-            //将数据存储到临时文件
-            editor.putFloat("LeadingSpeed", leadingSpeedNum);
-            editor.commit();
+            values.put("leadingspeed",leadingSpeedNum);
         });
         //去往讲解点
         binding.ExplanationSpeed.setOnSeekBarChangeListener(current -> {
             ExplanationSpeedNum = binding.ExplanationSpeed.getCur();
             Log.d(TAG, "设置去往讲解点速度: " + ExplanationSpeedNum);
-            //将数据存储到临时文件
-            editor.putFloat("ExplanationSpeed", ExplanationSpeedNum);
-            editor.commit();
+            values.put("goexplanationpoint",ExplanationSpeedNum);
         });
         //讲解语速
         binding.explain.setOnSeekBarChangeListener(current -> {
             explainNum = binding.explain.getCurInt();
             Log.d(TAG, "设置讲解语速: " + explainNum);
-            //将数据存储到临时文件
-            editor.putFloat("explain", explainNum);
-            editor.commit();
+            values.put("speechspeed",explainNum);
         });
         //逗留时间
         binding.stay.setOnSeekBarChangeListener(current -> {
             stayNum = binding.stay.getCurInt();
             Log.d(TAG, "设置逗留时间: " + stayNum);
-            //将数据存储到临时文件
-            editor.putFloat("stay", stayNum);
-            editor.commit();
+            values.put("staytime",stayNum);
         });
         //打断任务触控点暂停时间
         binding.BreakTask.setOnSeekBarChangeListener(current -> {
             BreakTaskNum = binding.BreakTask.getCurInt();
             Log.d(TAG, "设置打断任务触控点暂停时间: " + BreakTaskNum);
-            //将数据存储到临时文件
-            editor.putFloat("BreakTask", BreakTaskNum);
-            editor.commit();
+            values.put("whethertime",BreakTaskNum);
         });
         //巡逻速度
         binding.patrolSpeed.setOnSeekBarChangeListener(current -> {
             patrolSpeedNum = binding.patrolSpeed.getCur();
             Log.d(TAG, "巡逻速度: " + patrolSpeedNum);
-            //将数据存储到临时文件
-            editor.putFloat("patrolSpeed", patrolSpeedNum);
-            editor.commit();
+            values.put("patrolspeed",patrolSpeedNum);
         });
         //巡逻过程中暂停时间
         binding.suspension.setOnSeekBarChangeListener(current -> {
             suspensionNum = binding.suspension.getCurInt();
-            Log.d(TAG, "巡逻速度: " + suspensionNum);
-            //将数据存储到临时文件
-            editor.putFloat("suspension", suspensionNum);
-            editor.commit();
+            values.put("patrolstaytime",suspensionNum);
         });
-        //引领过程中是否允许被打断
-        binding.interrupted.setOnCheckedChangeListener((compoundButton, b) -> {
-            editor.putBoolean("interrupted", b);
-            editor.commit();
-        });
+
 
         //讲解过程中是否允许被打断
         binding.InterruptionExplanation.setOnCheckedChangeListener((compoundButton, b) -> {
-            editor.putBoolean("InterruptionExplanation", b);
-            editor.commit();
+            values.put("whetherinterrupt",BooleanToInt(b));
         });
         binding.VoiceAnnouncements.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            editor.putBoolean("VoiceAnnouncements", isChecked);
-            editor.commit();
+            values.put("voiceannouncements",BooleanToInt(isChecked));
         });
         //讲解结束允许：再讲一遍
         binding.AgainCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -309,30 +277,31 @@ public class ModeSettingFragment extends Fragment {
             //礼仪迎宾选择统计
             if (binding.skip.isChecked()) {
                 inaccessiblePoint = 0;
+                values.put("unarrive",0);
             }
             if (binding.repeat.isChecked()) {
-                inaccessiblePoint = 1;
+                values.put("unarrive",1);
             }
             //测温模式统计
             if (binding.singleTemp.isChecked()) {
-                tempMode = 0;
+                values.put("tempmode",0);
             }
             if (binding.multipleTemp.isChecked()) {
-                tempMode = 1;
+                values.put("tempmode",1);
             }
             //讲解结束允许统计
             if (binding.AgainCB.isChecked()) {
-                endOfExplanation = 0;
+                values.put("explanationfinish",0);
             }
             if (binding.otherCB.isChecked()) {
-                endOfExplanation = 1;
+                values.put("explanationfinish",1);
             }
             //异常警告方式统计
             if (binding.Announcements.isChecked()) {
-                abnormalWarning = 0;
+                values.put("error",0);
             }
             if (binding.followNearby.isChecked()) {
-                abnormalWarning = 1;
+                values.put("error",1);
             }
             //巡逻内容数据统计
             if (binding.maskDetection.isChecked()) {
@@ -344,15 +313,19 @@ public class ModeSettingFragment extends Fragment {
             if (binding.faceRecognition.isChecked()) {
                 stringBuffer.append("2 ");
             }
-
-            //提交数据
-            editor.putInt("inaccessiblePoint", inaccessiblePoint);
-            editor.putInt("endOfExplanation", endOfExplanation);
-            editor.putInt("abnormalWarning", abnormalWarning);
-            editor.putString("patrolContent", stringBuffer.toString());
-            editor.putInt("tempMode", tempMode);
-            editor.commit();
+            values.put("patrolcontent",stringBuffer.toString());
+            String[] whereArgs = {QuerySql.QueryBasicId()+""};
+            UpDataSQL.update("basicsetting", values, "id = ?", whereArgs);
         }
     }
+
+    private static int BooleanToInt(Boolean data){
+        if (data == true){
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+
 }
 

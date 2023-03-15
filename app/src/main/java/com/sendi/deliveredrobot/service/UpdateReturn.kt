@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.service
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.MapRevise
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
 import com.sendi.deliveredrobot.entity.RouteDB
@@ -14,6 +15,7 @@ import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.MapConfig
+import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.SendFloor
 import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
@@ -78,7 +80,7 @@ class UpdateReturn {
                 for (i in 0 until mapList.size ){
                     val mapId = debugDao.selectMapId(mapList[i])
 
-                    val query = queryAllMapPointsDao.queryAllMapPoints(mapId).groupBy { it.name as String }
+                    val query = queryAllMapPointsDao.queryAllMapsPoints().groupBy { it.name as String }
                         .mapValues { (_, maps) ->
                             maps.groupBy { it.floorName as String }
                         }
@@ -118,6 +120,9 @@ class UpdateReturn {
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
                 jsonObject["curMapName"] = queryAllMapPointsDao.queryCurrentMapName()
+                jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig()[0].timeStamp
+                jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
+                jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
                 jsonObject["maps"] = mapPoint
                 //发送Mqtt
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)

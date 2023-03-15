@@ -2,8 +2,8 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -23,12 +23,10 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.handler.MqttMessageHandler
+import com.sendi.deliveredrobot.entity.UpDataSQL
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -414,6 +412,7 @@ class HomeFragment : Fragment(), IMainView {
             "智能讲解" -> {
                 controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                 Log.d("TAG", "点击智能讲解 ")
+                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig()[0].routeListText)
             }
             "轻应用" -> {
                 //跳转到测温模式

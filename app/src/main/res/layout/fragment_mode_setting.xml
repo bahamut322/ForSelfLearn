@@ -85,49 +85,50 @@
                 <View
                     android:id="@+id/view10"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="@dimen/dp_264"
+                    android:layout_height="@dimen/dp_164"
                     android:layout_marginTop="@dimen/dp_24"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
-                <TextView
-                    android:id="@+id/textView24"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_32"
-                    android:layout_marginTop="@dimen/dp_44"
-                    android:alpha="0.7"
-                    android:text="@string/interrupt"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintStart_toStartOf="@+id/view10"
-                    app:layout_constraintTop_toTopOf="@+id/view10" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textView24"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="@dimen/dp_32"-->
+<!--                    android:layout_marginTop="@dimen/dp_44"-->
+<!--                    android:alpha="0.7"-->
+<!--                    android:text="@string/interrupt"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="@dimen/sp_24"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/view10"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/view10" />-->
 
-                <CheckBox
-                    android:id="@+id/interrupted"
-                    android:layout_width="@dimen/dp_56"
-                    android:layout_height="@dimen/dp_48"
-                    android:layout_marginTop="@dimen/dp_16"
-                    android:layout_marginEnd="@dimen/dp_32"
-                    android:button="@drawable/selector_switch_track"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView24"
-                    app:layout_constraintEnd_toEndOf="@+id/view10"
-                    app:layout_constraintTop_toTopOf="@+id/textView24" />
+<!--                <CheckBox-->
+<!--                    android:id="@+id/interrupted"-->
+<!--                    android:layout_width="@dimen/dp_56"-->
+<!--                    android:layout_height="@dimen/dp_48"-->
+<!--                    android:layout_marginTop="@dimen/dp_16"-->
+<!--                    android:layout_marginEnd="@dimen/dp_32"-->
+<!--                    android:button="@drawable/selector_switch_track"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/textView24"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/view10"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/textView24" />-->
 
 
                 <TextView
                     android:id="@+id/textView25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_92"
+                    android:layout_marginStart="@dimen/dp_32"
                     android:alpha="0.7"
                     android:text="@string/Leading_speed"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
-                    app:layout_constraintStart_toStartOf="@+id/textView24"
-                    app:layout_constraintTop_toBottomOf="@+id/textView24" />
+                    app:layout_constraintBottom_toBottomOf="@+id/view10"
+                    app:layout_constraintStart_toStartOf="@+id/view10"
+                    app:layout_constraintTop_toTopOf="@+id/view10" />
 
                 <TextView
                     android:id="@+id/textView26"
@@ -301,17 +302,16 @@
                     android:id="@+id/textView32"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_194"
                     android:text="@string/Duration_time_min"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/textView31"
-                    app:layout_constraintStart_toEndOf="@+id/textView31"
+                    app:layout_constraintStart_toStartOf="@+id/textView30"
                     app:layout_constraintTop_toTopOf="@+id/textView31" />
 
                 <com.sendi.deliveredrobot.view.widget.MySeekBar
                     android:id="@+id/stay"
-                    android:layout_width="480dp"
+                    android:layout_width="560dp"
                     android:layout_height="@dimen/dp_48"
                     android:layout_marginStart="@dimen/dp_31"
                     app:layout_constraintBottom_toBottomOf="@+id/textView32"
