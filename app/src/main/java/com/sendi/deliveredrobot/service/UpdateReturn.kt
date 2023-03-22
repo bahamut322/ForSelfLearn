@@ -120,7 +120,7 @@ class UpdateReturn {
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
                 jsonObject["curMapName"] = queryAllMapPointsDao.queryCurrentMapName()
-                jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig()[0].timeStamp
+                jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
                 jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
                 jsonObject["maps"] = mapPoint

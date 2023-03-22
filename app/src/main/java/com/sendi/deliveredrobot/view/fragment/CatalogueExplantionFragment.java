@@ -50,7 +50,6 @@ public class CatalogueExplantionFragment extends Fragment {
     private FragmentCatalogueExplantionBinding binding;
     private NavController controller;
     private CatalogueAdapter mAdapter;
-    private List<MyResultModel>  result;
 
 
     @Override
@@ -64,9 +63,8 @@ public class CatalogueExplantionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         controller = Navigation.findNavController(view);
         binding = DataBindingUtil.bind(view);
-        result =  QuerySql.queryMyData(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue());
-        viewModel.videoAudio();
-        mAdapter = new CatalogueAdapter(result, getContext());
+        viewModel.inForListData();
+        mAdapter = new CatalogueAdapter(viewModel.getMDatas(), getContext());
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> viewModel.start());
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));

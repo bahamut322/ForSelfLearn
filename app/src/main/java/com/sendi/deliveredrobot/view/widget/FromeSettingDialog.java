@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.widget;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -16,7 +17,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.utils.LogUtil;
+
+import java.util.Objects;
 
 
 public class FromeSettingDialog extends Dialog {
@@ -44,6 +49,21 @@ public class FromeSettingDialog extends Dialog {
         passwordEt = findViewById(R.id.verificationCodeView);
         errorTv = findViewById(R.id.errorhint);
 
+        YesExit.setOnClickListener(v -> {
+            if (Objects.equals(passwordEt.getContent(), Universal.password)){
+                cancel();
+                dismiss();
+                RobotStatus.INSTANCE.getPassWordToSetting().postValue(true);
+            }else {
+                passwordEt.clear();
+                errorTv.setVisibility(View.VISIBLE);
+            }
+        });
+        NoExit.setOnClickListener(v -> {
+            passwordEt.clear();
+            errorTv.setVisibility(View.GONE);
+            dismiss();
+        });
     }
 
     @Override

@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.display.DisplayManager;
+import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
 import android.media.MediaRouter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -25,6 +28,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
@@ -65,11 +69,9 @@ public class BaseActivity extends AppCompatActivity {
     public VerticalTextView verticalTV;//纵向文字
     ConstraintLayout constraintLayout2;//布局
     int videoAudio;
-    List<Advance> imagePaths = new ArrayList<>();
     public int flag = 0;    //用于双屏显示： 0.none 1. media—router 2.display-manager
     public static final String TAG = "BaseActivity";
     private BaseViewModel baseViewModel;
-    private DeliveredRobotDao dao;
     AdvertisingConfigDB advertisingConfigDB;
 
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
@@ -105,6 +107,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,36 +121,7 @@ public class BaseActivity extends AppCompatActivity {
                         MyApplication.Companion.getInstance()
                 )
         ).getDebug();
-        dao = DataBaseDeliveredRobotMap.Companion.getDatabase(MyApplication.Companion.getInstance()).getDao();
         baseViewModel = new ViewModelProvider(this).get(BaseViewModel.class);
-        //监听观察者更新副屏内容
-        RobotStatus.INSTANCE.getNewUpdata().observe(this,integer ->{
-            if (integer == 1) {
-                mPresentation.dismiss();
-                ShowPresentationByMediarouter();
-                ShowPresentationByDisplaymanager();
-                RobotStatus.INSTANCE.getNewUpdata().postValue(0);
-                LogUtil.INSTANCE.d("更新副屏 $this");
-            }
-        });
-
-        RobotStatus.INSTANCE.getSdScreenStatus().observe(this, integer ->{
-            if (integer == 0){
-                mPresentation.dismiss();
-                ShowPresentationByMediarouter();
-                ShowPresentationByDisplaymanager();
-                LogUtil.INSTANCE.d("更新副屏 $this");
-                layoutFree();
-            }
-            if (integer == 1){
-                mPresentation.dismiss();
-                ShowPresentationByMediarouter();
-                ShowPresentationByDisplaymanager();
-                LogUtil.INSTANCE.d("更新副屏 $this");
-                Layout();
-            }
-        });
-
     }
 
     private final class MyPresentation extends Presentation {
@@ -173,12 +147,8 @@ public class BaseActivity extends AppCompatActivity {
             horizontalTV = findViewById(R.id.horizontalTV);//横向文字
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
-            if (Universal.videoAudio == 1) {
-                new AudioMngHelper(getContext()).setVoice100(videoAudio);//设置视频音量
-            } else {
-                new AudioMngHelper(getContext()).setVoice100(0);//设置视频音量
-            }
-
+            //一定要在副屏的生命中中设置一下音量，否则刷新副屏的时候默认为最大声音
+            new AudioMngHelper(MyApplication.context).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());
             //将控件设置成副屏尺寸，并且旋转270度
             constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();
@@ -187,7 +157,6 @@ public class BaseActivity extends AppCompatActivity {
                 constraintLayout2.setLayoutParams(params);
                 constraintLayout2.setRotation(270);
             });
-            Layout();
         }
 
 
@@ -204,7 +173,7 @@ public class BaseActivity extends AppCompatActivity {
         /**
          * 重新加载Activity
          */
-        public void aReady(){
+        public void aReady() {
             finish();
             overridePendingTransition(0, 0);
             startActivity(getIntent());
@@ -314,7 +283,7 @@ public class BaseActivity extends AppCompatActivity {
         File file = new File(path);
         File[] files = file.listFiles();
         assert files != null;
-        imagePaths = new ArrayList<>();
+        List<Advance> imagePaths = new ArrayList<>();
         advanceView.initView();
         for (File value : files) {
             if (baseViewModel.checkIsImageFile(value.getPath())) {
@@ -329,139 +298,236 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    private void textLayout() {
-            //横向
-            if (Universal.fontLayout == 1) {
-                //隐藏纵向文字，显示横向文字
-                verticalTV.setVisibility(View.GONE);
-                horizontalTV.setVisibility(View.VISIBLE);
-                //显示内容
-                horizontalTV.setText(baseViewModel.getLength(Universal.fontContent));
-                //背景颜色&图片
-                constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
-                //文字颜色
-                horizontalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
-                //字体大小
-                if (Universal.fontSize == 1) {
-                    horizontalTV.setTextSize(90);
-                } else if (Universal.fontSize == 2) {
-                    horizontalTV.setTextSize(70);
-                } else if (Universal.fontSize == 3) {
-                    horizontalTV.setTextSize(50);
-                }
-            } else if (Universal.fontLayout == 2) {
-                //纵向
-                //隐藏横向文字，显示纵向文字
-                verticalTV.setVisibility(View.VISIBLE);
-                horizontalTV.setVisibility(View.GONE);
-                //显示内容
-                verticalTV.setText(Universal.fontContent);
-                //背景颜色
-                constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
-                //文字颜色
-                verticalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
-                //字体大小
-                if (Universal.fontSize == 1) {
-                    verticalTV.setTextSize(80);
-                } else if (Universal.fontSize == 2) {
-                    verticalTV.setTextSize(60);
-                } else if (Universal.fontSize == 3) {
-                    verticalTV.setTextSize(40);
-                }
-            }
-    }
+//    private void textLayout() {
+//        //横向
+//        if (Universal.fontLayout == 1) {
+//            //隐藏纵向文字，显示横向文字
+//            verticalTV.setVisibility(View.GONE);
+//            horizontalTV.setVisibility(View.VISIBLE);
+//            //显示内容
+//            horizontalTV.setText(baseViewModel.getLength(Universal.fontContent));
+//            //背景颜色&图片
+//            constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+//            //文字颜色
+//            horizontalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
+//            //字体大小
+//            if (Universal.fontSize == 1) {
+//                horizontalTV.setTextSize(90);
+//            } else if (Universal.fontSize == 2) {
+//                horizontalTV.setTextSize(70);
+//            } else if (Universal.fontSize == 3) {
+//                horizontalTV.setTextSize(50);
+//            }
+//        } else if (Universal.fontLayout == 2) {
+//            //纵向
+//            //隐藏横向文字，显示纵向文字
+//            verticalTV.setVisibility(View.VISIBLE);
+//            horizontalTV.setVisibility(View.GONE);
+//            //显示内容
+//            verticalTV.setText(Universal.fontContent);
+//            //背景颜色
+//            constraintLayout2.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+//            //文字颜色
+//            verticalTV.setTextColor(Color.parseColor(Universal.fontColor + ""));
+//            //字体大小
+//            if (Universal.fontSize == 1) {
+//                verticalTV.setTextSize(80);
+//            } else if (Universal.fontSize == 2) {
+//                verticalTV.setTextSize(60);
+//            } else if (Universal.fontSize == 3) {
+//                verticalTV.setTextSize(40);
+//            }
+//        }
+//    }
 
 
     @SuppressLint("RtlHardcoded")
-    public void Layout() {
-            //轮播时间
-            AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
-//        this.advanceView.initView();
-            //1-图片 2-视频 6-文字 7-图片+文字
-            switch (Universal.bigScreenType) {
-                case 1:
-                case 2:
-                    //读取文件
-                    getFilesAllName(Universal.Secondary);
-                    verticalTV.setVisibility(View.GONE);
-                    horizontalTV.setVisibility(View.GONE);
-                    advanceView.setVisibility(View.VISIBLE);
-                    break;
-                case 6:
-                    advanceView.setVisibility(View.GONE);
-                    textLayout();
-                    break;
-                case 7:
-                    //读取文件
-                    getFilesAllName(Universal.Secondary);
-                    if (Universal.textPosition == 0) {
-                        textLayout();
-                        horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
-                    } else if (Universal.textPosition == 1) {
-                        textLayout();
-                        horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
-                    } else if (Universal.textPosition == 2) {
-                        textLayout();
-                        horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
-                    }
-                    advanceView.setVisibility(View.VISIBLE);
-                    break;
-            }
-    }
-    private void layoutFree(){
+//    public void Layout() {
+//        //轮播时间
+//        AdvancePagerAdapter.time = Universal.picPlayTime * 1000;
+////        this.advanceView.initView();
+//        //1-图片 2-视频 6-文字 7-图片+文字
+//        switch (Universal.bigScreenType) {
+//            case 1:
+//            case 2:
+//                //读取文件
+//                getFilesAllName(Universal.Secondary);
+//                verticalTV.setVisibility(View.GONE);
+//                horizontalTV.setVisibility(View.GONE);
+//                advanceView.setVisibility(View.VISIBLE);
+//                break;
+//            case 6:
+//                advanceView.setVisibility(View.GONE);
+//                textLayout();
+//                break;
+//            case 7:
+//                //读取文件
+//                getFilesAllName(Universal.Secondary);
+//                if (Universal.textPosition == 0) {
+//                    textLayout();
+//                    horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
+//                } else if (Universal.textPosition == 1) {
+//                    textLayout();
+//                    horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
+//                } else if (Universal.textPosition == 2) {
+//                    textLayout();
+//                    horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
+//                }
+//                advanceView.setVisibility(View.VISIBLE);
+//                break;
+//        }
+//    }
+
+//    public void layoutFree() {
+//        //轮播时间
+//        AdvancePagerAdapter.time = advertisingConfigDB.getPicPlayTime() * 1000;
+////        this.advanceView.initView();
+//        //1-图片 2-视频 6-文字 7-图片+文字
+//        switch (advertisingConfigDB.getType()) {
+//            case 1:
+//            case 2:
+//                //读取文件
+//                getFilesAllName(Universal.advertisement);
+//                verticalTV.setVisibility(View.GONE);
+//                horizontalTV.setVisibility(View.GONE);
+//                advanceView.setVisibility(View.VISIBLE);
+//                break;
+//            case 6:
+//                advanceView.setVisibility(View.GONE);
+//                textLayoutFree();
+//                break;
+//            case 7:
+//                //读取文件
+//                getFilesAllName(Universal.advertisement);
+//                if (advertisingConfigDB.getTextPosition() == 0) {
+//                    textLayoutFree();
+//                    horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
+//                } else if (Universal.textPosition == 1) {
+//                    textLayoutFree();
+//                    horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
+//                } else if (Universal.textPosition == 2) {
+//                    textLayoutFree();
+//                    horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
+//                }
+//                advanceView.setVisibility(View.VISIBLE);
+//                break;
+//        }
+//    }
+
+//    private void textLayoutFree() {
+//
+//        //横向
+//        if (advertisingConfigDB.getFontLayout() == 1) {
+//            //隐藏纵向文字，显示横向文字
+//            verticalTV.setVisibility(View.GONE);
+//            horizontalTV.setVisibility(View.VISIBLE);
+//            //显示内容
+//            horizontalTV.setText(baseViewModel.getLength(advertisingConfigDB.getFontContent()));
+//            //背景颜色&图片
+//            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+//            //文字颜色
+//            horizontalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+//            //字体大小
+//            if (advertisingConfigDB.getFontSize() == 1) {
+//                horizontalTV.setTextSize(90);
+//            } else if (advertisingConfigDB.getFontSize() == 2) {
+//                horizontalTV.setTextSize(70);
+//            } else if (advertisingConfigDB.getFontSize() == 3) {
+//                horizontalTV.setTextSize(50);
+//            }
+//        } else {
+//            //纵向
+//            //隐藏横向文字，显示纵向文字
+//            verticalTV.setVisibility(View.VISIBLE);
+//            horizontalTV.setVisibility(View.GONE);
+//            //显示内容
+//            verticalTV.setText(advertisingConfigDB.getFontContent());
+//            //背景颜色
+//            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+//            //文字颜色
+//            verticalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+//            //字体大小
+//            if (advertisingConfigDB.getFontSize() == 1) {
+//                verticalTV.setTextSize(80);
+//            } else if (advertisingConfigDB.getFontSize() == 2) {
+//                verticalTV.setTextSize(60);
+//            } else if (advertisingConfigDB.getFontSize() == 3) {
+//                verticalTV.setTextSize(40);
+//            }
+//        }
+//    }
+
+    /**
+     * @param picPlayTime    轮播时间
+     * @param file           路径
+     * @param type           类型： 1-图片 2-视频 6-文字 7-图片+文字
+     * @param textPosition   文字位置
+     * @param fontLayout     文字方向：1-横向，2-纵向
+     * @param fontContent    文字
+     * @param fontBackGround 背景颜色
+     * @param fontColor      文字颜色
+     * @param fontSize       文字大小：1-大，2-中，3-小,
+     */
+    public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize) {
         //轮播时间
-        AdvancePagerAdapter.time = advertisingConfigDB.getPicPlayTime() * 1000;
-//        this.advanceView.initView();
-        //1-图片 2-视频 6-文字 7-图片+文字
-        switch (advertisingConfigDB.getType()) {
+        AdvancePagerAdapter.time = picPlayTime;
+        switch (type) {
             case 1:
             case 2:
                 //读取文件
-                getFilesAllName(Universal.advertisement);
+                getFilesAllName(file);
                 verticalTV.setVisibility(View.GONE);
                 horizontalTV.setVisibility(View.GONE);
                 advanceView.setVisibility(View.VISIBLE);
                 break;
             case 6:
                 advanceView.setVisibility(View.GONE);
-                textLayoutFree();
+                textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
                 break;
             case 7:
                 //读取文件
-                getFilesAllName(Universal.advertisement);
-                if (advertisingConfigDB.getTextPosition() == 0) {
-                    textLayoutFree();
+                getFilesAllName(file);
+                if (textPosition == 0) {
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
                     horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
-                } else if (Universal.textPosition == 1) {
-                    textLayoutFree();
+                } else if (textPosition == 1) {
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
                     horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
-                } else if (Universal.textPosition == 2) {
-                    textLayoutFree();
+                } else if (textPosition == 2) {
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
                     horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
                 }
                 advanceView.setVisibility(View.VISIBLE);
                 break;
         }
     }
-    private void textLayoutFree(){
+
+    /**
+     * @param fontLayout     文字方向：1-横向，2-纵向
+     * @param fontContent    文字
+     * @param fontBackGround 背景颜色
+     * @param fontColor      文字颜色
+     * @param fontSize       文字大小：1-大，2-中，3-小,
+     */
+    private void textLayoutThis(int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize) {
 
         //横向
-        if (advertisingConfigDB.getFontLayout() == 1) {
+        if (fontLayout == 1) {
             //隐藏纵向文字，显示横向文字
             verticalTV.setVisibility(View.GONE);
             horizontalTV.setVisibility(View.VISIBLE);
             //显示内容
-            horizontalTV.setText(baseViewModel.getLength(advertisingConfigDB.getFontContent()));
+            horizontalTV.setText(baseViewModel.getLength(fontContent));
             //背景颜色&图片
-            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+            constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
             //文字颜色
-            horizontalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+            horizontalTV.setTextColor(Color.parseColor(fontColor + ""));
             //字体大小
-            if (advertisingConfigDB.getFontSize() == 1) {
+            if (fontSize == 1) {
                 horizontalTV.setTextSize(90);
-            } else if (advertisingConfigDB.getFontSize() == 2) {
+            } else if (fontSize == 2) {
                 horizontalTV.setTextSize(70);
-            } else if (advertisingConfigDB.getFontSize() == 3) {
+            } else if (fontSize == 3) {
                 horizontalTV.setTextSize(50);
             }
         } else {
@@ -470,17 +536,17 @@ public class BaseActivity extends AppCompatActivity {
             verticalTV.setVisibility(View.VISIBLE);
             horizontalTV.setVisibility(View.GONE);
             //显示内容
-            verticalTV.setText(advertisingConfigDB.getFontContent());
+            verticalTV.setText(fontContent);
             //背景颜色
-            constraintLayout2.setBackgroundColor(Color.parseColor(advertisingConfigDB.getFontBackGround() + ""));
+            constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
             //文字颜色
-            verticalTV.setTextColor(Color.parseColor(advertisingConfigDB.getFontColor() + ""));
+            verticalTV.setTextColor(Color.parseColor(fontColor + ""));
             //字体大小
-            if (advertisingConfigDB.getFontSize() == 1) {
+            if (fontSize == 1) {
                 verticalTV.setTextSize(80);
-            } else if (advertisingConfigDB.getFontSize() == 2) {
+            } else if (fontSize == 2) {
                 verticalTV.setTextSize(60);
-            } else if (advertisingConfigDB.getFontSize() == 3) {
+            } else if (fontSize == 3) {
                 verticalTV.setTextSize(40);
             }
         }

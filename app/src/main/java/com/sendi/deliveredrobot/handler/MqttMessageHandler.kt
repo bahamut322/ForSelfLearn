@@ -52,6 +52,7 @@ object MqttMessageHandler {
     private var fileNames: Array<String?>? = null//副屏内容
     private var houseFile: Array<String?>? = null//主屏内容
     private var advFile: Array<String?>? = null //广告内容
+    private var ReceivingCompleted : Boolean? = false
 
 
     /**
@@ -112,48 +113,53 @@ object MqttMessageHandler {
                 "replyAdvertisementConfig" -> {
                     val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
-                    deleteAll(AdvertisingConfigDB::class.java)
-                    deleteFiles(File(Universal.advertisement))
-                    RobotStatus.advertisingConfig?.value = advertisingConfig
-                    DialogHelper.loadingDialog.show()
-                    LogUtil.d("收到广告配置")
-                    //创建文件的方法
-                    createFolder()
-                    val advertisingConfigDB = AdvertisingConfigDB()
-                    advertisingConfigDB.timeStamp = advertisingConfig.timeStamp
-                    advertisingConfigDB.type = advertisingConfig.argConfig!!.type!!
-                    if (advertisingConfig.argConfig.argPic != null) {
-                        Universal.advPics = advertisingConfig.argConfig.argPic.pics
-                        advertisingConfigDB.picType = advertisingConfig.argConfig.argPic.picType
-                        advertisingConfigDB.picPlayTime =
-                            advertisingConfig.argConfig.argPic.picPlayTime
+                    if (advertisingConfig.timeStamp!! > QuerySql.advTimeStamp()) {
+                        deleteAll(AdvertisingConfigDB::class.java)
+                        deleteFiles(File(Universal.advertisement))
+                        RobotStatus.advertisingConfig?.value = advertisingConfig
+                        DialogHelper.loadingDialog.show()
+                        LogUtil.d("收到广告配置")
+                        //创建文件的方法
+                        createFolder()
+                        val advertisingConfigDB = AdvertisingConfigDB()
+                        advertisingConfigDB.timeStamp = advertisingConfig.timeStamp
+                        advertisingConfigDB.type = advertisingConfig.argConfig!!.type!!
+                        if (advertisingConfig.argConfig.argPic != null) {
+                            Universal.advPics = advertisingConfig.argConfig.argPic.pics
+                            advertisingConfigDB.picType = advertisingConfig.argConfig.argPic.picType
+                            advertisingConfigDB.picPlayTime =
+                                advertisingConfig.argConfig.argPic.picPlayTime
+                        }
+                        if (advertisingConfig.argConfig.argFont != null) {
+                            advertisingConfigDB.fontContent =
+                                advertisingConfig.argConfig.argFont.fontContent
+                            advertisingConfigDB.fontColor =
+                                advertisingConfig.argConfig.argFont.fontColor
+                            advertisingConfigDB.fontSize =
+                                advertisingConfig.argConfig.argFont.fontSize
+                            advertisingConfigDB.fontLayout =
+                                advertisingConfig.argConfig.argFont.fontLayout
+                            advertisingConfigDB.fontBackGround =
+                                advertisingConfig.argConfig.argFont.fontBackGround
+                            advertisingConfigDB.textPosition =
+                                advertisingConfig.argConfig.argFont.textPosition
+                        }
+                        if (advertisingConfig.argConfig.argVideo != null) {
+                            Universal.advVideoFile = advertisingConfig.argConfig.argVideo.videos
+                            advertisingConfigDB.videoAudio =
+                                advertisingConfig.argConfig.argVideo.videoAudio
+                        }
+                        if (advertisingConfig.argConfig.argRadio != null) {
+                            LogUtil.d("广告配置收到了argRadio,提示暂无此配置")
+                        }
+                        if (advertisingConfig.argConfig.argPicGroup != null) {
+                            LogUtil.d("广告配置收到了argPicGroup,提示暂无此配置")
+                        }
+                        advertisingConfigDB.save()
+                        updateConfig()
+                    } else {
+                        LogUtil.d("不用更新")
                     }
-                    if (advertisingConfig.argConfig.argFont != null) {
-                        advertisingConfigDB.fontContent =
-                            advertisingConfig.argConfig.argFont.fontContent
-                        advertisingConfigDB.fontColor =
-                            advertisingConfig.argConfig.argFont.fontColor
-                        advertisingConfigDB.fontSize = advertisingConfig.argConfig.argFont.fontSize
-                        advertisingConfigDB.fontLayout =
-                            advertisingConfig.argConfig.argFont.fontLayout
-                        advertisingConfigDB.fontBackGround =
-                            advertisingConfig.argConfig.argFont.fontBackGround
-                        advertisingConfigDB.textPosition =
-                            advertisingConfig.argConfig.argFont.textPosition
-                    }
-                    if (advertisingConfig.argConfig.argVideo != null) {
-                        Universal.advVideoFile = advertisingConfig.argConfig.argVideo.videos
-                        advertisingConfigDB.videoAudio =
-                            advertisingConfig.argConfig.argVideo.videoAudio!!
-                    }
-                    if (advertisingConfig.argConfig.argRadio != null) {
-                        LogUtil.d("广告配置收到了argRadio,提示暂无此配置")
-                    }
-                    if (advertisingConfig.argConfig.argPicGroup != null) {
-                        LogUtil.d("广告配置收到了argPicGroup,提示暂无此配置")
-                    }
-                    advertisingConfigDB.save()
-                    updateConfig()
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
@@ -169,7 +175,10 @@ object MqttMessageHandler {
                                 .count(RouteDB::class.java) > 0
                         if (isExist && QuerySql.queryTime(routeList[route].routeName) != routeList[route].timeStamp) {
                             //删除对应文件夹
-                            deleteFolderFile((Universal.robotFile + routeList[route].rootMapName +"/" + routeList[route].routeName),true)
+                            deleteFolderFile(
+                                (Universal.robotFile + routeList[route].rootMapName + "/" + routeList[route].routeName),
+                                true
+                            )
                             deleteAll(
                                 BigScreenConfigDB::class.java,
                                 "pointconfigvodb_id = ?",
@@ -197,11 +206,11 @@ object MqttMessageHandler {
                         val route = iterator.next()
                         if (route.timeStamp > 0) {
                             //创建对应文件夹。以路线名字命名(存放大屏幕)
-                            openFile(Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/big/")
+                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/")
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
-                            openFile(Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/touch/")
+                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
-                            openFile(Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/mp3/")
+                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
                             val pointIterator = route.pointConfigVOList.iterator()
                             //路线名字
                             routeDB.routeName = route.routeName
@@ -213,12 +222,14 @@ object MqttMessageHandler {
                             routeDB.timeStamp = route.timeStamp
                             //路线背景图
                             routeDB.backgroundPic =
-                                Universal.robotFile + route.rootMapName +"/"+  route.routeName + "/touch/" + (route.backgroundPic!!).substring((route.backgroundPic).lastIndexOf("/") + 1) //路线背景图
+                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (route.backgroundPic!!).substring(
+                                    (route.backgroundPic).lastIndexOf("/") + 1
+                                ) //路线背景图
                             Thread {
                                 if (route.backgroundPic != null) {
                                     downloadFile(
                                         Universal.pathDownload + route.backgroundPic,
-                                        Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/touch"
+                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
                                     )
                                 }
                             }.start()
@@ -238,27 +249,31 @@ object MqttMessageHandler {
                                 pointConfigVODB.scope = point.scope!!
                                 //途径音频.mp3
                                 pointConfigVODB.walkVoice =
-                                    Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/mp3/" +  (point.walkVoice!!).substring((point.walkVoice).lastIndexOf("/") + 1)
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice!!).substring(
+                                        (point.walkVoice).lastIndexOf("/") + 1
+                                    )
                                 val walkVoiceFile =
-                                    UpdateReturn().splitStr(point.walkVoice!!)
+                                    UpdateReturn().splitStr(point.walkVoice)
                                 Thread {
                                     for (i in walkVoiceFile!!.indices) {
                                         downloadFile(
                                             Universal.pathDownload + walkVoiceFile[i],
-                                            Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/mp3"
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
                                         )
                                     }
                                 }.start()
                                 //到达讲解.mp3
                                 pointConfigVODB.explanationVoice =
-                                    Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/mp3/" +  (point.explanationVoice!!).substring((point.explanationVoice).lastIndexOf("/") + 1)
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.explanationVoice!!).substring(
+                                        (point.explanationVoice).lastIndexOf("/") + 1
+                                    )
                                 val explanationVoiceFile =
-                                    UpdateReturn().splitStr(point.explanationVoice!!)
+                                    UpdateReturn().splitStr(point.explanationVoice)
                                 Thread {
                                     for (i in explanationVoiceFile!!.indices) {
                                         downloadFile(
                                             Universal.pathDownload + explanationVoiceFile[i],
-                                            Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/mp3"
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
                                         )
                                     }
                                 }.start()
@@ -277,14 +292,16 @@ object MqttMessageHandler {
                                             point.bigScreenConfig.argPic.picPlayTime
                                         //图片
                                         bigScreenConfigDB.imageFile =
-                                            Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/big/" + (point.bigScreenConfig.argPic.pics!!).substring((point.bigScreenConfig.argPic.pics).lastIndexOf("/") + 1)
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + (point.bigScreenConfig.argPic.pics).substring(
+                                                (point.bigScreenConfig.argPic.pics).lastIndexOf("/") + 1
+                                            )
                                         val bigPicFile =
                                             UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
                                         Thread {
                                             for (i in bigPicFile!!.indices) {
                                                 downloadFile(
                                                     Universal.pathDownload + bigPicFile[i],
-                                                    Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/big"
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
                                                 )
                                             }
                                         }.start()
@@ -312,18 +329,22 @@ object MqttMessageHandler {
                                     if (point.bigScreenConfig.argVideo != null) {
                                         //视频是否播放声音
                                         bigScreenConfigDB.videoAudio =
-                                            point.bigScreenConfig.argVideo.videoAudio!!
+                                            point.bigScreenConfig.argVideo.videoAudio
                                         //视频储存位置
                                         bigScreenConfigDB.videoFile =
-                                            Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/big/" +
-                                        (point.bigScreenConfig.argVideo.videos!!).substring((point.bigScreenConfig.argVideo.videos).lastIndexOf("/") + 1)
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +
+                                                    (point.bigScreenConfig.argVideo.videos).substring(
+                                                        (point.bigScreenConfig.argVideo.videos).lastIndexOf(
+                                                            "/"
+                                                        ) + 1
+                                                    )
                                         val bigVideoFile =
-                                            UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos!!)
+                                            UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
                                         Thread {
                                             for (i in bigVideoFile!!.indices) {
                                                 downloadFile(
                                                     Universal.pathDownload + bigVideoFile[i],
-                                                    Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/big"
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
                                                 )
                                             }
                                         }.start()
@@ -340,20 +361,22 @@ object MqttMessageHandler {
                                     if (point.touchScreenConfig.argPic != null) {
                                         //图片布局
                                         touchScreenConfigDB.touch_picType =
-                                            point.touchScreenConfig.argPic!!.picType
+                                            point.touchScreenConfig.argPic.picType
                                         //轮播时间
                                         touchScreenConfigDB.touch_picPlayTime =
                                             point.touchScreenConfig.argPic.picPlayTime
                                         //图片路径
                                         touchScreenConfigDB.touch_imageFile =
-                                            Universal.robotFile + route.rootMapName +"/"+ route.routeName + "/touch/" + (point.touchScreenConfig.argPic.pics).substring((point.touchScreenConfig.argPic.pics).lastIndexOf("/") + 1)
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (point.touchScreenConfig.argPic.pics).substring(
+                                                (point.touchScreenConfig.argPic.pics).lastIndexOf("/") + 1
+                                            )
                                         val touchPicFile =
                                             UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
                                         Thread {
                                             for (i in touchPicFile!!.indices) {
                                                 downloadFile(
                                                     Universal.pathDownload + touchPicFile[i],
-                                                    Universal.robotFile  + route.rootMapName +"/"+ route.routeName + "/touch"
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
                                                 )
                                             }
                                         }.start()
@@ -385,7 +408,7 @@ object MqttMessageHandler {
                                 pointItem.add(pointConfigVODB)
                                 routeDB.mapPointName = pointItem
                                 routeDB.save()
-
+                                ReceivingCompleted = true
                             }
                         }
                     }
@@ -438,7 +461,7 @@ object MqttMessageHandler {
                             println("收到：argVideo")
                             Universal.videoFile = gatekeeper.argConfig.argVideo.videos
                             replyGateConfig.videoAudio =
-                                gatekeeper.argConfig.argVideo.videoAudio!!
+                                gatekeeper.argConfig.argVideo.videoAudio
                         }
                         if (gatekeeper.argConfig.argRadio != null) {
                             println("收到：argRadio 暂无")
@@ -644,15 +667,8 @@ object MqttMessageHandler {
                 e.printStackTrace()
             }
             UpdateReturn().mapSetting()
-            if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "") {
-                DialogHelper.loadingDialog.dismiss()
-                Universal.pics = ""
-                Universal.sleepContentName = ""
-                Universal.videoFile = ""
-                RobotStatus.newUpdata.postValue(1)
-                UpdateReturn().method()
-            }
-            if (Universal.pics != "" || Universal.videoFile != "" || Universal.sleepContentName != "" || Universal.advVideoFile != "" || Universal.advPics != "") {
+            nullData()
+            if (Universal.pics != "" || Universal.videoFile != "") {
                 if (Universal.pics != "") {
                     fileNames = null
                     fileNames = UpdateReturn().splitStr(Universal.pics)
@@ -684,16 +700,7 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "" && Universal.advVideoFile == "" && Universal.advPics == "") {
-                Looper.prepare()
-                DialogHelper.loadingDialog.dismiss()
-                Universal.pics = ""
-                Universal.sleepContentName = ""
-                Universal.videoFile = ""
-                RobotStatus.newUpdata.postValue(1)
-                UpdateReturn().method()
-                Looper.loop()
-            }
+            nullData()
             if (Universal.sleepContentName != "") {
                 houseFile = UpdateReturn().splitStr(Universal.sleepContentName)
             }
@@ -718,15 +725,8 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "" && Universal.advVideoFile == "" && Universal.advPics == "") {
-                DialogHelper.loadingDialog.dismiss()
-                Universal.pics = ""
-                Universal.sleepContentName = ""
-                Universal.videoFile = ""
-                RobotStatus.newUpdata.postValue(1)
-                UpdateReturn().method()
-            }
-            if (Universal.pics != "" || Universal.videoFile != "" || Universal.sleepContentName != "" || Universal.advVideoFile != "" || Universal.advPics != "") {
+            nullData()
+            if (Universal.advVideoFile != "" || Universal.advPics != "") {
                 if (Universal.advPics != "") {
                     advFile = null
                     advFile = UpdateReturn().splitStr(Universal.advPics)
@@ -736,7 +736,7 @@ object MqttMessageHandler {
                 }
 //                try {
                 //副屏
-                if (advFile!!.isNotEmpty()) {
+                if (advFile != null) {
                     for (i in 0 until advFile!!.size) {
                         downloadFile(
                             "http://172.168.201.34:9055/management_res/" + advFile!![i],
@@ -765,6 +765,7 @@ object MqttMessageHandler {
                 // 下载失败
                 e.printStackTrace()
                 LogUtil.e("下载失败：$url ")
+                downLoadFinish()
             }
 
             @Throws(IOException::class)
@@ -787,35 +788,12 @@ object MqttMessageHandler {
                         LogUtil.e("下载中：$file: $progress %")
                     }
                     fos.flush()
-                    // 下载完成
-                    if (UpdateReturn().splitStr(Universal.sleepContentName)!!.isEmpty()) {
-                        if (fileNames!!.size == UpdateReturn().fileSize(Universal.Secondary)) {
-                            DialogHelper.loadingDialog.dismiss()
-                            Universal.pics = ""
-                            Universal.sleepContentName = ""
-                            Universal.videoFile = ""
-                            RobotStatus.newUpdata.postValue(1)
-                            UpdateReturn().method()
-                        }
-                    } else {
-                        if (fileNames!!.size + UpdateReturn().splitStr(Universal.sleepContentName)!!.size == UpdateReturn().fileSize(
-                                Universal.Secondary
-                            ) + UpdateReturn().fileSize(Universal.Standby)
-                        ) {
-                            DialogHelper.loadingDialog.dismiss()
-                            Universal.pics = ""
-                            Universal.sleepContentName = ""
-                            Universal.videoFile = ""
-                            RobotStatus.newUpdata.postValue(1)
-                            UpdateReturn().method()
-                        }
-                    }
                     LogUtil.e("下载成功：$file,下载耗时= ${(System.currentTimeMillis() - startTime)} ms")
-                    DialogHelper.loadingDialog.dismiss()
+                    downLoadFinish()
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
                     LogUtil.e("下载失败!!")
-                    DialogHelper.loadingDialog.dismiss()
+                    downLoadFinish()
                 } finally {
                     try {
                         `is`?.close()
@@ -828,6 +806,65 @@ object MqttMessageHandler {
                 }
             }
         })
+    }
+
+    private fun nullData() {
+        if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "" && Universal.advVideoFile == "" && Universal.advPics == "") {
+            Looper.prepare()
+            DialogHelper.loadingDialog.dismiss()
+            Universal.pics = ""
+            Universal.sleepContentName = ""
+            Universal.videoFile = ""
+            Universal.advVideoFile == ""
+            Universal.advPics == ""
+            UpdateReturn().method()
+            Looper.loop()
+        }
+    }
+
+    fun downLoadFinish() {
+        // 下载完成
+        if (fileNames?.size !=null) {
+            if (fileNames!!.size == UpdateReturn().fileSize(Universal.Secondary)) {
+                DialogHelper.loadingDialog.dismiss()
+                Universal.pics = ""
+                Universal.sleepContentName = ""
+                Universal.videoFile = ""
+                Universal.advVideoFile == ""
+                Universal.advPics == ""
+                RobotStatus.newUpdata.postValue(1)
+                UpdateReturn().method()
+            }
+        }
+        if (houseFile?.size !=null) {
+            if (houseFile!!.size == UpdateReturn().fileSize(Universal.Standby)) {
+                DialogHelper.loadingDialog.dismiss()
+                Universal.pics = ""
+                Universal.sleepContentName = ""
+                Universal.videoFile = ""
+                Universal.advVideoFile == ""
+                Universal.advPics == ""
+                RobotStatus.newUpdata.postValue(1)
+                UpdateReturn().method()
+            }
+        }
+        if (advFile?.size !=null) {
+            if (advFile!!.size == UpdateReturn().fileSize(Universal.advertisement)) {
+                DialogHelper.loadingDialog.dismiss()
+                Universal.pics = ""
+                Universal.sleepContentName = ""
+                Universal.videoFile = ""
+                Universal.advVideoFile == ""
+                Universal.advPics == ""
+                RobotStatus.newUpdata.postValue(1)
+                UpdateReturn().method()
+            }
+        }
+        if (ReceivingCompleted == true){
+            DialogHelper.loadingDialog.dismiss()
+//            UpdateReturn().method()
+            ReceivingCompleted = false
+        }
     }
 
     /**

@@ -8,8 +8,8 @@ package com.sendi.deliveredrobot.model
  *  `videoAudio` tinyint(1) '视频是否播放声音',
  */
 data class VideoConfiguration(
-    val videos: String?,
-    val videoAudio: Int? = 1,
+    val videos: String,
+    val videoAudio: Int ,
     val videoFrame: String?,
     val videoPlayType : Int? = 1
 )

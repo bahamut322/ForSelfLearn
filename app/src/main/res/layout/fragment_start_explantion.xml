@@ -61,7 +61,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/con"
                 app:layout_constraintStart_toEndOf="@+id/pointList"
                 app:layout_constraintTop_toTopOf="@+id/con" />
-
+            <!--显示图片-->
             <ImageView
                 android:id="@+id/pointImage"
                 android:layout_width="522dp"
@@ -73,6 +73,15 @@
                 app:layout_constraintStart_toStartOf="@+id/view26"
                 app:layout_constraintTop_toTopOf="@+id/view26"
                 tools:src="@tools:sample/avatars"/>
+                <!--显示文字-->
+                <TextView
+                    android:id="@+id/pointTv"
+                    android:layout_width="522dp"
+                    android:layout_height="414dp"
+                    android:layout_marginStart="@dimen/dp_32"
+                    app:layout_constraintBottom_toBottomOf="@+id/view26"
+                    app:layout_constraintStart_toStartOf="@+id/view26"
+                    app:layout_constraintTop_toTopOf="@+id/view26" />
 
             <TextView
                 android:id="@+id/nowExplanation"

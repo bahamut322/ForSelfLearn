@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.ContentValues
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
@@ -15,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.sendi.deliveredrobot.BaseActivity
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
@@ -23,14 +23,15 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.entity.UpDataSQL
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.*
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
+import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
@@ -171,13 +172,12 @@ class HomeFragment : Fragment(), IMainView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
-        fromeSettingDialog = FromeSettingDialog(activity)
+        fromeSettingDialog = FromeSettingDialog(context)
 //        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
 //        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
+//        AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().videoVolume.toInt())
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(view)
-        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
-        val basicSetting: List<BasicSetting> = findAll(BasicSetting::class.java)
         LogUtil.i("待机时间：" + Universal.sleepTime)
         //设置速度
         ROSHelper.setSpeed("0.4")
@@ -189,36 +189,31 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
-
-        val open = sp.getBoolean("Etiquette", false) // 是否开启人脸识别
-
-        for (basicSettings in basicSetting) {
-            Universal.selectItem = basicSettings.defaultValue
-            Universal.RobotMode = basicSettings.robotMode
-            Log.d("MainActivity", "选择的功能展示模块： " + basicSettings.defaultValue)
-            Log.d("MainActivity", "机器人音色： " + basicSettings.robotMode)
+        binding.speak.setOnClickListener {
+            BaiduTTSHelper.getInstance().speak("你好你好，欢迎")
         }
-        if (open == true) {
+
+
+        if (QuerySql.QueryBasic().identifyVip == true) {
             faceViewModel?.suerfaceInit(binding.SurfaceView)
-            if (Universal.selectItem != "") {
+            if (QuerySql.QueryBasic().defaultValue != "") {
                 binding.homeClay.setBackgroundResource(R.drawable.guests_open_bg)
-            }else{
+            } else {
                 binding.homeClay.setBackgroundResource(R.drawable.once_guests_bg)
             }
-        }else{
+        } else {
             binding.homeClay.setBackgroundResource(R.drawable.bg)
         }
-        val tempMode = sp.getInt("tempMode", 0) // 测温模式
         //改变人脸识别工具类，人脸识别数量的最大值
-        if (tempMode == 0) {
+        if (QuerySql.QueryBasic().tempMode == 0) {
             Log.d("TAG", "当前为单人测温")
             Utils.mNmsLimit = 1
         } else {
             Log.d("TAG", "当前为多人测温")
             Utils.mNmsLimit = 10
         }
-        if (Universal.selectItem != null) {
-            rescolors = Universal.selectItem.split(" ").toTypedArray()
+        if (QuerySql.QueryBasic().defaultValue != null) {
+            rescolors = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
             when (rescolors!!.size - 1) {
                 0 -> {
                     allInvisible()
@@ -247,20 +242,12 @@ class HomeFragment : Fragment(), IMainView {
             //密码弹窗
             fromeSettingDialog!!.show()
             //弹窗点击事件。回到主页面
-            fromeSettingDialog!!.YesExit.setOnClickListener {
-                if (fromeSettingDialog!!.passwordEt.content == Universal.password) {
+            PassWordToSetting.observe(viewLifecycleOwner) {
+                if (PassWordToSetting.value == true) {
                     controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
+                    PassWordToSetting.postValue(false)
                     fromeSettingDialog!!.dismiss()
-                } else {
-                    fromeSettingDialog!!.passwordEt.clear()
-                    fromeSettingDialog!!.errorTv.visibility = View.VISIBLE
                 }
-            }
-            //点击消除弹窗
-            fromeSettingDialog!!.NoExit.setOnClickListener {
-                fromeSettingDialog!!.passwordEt.clear()
-                fromeSettingDialog!!.errorTv.visibility = View.GONE
-                fromeSettingDialog!!.dismiss()
             }
 
         }
@@ -412,7 +399,7 @@ class HomeFragment : Fragment(), IMainView {
             "智能讲解" -> {
                 controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                 Log.d("TAG", "点击智能讲解 ")
-                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig()[0].routeListText)
+                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().routeListText)
             }
             "轻应用" -> {
                 //跳转到测温模式

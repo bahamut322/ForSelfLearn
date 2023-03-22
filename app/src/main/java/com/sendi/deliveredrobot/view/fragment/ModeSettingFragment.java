@@ -70,44 +70,44 @@ public class ModeSettingFragment extends Fragment {
 
 
         //讲解结束方式判断
-        if (QuerySql.QueryBasic().get(0).getExplanationFinish() == 0) {
+        if (QuerySql.QueryBasic().getExplanationFinish() == 0) {
             binding.AgainCB.setChecked(true);
         } else {
             binding.otherCB.setChecked(true);
         }
         //测温模式选择判断
-        if (QuerySql.QueryBasic().get(0).getTempMode() == 0) {
+        if (QuerySql.QueryBasic().getTempMode() == 0) {
             binding.singleTemp.setChecked(true);
         } else {
             binding.multipleTemp.setChecked(true);
         }
         //异常警告方式判断
-        if (Objects.equals(QuerySql.QueryBasic().get(0).getError(), "1")) {
+        if (Objects.equals(QuerySql.QueryBasic().getError(), "1")) {
             binding.followNearby.setChecked(true);
         } else {
             binding.Announcements.setChecked(true);
         }
-        if (QuerySql.QueryBasic().get(0).getUnArrive() == 0) {
+        if (QuerySql.QueryBasic().getUnArrive() == 0) {
             binding.skip.setChecked(true);
         } else {
             binding.repeat.setChecked(true);
         }
         //巡逻方式判断
-        if ( QuerySql.QueryBasic().get(0).getPatrolContent()!= null) {
-            for (int i = 0; i < QuerySql.QueryBasic().get(0).getPatrolContent().split(" ").length; i++) {
-                check(QuerySql.QueryBasic().get(0).getPatrolContent().split(" ")[i]);
+        if ( QuerySql.QueryBasic().getPatrolContent()!= null) {
+            for (int i = 0; i < QuerySql.QueryBasic().getPatrolContent().split(" ").length; i++) {
+                check(QuerySql.QueryBasic().getPatrolContent().split(" ")[i]);
             }
         }
-        binding.suspension.setCur(QuerySql.QueryBasic().get(0).getPatrolStayTime());
-        binding.patrolSpeed.setCur(QuerySql.QueryBasic().get(0).getPatrolSpeed());
-        binding.etiquette.setChecked(QuerySql.QueryBasic().get(0).getIdentifyVip());
-        binding.InterruptionExplanation.setChecked(QuerySql.QueryBasic().get(0).getWhetherInterrupt());
-        binding.VoiceAnnouncements.setChecked(QuerySql.QueryBasic().get(0).getVoiceAnnouncements());
-        binding.LeadingSpeed.setCur(QuerySql.QueryBasic().get(0).getLeadingSpeed());
-        binding.ExplanationSpeed.setCur(QuerySql.QueryBasic().get(0).getGoExplanationPoint());
-        binding.explain.setCur(QuerySql.QueryBasic().get(0).getSpeechSpeed());
-        binding.stay.setCur(QuerySql.QueryBasic().get(0).getStayTime());
-        binding.BreakTask.setCur(QuerySql.QueryBasic().get(0).getWhetherTime());
+        binding.suspension.setCur(QuerySql.QueryBasic().getPatrolStayTime());
+        binding.patrolSpeed.setCur(QuerySql.QueryBasic().getPatrolSpeed());
+        binding.etiquette.setChecked(QuerySql.QueryBasic().getIdentifyVip());
+        binding.InterruptionExplanation.setChecked(QuerySql.QueryBasic().getWhetherInterrupt());
+        binding.VoiceAnnouncements.setChecked(QuerySql.QueryBasic().getVoiceAnnouncements());
+        binding.LeadingSpeed.setCur(QuerySql.QueryBasic().getLeadingSpeed());
+        binding.ExplanationSpeed.setCur(QuerySql.QueryBasic().getGoExplanationPoint());
+        binding.explain.setCur(QuerySql.QueryBasic().getSpeechSpeed());
+        binding.stay.setCur(QuerySql.QueryBasic().getStayTime());
+        binding.BreakTask.setCur(QuerySql.QueryBasic().getWhetherTime());
 
 
         //VIP人脸识别

@@ -355,6 +355,13 @@
         <action
             android:id="@+id/action_settingHomeFragment_to_verifyToDebugFragment"
             app:destination="@id/verifyToDebugFragment" />
+        <!--设置->智能讲解-->
+        <action
+            android:id="@+id/action_settingHomeFragment_to_explanationFragment"
+            app:destination="@id/ExplanationFragment" />
+        <!--设置->智能引领-->
+        <action android:id="@+id/action_settingHomeFragment_to_GuideFragment"
+            app:destination="@+id/GuideFragment"/>
     </fragment>
     <fragment
         android:id="@+id/wifiSettingFragment"
@@ -378,6 +385,14 @@
         <action
             android:id="@+id/action_selfCheckFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <!--自检->智能讲解-->
+        <action
+            android:id="@+id/action_selfCheckFragment_to_explanationFragment"
+            app:destination="@id/ExplanationFragment" />
+        <!--自检->智能引领-->
+        <action
+            android:id="@+id/action_selfCheckFragment_to_guideFragment"
+            app:destination="@id/GuideFragment" />
 
     </fragment>
     <fragment
@@ -539,6 +554,10 @@
         <action
             android:id="@+id/action_guideFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <!--智能引领->设置-->
+        <action
+            android:id="@+id/action_guideFragment_to_settingHomeFragment"
+            app:destination="@id/settingHomeFragment" />
     </fragment>
 
     <fragment
@@ -551,6 +570,10 @@
         <action
             android:id="@+id/action_explanationFragment_to_CatalogueExplantionFragment"
             app:destination="@id/CatalogueExplantionFragment"/>
+        <!--智能讲解->设置-->
+        <action
+            android:id="@+id/action_explanationFragment_to_settingHomeFragment"
+            app:destination="@+id/settingHomeFragment"/>
     </fragment>
 
     <fragment

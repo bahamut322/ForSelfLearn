@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_68"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center"
@@ -51,7 +52,33 @@
                 android:alpha="0.6"
                 android:text="@string/home" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/firstFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_68"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/dp_32"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+        <ImageView
+            android:id="@+id/imageViewSetting"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:src="@drawable/setting_svg"
+           />
 
+        <ImageView
+            android:id="@+id/regularImg"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginStart="@dimen/dp_32"
+            android:src="@drawable/timeoclick_svg"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
+            app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
+            app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/explainRv"
             android:layout_width="0dp"

@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.net.ConnectivityManager
-import android.os.Binder
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
+import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.MotionEvent
@@ -23,8 +21,12 @@ import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
+import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
+import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
@@ -35,6 +37,7 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
+import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -52,6 +55,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private val dateViewModel by viewModels<DateViewModel>()
+
     @SuppressLint("SimpleDateFormat")
     private val sdf2 = SimpleDateFormat("HH:mm")
     private lateinit var navigationReceiver: NavigationReceiver
@@ -59,7 +63,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
 
-    @SuppressLint("SimpleDateFormat", "SetTextI18n")
+    @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +102,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController
         registerReceiver(navigationReceiver, IntentFilter(ACTION_NAVIGATE))
+        RobotStatus.PassWordToSetting.postValue(false);
+        RobotStatus.speaking.postValue(0)
         //-----------------设置状态栏状态receiver--------------------
         val intentFilter = IntentFilter()
         intentFilter.addAction(Intent.ACTION_TIME_TICK) //每分钟变化
@@ -137,10 +143,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                             .queryChargePoint()
                     RobotStatus.originalLocation = queryPoint
                     RobotStatus.currentLocation = RobotStatus.originalLocation
-                    LogUtil.d("当前所在楼层"+RobotStatus.currentLocation!!.floorName)
+                    LogUtil.d("当前所在楼层" + RobotStatus.currentLocation!!.floorName)
                 }
             }
         }
+        screenRenew()
         initBatteryStatusListener()
         RobotStatus.tenancy.observe(this) {
             binding.textViewRobotName.apply {
@@ -354,6 +361,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             e.printStackTrace()
         }
     }
+
     interface MyTouchListener {
         fun onTouchEvent(event: MotionEvent?)
     }
@@ -386,10 +394,85 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
         return super.dispatchTouchEvent(ev)
     }
+
     companion object {
         const val ACTION_SIM_STATE_CHANGED = "android.intent.action.SIM_STATE_CHANGED"
 
         @SuppressLint("StaticFieldLeak")
         lateinit var instance: ComponentActivity
+    }
+
+
+    private fun screenRenew() {
+        var doubleScreen = 0
+        //监听观察者更新副屏内容
+        newUpdata.observe(this) {
+            if (newUpdata.value == 1) {
+//                renovate()
+                newUpdata.postValue(0)
+                if (doubleScreen == 0) {
+                    sdScreenStatus!!.postValue(0)
+                } else if (doubleScreen == 1) {
+                    sdScreenStatus!!.postValue(1)
+                } else if (doubleScreen == 2) {
+                    sdScreenStatus!!.postValue(2)
+                }
+            }
+        }
+        sdScreenStatus!!.observe(this) {
+            if (sdScreenStatus!!.value == 0) {
+                renovate()
+                doubleScreen = sdScreenStatus!!.value!!
+                layoutThis(
+                    advertisingConfigDB.picPlayTime * 1000,
+                    Universal.advertisement,
+                    advertisingConfigDB.type,
+                    advertisingConfigDB.textPosition,
+                    advertisingConfigDB.fontLayout,
+                    advertisingConfigDB.fontContent,
+                    advertisingConfigDB.fontBackGround,
+                    advertisingConfigDB.fontColor,
+                    advertisingConfigDB.fontSize
+                )
+            }
+            if (sdScreenStatus!!.value == 1) {
+                renovate()
+                doubleScreen = sdScreenStatus!!.value!!
+                layoutThis(
+                    Universal.picPlayTime * 1000,
+                    Universal.Secondary,
+                    Universal.bigScreenType,
+                    Universal.textPosition,
+                    Universal.fontLayout,
+                    Universal.fontContent,
+                    Universal.fontBackGround,
+                    Universal.fontColor,
+                    Universal.fontSize
+                )
+            }
+            if (sdScreenStatus!!.value == 3){
+                renovate()
+                doubleScreen = sdScreenStatus!!.value!!
+                layoutThis(
+                    RobotStatus.SecondModel!!.value?.picPlayTime!!,
+                    RobotStatus.SecondModel!!.value?.file,
+                    RobotStatus.SecondModel!!.value?.type!!,
+                    RobotStatus.SecondModel!!.value?.textPosition!!,
+                    RobotStatus.SecondModel!!.value?.fontLayout!!,
+                    RobotStatus.SecondModel!!.value?.fontContent,
+                    RobotStatus.SecondModel!!.value?.fontBackGround,
+                    RobotStatus.SecondModel!!.value?.fontColor,
+                    RobotStatus.SecondModel!!.value?.fontSize!!
+                )
+            }
+        }
+    }
+
+    private fun renovate() {
+        if (mPresentation != null) {
+            mPresentation.dismiss()
+        }
+        ShowPresentationByMediarouter()
+        ShowPresentationByDisplaymanager()
     }
 }

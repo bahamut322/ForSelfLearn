@@ -44,7 +44,6 @@ public class AdvanceView extends RelativeLayout {
 
     public void setData(List<Advance> advances) {
         adapter.setData(advances);
-
     }
 
     public void setPause(){

@@ -3,11 +3,13 @@ package com.sendi.deliveredrobot.view.fragment
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +20,8 @@ import chassis_msgs.SafeState
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
+import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
 import com.sendi.deliveredrobot.model.QueryElevatorListModel
@@ -218,7 +222,7 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("已取消自动充电")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                                selectFunction()
                                             }
                                         }
                                         RobotStatus.batteryPower.observe(this@SelfCheckFragment) {
@@ -226,13 +230,13 @@ class SelfCheckFragment : Fragment() {
                                                 LogUtil.i("电量已超过最小阈值")
                                                 chargingDialog.dismiss()
                                                 findNavController().popBackStack()
-                                                controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                                selectFunction()
                                             }
                                         }
 //                                        findNavController().navigate(R.id.action_selfCheckFragment_to_chargeFragment)
                                     }else{
                                         findNavController().popBackStack()
-                                        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                                        selectFunction()
                                     }
                                 }
                             } else {
@@ -245,7 +249,7 @@ class SelfCheckFragment : Fragment() {
                         LogUtil.i("数据异常未设置默认充电桩")
 //                        findNavController().popBackStack()
                         //默认充电桩点未设置
-                        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                        selectFunction()
                     }
                 }
             }
@@ -265,8 +269,7 @@ class SelfCheckFragment : Fragment() {
 //            LogUtil.d("SelfCheck 获取到分数:$score")
 //        }
 //        if (score > scoreMin) {
-        controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
-
+        selectFunction()
 //        } else {
 //            MainScope().launch {
 //                withContext(Dispatchers.Main) {
@@ -324,6 +327,40 @@ class SelfCheckFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         LogUtil.i("SelfCheckFragment onDestroy")
+    }
+
+    private fun selectFunction(){
+        //判断数据长度来，判断全选是否勾选一个功能
+        Looper.prepare();
+        when(FunctionSkip.selectFunction()){
+            //智能引领
+            0 ->{
+                controller!!.navigate(R.id.action_selfCheckFragment_to_guideFragment)
+                Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
+                LogUtil.i("智能引领")
+            }
+            //智能讲解
+            1 ->{
+                controller!!.navigate(R.id.action_selfCheckFragment_to_explanationFragment)
+                Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
+                LogUtil.i("智能讲解")
+            }
+            //智能问答
+            2->{
+                Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+                LogUtil.i("智能问答")
+            }
+            //轻应用
+            3->{
+                Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
+                LogUtil.i("轻应用")
+            }
+            //不只有一个选项
+            4->{
+                controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+            }
+        }
+        Looper.loop();
     }
 
     fun setAnimation(view: ProgressBar, mStartProgressBar: Int, mProgressBar: Int) {

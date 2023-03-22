@@ -61,6 +61,7 @@ object RobotStatus {
     val versionStatusModel = MutableLiveData<VersionStatusModel>()//机器人版本状态
     val tenancy = MutableLiveData<ResponseTenancyModel>() //使用期限
     var odomPose: Pose2D? = null //里程计
+    val PassWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
@@ -71,9 +72,11 @@ object RobotStatus {
     var explanationList : MutableLiveData<ExplanationTraceModel> = MutableLiveData<ExplanationTraceModel>()
     var speakNumber : MutableLiveData<String> = MutableLiveData();//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>();//记录智能讲解朗读的内容
+    var speaking : MutableLiveData<Int?> = MutableLiveData()//记录百度语音是否在说话
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
-    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 默认:空闲 1:测温 2:讲解
+    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item
+    var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status

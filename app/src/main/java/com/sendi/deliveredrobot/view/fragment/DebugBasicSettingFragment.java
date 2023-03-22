@@ -17,12 +17,16 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
 import com.sendi.deliveredrobot.entity.BasicSetting;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
@@ -57,21 +61,19 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.seekbarVoice.setRange(0, 100, 0);//设置视频音量调节范围
 
 
-        binding.seekbarMusic.setCur(QuerySql.QueryBasic().get(0).getVoiceVolume());
-        binding.seekbarVoice.setCur(QuerySql.QueryBasic().get(0).getVideoVolume());
-        Log.d(TAG, "机器人功能选择: " + Universal.selectItem);
-        Log.d(TAG, "机器人音色选择: " + Universal.RobotMode);
-        timbres(QuerySql.QueryBasic().get(0).getRobotMode());//选中音色方法
-        binding.expressionCB.setChecked(QuerySql.QueryBasic().get(0).getExpression());//是否开启表情
-        binding.cbEtiquette.setChecked(QuerySql.QueryBasic().get(0).getEtiquette());//是否开启礼仪迎宾
-        binding.cbIntelligent.setChecked(QuerySql.QueryBasic().get(0).getIntelligent());//是否开启智能语音
+        binding.seekbarMusic.setCur(QuerySql.QueryBasic().getVoiceVolume());
+        binding.seekbarVoice.setCur(QuerySql.QueryBasic().getVideoVolume());
+        timbres(QuerySql.QueryBasic().getRobotMode());//选中音色方法
+        binding.expressionCB.setChecked(QuerySql.QueryBasic().getExpression());//是否开启表情
+        binding.cbEtiquette.setChecked(QuerySql.QueryBasic().getEtiquette());//是否开启礼仪迎宾
+        binding.cbIntelligent.setChecked(QuerySql.QueryBasic().getIntelligent());//是否开启智能语音
 
-        if (Universal.selectItem != null) {
-            for (int i = 0; i < QuerySql.QueryBasic().get(0).getDefaultValue().split(" ").length; i++) {
-                check(QuerySql.QueryBasic().get(0).getDefaultValue().split(" ")[i]);
+        if (QuerySql.QueryBasic().getDefaultValue() != null) {
+            for (int i = 0; i < QuerySql.QueryBasic().getDefaultValue().split(" ").length; i++) {
+                check(QuerySql.QueryBasic().getDefaultValue().split(" ")[i]);
             }
             //判断数据长度来，判断全选是否勾选
-            if (Universal.selectItem.split(" ").length == 4) {
+            if (QuerySql.QueryBasic().getDefaultValue().split(" ").length == 4) {
                 binding.all.setChecked(true);
             }
         }
@@ -107,6 +109,7 @@ public class DebugBasicSettingFragment extends Fragment {
         //音频音量
         binding.seekbarVoice.setOnSeekBarChangeListener(current -> {
             videoAudio = binding.seekbarVoice.getCur();
+            new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int)binding.seekbarVoice.getCur());
             Log.d(TAG, "设置音频音量：" + videoAudio);
             values.put("videovolume",videoAudio);
         });
@@ -223,4 +226,5 @@ public class DebugBasicSettingFragment extends Fragment {
             return 0;
         }
     }
+
 }

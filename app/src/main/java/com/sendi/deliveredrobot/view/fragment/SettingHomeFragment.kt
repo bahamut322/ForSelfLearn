@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,8 +18,11 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.adapter.SettingHomeListAdapter
 import com.sendi.deliveredrobot.databinding.FragmentSettingHomeBinding
+import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.SettingHomeViewModel
 import kotlinx.coroutines.*
 
@@ -123,12 +127,40 @@ class SettingHomeFragment : Fragment() {
 //                true
 //            }
 //        }
-        binding.returnHome.setOnClickListener(View.OnClickListener {
-            controller!!.navigate(R.id.action_settingHomeFragment_to_homeFragment)
+        //返回时判断数据长度来，判断全选是否勾选一个功能
+        binding.returnHome.setOnClickListener {
             for (fragment in fragments) {
                 fragment.onDestroy()
             }
-        })
+            when(FunctionSkip.selectFunction()){
+                //智能引领
+                0 ->{
+                    controller!!.navigate(R.id.action_settingHomeFragment_to_GuideFragment)
+                    Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
+                    LogUtil.i("智能引领")
+                }
+                //智能讲解
+                1 ->{
+                    controller!!.navigate(R.id.action_settingHomeFragment_to_explanationFragment)
+                    Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
+                    LogUtil.i("智能讲解")
+                }
+                //智能问答
+                2->{
+                    Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+                    LogUtil.i("智能问答")
+                }
+                //轻应用
+                3->{
+                    Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
+                    LogUtil.i("轻应用")
+                }
+                //不只有一个选项
+                4->{
+                    controller!!.navigate(R.id.action_settingHomeFragment_to_homeFragment)
+                }
+            }
+        }
     }
 
     /**

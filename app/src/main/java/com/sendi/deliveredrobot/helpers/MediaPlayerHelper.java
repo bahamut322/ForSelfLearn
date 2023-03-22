@@ -2,6 +2,10 @@ package com.sendi.deliveredrobot.helpers;
 
 import android.media.MediaPlayer;
 import android.os.Environment;
+
+import com.sendi.deliveredrobot.MyApplication;
+import com.sendi.deliveredrobot.entity.QuerySql;
+
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,8 +28,9 @@ public class MediaPlayerHelper {
         } else {
             mMediaPlayer.reset();
         }
+        new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         try {
-            mMediaPlayer.setDataSource( fileName);
+            mMediaPlayer.setDataSource(fileName);
             mMediaPlayer.prepare();
             mMediaPlayer.start();
             startTimer();
@@ -72,6 +77,10 @@ public class MediaPlayerHelper {
             public void run() {
                 if (mMediaPlayer != null && mOnProgressListener != null) {
                     mOnProgressListener.onProgress(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
+                    if (mMediaPlayer.getCurrentPosition() == mMediaPlayer.getDuration()){
+                        //恢复成视频播放声音大小
+                        new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());
+                    }
                 }
             }
         }, 0, 1000);

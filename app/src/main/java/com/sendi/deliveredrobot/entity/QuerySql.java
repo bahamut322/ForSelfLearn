@@ -19,15 +19,16 @@ import java.util.List;
  */
 public class QuerySql {
     /**
-     * 笛卡尔积查询数据库中讲解配置
+     * 笛卡尔积查询数据库讲解路线中的信息(升序排序)
      * @param routeId 当前地图的id
      */
-    public static List<MyResultModel> queryMyData(int routeId) {
-        List<MyResultModel> list = new ArrayList<>();
+    public static ArrayList<MyResultModel> queryMyData(int routeId) {
+        ArrayList<MyResultModel> list = new ArrayList<>();
         String sql = "SELECT * FROM routedb route "
                 + "LEFT JOIN pointconfigvodb point ON " + routeId + " = point.routedb_id "
                 + "LEFT JOIN bigscreenconfigdb bigscreen ON point.id = bigscreen.pointconfigvodb_id "
-                + "LEFT JOIN touchscreenconfigdb touch ON point.id = touch.pointconfigvodb_id";
+                + "LEFT JOIN touchscreenconfigdb touch ON point.id = touch.pointconfigvodb_id "
+                + "ORDER BY scope ASC";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -177,14 +178,13 @@ public class QuerySql {
     /**
      * 查询讲解配置中的信息
      */
-    public static List<ExplainConfigModel> QueryExplainConfig(){
-        List<ExplainConfigModel> list = new ArrayList<>();
+    public static ExplainConfigModel QueryExplainConfig(){
+        ExplainConfigModel model = new ExplainConfigModel();
         String sql = "SELECT * FROM explainconfigdb";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 // 构造实体对象
-                ExplainConfigModel model = new ExplainConfigModel();
                 model.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 model.setPointListText(cursor.getString(cursor.getColumnIndex("pointlisttext")));
                 model.setInterruptionText(cursor.getString(cursor.getColumnIndex("interruptiontext")));
@@ -194,11 +194,10 @@ public class QuerySql {
                 model.setStartText(cursor.getString(cursor.getColumnIndex("starttext")));
                 model.setSlogan(cursor.getString(cursor.getColumnIndex("slogan")));
                 model.setTimeStamp(cursor.getLong(cursor.getColumnIndex("timestamp")));
-                list.add(model);
             } while (cursor.moveToNext());
             cursor.close();
         }
-        return list;
+        return model;
     }
 
     /**
@@ -230,14 +229,13 @@ public class QuerySql {
         }
         return basic_id;
     }
-    public static List<BasicModel> QueryBasic() {
-        List<BasicModel> list = new ArrayList<>();
+    public static BasicModel QueryBasic() {
+        BasicModel model = new BasicModel();
         String sql = "SELECT * FROM basicsetting";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 // 构造实体对象
-                BasicModel model = new BasicModel();
                 model.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 boolean etique = intToBoolean(cursor.getInt(cursor.getColumnIndex("etiquette")));
                 model.setEtiquette(etique);
@@ -267,11 +265,10 @@ public class QuerySql {
                 model.setVoiceAnnouncements(VoiceAnnouncements);
                 boolean Expression = intToBoolean(cursor.getInt(cursor.getColumnIndex("expression")));
                 model.setExpression(Expression);
-                list.add(model);
             } while (cursor.moveToNext());
             cursor.close();
         }
-        return list;
+        return model;
     }
 
     /**

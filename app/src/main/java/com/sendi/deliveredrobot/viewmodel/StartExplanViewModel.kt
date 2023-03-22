@@ -1,81 +1,57 @@
 package com.sendi.deliveredrobot.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.text.SpannableStringBuilder
-import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.model.ExplanationTraceModel
+import com.sendi.deliveredrobot.model.MyResultModel
+import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager.addAllAtIndex
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
+import com.sendi.deliveredrobot.navigationtask.ConsumptionTask
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
-import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import java.io.File
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
+import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.utils.LogUtil.d
+import kotlinx.coroutines.*
 import kotlin.math.pow
 
 
 class StartExplanViewModel : ViewModel() {
-    var mDatas: ArrayList<ExplanationTraceModel?>? = ArrayList()
+    var mDatas: ArrayList<MyResultModel?>? = ArrayList()
     lateinit var mainScope: CoroutineScope
-    private var videoAudio : Int = 0
 
 
-    fun infoList() {
+    fun inForListData() {
         mDatas = ArrayList()
-        val explanation = ExplanationTraceModel()
-        //模拟数据1
-        explanation.pointName = QueryPointEntity(
-            floorName = "1",
-            name = "map-0209-1",
-            pointDirection = "左右",
-            pointId = 877,
-            pointName = "room1",
-            rootMapId = 13,
-            routeId = 42,
-            routePath = "path_2022-12-07_15-49-05.txt",
-            subMapId = 56,
-            subPath = "/home/rpdzkj/robot-data/laser_map/2022-12-07#15-40-13",
-            w = 1.4441915648753874,
-            x = -15.958836.toFloat(),
-            y = -8.263622.toFloat(),
-            elevator = null,
-            publicAreaName = null,
-            publicAreaId = null,
-            type = 0,
-            speakString = "广州市申迪计算机系统有限公司于1998年10月在广州市创立，是一家专业从事计算机软件开发、系统集成和技术服务的民营企业。公司已通过ISO9001质量管理体系认证、ISO20000 IT服务管理体系认证、ISO27001信息安全管理系统认证、ISO14001环境管理体系认证和ISO45001职业健康安全管理体系认证；被评定为国家高新技术企业，具有中国电子工业标准化技术协会颁发的ITSS等级资质和广东省网络空间安全协会颁发的计算机信息系统安全服务等级资质，并被认定为省市软件企业、广东省大数据培育企业，具有国际机构颁发的CMMI5认证证书。"
-        )
-        explanation.acceptStation =
-            "广州市申迪计算机系统有限公司于1998年10月在广州市创立，是一家专业从事计算机软件开发、系统集成和技术服务的民营企业。公司已通过ISO9001质量管理体系认证、ISO20000 IT服务管理体系认证、ISO27001信息安全管理系统认证、ISO14001环境管理体系认证和ISO45001职业健康安全管理体系认证；被评定为国家高新技术企业，具有中国电子工业标准化技术协会颁发的ITSS等级资质和广东省网络空间安全协会颁发的计算机信息系统安全服务等级资质，并被认定为省市软件企业、广东省大数据培育企业，具有国际机构颁发的CMMI5认证证书。"
-        explanation.pointImage =
-            "http://172.168.201.34:9055/management_res//68/NDg1MDk2NDA4NTYzZGU5ZTYxZTA1MWUyMDY2YTE2YzU1ZDM0ODEuanBlZzE2Nzc4MTM3Nzg5Njk.jpeg"
-        mDatas!!.add(explanation)
-
+        mDatas = QuerySql.queryMyData(selectRoutMapItem!!.value!!)
     }
 
     /**
      * 路径加入列队方法
      */
-    fun start(){
+    fun start() {
         for (i in 0 until mDatas!!.size) {
-            val taskModel = TaskModel(location = mDatas!![i]?.pointName, speakString = mDatas!![i]?.acceptStation)
-            val bill = createBill(taskModel = taskModel)
-            addAllAtIndex(bill, i)
-            currentBill()!!.executeNextTask()
+            MainScope().launch(Dispatchers.Default) {
+                val taskModel = TaskModel(
+                    location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
+                        .queryPoint(mDatas!![i]!!.name),
+                    speakString = mDatas!![i]?.explanationtext
+                )
+                val bill = createBill(taskModel = taskModel)
+                addAllAtIndex(bill, i)
+                currentBill()!!.executeNextTask()
+            }
         }
     }
+
     /**
      * 将数字转换为汉字
      *
@@ -188,31 +164,41 @@ class StartExplanViewModel : ViewModel() {
     }
 
 
-
-    fun  mainScope(){
+    fun mainScope() {
         mainScope = MainScope()
 
     }
+
     //结束讲解
-    fun finish(){
+    fun finish() {
         mainScope.launch {
             currentBill()?.earlyFinish()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
         }
 
     }
+
     //下一个任务
-    fun nextTask(){
+    fun nextTask() {
         currentBill()?.executeNextTask()
     }
-    fun cancelMainScope(){
+
+    fun cancelMainScope() {
         mainScope.cancel()
     }
-    fun videoAudio() {
-        val sp: SharedPreferences = MyApplication.instance!!.getSharedPreferences("data", Context.MODE_PRIVATE)
-        videoAudio = sp.getFloat("videoAudio", 0f).toInt() // 视频音量
-        AudioMngHelper(MyApplication.context).setVoice100(videoAudio)
 
+    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>):SecondModel {
+        return SecondModel(
+            picPlayTime = mData[position]!!.big_picplaytime,
+            file = Universal.robotFile + mData[position]!!.rootmapname + "/" + mData[position]!!.routename + "/big/",
+            type = mData[position]!!.big_type,
+            textPosition = mData[position]!!.big_textposition,
+            fontLayout = mData[position]!!.big_fontlayout,
+            fontContent = mData[position]!!.big_fontcontent.toString(),
+            fontBackGround = mData[position]!!.big_fontbackground.toString(),
+            fontColor = mData[position]!!.big_fontcolor.toString(),
+            fontSize = mData[position]!!.big_fontsize
+        )
     }
 }
 

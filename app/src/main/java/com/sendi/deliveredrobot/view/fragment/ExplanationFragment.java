@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.ExplanationItemBinding;
 import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
+import com.sendi.deliveredrobot.entity.FunctionSkip;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.model.ExplanationTraceModel;
@@ -47,6 +48,7 @@ import com.sendi.deliveredrobot.room.entity.QueryPointEntity;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
+import com.sendi.deliveredrobot.view.widget.FromeSettingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,11 +74,30 @@ public class ExplanationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        FromeSettingDialog fromeSettingDialog = new FromeSettingDialog(getContext());
+        //是否是第一个页面
+        if (FunctionSkip.selectFunction() == 4) {
+            binding.firstFragment.setVisibility(View.GONE);
+            binding.llReturn.setVisibility(View.VISIBLE);
+        } else {
+            binding.firstFragment.setVisibility(View.VISIBLE);
+            binding.llReturn.setVisibility(View.GONE);
+        }
         controller = Navigation.findNavController(view);
-        binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().get(0).getSlogan());
+        binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> controller.navigate(R.id.action_explanationFragment_to_homeFragment));
+
+        binding.imageViewSetting.setOnClickListener(v -> {
+            fromeSettingDialog.show();
+            RobotStatus.INSTANCE.getPassWordToSetting().observe(getViewLifecycleOwner(), it -> {
+                if (RobotStatus.INSTANCE.getPassWordToSetting().getValue()) {
+                    controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
+                    fromeSettingDialog.dismiss();
+                    RobotStatus.INSTANCE.getPassWordToSetting().postValue(false);
+                }
+            });
+        });
         init();
     }
 
@@ -271,7 +292,7 @@ public class ExplanationFragment extends Fragment {
                 scrollToCenter(fp);
                 RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                 controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
-                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().get(0).getPointListText());
+                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().getPointListText());
             });
         }
 
@@ -324,6 +345,7 @@ public class ExplanationFragment extends Fragment {
 
     /**
      * 异步加载图片
+     *
      * @param imageView 图片控件
      * @param imageFile 图片路径
      */
@@ -339,6 +361,7 @@ public class ExplanationFragment extends Fragment {
                 bmOptions.inPurgeable = true;
                 return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
             }
+
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 imageView.setImageBitmap(bitmap);

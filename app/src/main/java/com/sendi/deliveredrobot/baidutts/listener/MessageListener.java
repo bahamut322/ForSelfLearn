@@ -4,9 +4,14 @@ import android.util.Log;
 
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
+import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
+import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.util.Objects;
 
@@ -28,6 +33,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSynthesizeStart(String utteranceId) {
         sendMessage("准备开始合成,序列号:" + utteranceId);
+        //开始合成的时候通知副屏的视频和主屏幕的mp3静音或者停止
+        Order.setFlage("1");
+        MediaPlayerHelper.pause();
     }
 
     /**
@@ -88,15 +96,19 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
+        Order.setFlage("0");
+        //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
             if (progressSpeak != RobotStatus.INSTANCE.getSpeakNumber().getValue().length()) {
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
-//                BaiduTTSHelper.getInstance().speaks(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak), "explantion");
-//                progressSpeak = 0;
+            } else if (utteranceId.equals("explantion")) {
+                RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
             }
         }
+        //朗读完毕恢复mp3的播放
+        MediaPlayerHelper.resume();
     }
 
     /**

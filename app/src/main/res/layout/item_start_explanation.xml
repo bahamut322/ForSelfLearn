@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_72"
+    android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@color/black"
     android:orientation="horizontal">
 
     <RelativeLayout
         android:id="@+id/rlTimeline"
-        android:layout_width="32dp"
-        android:layout_height="match_parent">
+        android:layout_width="@dimen/dp_32"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <ImageView
             android:id="@+id/tvTopLine"
             android:layout_width="4dp"
-            android:layout_height="12dp"
+            android:layout_height="@dimen/dp_50"
             android:layout_centerHorizontal="true"
-            android:background="#999" />
+            android:background="#999"
+            android:scaleType="fitCenter"
+            android:src="@drawable/anim_login_start_loading" />
 
         <TextView
             android:id="@+id/tvDot"
@@ -25,31 +35,26 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/lline_dot_normal" />
 
-        <TextView
-            android:layout_width="4dp"
-            android:layout_height="match_parent"
-            android:layout_below="@id/tvDot"
-            android:layout_centerHorizontal="true"
-            android:background="#999" />
+        <!--        <TextView-->
+        <!--            android:layout_width="4dp"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_below="@id/tvDot"-->
+        <!--            android:layout_centerHorizontal="true"-->
+        <!--            android:background="#999" />-->
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rlCenter"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="6dp"
-        android:paddingRight="10dp"
-        android:paddingTop="6dp">
 
-        <TextView
-            android:id="@+id/tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="你好"
-            android:textColor="@color/white"
-            android:textSize="24dp" />
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="你好"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/rlTimeline"
+        app:layout_constraintStart_toEndOf="@+id/rlTimeline" />
 
-        <!--        <TextView-->
+    <!--        <TextView-->
         <!--            android:id="@+id/tvAcceptStation"-->
         <!--            android:layout_width="wrap_content"-->
         <!--            android:layout_height="wrap_content"-->
@@ -58,5 +63,5 @@
         <!--            android:text="快件在 深圳 ,准备送往下一站 深圳集散中心 [深圳市]"-->
         <!--            android:textColor="#999"-->
         <!--            android:textSize="12sp" />-->
-    </RelativeLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

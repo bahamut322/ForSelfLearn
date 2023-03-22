@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item
+        android:drawable="@drawable/explan_going1"
+        android:duration="49" />
+    <item
+        android:drawable="@drawable/explan_going2"
+        android:duration="49" />
+    <item
+        android:drawable="@drawable/explan_going3"
+        android:duration="49" />
+    <item
+        android:drawable="@drawable/explan_going4"
+        android:duration="49" />
+    <item
+        android:drawable="@drawable/explan_going5"
+        android:duration="49" />
+    <item
+        android:drawable="@drawable/explan_going6"
+        android:duration="49" />
+</animation-list>

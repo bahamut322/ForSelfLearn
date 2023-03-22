@@ -14,12 +14,15 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
+import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -63,8 +66,15 @@ class GuideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(view)
         timer = Timer()
-
-
+        val toSettingDialog = FromeSettingDialog(context)
+        //是否是第一个页面
+        if (FunctionSkip.selectFunction() == 4) {
+            binding.firstFragment.visibility = View.GONE
+            binding.llReturn.visibility = View.VISIBLE
+        } else {
+            binding.firstFragment.visibility = View.VISIBLE
+            binding.llReturn.visibility = View.GONE
+        }
         fromType = arguments?.getString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE)
         // 初始化适配器
         binding.GvGuideList.adapter = context?.let { GuidePointAdapter(it, queryFloorPoints) }
@@ -78,12 +88,22 @@ class GuideFragment : Fragment() {
 //                GuideTaskBill(TaskModel(location = queryFloorPoints[position]))
                 val endPoint = queryFloorPoints[position]
                 val taskModel = TaskModel(location = endPoint)
-                val  bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
+                val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
                 BillManager.addAllAtIndex(bill, 0)
                 BillManager.currentBill()?.executeNextTask()
             }
         binding.llReturn.setOnClickListener {
             controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
+        }
+        binding.imageViewSetting.setOnClickListener { v ->
+            toSettingDialog.show()
+            PassWordToSetting.observe(viewLifecycleOwner) {
+                if (PassWordToSetting.value == true) {
+                    controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
+                    toSettingDialog.dismiss()
+                    PassWordToSetting.postValue(false)
+                }
+            }
         }
     }
 }

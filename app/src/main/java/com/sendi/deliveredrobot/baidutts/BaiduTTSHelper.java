@@ -16,6 +16,8 @@ import com.sendi.deliveredrobot.baidutts.listener.MessageListener;
 import com.sendi.deliveredrobot.baidutts.util.Auth;
 import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
+import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 
@@ -84,12 +86,11 @@ public class BaiduTTSHelper {
         // 设置初始化参数
         // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
         SpeechSynthesizerListener listener = new MessageListener();
-        InitConfig config = getInitConfig(listener);
+        InitConfig config = getInitConfig(listener,getParams());
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }
 
-    protected InitConfig getInitConfig(SpeechSynthesizerListener listener) {
-        Map<String, String> params = getParams();
+    protected InitConfig getInitConfig(SpeechSynthesizerListener listener,Map<String, String> params) {
         // 添加你自己的参数
         InitConfig initConfig;
         // appId appKey secretKey 网站上您申请的应用获取。注意使用离线合成功能的话，需要应用中填写您app的包名。包名在build.gradle中获取。
@@ -176,10 +177,8 @@ public class BaiduTTSHelper {
         if (TextUtils.isEmpty(text)) {
             text = "没有指定名称的话，小迪不知道怎么走啦";
         }
-        // 合成前可以修改参数：
-        // Map<String, String> params = getParams();
-        // params.put(SpeechSynthesizer.PARAM_SPEAKER, "3"); // 设置为度逍遥
-        // synthesizer.setParams(params);
+        //播报语音音量
+        new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());
         RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         int result = synthesizer.speak(text);
 //        LogUtil.INSTANCE.i(text);
@@ -194,9 +193,35 @@ public class BaiduTTSHelper {
     }
 
     public void speaks(String text, String utteranceId) {
+        new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         synthesizer.speak(text, utteranceId);
     }
 
+    public void setParam(Map<String, String> params, String voiceType){
+//        synthesizer.setParams(params);
+        synthesizer.release();
+        OfflineResource offlineResource = createOfflineResource(voiceType);
+        // 声学模型文件路径 (离线引擎使用), 请确认下面两个文件存在
+        params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, offlineResource.getTextFilename());
+        params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, offlineResource.getModelFilename());
+        SpeechSynthesizerListener listener = new MessageListener();
+        InitConfig config = getInitConfig(listener, params);
+        synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
+    }
+
+    public void resetParam(){
+        Map<String, String> params = new HashMap<>();
+        // 以下参数均为选填
+        // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>, 其它发音人见文档
+        params.put(SpeechSynthesizer.PARAM_SPEAKER, "4");
+        // 设置合成的音量，0-15 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_VOLUME, "15");
+        // 设置合成的语速，0-15 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_SPEED, "7");
+        // 设置合成的语调，0-15 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_PITCH, "5");
+        setParam(params, offlineVoice);
+    }
 }
 
 
