@@ -10,6 +10,7 @@
 //import androidx.annotation.Nullable;
 //import androidx.databinding.DataBindingUtil;
 //import androidx.fragment.app.Fragment;
+//import androidx.lifecycle.LifecycleObserver;
 //import androidx.lifecycle.ViewModel;
 //import androidx.lifecycle.ViewModelProvider;
 //import androidx.navigation.NavController;
@@ -69,7 +70,7 @@
 //    private final int childViewHalfCount = 0; //当前RecyclerView一半最多可以存在几个Item
 //    private StartExplanViewModel viewModel;
 //    private LineUpTaskHelp lineUpTaskHelp;
-//    int index = 0;
+//    private static CoroutineScope mainScope;
 //
 //
 //    @Override

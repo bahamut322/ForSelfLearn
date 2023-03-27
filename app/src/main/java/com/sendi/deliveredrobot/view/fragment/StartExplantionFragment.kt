@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.fragment
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.os.HandlerThread
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.ConsumptionTask
 import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp
 import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp.OnTaskListener
@@ -49,7 +51,7 @@ import kotlinx.coroutines.launch
 class StartExplantionFragment : Fragment() {
     var binding: FragmentStartExplantionBinding? = null
     var controller: NavController? = null
-    private var mAdapter: MAdapter? = null
+    private var mAdapter: MAdapter?  = MAdapter()
     private var centerToTopDistance //RecyclerView高度的一半 ,也就是控件中间位置到顶部的距离 ，
             = 0
     private val childViewHalfCount = 0 //当前RecyclerView一半最多可以存在几个Item
@@ -68,10 +70,12 @@ class StartExplantionFragment : Fragment() {
         lineUpTaskHelp = getInstance()
         controller = Navigation.findNavController(view)
         viewModel = ViewModelProvider(this).get(StartExplanViewModel::class.java)
+        viewModel!!.inForListData()
+        //数组赋值
         RobotStatus.speakContinue!!.observe(viewLifecycleOwner) {
             if (RobotStatus.speakContinue!!.value == 1) {
-                if ((lineUpTaskHelp as LineUpTaskHelp<*>?)!!.checkTask()) {
-                    (lineUpTaskHelp as LineUpTaskHelp<*>?)!!.deletePlanNoAll("speakNumber")
+                if (lineUpTaskHelp .checkTask()) {
+                    lineUpTaskHelp .deletePlanNoAll("speakNumber")
                 }
                 getLength(RobotStatus.speakNumber.value)
                 RobotStatus.speakContinue!!.postValue(0)
@@ -84,11 +88,11 @@ class StartExplantionFragment : Fragment() {
             viewModel!!.finish()
             BaiduTTSHelper.getInstance().stop()
             //删除讲解队列
-            if ((lineUpTaskHelp as LineUpTaskHelp<*>?)!!.checkTask()) {
-                (lineUpTaskHelp as LineUpTaskHelp<*>?)!!.deletePlanNoAll("speakNumber")
+            if (lineUpTaskHelp .checkTask()) {
+                lineUpTaskHelp.deletePlanNoAll("speakNumber")
             }
         }
-        binding!!.nextTaskBtn.setOnClickListener { v -> viewModel!!.nextTask() }
+        binding!!.nextTaskBtn.setOnClickListener { viewModel!!.nextTask() }
     }
 
     override fun onCreateView(
@@ -108,7 +112,7 @@ class StartExplantionFragment : Fragment() {
             override fun onGlobalLayout() {
                 binding!!.pointList.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 centerToTopDistance = binding!!.pointList.height / 2
-                val childViewHeight = UiUtils.dip2px(context, 72f) //72是当前已知的 Item的高度
+//                val childViewHeight = UiUtils.dip2px(context, 72f) //72是当前已知的 Item的高度
                 //                childViewHalfCount = (recyclerView.getHeight() / childViewHeight + 1) / 2;
                 initData()
                 findView()
@@ -214,6 +218,7 @@ class StartExplantionFragment : Fragment() {
 
     internal inner class MAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            viewModel!!.inForListData()
             return VH(
                 LayoutInflater.from(
                     context
@@ -238,14 +243,16 @@ class StartExplantionFragment : Fragment() {
                 binding!!.acceptstationTv.text = viewModel!!.mDatas!![position]!!.explanationtext
                 binding!!.nowExplanation.text = "当前讲解：" + viewModel!!.mDatas!![position]!!.name
                 //帧动画
-                vh.tvTopLine.setImageResource(R.drawable.anim_login_start_loading)
-                val animationDrawable = vh.tvTopLine.drawable as AnimationDrawable
-                animationDrawable.start()
+                if (position != 0) {
+                    vh.tvTopLine.setImageResource(R.drawable.anim_login_start_loading)
+                    val animationDrawable = vh.tvTopLine.drawable as AnimationDrawable
+                    animationDrawable.start()
+                }
 
                 //副屏更新
-                RobotStatus.SecondModel?.value = viewModel!!.secondScreenModel(position,viewModel!!.mDatas!!)
-                RobotStatus.sdScreenStatus!!.postValue(3)
-
+//                    RobotStatus.SecondModel?.value =
+//                        viewModel!!.secondScreenModel(position, viewModel!!.mDatas!!)
+//                    RobotStatus.sdScreenStatus!!.postValue(3)
                 //如果有讲解内容
                 if (viewModel!!.mDatas!![position]!!.walktext != null) {
                     //截取文字加入队列
@@ -253,12 +260,11 @@ class StartExplantionFragment : Fragment() {
                     RobotStatus.speakNumber.postValue(viewModel!!.mDatas!![position]!!.walktext)
                     //观察讲解是否结束
                     RobotStatus.speakContinue!!.observe(viewLifecycleOwner) { integer: Int? ->
-                        viewModel!!.mainScope.launch {
-                            if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP) && RobotStatus.speakContinue!!.value != 3) {
-                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                            } else {
-                                //TODO
-                                arrayToDo(viewModel!!.mDatas, position)
+                        RobotStatus.ready.observe(viewLifecycleOwner) { integer: Int? ->
+                            viewModel!!.mainScope.launch {
+                                if (RobotStatus.ready.value == 1 && RobotStatus.speakContinue!!.value == 3) {
+                                    arrayToDo(viewModel!!.mDatas, position)
+                                }
                             }
                         }
                     }
@@ -268,24 +274,26 @@ class StartExplantionFragment : Fragment() {
                     MediaPlayerHelper.play(viewModel!!.mDatas!![position]!!.walkvoice)
                     //mp3播放监听
                     MediaPlayerHelper.setOnProgressListener { currentPosition: Int, totalDuration: Int ->
+                        LogUtil.i("currentPosition : $currentPosition totalDuration : $totalDuration")
                         viewModel!!.mainScope.launch {
-                            if (currentPosition != totalDuration && ROSHelper.manageRobot(
-                                    RobotCommand.MANAGE_STATUS_STOP
-                                )
-                            ) {
-                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                            } else {
-                                //TODO
-                                arrayToDo(viewModel!!.mDatas, position)
+                            RobotStatus.ready.observe(viewLifecycleOwner) { integer: Int? ->
+                                viewModel!!.mainScope.launch {
+                                    if (currentPosition >= totalDuration && integer == 1) {
+                                        LogUtil.i("到点并且播放完成")
+                                        arrayToDo(viewModel!!.mDatas, position)
+                                        // mediaplayer went away with unhandled events
+//                                    ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
             } else {
                 vh.tv.setTextColor(resources.getColor(R.color.white))
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first)
             }
-            vh.tv.text = viewModel!!.mDatas!![position]!!.name
             vh.itemView.setOnClickListener { v: View? ->
                 scrollToCenter(position)
                 Toast.makeText(
@@ -322,29 +330,30 @@ class StartExplantionFragment : Fragment() {
     }
 
     fun arrayToDo(mDatas: ArrayList<MyResultModel?>?, position: Int) {
-        viewModel!!.mainScope.launch {
-            if (mDatas!![position]!!.explanationtext != null) {
-                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+            if (mDatas!![position]!!.explanationtext != "") {
+//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
                 getLength(mDatas[position]!!.explanationtext)
                 if (RobotStatus.speakContinue!!.value == 3) {
-                    ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                    BillManager.currentBill()?.executeNextTask()
                     mAdapter!!.setSelectPosition(position+1)
-                }
-            } else if (mDatas[position]?.explanationvoice != null) {
-                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+            } else if (mDatas[position]?.explanationvoice != "") {
+//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
                 MediaPlayerHelper.play(mDatas[position]!!.explanationvoice)
                 MediaPlayerHelper.setOnProgressListener { currentPosition: Int, totalDuration: Int ->
                     viewModel!!.mainScope.launch {
                         if (currentPosition != totalDuration) {
-                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                        }else{
-                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                            BillManager.currentBill()?.executeNextTask()
                             mAdapter!!.setSelectPosition(position+1)
+//                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
                         }
                     }
                 }
+            }else if(mDatas[position]?.explanationvoice == "" && mDatas[position]!!.explanationtext != ""){
+                BillManager.currentBill()?.executeNextTask()
+                mAdapter!!.setSelectPosition(position+1)
             }
         }
+        RobotStatus.ready.postValue(0)
     }
 
     //根据字符串长度添加换行符

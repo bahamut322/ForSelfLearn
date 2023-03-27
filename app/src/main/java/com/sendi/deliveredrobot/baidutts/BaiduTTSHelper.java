@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 
@@ -179,6 +180,7 @@ public class BaiduTTSHelper {
         }
         //播报语音音量
         new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());
+        MediaPlayerHelper.pause();
         RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         int result = synthesizer.speak(text);
 //        LogUtil.INSTANCE.i(text);
@@ -186,6 +188,7 @@ public class BaiduTTSHelper {
 
     public void stop(){
         synthesizer.stop();
+        MediaPlayerHelper.resume();
     }
 
     public void pause(){
@@ -194,6 +197,7 @@ public class BaiduTTSHelper {
 
     public void speaks(String text, String utteranceId) {
         new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
+        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         synthesizer.speak(text, utteranceId);
     }
 

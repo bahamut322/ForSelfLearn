@@ -1,7 +1,10 @@
 package com.sendi.deliveredrobot.service
 
 import com.alibaba.fastjson.JSONObject
+import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.MapRevise
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
@@ -225,7 +228,7 @@ class UpdateReturn {
      * @param str
      * @return
      */
-    fun splitStr(str: String): Array<String?>? {
+    fun splitStr(str: String): Array<String?> {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
 }

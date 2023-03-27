@@ -4,6 +4,7 @@ import com.sendi.deliveredrobot.helpers.RobotMileageHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
 

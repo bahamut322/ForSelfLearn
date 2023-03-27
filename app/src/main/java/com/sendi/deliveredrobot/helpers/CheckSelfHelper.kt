@@ -1,5 +1,10 @@
 package com.sendi.deliveredrobot.helpers
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
+import android.hardware.Camera
+import android.media.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
@@ -17,6 +22,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.*
 import sendi_sensor_msgs.InfraredManageResponse
 import java.util.*
+
 
 /**
  *   @author: heky
@@ -56,7 +62,7 @@ object CheckSelfHelper {
         // 倒计时观察
         val seconds = MutableLiveData(time)
         var progress = 0;
-        var tempFlag = 8;
+        var tempFlag = 0;
         var initRosTopic = false;
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
@@ -139,14 +145,6 @@ object CheckSelfHelper {
                     continue
                 }
             }
-//          if (!infraredComplete.value!!) {
-//              withContext(Dispatchers.Main) {
-//                  infraredComplete.value = checkInfrared()
-//              }
-//          }
-//            if (initRosTopic && RobotStatus.doorState.size == 0) {
-//                checkDoor()
-//            }
             if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
                 tempFlag = tempFlag or 0x01
                 progress++
@@ -165,12 +163,31 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("急停按钮检测通过")
             }
-//            if(RobotStatus.doorState.size > 0 && tempFlag and 0x08 == 0){
-//                tempFlag = tempFlag or 0x08
-//                progress++
-//                mOnCheckChangeListener.onCheckProgress(progress)
-//                LogUtil.i("仓门检测通过")
-//            }
+            if(RobotStatus.mPresentation.value == 1 && tempFlag and 0x08 == 0){
+                tempFlag = tempFlag or 0x08
+                progress++
+                mOnCheckChangeListener.onCheckProgress(progress)
+                RobotStatus.newUpdata.postValue(1)
+                LogUtil.i("副屏检测通过")
+            }
+            if (checkCameraHardware(MyApplication.context) && tempFlag and 0x10 == 0){
+                tempFlag = tempFlag or 0x10
+                progress++
+                mOnCheckChangeListener.onCheckProgress(progress)
+                LogUtil.i("摄像头检测通过")
+            }
+            if (isMicrophoneAvailable() && tempFlag and 0x20 == 0){
+                tempFlag = tempFlag or 0x20
+                progress++
+                mOnCheckChangeListener.onCheckProgress(progress)
+                LogUtil.i("麦克风检测通过")
+            }
+            if (isSpeakerAvailable() && tempFlag and 0x40 == 0){
+                tempFlag = tempFlag or 0x40
+                progress++
+                mOnCheckChangeListener.onCheckProgress(progress)
+                LogUtil.i("扬声器检测通过")
+            }
 
             if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
                 RobotStatus.stopButtonPressed.value == 0){
@@ -233,6 +250,75 @@ object CheckSelfHelper {
             ROSHelper.controlBin(cmd = RobotCommand.CMD_CLOSE, door = DoorState.DOOR_TWO)
         }
     }
-
+    /**
+     * 检测摄像头
+     */
+    @SuppressLint("UnsupportedChromeOsCameraSystemFeature")
+    open fun checkCameraHardware(context: Context): Boolean {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // 检测设备是否有摄像头
+            var camera: Camera? = null
+            try {
+                camera = Camera.open()
+                // 打开摄像头
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            if (camera != null) {
+                camera.release()
+                // 释放摄像头
+                return true
+            }
+        }
+        return false
+    }
+    /**
+     * 麦克风检测
+     */
+    open fun isMicrophoneAvailable(): Boolean {
+        var audioRecord: AudioRecord? = null
+        return try {
+            val bufferSize = AudioRecord.getMinBufferSize(
+                44100,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT
+            )
+            audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                44100,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                bufferSize
+            )
+            if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
+                false
+            } else true
+        } catch (e: java.lang.Exception) {
+            false
+        } finally {
+            audioRecord?.release()
+        }
+    }
+    /**
+     * 扬声器检测
+     */
+    open fun isSpeakerAvailable(): Boolean {
+        var audioTrack: AudioTrack? = null
+        return try {
+            val bufferSize = AudioTrack.getMinBufferSize(
+                44100, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT
+            )
+            audioTrack = AudioTrack(
+                AudioManager.STREAM_VOICE_CALL, 44100, AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM
+            )
+            audioTrack.play()
+            true
+        } catch (e: java.lang.Exception) {
+            false
+        } finally {
+            audioTrack?.release()
+        }
+    }
 
 }

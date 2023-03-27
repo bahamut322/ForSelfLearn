@@ -52,7 +52,7 @@ object MqttMessageHandler {
     private var fileNames: Array<String?>? = null//副屏内容
     private var houseFile: Array<String?>? = null//主屏内容
     private var advFile: Array<String?>? = null //广告内容
-    private var ReceivingCompleted : Boolean? = false
+    private var ReceivingCompleted: Boolean? = false
 
 
     /**
@@ -221,19 +221,18 @@ object MqttMessageHandler {
                             //配置时间戳
                             routeDB.timeStamp = route.timeStamp
                             //路线背景图
-                            routeDB.backgroundPic =
-                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (route.backgroundPic!!).substring(
-                                    (route.backgroundPic).lastIndexOf("/") + 1
-                                ) //路线背景图
-                            Thread {
-                                if (route.backgroundPic != null) {
-                                    downloadFile(
-                                        Universal.pathDownload + route.backgroundPic,
-                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
-                                    )
-                                }
-                            }.start()
-
+                            if (route.backgroundPic !="") {
+                                routeDB.backgroundPic =
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (route.backgroundPic!!).substring(
+                                        (route.backgroundPic).lastIndexOf("/") + 1
+                                    ) //路线背景图
+                                Thread {
+                                        downloadFile(
+                                            Universal.pathDownload + route.backgroundPic,
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
+                                        )
+                                }.start()
+                            }
                             var pointItem: List<PointConfigVODB>
                             while (pointIterator.hasNext()) {
                                 val point = pointIterator.next()
@@ -248,35 +247,39 @@ object MqttMessageHandler {
                                 //排序
                                 pointConfigVODB.scope = point.scope!!
                                 //途径音频.mp3
-                                pointConfigVODB.walkVoice =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice!!).substring(
-                                        (point.walkVoice).lastIndexOf("/") + 1
-                                    )
-                                val walkVoiceFile =
-                                    UpdateReturn().splitStr(point.walkVoice)
-                                Thread {
-                                    for (i in walkVoiceFile!!.indices) {
-                                        downloadFile(
-                                            Universal.pathDownload + walkVoiceFile[i],
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
+                                if (point.walkVoice != "") {
+                                    pointConfigVODB.walkVoice =
+                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice)!!.substring(
+                                            (point.walkVoice).lastIndexOf("/") + 1
                                         )
-                                    }
-                                }.start()
+                                    val walkVoiceFile =
+                                        UpdateReturn().splitStr(point.walkVoice!!)
+                                    Thread {
+                                        for (i in walkVoiceFile!!.indices) {
+                                            downloadFile(
+                                                Universal.pathDownload + walkVoiceFile[i],
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
+                                            )
+                                        }
+                                    }.start()
+                                }
                                 //到达讲解.mp3
-                                pointConfigVODB.explanationVoice =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.explanationVoice!!).substring(
-                                        (point.explanationVoice).lastIndexOf("/") + 1
-                                    )
-                                val explanationVoiceFile =
-                                    UpdateReturn().splitStr(point.explanationVoice)
-                                Thread {
-                                    for (i in explanationVoiceFile!!.indices) {
-                                        downloadFile(
-                                            Universal.pathDownload + explanationVoiceFile[i],
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
+                                if (point.explanationVoice != "") {
+                                    pointConfigVODB.explanationVoice =
+                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.explanationVoice)!!!!.substring(
+                                            (point.explanationVoice).lastIndexOf("/") + 1
                                         )
-                                    }
-                                }.start()
+                                    val explanationVoiceFile =
+                                        UpdateReturn().splitStr(point.explanationVoice)
+                                    Thread {
+                                        for (i in explanationVoiceFile!!.indices) {
+                                            downloadFile(
+                                                Universal.pathDownload + explanationVoiceFile[i],
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3"
+                                            )
+                                        }
+                                    }.start()
+                                }
                                 //大屏配置
                                 if (point.bigScreenConfig!!.screen == 1) {
                                     val bigScreenConfigDB = BigScreenConfigDB()
@@ -291,20 +294,24 @@ object MqttMessageHandler {
                                         bigScreenConfigDB.picPlayTime =
                                             point.bigScreenConfig.argPic.picPlayTime
                                         //图片
-                                        bigScreenConfigDB.imageFile =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + (point.bigScreenConfig.argPic.pics).substring(
-                                                (point.bigScreenConfig.argPic.pics).lastIndexOf("/") + 1
-                                            )
-                                        val bigPicFile =
-                                            UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
-                                        Thread {
-                                            for (i in bigPicFile!!.indices) {
-                                                downloadFile(
-                                                    Universal.pathDownload + bigPicFile[i],
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
+                                        if (point.bigScreenConfig.argPic.pics != null) {
+                                            bigScreenConfigDB.imageFile =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + (point.bigScreenConfig.argPic.pics).substring(
+                                                    (point.bigScreenConfig.argPic.pics).lastIndexOf(
+                                                        "/"
+                                                    ) + 1
                                                 )
-                                            }
-                                        }.start()
+                                            val bigPicFile =
+                                                UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
+                                            Thread {
+                                                for (i in bigPicFile!!.indices) {
+                                                    downloadFile(
+                                                        Universal.pathDownload + bigPicFile[i],
+                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
+                                                    )
+                                                }
+                                            }.start()
+                                        }
                                     }
                                     if (point.bigScreenConfig.argFont != null) {
                                         //文字
@@ -331,23 +338,25 @@ object MqttMessageHandler {
                                         bigScreenConfigDB.videoAudio =
                                             point.bigScreenConfig.argVideo.videoAudio
                                         //视频储存位置
-                                        bigScreenConfigDB.videoFile =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +
-                                                    (point.bigScreenConfig.argVideo.videos).substring(
-                                                        (point.bigScreenConfig.argVideo.videos).lastIndexOf(
-                                                            "/"
-                                                        ) + 1
+                                        if (point.bigScreenConfig.argVideo.videos != null) {
+                                            bigScreenConfigDB.videoFile =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +
+                                                        (point.bigScreenConfig.argVideo.videos).substring(
+                                                            (point.bigScreenConfig.argVideo.videos).lastIndexOf(
+                                                                "/"
+                                                            ) + 1
+                                                        )
+                                            val bigVideoFile =
+                                                UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
+                                            Thread {
+                                                for (i in bigVideoFile!!.indices) {
+                                                    downloadFile(
+                                                        Universal.pathDownload + bigVideoFile[i],
+                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
                                                     )
-                                        val bigVideoFile =
-                                            UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
-                                        Thread {
-                                            for (i in bigVideoFile!!.indices) {
-                                                downloadFile(
-                                                    Universal.pathDownload + bigVideoFile[i],
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
-                                                )
-                                            }
-                                        }.start()
+                                                }
+                                            }.start()
+                                        }
                                     }
                                     bigScreenConfigDB.save()
                                     pointConfigVODB.bigScreenConfigDB = bigScreenConfigDB
@@ -366,20 +375,24 @@ object MqttMessageHandler {
                                         touchScreenConfigDB.touch_picPlayTime =
                                             point.touchScreenConfig.argPic.picPlayTime
                                         //图片路径
-                                        touchScreenConfigDB.touch_imageFile =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (point.touchScreenConfig.argPic.pics).substring(
-                                                (point.touchScreenConfig.argPic.pics).lastIndexOf("/") + 1
-                                            )
-                                        val touchPicFile =
-                                            UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
-                                        Thread {
-                                            for (i in touchPicFile!!.indices) {
-                                                downloadFile(
-                                                    Universal.pathDownload + touchPicFile[i],
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
+                                        if (point.touchScreenConfig.argPic.pics != null) {
+                                            touchScreenConfigDB.touch_imageFile =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (point.touchScreenConfig.argPic.pics).substring(
+                                                    (point.touchScreenConfig.argPic.pics).lastIndexOf(
+                                                        "/"
+                                                    ) + 1
                                                 )
-                                            }
-                                        }.start()
+                                            val touchPicFile =
+                                                UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
+                                            Thread {
+                                                for (i in touchPicFile!!.indices) {
+                                                    downloadFile(
+                                                        Universal.pathDownload + touchPicFile[i],
+                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
+                                                    )
+                                                }
+                                            }.start()
+                                        }
                                     }
                                     if (point.touchScreenConfig.argFont != null) {
                                         //文字
@@ -824,7 +837,7 @@ object MqttMessageHandler {
 
     fun downLoadFinish() {
         // 下载完成
-        if (fileNames?.size !=null) {
+        if (fileNames?.size != null) {
             if (fileNames!!.size == UpdateReturn().fileSize(Universal.Secondary)) {
                 DialogHelper.loadingDialog.dismiss()
                 Universal.pics = ""
@@ -836,7 +849,7 @@ object MqttMessageHandler {
                 UpdateReturn().method()
             }
         }
-        if (houseFile?.size !=null) {
+        if (houseFile?.size != null) {
             if (houseFile!!.size == UpdateReturn().fileSize(Universal.Standby)) {
                 DialogHelper.loadingDialog.dismiss()
                 Universal.pics = ""
@@ -848,7 +861,7 @@ object MqttMessageHandler {
                 UpdateReturn().method()
             }
         }
-        if (advFile?.size !=null) {
+        if (advFile?.size != null) {
             if (advFile!!.size == UpdateReturn().fileSize(Universal.advertisement)) {
                 DialogHelper.loadingDialog.dismiss()
                 Universal.pics = ""
@@ -860,7 +873,7 @@ object MqttMessageHandler {
                 UpdateReturn().method()
             }
         }
-        if (ReceivingCompleted == true){
+        if (ReceivingCompleted == true) {
             DialogHelper.loadingDialog.dismiss()
 //            UpdateReturn().method()
             ReceivingCompleted = false

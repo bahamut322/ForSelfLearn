@@ -1,6 +1,9 @@
 package com.sendi.deliveredrobot.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.baidu.tts.client.SpeechSynthesizer
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.room.entity.BasicConfig
 
 /**

@@ -35,6 +35,7 @@ import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
+import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
 import org.litepal.LitePal.findAll
@@ -181,6 +182,7 @@ class HomeFragment : Fragment(), IMainView {
         LogUtil.i("待机时间：" + Universal.sleepTime)
         //设置速度
         ROSHelper.setSpeed("0.4")
+        Order.setNextTasK(0)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -399,7 +401,7 @@ class HomeFragment : Fragment(), IMainView {
             "智能讲解" -> {
                 controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                 Log.d("TAG", "点击智能讲解 ")
-                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().routeListText)
+                SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
             }
             "轻应用" -> {
                 //跳转到测温模式

@@ -35,7 +35,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         sendMessage("准备开始合成,序列号:" + utteranceId);
         //开始合成的时候通知副屏的视频和主屏幕的mp3静音或者停止
         Order.setFlage("1");
-        MediaPlayerHelper.pause();
     }
 
     /**

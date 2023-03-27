@@ -15,6 +15,7 @@ import com.sendi.deliveredrobot.databinding.FragmentExplanArriveBinding
 import com.sendi.deliveredrobot.databinding.FragmentGuideArriveBinding
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.view.widget.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

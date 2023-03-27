@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
@@ -24,9 +23,7 @@ import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
@@ -37,7 +34,6 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
-import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -62,7 +58,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var timeChangeReceiver: TimeChangeReceiver
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
-
     @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +76,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         FileUtil.checkAndDeleteLogFilesCache()
         //初始化ToastUtil
         ToastUtil.initial(this)
-        RobotStatus.ready.postValue(0)
         //隐藏状态栏按钮
         statusBarDisable(!BuildConfig.IS_DEBUG, this)
         binding =
@@ -408,7 +402,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         //监听观察者更新副屏内容
         newUpdata.observe(this) {
             if (newUpdata.value == 1) {
-//                renovate()
                 newUpdata.postValue(0)
                 if (doubleScreen == 0) {
                     sdScreenStatus!!.postValue(0)

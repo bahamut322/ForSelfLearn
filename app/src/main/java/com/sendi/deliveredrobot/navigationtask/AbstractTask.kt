@@ -7,6 +7,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.interfaces.ITask
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.task.GuideArriveTask
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum

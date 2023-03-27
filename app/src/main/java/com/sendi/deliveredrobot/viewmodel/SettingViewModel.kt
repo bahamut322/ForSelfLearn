@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
+import com.sendi.deliveredrobot.entity.QuerySql
 
 class SettingViewModel : ViewModel() {
-    private fun getParam(): Map<String,String>{
+    private fun getParam(): Map<String, String> {
         return HashMap<String, String>().apply {
             this[SpeechSynthesizer.PARAM_SPEAKER] = "4"
             this[SpeechSynthesizer.PARAM_VOLUME] = "15"
@@ -15,10 +16,23 @@ class SettingViewModel : ViewModel() {
         }
     }
 
-    private fun randomVoice(){
-        val list = listOf(OfflineResource.VOICE_FEMALE, OfflineResource.VOICE_MALE, OfflineResource.VOICE_DUXY, OfflineResource.VOICE_DUYY)
-        val index = (Math.random() * 100).toInt() % 4
+    fun randomVoice(i: Int) {
         val params = getParam()
-        BaiduTTSHelper.getInstance().setParam(params, list[index])
+        if (i == 1) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_FEMALE)//女
+        } else if (i == 2) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_MALE)//男
+        } else if (i == 3) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
+        }
+    }
+     fun timbres() {
+        if ("男声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(2)
+        } else if ("女声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(1)
+        } else if ("童声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(3)
+        }
     }
 }

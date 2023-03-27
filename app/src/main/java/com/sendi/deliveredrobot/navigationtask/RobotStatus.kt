@@ -34,6 +34,8 @@ object RobotStatus {
     val adapterState: MutableLiveData<Byte> = MutableLiveData(-1)
     // 仓门状态
     val doorState = arrayListOf<Int>()
+    //广告屏
+    val mPresentation : MutableLiveData<Int?> = MutableLiveData()
 
     //电量
     val batteryPower: MutableLiveData<Float> = MutableLiveData(-1f)

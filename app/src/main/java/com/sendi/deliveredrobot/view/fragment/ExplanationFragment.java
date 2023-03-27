@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
 import com.sendi.deliveredrobot.entity.FunctionSkip;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.ExplanationTraceModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.RouteMapList;
@@ -292,7 +293,7 @@ public class ExplanationFragment extends Fragment {
                 scrollToCenter(fp);
                 RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                 controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
-                BaiduTTSHelper.getInstance().speak(QuerySql.QueryExplainConfig().getPointListText());
+                SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getPointListText());
             });
         }
 

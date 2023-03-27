@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
+import com.sendi.deliveredrobot.viewmodel.SettingViewModel
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
@@ -48,6 +49,7 @@ import java.util.*
 class SelfCheckFragment : Fragment() {
     private lateinit var binding: FragmentSelfCheckBinding
     private val basicSettingViewModel by viewModels<BasicSettingViewModel>({ requireActivity() })
+    private val settingViewModel by viewModels<SettingViewModel>({ requireActivity() })
     private lateinit var mView: View
 
 
@@ -80,8 +82,9 @@ class SelfCheckFragment : Fragment() {
                 RobotStatus.currentLocation = RobotStatus.originalLocation
                 // 从数据库获取basic
                 // _config，并缓存
-                val basicConfig = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
-                    .queryBasicConfig()
+                val basicConfig =
+                    DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
+                        .queryBasicConfig()
                 basicSettingViewModel.basicConfig = basicConfig
 
                 //-------------------自检---------------------
@@ -109,24 +112,37 @@ class SelfCheckFragment : Fragment() {
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
-                if (resCheck != 0x0f) {
+                if (resCheck != 0x7F) {
                     withContext(Dispatchers.Main) {
                         var errorCode = ""
                         if (BuildConfig.IS_DEBUG) {
-                            if (resCheck and 0x01 != 0x01){
-                                errorCode = (if("" == errorCode) "" else "$errorCode,") +"镭射异常"
+                            if (resCheck and 0x01 != 0x01) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "镭射异常"
                             }
-                            if (resCheck and 0x02 != 0x02){
-                                errorCode = (if("" == errorCode) "" else "$errorCode,") +"电量异常"
+                            if (resCheck and 0x02 != 0x02) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "电量异常"
                             }
-                            if (resCheck and 0x04 != 0x04){
-                                errorCode = (if("" == errorCode) "" else "$errorCode,") +"急停异常"
+                            if (resCheck and 0x04 != 0x04) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "急停异常"
                             }
-                        }else{
+                            if (resCheck and 0x08 != 0x08) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "副屏启动异常"
+                            }
+                            if (resCheck and 0x10 != 0x10) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "摄像头异常"
+                            }
+                            if (resCheck and 0x20 != 0x20) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "麦克风异常"
+                            }
+                            if (resCheck and 0x40 != 0x40) {
+                                errorCode = (if ("" == errorCode) "" else "$errorCode,") + "扬声器异常"
+                            }
+                        } else {
                             errorCode = resCheck.toHexString();
                         }
-                        DialogHelper.selfCheckDialog("启动异常", "请尝试重启", errorCode, false, false, null).show()
-                        Log.d("TAG", "initSelfCheck: "+resCheck.toHexString())
+                        DialogHelper.selfCheckDialog("启动异常", "请尝试重启", errorCode, false, false, null)
+                            .show()
+                        Log.d("TAG", "initSelfCheck: " + resCheck.toHexString())
                     }
                 } else {
                     //硬件自检通过
@@ -157,21 +173,22 @@ class SelfCheckFragment : Fragment() {
                     UpdateReturn().assignment()
                     UploadMapHelper.uploadMap()
                     if (RobotStatus.bootLocation != null) {
-                       //设置地图
+                        //设置地图
                         ROSHelper.setNavigationMap(
                             labelMapName = RobotStatus.bootLocation!!.subPath!!,
                             pathMapName = RobotStatus.bootLocation!!.routePath!!
                         )
-                        LogUtil.d("SelfCheck"+"开始设置默认充电桩的点")
+                        LogUtil.d("SelfCheck" + "开始设置默认充电桩的点")
                         var setPoseRes = ROSHelper.setPoseClient(RobotStatus.bootLocation!!)
-                        LogUtil.d("SelfCheck"+"设置默认充电桩的点完成")
+                        LogUtil.d("SelfCheck" + "设置默认充电桩的点完成")
                         if (RobotStatus.adapterState.value == SafeState.STATE_IS_TRIGGING) {
                             //适配器已接入
                             if (RobotStatus.batterySupplyStatus.value == BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                 //充电中
                                 LogUtil.i("手动充电中")
                                 withContext(Dispatchers.Main) {
-                                    val chargingDialog = DialogHelper.initChargingDialog(this@SelfCheckFragment)
+                                    val chargingDialog =
+                                        DialogHelper.initChargingDialog(this@SelfCheckFragment)
                                     chargingDialog.show()
                                     RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                         if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
@@ -213,9 +230,9 @@ class SelfCheckFragment : Fragment() {
                                 LogUtil.i("自动充电中");
                                 withContext(Dispatchers.Main) {
                                     //判断当前电量是否小于最低电,小于则去充电
-                                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE)
-                                    {
-                                        val chargingDialog = DialogHelper.initChargingDialog(this@SelfCheckFragment)
+                                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
+                                        val chargingDialog =
+                                            DialogHelper.initChargingDialog(this@SelfCheckFragment)
                                         chargingDialog.show()
                                         RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                             if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
@@ -234,7 +251,7 @@ class SelfCheckFragment : Fragment() {
                                             }
                                         }
 //                                        findNavController().navigate(R.id.action_selfCheckFragment_to_chargeFragment)
-                                    }else{
+                                    } else {
                                         findNavController().popBackStack()
                                         selectFunction()
                                     }
@@ -307,7 +324,8 @@ class SelfCheckFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(view)
-
+        RobotStatus.ready.postValue(0)
+        settingViewModel.timbres()
         binding.bootIv.apply {
             Glide.with(this).asGif().load(R.raw.selfcheck_animation).into(this)
         }
@@ -329,48 +347,48 @@ class SelfCheckFragment : Fragment() {
         LogUtil.i("SelfCheckFragment onDestroy")
     }
 
-    private fun selectFunction(){
+    private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
         Looper.prepare();
-        when(FunctionSkip.selectFunction()){
+        when (FunctionSkip.selectFunction()) {
             //智能引领
-            0 ->{
+            0 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_guideFragment)
                 Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
                 LogUtil.i("智能引领")
             }
             //智能讲解
-            1 ->{
+            1 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_explanationFragment)
                 Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
                 LogUtil.i("智能讲解")
             }
             //智能问答
-            2->{
+            2 -> {
                 Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
                 LogUtil.i("智能问答")
             }
             //轻应用
-            3->{
+            3 -> {
                 Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
                 LogUtil.i("轻应用")
             }
             //不只有一个选项
-            4->{
+            4 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
             }
         }
         Looper.loop();
     }
 
-    fun setAnimation(view: ProgressBar, mStartProgressBar: Int, mProgressBar: Int) {
-        val animator: ValueAnimator =
-            ValueAnimator.ofInt(mStartProgressBar, mProgressBar).setDuration(2000)
-        animator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
-            override fun onAnimationUpdate(valueAnimator: ValueAnimator) {
-                view.setProgress(valueAnimator.getAnimatedValue() as Int)
-            }
-        })
-        animator.start()
+        fun setAnimation(view: ProgressBar, mStartProgressBar: Int, mProgressBar: Int) {
+            val animator: ValueAnimator =
+                ValueAnimator.ofInt(mStartProgressBar, mProgressBar).setDuration(2000)
+            animator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
+                override fun onAnimationUpdate(valueAnimator: ValueAnimator) {
+                    view.setProgress(valueAnimator.getAnimatedValue() as Int)
+                }
+            })
+            animator.start()
+        }
     }
-}

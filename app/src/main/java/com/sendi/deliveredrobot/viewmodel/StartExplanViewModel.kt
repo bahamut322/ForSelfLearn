@@ -12,15 +12,15 @@ import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.BillManager.addAllAtIndex
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
-import com.sendi.deliveredrobot.navigationtask.ConsumptionTask
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.LogUtil.d
 import kotlinx.coroutines.*
+import java.util.Objects
 import kotlin.math.pow
 
 
@@ -43,7 +43,10 @@ class StartExplanViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
                         .queryPoint(mDatas!![i]!!.name),
-                    speakString = mDatas!![i]?.explanationtext
+                    walkSpeak = mDatas!![i]?.walktext,
+                    walkMp3 = mDatas!![i]?.walkvoice,
+                    arraySpeak = mDatas!![i]?.explanationtext,
+                    arrayMp3 = mDatas!![i]?.explanationtext
                 )
                 val bill = createBill(taskModel = taskModel)
                 addAllAtIndex(bill, i)

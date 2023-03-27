@@ -5,6 +5,7 @@ import android.os.Environment;
 
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -28,6 +29,7 @@ public class MediaPlayerHelper {
         } else {
             mMediaPlayer.reset();
         }
+        Order.setFlage("1");
         new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         try {
             mMediaPlayer.setDataSource(fileName);
@@ -79,7 +81,8 @@ public class MediaPlayerHelper {
                     mOnProgressListener.onProgress(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
                     if (mMediaPlayer.getCurrentPosition() == mMediaPlayer.getDuration()){
                         //恢复成视频播放声音大小
-                        new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());
+                        Order.setFlage("0");
+                        stopTimer();
                     }
                 }
             }

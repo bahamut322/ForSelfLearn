@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
 import com.sendi.deliveredrobot.entity.BasicSetting;
 import com.sendi.deliveredrobot.entity.QuerySql;
@@ -205,12 +206,15 @@ public class DebugBasicSettingFragment extends Fragment {
 
             if (binding.BoyVoice.isChecked()) {
                 timbre = "男声";
+                viewModel.randomVoice(2);
             }
             if (binding.FemaleVoice.isChecked()) {
                 timbre = "女声";
+                viewModel.randomVoice(1);
             }
             if (binding.ChildVoice.isChecked()) {
                 timbre = "童声";
+                viewModel.randomVoice(3);
             }
             values.put("defaultvalue", stringBuffer.toString());
             values.put("robotmode", timbre);

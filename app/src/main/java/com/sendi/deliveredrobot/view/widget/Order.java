@@ -19,5 +19,15 @@ public class Order {
             onChangeListener.onChange();
         }
     }
+    private static int NextTasK;
+    public static int getNextTasK() {
+        return NextTasK;
+    }
+    public static void setNextTasK(int NextTasK) {
+        Order.NextTasK = NextTasK;
+        if(onChangeListener!=null) {
+            onChangeListener.onChange();
+        }
+    }
 }
 
