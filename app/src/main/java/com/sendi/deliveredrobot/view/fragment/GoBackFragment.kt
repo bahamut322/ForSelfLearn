@@ -140,7 +140,6 @@ class GoBackFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        NextTask.setNextTasK(0)
         super.onViewCreated(view, savedInstanceState)
     }
 

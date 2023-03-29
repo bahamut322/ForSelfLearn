@@ -20,6 +20,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.NextTask
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.math.pow
@@ -78,7 +79,8 @@ class StartExplanViewModel : ViewModel() {
                 )
                 val bill = createBill(taskModel = taskModel)
                 addAllAtIndex(bill, i)
-                currentBill()!!.executeNextTask()
+                NextTask.setNextTasK(true)
+//                currentBill()!!.executeNextTask()
             }
         }
     }

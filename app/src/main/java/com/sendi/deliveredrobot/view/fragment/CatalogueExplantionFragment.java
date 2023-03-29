@@ -74,7 +74,6 @@ public class CatalogueExplantionFragment extends Fragment {
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {viewModel.start();
             SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getStartText());
-            NextTask.setNextTasK(1);
         });
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
     }

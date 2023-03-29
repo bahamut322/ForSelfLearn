@@ -12,13 +12,13 @@ public class NextTask {
         onChangeListener = onChange;
     }
 
-    private static int NextTasK;
+    private static Boolean NextTasK;
 
-    public static int getNextTasK() {
+    public static Boolean getNextTasK() {
         return NextTasK;
     }
 
-    public static void setNextTasK(int NextTasK) {
+    public static void setNextTasK(Boolean NextTasK) {
         NextTask.NextTasK = NextTasK;
         onChangeListener.onChange();
     }

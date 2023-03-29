@@ -180,7 +180,7 @@ class HomeFragment : Fragment(), IMainView {
         LogUtil.i("待机时间：" + Universal.sleepTime)
         //设置速度
         ROSHelper.setSpeed("0.4")
-        NextTask.setNextTasK(0)
+        NextTask.setNextTasK(true)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {

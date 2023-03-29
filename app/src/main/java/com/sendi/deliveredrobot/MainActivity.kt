@@ -461,11 +461,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
     }
 
-    private fun renovate() {
-        if (mPresentation != null) {
-            mPresentation.dismiss()
-        }
-        ShowPresentationByMediarouter()
-        ShowPresentationByDisplaymanager()
-    }
+//    private fun renovate() {
+//        if (mPresentation != null) {
+//            mPresentation.dismiss()
+//        }
+//        ShowPresentationByMediarouter()
+//        ShowPresentationByDisplaymanager()
+//    }
 }

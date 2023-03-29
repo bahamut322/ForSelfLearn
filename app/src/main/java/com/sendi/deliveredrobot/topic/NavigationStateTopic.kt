@@ -44,7 +44,7 @@ object NavigationStateTopic {
                     if (RobotStatus.callingLift) return@launch
                     RobotStatus.ready.postValue(1)
                     NextTask.setOnChangeListener {
-                        if (NextTask.getNextTasK() != 1) {
+                        if (NextTask.getNextTasK() == true) {
                             BillManager.currentBill()?.executeNextTask()
                         }
                     }

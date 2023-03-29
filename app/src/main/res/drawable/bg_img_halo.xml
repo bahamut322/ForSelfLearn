@@ -24,7 +24,7 @@
                         android:centerX="1"
                         android:centerY="1"
                         android:endColor="#00241E9A"
-                        android:gradientRadius="400dp"
+                        android:gradientRadius="1000dp"
                         android:startColor="#BF241E9A"
                         android:type="radial" />
                 </shape>
@@ -38,6 +38,19 @@
                         android:centerY="0"
                         android:endColor="#0027147D"
                         android:gradientRadius="500dp"
+                        android:startColor="#241E9A"
+                        android:type="radial" />
+                </shape>
+            </item>
+            <!--左下角-->
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient
+                        android:angle="270"
+                        android:centerX="0"
+                        android:centerY="1"
+                        android:endColor="#0027147D"
+                        android:gradientRadius="@dimen/dp_600"
                         android:startColor="#241E9A"
                         android:type="radial" />
                 </shape>

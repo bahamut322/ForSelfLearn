@@ -71,7 +71,6 @@ object RobotStatus {
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
     var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    var explanationList : MutableLiveData<ExplanationTraceModel> = MutableLiveData<ExplanationTraceModel>()
     var speakNumber : MutableLiveData<String> = MutableLiveData();//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>();//记录智能讲解朗读的内容
     var speaking : MutableLiveData<Int?> = MutableLiveData()//记录百度语音是否在说话
@@ -79,6 +78,7 @@ object RobotStatus {
     var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item
     var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
+    var targetName : MutableLiveData<String?>? = MutableLiveData()
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status
