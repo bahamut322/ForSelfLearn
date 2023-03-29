@@ -38,7 +38,7 @@ class IntoLiftFinishTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 //        RobotStatus.enteringLift = false
         // 设置与电梯位置关系
         RobotStatus.outOfLift = false
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

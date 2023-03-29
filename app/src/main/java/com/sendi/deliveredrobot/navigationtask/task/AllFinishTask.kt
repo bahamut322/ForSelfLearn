@@ -26,9 +26,9 @@ class AllFinishTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 //            virtualTaskExecute()
 //            if (TopicHandler.navController.currentDestination?.label == "homeFragment") {
 //                //自动巡航
-//                if (TaskQueue.autoCruiseQueue.size > 0) {
-//                    TaskQueue.queue.addAll(TaskQueue.autoCruiseQueue)
-//                    TaskQueue.executeNextTask()
+//                if (TaskQueues.autoCruiseQueue.size > 0) {
+//                    TaskQueues.queue.addAll(TaskQueues.autoCruiseQueue)
+//                    TaskQueues.executeNextTask()
 //                }
 //            }
 //        }

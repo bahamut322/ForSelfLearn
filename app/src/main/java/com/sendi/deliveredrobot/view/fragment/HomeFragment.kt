@@ -35,6 +35,7 @@ import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
+import com.sendi.deliveredrobot.view.widget.NextTask
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
@@ -174,15 +175,12 @@ class HomeFragment : Fragment(), IMainView {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
         fromeSettingDialog = FromeSettingDialog(context)
-//        val sp = requireContext().getSharedPreferences("data", Context.MODE_PRIVATE)
-//        val selectItem = sp.getString("SelectItem", "") // 获取存储在文件中的数据
-//        AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().videoVolume.toInt())
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(view)
         LogUtil.i("待机时间：" + Universal.sleepTime)
         //设置速度
         ROSHelper.setSpeed("0.4")
-        Order.setNextTasK(0)
+        NextTask.setNextTasK(0)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {

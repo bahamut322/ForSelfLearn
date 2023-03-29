@@ -414,7 +414,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
         sdScreenStatus!!.observe(this) {
             if (sdScreenStatus!!.value == 0) {
-                renovate()
+//                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     advertisingConfigDB.picPlayTime * 1000,
@@ -429,7 +429,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 )
             }
             if (sdScreenStatus!!.value == 1) {
-                renovate()
+//                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     Universal.picPlayTime * 1000,
@@ -444,7 +444,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 )
             }
             if (sdScreenStatus!!.value == 3){
-                renovate()
+//                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     RobotStatus.SecondModel!!.value?.picPlayTime!!,

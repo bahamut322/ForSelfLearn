@@ -76,7 +76,7 @@ class FinishRemoteOrderSendTask(taskModel: TaskModel, val type: Int, var excepti
                 }
             }
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 

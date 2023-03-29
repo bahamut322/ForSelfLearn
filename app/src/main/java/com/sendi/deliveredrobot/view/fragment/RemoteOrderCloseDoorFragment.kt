@@ -131,7 +131,7 @@ class RemoteOrderCloseDoorFragment : Fragment() {
                         }
                     }
                     SpeakHelper.speakWithoutStop(MyApplication.instance!!.getString(R.string.i_am_your_errand))
-//                    TaskQueue.executeNextTask()
+//                    TaskQueues.executeNextTask()
                     BillManager.currentBill()?.executeNextTask()
                 }
                 DoorState.STATE_OPENING -> {

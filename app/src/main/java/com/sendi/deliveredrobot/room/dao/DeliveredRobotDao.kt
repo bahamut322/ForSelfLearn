@@ -720,6 +720,31 @@ ORDER BY relationship_point.root_map_id,relationship_lift.floor_name
     fun queryAllMapsPoints(): List<QueryAllPointEntity>
 
     /**
+     * @description 查询所有公共区域区域
+     */
+    @Query(
+        """
+SELECT
+	public_area.id AS public_area_id,
+-- 	public_area.name AS public_area_name,
+ 	map_point.name AS point_name
+--	 map_root.name AS name
+FROM
+	relationship_point
+	INNER JOIN public_area ON public_area.id = map_point.type
+	INNER JOIN map_sub ON relationship_point.sub_map_id = map_sub.id
+	INNER JOIN map_point ON relationship_point.point_id = map_point.id
+	INNER JOIN map_route ON relationship_point.route_id = map_route.id
+  INNER JOIN relationship_lift ON relationship_lift.sub_map_id = relationship_point.sub_map_id
+--	inner join map_root on map_root.id=  relationship_point.root_map_id
+WHERE
+	public_area.id > 100
+    """
+    )
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    fun queryAreaMapPoint(): List<QueryAreaPointEntity>
+
+    /**
      * @description 查询区域
      */
     @Query(

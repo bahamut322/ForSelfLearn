@@ -72,7 +72,7 @@ class SwitchSubMapTask(taskModel: TaskModel? = null, private val needSwitch: Boo
             }
 
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
         DialogHelper.loadingDialog.dismiss()
     }

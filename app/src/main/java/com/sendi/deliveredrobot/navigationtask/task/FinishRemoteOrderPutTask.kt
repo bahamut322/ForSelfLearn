@@ -68,7 +68,7 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin1.value.previousRemoteOrderPutFinished = true
                         viewModelBin1.value.previousRemoteOrderSendFinished = true
-//                        TaskQueue.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
+//                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
                     }
                 }
             }
@@ -88,7 +88,7 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin2.value.previousRemoteOrderPutFinished = true
                         viewModelBin2.value.previousRemoteOrderSendFinished = true
-//                        TaskQueue.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
+//                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
                     }
                 }
             }

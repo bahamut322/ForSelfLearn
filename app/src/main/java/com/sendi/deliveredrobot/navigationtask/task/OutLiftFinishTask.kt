@@ -35,7 +35,7 @@ class OutLiftFinishTask(taskModel: TaskModel, val reset: Boolean = true) : Abstr
             // 释放开门
             LiftHelper.releaseLiftDoor(taskModel?.elevator?:"")
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

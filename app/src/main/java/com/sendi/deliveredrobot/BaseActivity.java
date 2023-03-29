@@ -306,8 +306,9 @@ public class BaseActivity extends AppCompatActivity {
         File file = new File(path);
         File[] files = file.listFiles();
         assert files != null;
-        List<Advance> imagePaths = new ArrayList<>();
+        advanceView.removeAllViews();
         advanceView.initView();
+        List<Advance> imagePaths = new ArrayList<>();
         for (File value : files) {
             if (baseViewModel.checkIsImageFile(value.getPath())) {
                 //图片

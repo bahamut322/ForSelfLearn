@@ -96,7 +96,7 @@ class CallLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
                                     floor = RobotStatus.currentLocation?.floorName ?: ""
                                 ).toString()
                             )
-//                        TaskQueue.clearQueue()
+//                        TaskQueues.clearQueue()
                             LiftHelper.resetTimer()
                         }
                     }

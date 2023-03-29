@@ -17,7 +17,7 @@ class PreLoadMapTask(taskModel: TaskModel): AbstractTask(taskModel) {
 
     override suspend fun execute() {
         ROSHelper.preLoadMap(taskModel?.location?.subPath?:"")
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

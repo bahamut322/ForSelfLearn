@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.ExplanationTraceModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
@@ -35,12 +38,14 @@ import com.sendi.deliveredrobot.navigationtask.ConsumptionTask;
 import com.sendi.deliveredrobot.navigationtask.LineUpTaskHelp;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.view.widget.NextTask;
 import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author swn
@@ -65,15 +70,13 @@ public class CatalogueExplantionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         controller = Navigation.findNavController(view);
         binding = DataBindingUtil.bind(view);
-        viewModel.inForListData();
-        mAdapter = new CatalogueAdapter(viewModel.getMDatas(), getContext());
+        mAdapter = new CatalogueAdapter(viewModel.inForListData(), getContext());
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {viewModel.start();
             SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getStartText());
-            Order.setNextTasK(1);
+            NextTask.setNextTasK(1);
         });
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
-
     }
 
 

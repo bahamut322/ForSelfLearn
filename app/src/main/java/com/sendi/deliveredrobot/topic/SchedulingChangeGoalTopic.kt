@@ -79,9 +79,9 @@ object SchedulingChangeGoalTopic {
                             LogUtil.e("SchedulingSub -> sleep(2) -> isHas:$isHas")
                         }
                     }
-//                    TaskQueue.addFirst(DispatchWaitResumeTask())
+//                    TaskQueues.addFirst(DispatchWaitResumeTask())
 //                    withContext(Dispatchers.Default) {
-//                        TaskQueue.executeNextTask()
+//                        TaskQueues.executeNextTask()
 //                    }
                 }
             }

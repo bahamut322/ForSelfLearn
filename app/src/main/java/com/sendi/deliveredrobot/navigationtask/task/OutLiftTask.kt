@@ -100,7 +100,7 @@ class OutLiftTask(taskModel: TaskModel, private val needGetPose:Boolean = true, 
                             floor = RobotStatus.currentLocation?.floorName ?: ""
                         ).toString()
                     )
-//                    TaskQueue.clearQueue()
+//                    TaskQueues.clearQueue()
 //                    ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_STOP)
                     return
                 }

@@ -58,7 +58,7 @@ class BeginDockTask(taskModel: TaskModel) : AbstractTask(taskModel) {
                 //重试次数自增
                 RobotStatus.retryDockTimes++
                 LogUtil.i("第${RobotStatus.retryDockTimes}次尝试试对接充电桩")
-//                TaskQueue.executeNextTask()
+//                TaskQueues.executeNextTask()
                 ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_STOP)
             } else {
                 // begin_dock返回false

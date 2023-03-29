@@ -113,7 +113,7 @@ class InputTakeObjectCodeFragment : Fragment() {
                         SpeakHelper.speakWithoutStop(MyApplication.instance!!.getString(R.string.i_continue_work))
                     }
                     timer.cancel()
-//                    TaskQueue.executeNextTask()
+//                    TaskQueues.executeNextTask()
                     BillManager.currentBill()?.executeNextTask()
                 }
                 DoorState.STATE_OPENING -> {
@@ -227,7 +227,7 @@ class InputTakeObjectCodeFragment : Fragment() {
                     BIN_NOT_OPEN -> {
                         // 超时则直接下一步
                         mainScope.launch {
-//                            TaskQueue.executeNextTask()
+//                            TaskQueues.executeNextTask()
                             BillManager.currentBill()?.executeNextTask()
                         }
                         return@observe

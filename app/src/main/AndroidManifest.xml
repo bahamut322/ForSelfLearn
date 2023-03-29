@@ -68,6 +68,7 @@
 		<service android:name="org.eclipse.paho.android.service.MqttService" /> <!--MqttService-->
 		<service android:name=".service.CloudMqttService"/>
 		<service android:name=".service.DeliverMqttService"/>
+		<service android:name=".service.MqttService"/>
 		<service android:name=".service.ReportRobotStateService"/>
 		<service android:name="com.amap.api.location.APSService"/>
 

@@ -72,7 +72,7 @@ object TaskQueueFactory {
 //                                ROSHelper.controlDock(RobotCommand.CMD_STOP)
 //                            }
 //                            // step 0：清空队列
-//                            TaskQueue.clearQueue()
+//                            TaskQueues.clearQueue()
 //                            //step:0.5:
 //                            createRemoteOrderTask(
 //                                this,
@@ -121,7 +121,7 @@ object TaskQueueFactory {
 //                                    ROSHelper.controlDock(RobotCommand.CMD_STOP)
 //                                }
 //                                // 如果是返回过程，则打断，并执行下一个任务
-//                                TaskQueue.clearQueue()
+//                                TaskQueues.clearQueue()
 //                                createRemoteOrderTask(
 //                                    this,
 //                                    taskType = when(taskType){
@@ -182,9 +182,9 @@ object TaskQueueFactory {
 //            TYPE_REMOTE_ORDER_SEND,
 //            TYPE_REMOTE_ORDER_TAKE -> {
 //                RobotStatus.lowPowerBacking = false
-//                TaskQueue.addLastEndTarget(remoteOrderModel.from.pointName?:"")
-//                TaskQueue.addLastEndTarget(remoteOrderModel.to.pointName?:"")
-//                TaskQueue.remainPlus()
+//                TaskQueues.addLastEndTarget(remoteOrderModel.from.pointName?:"")
+//                TaskQueues.addLastEndTarget(remoteOrderModel.to.pointName?:"")
+//                TaskQueues.remainPlus()
 //                createRemoteOrderTaskQueue(remoteOrderModel, taskType)
 //            }
 //        }
@@ -224,7 +224,7 @@ object TaskQueueFactory {
 //     * @describe 创建返回任务队列
 //     */
 //    private fun createGoBackTaskQueue(): LinkedList<Task> {
-//        val tempTaskId = TaskQueue.currentTask?.taskModel?.taskId?:""
+//        val tempTaskId = TaskQueues.currentTask?.taskModel?.taskId?:""
 //        val tempQueue = LinkedList<Task>()
 //        tempQueue.apply {
 //            //step 13: 回到充电桩
@@ -690,7 +690,7 @@ object TaskQueueFactory {
 //        remoteOrderModel: RemoteOrderModel,
 //        type: Int
 //    ){
-//        TaskQueue.queue.apply {
+//        TaskQueues.queue.apply {
 //            add(StartRemoteOrderPutTask(
 //                TaskModel(
 //                    remoteOrderModel = remoteOrderModel,
@@ -778,7 +778,7 @@ object TaskQueueFactory {
 //     * @description 生成送物任务链
 //     */
 //    fun createRemoteOrderSendTask(remoteOrderModel: RemoteOrderModel, type: Int){
-//        TaskQueue.queue.apply {
+//        TaskQueues.queue.apply {
 //            add(0,StartRemoteOrderSendTask(
 //                TaskModel(
 //                    remoteOrderModel = remoteOrderModel,
@@ -907,7 +907,7 @@ object TaskQueueFactory {
 //                                ROSHelper.controlDock(RobotCommand.CMD_STOP)
 //                            }
 //                            // step 0：清空队列
-//                            TaskQueue.clearQueue()
+//                            TaskQueues.clearQueue()
 //                            //step:0.5:
 //                            createRemoteOrderTask(
 //                                this,
@@ -956,7 +956,7 @@ object TaskQueueFactory {
 //                                    ROSHelper.controlDock(RobotCommand.CMD_STOP)
 //                                }
 //                                // 如果是返回过程，则打断，并执行下一个任务
-//                                TaskQueue.clearQueue()
+//                                TaskQueues.clearQueue()
 //                                createRemoteOrderTask(
 //                                    this,
 //                                    taskType = when(taskType){
@@ -1028,7 +1028,7 @@ object TaskQueueFactory {
 //        taskType: Int
 //    ): LinkedList<Task> {
 ////        // step 0：清空队列
-////        TaskQueue.clearQueue()
+////        TaskQueues.clearQueue()
 ////        //step:0.5:
 ////        ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_STOP)
 //        // step 2：判断任务类型（送物/引领）
@@ -1062,7 +1062,7 @@ object TaskQueueFactory {
 //     * @describe 创建返回任务队列
 //     */
 //    private fun createGoBackTaskQueue(): LinkedList<Task> {
-//        val tempTaskId = TaskQueue. currentTask?.taskModel?.taskId?:""
+//        val tempTaskId = TaskQueues. currentTask?.taskModel?.taskId?:""
 //        val tempQueue = LinkedList<Task>()
 //        tempQueue.apply {
 //            //step 13: 回到充电桩
@@ -1445,7 +1445,7 @@ object TaskQueueFactory {
 //                ))
 //            }
 //        }
-////        TaskQueue.queue.addAll(0,tempQueue)
+////        TaskQueues.queue.addAll(0,tempQueue)
 //        return tempQueue
 //    }
 //
@@ -1538,7 +1538,7 @@ object TaskQueueFactory {
 //        remoteOrderModel: RemoteOrderModel,
 //        type: Int
 //    ){
-//        TaskQueue.queue.apply {
+//        TaskQueues.queue.apply {
 //            add(StartRemoteOrderPutTask(
 //                TaskModel(
 //                    remoteOrderModel = remoteOrderModel,
@@ -1626,7 +1626,7 @@ object TaskQueueFactory {
 //     * @description 生成送物任务链
 //     */
 //    fun createRemoteOrderSendTask(remoteOrderModel: RemoteOrderModel, type: Int){
-//        TaskQueue.queue.apply {
+//        TaskQueues.queue.apply {
 //            add(0,StartRemoteOrderSendTask(
 //                TaskModel(
 //                    remoteOrderModel = remoteOrderModel,

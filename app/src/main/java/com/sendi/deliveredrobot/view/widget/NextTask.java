@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.widget;
 
-public class Order {
+
+public class NextTask {
     public interface OnChangeListener {    // 创建interface类
         void onChange();    // 值改变
     }
@@ -11,15 +12,16 @@ public class Order {
         onChangeListener = onChange;
     }
 
-    private static String flage;
+    private static int NextTasK;
 
-    public static String getFlage() {
-        return flage;
+    public static int getNextTasK() {
+        return NextTasK;
     }
 
-    public static void setFlage(String flage) {
-        Order.flage = flage;
+    public static void setNextTasK(int NextTasK) {
+        NextTask.NextTasK = NextTasK;
         onChangeListener.onChange();
     }
 }
+
 

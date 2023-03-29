@@ -17,6 +17,7 @@ import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.view.widget.NextTask
 import com.sendi.deliveredrobot.view.widget.Order
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -42,8 +43,8 @@ object NavigationStateTopic {
                     if (RobotStatus.currentStatus == TYPE_EXCEPTION) return@launch
                     if (RobotStatus.callingLift) return@launch
                     RobotStatus.ready.postValue(1)
-                    Order.setOnChangeListener {
-                        if (Order.getNextTasK() != 1) {
+                    NextTask.setOnChangeListener {
+                        if (NextTask.getNextTasK() != 1) {
                             BillManager.currentBill()?.executeNextTask()
                         }
                     }

@@ -39,7 +39,7 @@ class StartRemoteOrderPutTask(taskModel: TaskModel, val type: Int):AbstractTask(
                 viewModelBin2.value.previousRemoteOrderSendFinished = false
             }
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

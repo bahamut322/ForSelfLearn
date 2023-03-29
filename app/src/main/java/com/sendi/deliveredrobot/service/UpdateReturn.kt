@@ -1,16 +1,8 @@
 package com.sendi.deliveredrobot.service
 
 import com.alibaba.fastjson.JSONObject
-import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.baidutts.util.OfflineResource
-import com.sendi.deliveredrobot.entity.MapRevise
-import com.sendi.deliveredrobot.entity.QuerySql
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
-import com.sendi.deliveredrobot.entity.RouteDB
-import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -18,16 +10,16 @@ import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.MapConfig
-import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.SendFloor
 import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
-import javassist.bytecode.stackmap.TypeData.ClassName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
 import org.litepal.LitePal.where
 import java.io.File
@@ -97,7 +89,7 @@ class UpdateReturn {
                         while (iterator1.hasNext()) {
                             sendFloor = ArrayList()
                             val (key1, value1) = iterator1.next()
-                            val sendFloor1 = SendFloor(key1, value1)
+                            val sendFloor1 = SendFloor(key1,value1)
                             sendFloor.add(sendFloor1)
                         }
                         //添加数据
@@ -122,13 +114,14 @@ class UpdateReturn {
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
+                jsonObject["areas"] = queryAllMapPointsDao.queryAreaMapPoint()
                 jsonObject["curMapName"] = queryAllMapPointsDao.queryCurrentMapName()
                 jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
                 jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
                 jsonObject["maps"] = mapPoint
                 //发送Mqtt
-                CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
+                MqttService.publish(JSONObject.toJSONString(jsonObject),true)
 
 
             }

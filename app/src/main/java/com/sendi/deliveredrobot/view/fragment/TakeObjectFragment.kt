@@ -143,7 +143,7 @@ class TakeObjectFragment : Fragment() {
                         SpeakHelper.speakWithoutStop(MyApplication.instance!!.getString(R.string.i_continue_work))
                     }
                     timer.cancel()
-//                    TaskQueue.executeNextTask()
+//                    TaskQueues.executeNextTask()
                     BillManager.currentBill()?.executeNextTask()
                 }
                 DoorState.STATE_OPENING -> {
@@ -229,14 +229,14 @@ class TakeObjectFragment : Fragment() {
 //                            mainScope.launch {
                                 //结束拨号
                                 CloudMqttService.publish(PhoneConfirmModel(number = viewModelBin1.place.value?:"").toString())
-//                                TaskQueue.executeNextTask()
+//                                TaskQueues.executeNextTask()
                             BillManager.currentBill()?.executeNextTask()
 //                            }
                         } else if (viewModelBin2.binMarkBin2 == binMark) {
 //                            mainScope.launch {
                                 //结束拨号
                                 CloudMqttService.publish(PhoneConfirmModel(number = viewModelBin2.place.value?:"").toString())
-//                                TaskQueue.executeNextTask()
+//                                TaskQueues.executeNextTask()
                             BillManager.currentBill()?.executeNextTask()
 //                            }
                         }

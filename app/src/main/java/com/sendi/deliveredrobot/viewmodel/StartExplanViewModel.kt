@@ -4,34 +4,66 @@ import android.text.SpannableStringBuilder
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.*
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BillManager.addAllAtIndex
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
+import com.sendi.deliveredrobot.navigationtask.ITaskBill
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.utils.LogUtil.d
+import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.*
-import java.util.Objects
+import java.util.*
 import kotlin.math.pow
 
 
 class StartExplanViewModel : ViewModel() {
     var mDatas: ArrayList<MyResultModel?>? = ArrayList()
     lateinit var mainScope: CoroutineScope
+    var countDownTimer: MyCountDownTimer? = null
 
 
-    fun inForListData() {
+    fun inForListData(): ArrayList<MyResultModel?>? {
         mDatas = ArrayList()
         mDatas = QuerySql.queryMyData(selectRoutMapItem!!.value!!)
+        return mDatas
+    }
+
+    fun pause() {
+        mainScope.launch {
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+        }
+    }
+
+    fun resume() {
+        mainScope.launch {
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+        }
+    }
+
+    fun downTimer() {
+        countDownTimer = MyCountDownTimer(
+            millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
+            countDownInterval = 1000, // 倒计时间隔，单位为毫秒
+            onTick = { millisUntilFinished ->
+                // 更新 UI，显示剩余时间
+                val seconds = millisUntilFinished / 1000
+                LogUtil.i( "倒计时器：${seconds}s" )
+            },
+            onFinish = {
+                // 倒计时结束，执行操作
+                BillManager.currentBill()?.executeNextTask()
+                RobotStatus.ready.postValue(0)
+            }
+        )
     }
 
     /**
@@ -43,16 +75,20 @@ class StartExplanViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
                         .queryPoint(mDatas!![i]!!.name),
-                    walkSpeak = mDatas!![i]?.walktext,
-                    walkMp3 = mDatas!![i]?.walkvoice,
-                    arraySpeak = mDatas!![i]?.explanationtext,
-                    arrayMp3 = mDatas!![i]?.explanationtext
                 )
                 val bill = createBill(taskModel = taskModel)
                 addAllAtIndex(bill, i)
                 currentBill()!!.executeNextTask()
             }
         }
+    }
+
+    fun taskName(): String {
+        return BillManager.findNextBill()!!.currentTask()!!.taskModel!!.location!!.name!!
+    }
+
+    fun taskList(): LinkedList<ITaskBill> {
+        return BillManager.billList()
     }
 
     /**
@@ -190,7 +226,7 @@ class StartExplanViewModel : ViewModel() {
         mainScope.cancel()
     }
 
-    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>):SecondModel {
+    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>): SecondModel {
         return SecondModel(
             picPlayTime = mData[position]!!.big_picplaytime,
             file = Universal.robotFile + mData[position]!!.rootmapname + "/" + mData[position]!!.routename + "/big/",
@@ -203,6 +239,7 @@ class StartExplanViewModel : ViewModel() {
             fontSize = mData[position]!!.big_fontsize
         )
     }
+
 }
 
 

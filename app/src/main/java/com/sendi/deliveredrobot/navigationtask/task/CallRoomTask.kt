@@ -35,7 +35,7 @@ class CallRoomTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
                 floor = RobotStatus.currentLocation?.floorName?:""
             ).toString()
         )
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

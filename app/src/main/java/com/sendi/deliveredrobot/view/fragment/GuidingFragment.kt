@@ -232,8 +232,8 @@ class GuidingFragment : Fragment() {
                 isEnabled = false
                 mainScope.launch {
 //                    ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_PAUSE)
-//                    TaskQueue.queue.add(0, PauseGuideTask())
-//                    TaskQueue.executeNextTask()
+//                    TaskQueues.queue.add(0, PauseGuideTask())
+//                    TaskQueues.executeNextTask()
                     if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)) {
                         binding.motionLayoutGuiding.transitionToState(R.id.state3)
                     }else{

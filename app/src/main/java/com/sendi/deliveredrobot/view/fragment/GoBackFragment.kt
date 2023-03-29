@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.LowPowerDialog
+import com.sendi.deliveredrobot.view.widget.NextTask
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
 import java.util.*
@@ -136,6 +137,11 @@ class GoBackFragment : Fragment() {
         super.onStop()
         SafeStateTopic.resetSafeStateListener()
 //        mainScope.cancel()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        NextTask.setNextTasK(0)
+        super.onViewCreated(view, savedInstanceState)
     }
 
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

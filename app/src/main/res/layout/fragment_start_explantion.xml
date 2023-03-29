@@ -24,20 +24,20 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:id="@+id/con"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/bg_img_halo"-->
-<!--            tools:layout_editor_absoluteX="60dp"-->
-<!--            tools:layout_editor_absoluteY="-16dp">-->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/con"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg"
-                tools:layout_editor_absoluteX="60dp"
-                tools:layout_editor_absoluteY="-16dp">
+        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/con"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:background="@drawable/bg_img_halo"-->
+        <!--            tools:layout_editor_absoluteX="60dp"-->
+        <!--            tools:layout_editor_absoluteY="-16dp">-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/con"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg"
+            tools:layout_editor_absoluteX="60dp"
+            tools:layout_editor_absoluteY="-16dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pointList"
@@ -48,8 +48,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/con"
                 app:layout_constraintStart_toStartOf="@+id/con"
                 app:layout_constraintTop_toTopOf="@+id/con" />
-
-
 
 
             <View
@@ -72,29 +70,48 @@
                 app:layout_constraintBottom_toBottomOf="@+id/view26"
                 app:layout_constraintStart_toStartOf="@+id/view26"
                 app:layout_constraintTop_toTopOf="@+id/view26"
-                tools:src="@tools:sample/avatars"/>
-                <!--显示文字-->
-                <TextView
-                    android:id="@+id/pointTv"
-                    android:layout_width="522dp"
-                    android:layout_height="414dp"
-                    android:layout_marginStart="@dimen/dp_32"
-                    app:layout_constraintBottom_toBottomOf="@+id/view26"
-                    app:layout_constraintStart_toStartOf="@+id/view26"
-                    app:layout_constraintTop_toTopOf="@+id/view26" />
-
+                tools:src="@tools:sample/avatars" />
+            <!--显示文字-->
             <TextView
-                android:id="@+id/nowExplanation"
+                android:id="@+id/pointTv"
+                android:layout_width="522dp"
+                android:layout_height="414dp"
+                android:layout_marginStart="@dimen/dp_32"
+                app:layout_constraintBottom_toBottomOf="@+id/view26"
+                app:layout_constraintStart_toStartOf="@+id/view26"
+                app:layout_constraintTop_toTopOf="@+id/view26" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dp_52"
-                android:text="当前讲解：XXX"
-                android:textColor="@color/white"
-                android:textSize="40sp"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/view26"
                 app:layout_constraintEnd_toEndOf="@+id/view26"
-                app:layout_constraintStart_toEndOf="@+id/pointList"
-                tools:ignore="HardcodedText" />
+                app:layout_constraintStart_toEndOf="@+id/pointList">
+
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="当前讲解:"
+                    android:textColor="@color/white"
+                    android:textSize="40sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/nowExplanation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="XXXXX"
+                    android:textColor="@color/white"
+                    android:textSize="40sp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/pointName"
@@ -134,18 +151,18 @@
                 android:id="@+id/finishBtn"
                 android:layout_width="@dimen/dp_204"
                 android:layout_height="@dimen/dp_72"
+                android:layout_marginEnd="@dimen/dp_32"
                 android:background="@drawable/bg_button"
                 android:gravity="center"
                 android:text="结束讲解"
                 android:textColor="@color/white"
                 android:textSize="32sp"
-                android:layout_marginEnd="@dimen/dp_32"
-                app:layout_constraintBottom_toBottomOf="@+id/button2"
-                app:layout_constraintEnd_toStartOf="@+id/button2"
-                app:layout_constraintTop_toTopOf="@+id/button2" />
+                app:layout_constraintBottom_toBottomOf="@+id/ChangingOver"
+                app:layout_constraintEnd_toStartOf="@+id/ChangingOver"
+                app:layout_constraintTop_toTopOf="@+id/ChangingOver" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/ChangingOver"
                 android:layout_width="@dimen/dp_204"
                 android:layout_height="@dimen/dp_72"
                 android:layout_marginEnd="@dimen/dp_32"
@@ -170,8 +187,17 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/view26"
                 app:layout_constraintTop_toBottomOf="@+id/view26" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            android:id="@+id/ChangeFragment"
+            layout="@layout/fragment_changing_over"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

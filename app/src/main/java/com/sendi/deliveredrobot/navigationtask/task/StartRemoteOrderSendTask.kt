@@ -37,7 +37,7 @@ class StartRemoteOrderSendTask(taskModel: TaskModel, val type: Int):AbstractTask
                 viewModelBin2.value.setBill(taskModel?.bill)
             }
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

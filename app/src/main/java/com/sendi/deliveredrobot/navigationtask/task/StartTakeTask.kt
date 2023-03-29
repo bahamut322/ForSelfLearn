@@ -15,7 +15,7 @@ class StartTakeTask(taskModel: TaskModel) : AbstractTask(taskModel) {
     }
 
     override suspend fun execute() {
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

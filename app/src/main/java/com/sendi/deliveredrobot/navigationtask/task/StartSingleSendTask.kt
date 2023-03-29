@@ -35,7 +35,7 @@ class StartSingleSendTask(taskModel: TaskModel):AbstractTask(taskModel) {
 
         IdleGateDataHelper.minusCount()
         IdleGateDataHelper.reportIdleGateCount()
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

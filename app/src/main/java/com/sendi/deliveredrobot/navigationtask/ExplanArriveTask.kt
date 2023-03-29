@@ -20,10 +20,10 @@ class ExplanArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
     }
 
     override suspend fun execute() {
-//        if (TaskQueue.previousTask != null) {
-//            taskModel = TaskQueue.previousTask!!.taskModel
+//        if (TaskQueues.previousTask != null) {
+//            taskModel = TaskQueues.previousTask!!.taskModel
 //        }
-//        if (TaskQueue.previousTask != null && TaskQueue.previousTask !is NavToFarPointTask) {
+//        if (TaskQueues.previousTask != null && TaskQueues.previousTask !is NavToFarPointTask) {
         var pointName = taskModel?.location?.pointName ?: ""
         pointName = pointName.toList().joinToString(" ")
         SpeakHelper.speak(String.format(MyApplication.instance!!.getString(R.string.point_arrived),pointName))
@@ -32,8 +32,8 @@ class ExplanArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, R.id.explanArriveFragment)
         })
-        virtualTaskExecute(2, "引领到达")
-//        TaskQueue.executeNextTask()
+        virtualTaskExecute(2, "到达")
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

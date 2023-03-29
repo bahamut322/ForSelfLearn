@@ -67,11 +67,11 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false ) : A
         MyApplication.instance!!.sendBroadcast(Intent().apply {
             action = ACTION_SEND_TASK_FINISH
         })
-//        TaskQueue.popEndTarget()
-//        TaskQueue.remainMinus()
-//        TaskQueue.executeNextTask()
+//        TaskQueues.popEndTarget()
+//        TaskQueues.remainMinus()
+//        TaskQueues.executeNextTask()
 //        if(waitForResume) return
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
 //        if (BillManager.findNextBill() == null) {
 //            // 后续没有任务，则返回充电桩
 //            val bill = GoBackTaskBillFactory.createBill(taskModel)

@@ -49,7 +49,7 @@ class FinishDockTask(taskModel: TaskModel) : AbstractTask(taskModel){
         RobotStatus.docking = false
         //重置重试次数
         RobotStatus.retryDockTimes = 0
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

@@ -61,8 +61,8 @@ class ScanLiftTask(taskModel: TaskModel): AbstractTask(taskModel) {
             LogUtil.i("扫描失败，20s后重试")
             virtualTaskExecute(20, "扫描失败，20s后重试")
         }
-//        TaskQueue.executeNextTask()
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 

@@ -105,8 +105,8 @@ class InputRoomNumberFragment : Fragment() {
                        }
                     viewModelGuide?.clearGuidePlace()
 //                    if (RobotStatus.autoCruise) {
-//                        TaskQueue.autoCruiseQueue.clear()
-//                        TaskQueue.autoCruiseQueue.addAll(TaskQueue.queue)
+//                        TaskQueues.autoCruiseQueue.clear()
+//                        TaskQueues.autoCruiseQueue.addAll(TaskQueues.queue)
 //                    }
                     timer.cancel()
                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)

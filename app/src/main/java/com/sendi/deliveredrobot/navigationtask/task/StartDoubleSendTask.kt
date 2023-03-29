@@ -36,7 +36,7 @@ class StartDoubleSendTask(taskModel: TaskModel):AbstractTask(taskModel) {
         IdleGateDataHelper.minusCount()
         IdleGateDataHelper.minusCount()
         IdleGateDataHelper.reportIdleGateCount()
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }
 }

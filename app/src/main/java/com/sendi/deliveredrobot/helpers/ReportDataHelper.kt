@@ -140,7 +140,7 @@ object ReportDataHelper {
                         endTarget = taskModel.endTarget
                     }
 //                    val tempTaskId = TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.DELIVERY, DoorEnum.SECOND_DOOR, date)
-//                    TaskQueue.nextTaskId = tempTaskId
+//                    TaskQueues.nextTaskId = tempTaskId
                     robotPoseStageData.taskList.add(taskDto1)
                 }else{
                     //单任务

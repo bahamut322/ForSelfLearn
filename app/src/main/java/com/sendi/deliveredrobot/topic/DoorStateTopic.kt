@@ -54,7 +54,7 @@ object DoorStateTopic {
 //                            } else {
 //                                SpeakHelper.speakWithoutStop(MyApplication.instance!!.getString(R.string.i_continue_work))
 //                            }
-//                            TaskQueue.executeNextTask()
+//                            TaskQueues.executeNextTask()
 //                        }
 //                        if (RobotStatus.settingControlDoor) {
 //                            RobotStatus.settingControlDoor = false
@@ -70,7 +70,7 @@ object DoorStateTopic {
 //                                //如果双仓有任务
 //                                if (state.door == DoorState.DOOR_TWO) {
 //                                    RobotStatus.sendFail = false
-//                                    TaskQueue.executeNextTask()
+//                                    TaskQueues.executeNextTask()
 //                                } else if (state.door == DoorState.DOOR_ONE) {
 //                                    ROSHelper.controlBin(
 //                                        RobotCommand.CMD_CLOSE,
@@ -80,7 +80,7 @@ object DoorStateTopic {
 //                            } else {
 //                                //如果非双仓有任务
 //                                RobotStatus.sendFail = false
-//                                TaskQueue.executeNextTask()
+//                                TaskQueues.executeNextTask()
 //                            }
 //                        }
 
@@ -101,7 +101,7 @@ object DoorStateTopic {
 //                        when (RobotStatus.currentStatus){
 //                            TYPE_REMOTE_ORDER_SEND, TYPE_REMOTE_ORDER_TAKE -> {
 //                                SpeakHelper.speakWithoutStop(MyApplication.instance!!.getString(R.string.i_am_your_errand))
-//                                TaskQueue.executeNextTask()
+//                                TaskQueues.executeNextTask()
 //                            }
 //                        }
                         DialogHelper.loadingDialog.dismiss()
@@ -146,7 +146,7 @@ object DoorStateTopic {
                     DoorState.STATE_CLOSE_FAILED -> {
 //                        if (RobotStatus.takingObject) {
 //                            RobotStatus.takingObject = false
-//                            TaskQueue.executeNextTask()
+//                            TaskQueues.executeNextTask()
 //                        }
 //                        if (RobotStatus.settingControlDoor) {
 //                            RobotStatus.settingControlDoor = false

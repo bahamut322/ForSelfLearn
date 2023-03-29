@@ -200,7 +200,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
             }
             taskModel?.bill?.addAll(0,tempQueue)
         }
-//        TaskQueue.executeNextTask()
+//        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
         DialogHelper.loadingDialog.dismiss()
     }

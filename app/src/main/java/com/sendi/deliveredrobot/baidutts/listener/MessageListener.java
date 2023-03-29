@@ -95,7 +95,8 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        Order.setFlage("0");
+        //朗读完毕恢复mp3的播放
+        MediaPlayerHelper.resume();
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
@@ -106,8 +107,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
             }
         }
-        //朗读完毕恢复mp3的播放
-        MediaPlayerHelper.resume();
     }
 
     /**
