@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.sendi.deliveredrobot.R;
 
@@ -22,6 +23,7 @@ import com.sendi.deliveredrobot.databinding.FragmentModeSettingBinding;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
+import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class ModeSettingFragment extends Fragment {
     String TAG = "ModeSettingFragment";
     SharedPreferences sp;
     View view;
+    SettingViewModel viewModel;
     SharedPreferences.Editor editor;
     public int inaccessiblePoint = 0;
     public float leadingSpeedNum = 0.3f;//引领速度默认值
@@ -53,20 +56,21 @@ public class ModeSettingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         values = new ContentValues();
+        viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
         //引领速度
         binding.LeadingSpeed.setRange(0.3f, 1.2f, 1);
         //去往讲解点速度
         binding.ExplanationSpeed.setRange(0.3f, 1.2f, 1);
         //讲解语速
-        binding.explain.setRange(1, 6, 0);
+        binding.explain.setRange(1, 6, 1);
         //逗留时间
-        binding.stay.setRange(1, 180, 0);
+        binding.stay.setRange(1, 180, 1);
         //打断任务触控点暂停时间
-        binding.BreakTask.setRange(1, 180, 0);
+        binding.BreakTask.setRange(1, 180, 1);
         //巡逻速度
         binding.patrolSpeed.setRange(0.3f, 1.2f, 1);
         //巡逻过程中暂停时间
-        binding.suspension.setRange(1, 180, 0);
+        binding.suspension.setRange(1, 180, 1);
 
 
         //讲解结束方式判断
@@ -150,6 +154,7 @@ public class ModeSettingFragment extends Fragment {
             explainNum = binding.explain.getCurInt();
             Log.d(TAG, "设置讲解语速: " + explainNum);
             values.put("speechspeed",explainNum);
+            viewModel.timbres(explainNum+"");
         });
         //逗留时间
         binding.stay.setOnSeekBarChangeListener(current -> {

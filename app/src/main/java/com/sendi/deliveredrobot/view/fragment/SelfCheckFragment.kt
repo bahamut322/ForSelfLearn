@@ -326,7 +326,7 @@ class SelfCheckFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(view)
         RobotStatus.ready.postValue(0)
-        settingViewModel.timbres()
+        settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
         binding.bootIv.apply {
             Glide.with(this).asGif().load(R.raw.selfcheck_animation).into(this)
         }

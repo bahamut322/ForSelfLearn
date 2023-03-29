@@ -47,7 +47,6 @@ public class DebugBasicSettingFragment extends Fragment {
     View view;
     Float robotAudio;
     Float videoAudio;
-    Float musicAudio;
     ContentValues values;
 
     @Override
@@ -206,15 +205,15 @@ public class DebugBasicSettingFragment extends Fragment {
 
             if (binding.BoyVoice.isChecked()) {
                 timbre = "男声";
-                viewModel.randomVoice(2);
+                viewModel.randomVoice(2,QuerySql.QueryBasic().getSpeechSpeed()+"");
             }
             if (binding.FemaleVoice.isChecked()) {
                 timbre = "女声";
-                viewModel.randomVoice(1);
+                viewModel.randomVoice(1,QuerySql.QueryBasic().getSpeechSpeed()+"");
             }
             if (binding.ChildVoice.isChecked()) {
                 timbre = "童声";
-                viewModel.randomVoice(3);
+                viewModel.randomVoice(3,QuerySql.QueryBasic().getSpeechSpeed()+"");
             }
             values.put("defaultvalue", stringBuffer.toString());
             values.put("robotmode", timbre);
