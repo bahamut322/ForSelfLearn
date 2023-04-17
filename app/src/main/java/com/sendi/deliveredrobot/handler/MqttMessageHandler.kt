@@ -102,6 +102,7 @@ object MqttMessageHandler {
                     explainConfigDB.slogan = explainConfig.slogan
                     explainConfigDB.stayTime = explainConfig.stayTime!!
                     explainConfigDB.routeListText = explainConfig.routeListText
+                    explainConfigDB.routeListText = explainConfig.routeListText
                     explainConfigDB.pointListText = explainConfig.pointListText
                     explainConfigDB.startText = explainConfig.startText
                     explainConfigDB.endText = explainConfig.endText
@@ -205,8 +206,6 @@ object MqttMessageHandler {
                     while (iterator.hasNext()) {
                         val route = iterator.next()
                         if (route.timeStamp > 0) {
-                            //创建对应文件夹。以路线名字命名(存放大屏幕)
-                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/")
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
                             openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
@@ -221,7 +220,7 @@ object MqttMessageHandler {
                             //配置时间戳
                             routeDB.timeStamp = route.timeStamp
                             //路线背景图
-                            if (route.backgroundPic !="") {
+                            if (route.backgroundPic != "") {
                                 routeDB.backgroundPic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (route.backgroundPic!!).substring(
                                         (route.backgroundPic).lastIndexOf("/") + 1
@@ -243,11 +242,11 @@ object MqttMessageHandler {
                                 //途径播报内容-播报语(200)
                                 pointConfigVODB.walkText = point.walkText
                                 //讲解播报内容-播报语(200)
-                                pointConfigVODB.explanationText = point.explanationText
+                                pointConfigVODB.explanationText = point.explanation
                                 //排序
                                 pointConfigVODB.scope = point.scope!!
                                 //途径音频.mp3
-                                if (point.walkVoice != "") {
+                                if (point.walkVoice != null) {
                                     pointConfigVODB.walkVoice =
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice)!!.substring(
                                             (point.walkVoice).lastIndexOf("/") + 1
@@ -295,19 +294,17 @@ object MqttMessageHandler {
                                             point.bigScreenConfig.argPic.picPlayTime
                                         //图片
                                         if (point.bigScreenConfig.argPic.pics != null) {
+                                            //创建对应文件夹。以路线名字命名(存放大屏幕)
+                                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/"+point.name)
                                             bigScreenConfigDB.imageFile =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + (point.bigScreenConfig.argPic.pics).substring(
-                                                    (point.bigScreenConfig.argPic.pics).lastIndexOf(
-                                                        "/"
-                                                    ) + 1
-                                                )
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
                                             val bigPicFile =
                                                 UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
                                             Thread {
-                                                for (i in bigPicFile!!.indices) {
+                                                for (i in bigPicFile.indices) {
                                                     downloadFile(
                                                         Universal.pathDownload + bigPicFile[i],
-                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
+                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/"+ point.name
                                                     )
                                                 }
                                             }.start()
@@ -339,20 +336,24 @@ object MqttMessageHandler {
                                             point.bigScreenConfig.argVideo.videoAudio
                                         //视频储存位置
                                         if (point.bigScreenConfig.argVideo.videos != null) {
+                                            //创建对应文件夹。以路线名字命名(存放大屏幕)
+                                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/"+point.name)
+//                                            bigScreenConfigDB.videoFile =
+//                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +
+//                                                        (point.bigScreenConfig.argVideo.videos).substring(
+//                                                            (point.bigScreenConfig.argVideo.videos).lastIndexOf(
+//                                                                "/"
+//                                                            ) + 1
+//                                                        )
                                             bigScreenConfigDB.videoFile =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +
-                                                        (point.bigScreenConfig.argVideo.videos).substring(
-                                                            (point.bigScreenConfig.argVideo.videos).lastIndexOf(
-                                                                "/"
-                                                            ) + 1
-                                                        )
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" +point.name
                                             val bigVideoFile =
                                                 UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
                                             Thread {
-                                                for (i in bigVideoFile!!.indices) {
+                                                for (i in bigVideoFile.indices) {
                                                     downloadFile(
                                                         Universal.pathDownload + bigVideoFile[i],
-                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big"
+                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/"+point.name
                                                     )
                                                 }
                                             }.start()

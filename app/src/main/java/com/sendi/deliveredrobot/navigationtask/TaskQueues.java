@@ -49,6 +49,10 @@ public class TaskQueues<T> {
         return completedTasks == totalTasks;
     }
 
+    public boolean isTaskQueueCompleted() {
+        return isCompleted();
+    }
+
     private void runNextTask() {
         T task = queue.poll();
         if (task != null) {
@@ -66,4 +70,3 @@ public class TaskQueues<T> {
         }
     }
 }
-

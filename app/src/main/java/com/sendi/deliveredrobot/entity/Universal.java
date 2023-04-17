@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public class Universal {
-
+    //首次进入讲解
     //异常人脸温度的界值
     public static float TemperatureMax = 38;
     //红外摄像头的分辨率Width
@@ -78,7 +78,6 @@ public class Universal {
     //文字位置
     public static int textPosition = 0;
 
-    //TODO 机器人默认配置
     //机器人声音类型
     public static int audioType = 1;
     //机器人唤醒词
@@ -99,6 +98,13 @@ public class Universal {
     public static String mapName;
     //密码
     public static String password;
+    //当前状态
+//    public static String Model = "开始";
+    //播放进度
+    public static int progress = 0;
+    //观察当前在第几个队列
+    public static int taskNum = 0;
 
+    public static boolean selectMapPoint = false;
 }
 

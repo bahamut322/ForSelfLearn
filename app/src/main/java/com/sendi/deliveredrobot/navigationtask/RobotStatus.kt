@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
 import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.navigationtask.task.ArrayPointExplanTask
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
 
@@ -43,7 +44,7 @@ object RobotStatus {
     //电量供应状态
     val batterySupplyStatus: MutableLiveData<Byte> = MutableLiveData(-1)
     var chargeStatus: MutableLiveData<Boolean> = MutableLiveData(false) //是否充电中
-
+    val RobotStat : MutableLiveData<Int> = MutableLiveData()
     var selfChecking = 0 //0-正在自检，1-非自检
     var lowPowerBacking = false //低电量自动回充
     var docking = false //自主回充状态
@@ -79,6 +80,9 @@ object RobotStatus {
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item
     var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
     var targetName : MutableLiveData<String?>? = MutableLiveData()
+    var progress : MutableLiveData<Int> = MutableLiveData()//文字朗读进度
+    var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
+
     fun setStatus(status: Int){
         previousStatus = currentStatus
         currentStatus = status

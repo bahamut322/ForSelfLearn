@@ -15,6 +15,9 @@ import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
@@ -66,6 +69,9 @@ class GuideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(view)
         timer = Timer()
+//        Universal.Model="引领"
+        ROSHelper.setSpeed(QuerySql.QueryBasic().leadingSpeed.toString())
+//        NextTask.setNextTasK(true)
         val toSettingDialog = FromeSettingDialog(context)
         //是否是第一个页面
         if (FunctionSkip.selectFunction() == 4) {

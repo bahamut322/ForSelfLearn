@@ -1,9 +1,11 @@
 package com.sendi.deliveredrobot.viewmodel
 
 import android.text.SpannableStringBuilder
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -11,16 +13,20 @@ import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.BillManager.addAllAtIndex
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
 import com.sendi.deliveredrobot.navigationtask.ITaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.SecondModel
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.widget.NextTask
+import com.sendi.deliveredrobot.utils.LogUtil.i
+import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.math.pow
@@ -37,6 +43,63 @@ class StartExplanViewModel : ViewModel() {
         mDatas = QuerySql.queryMyData(selectRoutMapItem!!.value!!)
         return mDatas
     }
+
+    fun finishTask(array: Boolean) {
+        MainScope().launch {
+            for (iTaskBill in BillManager.billList()) {
+                iTaskBill.earlyFinish()
+            }
+//            BillManager.currentBill()!!.earlyFinish()
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+//            Universal.Model = "结束讲解"
+            ready.postValue(0)
+            if (!array) {
+                currentBill()?.executeNextTask()
+            }
+            BaiduTTSHelper.getInstance().stop()
+            TaskNext.setToDo("0")
+            RobotStatus.ArrayPointExplan.postValue(0)
+        }
+    }
+
+    fun test(selectName: String) {
+        var position = 0
+        Universal.selectMapPoint = true
+        for (i in mDatas!!.indices) {
+            if (mDatas!![i]!!.name == selectName) {
+                Log.d("TAG", "onClick: $i")
+                position = i;
+                break
+            }
+        }
+        MainScope().launch(Dispatchers.Default) {
+            for (iTaskBill in BillManager.billList()) {
+                iTaskBill.earlyFinish()
+            }
+            BillManager.billList().clear()
+            BaiduTTSHelper.getInstance().stop()
+//            Universal.Model = "结束讲解"
+
+            i("选择地点的索引：$position")
+            for (index in position until inForListData()!!.size) {
+                val taskModel = TaskModel(
+                    location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
+                        .queryPoint(inForListData()!![index]!!.name),
+                )
+                val bill = createBill(taskModel = taskModel)
+//                BillManager.addAllAtIndex(bill, index)
+                BillManager.addAllLast(bill)
+            }
+//            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+//            Universal.Model = "切换点讲解"
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+            BaiduTTSHelper.getInstance().stop()
+            TaskNext.setToDo("0")
+            RobotStatus.ArrayPointExplan.postValue(0)
+            Universal.selectMapPoint = false
+        }
+    }
+
 
     fun pause() {
         mainScope.launch {
@@ -57,12 +120,14 @@ class StartExplanViewModel : ViewModel() {
             onTick = { millisUntilFinished ->
                 // 更新 UI，显示剩余时间
                 val seconds = millisUntilFinished / 1000
-                LogUtil.i( "倒计时器：${seconds}s" )
+                i("倒计时器：${seconds}s")
             },
             onFinish = {
+                TaskNext.setToDo("1")
                 // 倒计时结束，执行操作
-                BillManager.currentBill()?.executeNextTask()
-                RobotStatus.ready.postValue(0)
+//                currentBill()?.executeNextTask()
+                ready.postValue(0)
+//                Universal.Model = "结束一段讲解"
             }
         )
     }
@@ -71,17 +136,19 @@ class StartExplanViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
-        for (i in 0 until mDatas!!.size) {
-            MainScope().launch(Dispatchers.Default) {
+        MainScope().launch(Dispatchers.Default) {
+            for (i in mDatas!!.indices) {
                 val taskModel = TaskModel(
                     location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
                         .queryPoint(mDatas!![i]!!.name),
                 )
                 val bill = createBill(taskModel = taskModel)
-                addAllAtIndex(bill, i)
-                NextTask.setNextTasK(true)
-//                currentBill()!!.executeNextTask()
+//                BillManager.addAllLast(bill)
+                BillManager.addAllAtIndex(bill, i)
+//                Universal.Model = "开始讲解"
             }
+            ready.postValue(0)
+            currentBill()?.executeNextTask()
         }
     }
 
@@ -210,38 +277,51 @@ class StartExplanViewModel : ViewModel() {
 
     }
 
-    //结束讲解
-    fun finish() {
-        mainScope.launch {
-            currentBill()?.earlyFinish()
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-        }
-
-    }
 
     //下一个任务
-    fun nextTask() {
+    fun nextTask(array: Boolean) {
         currentBill()?.executeNextTask()
+        if (!array) {
+            UpdateReturn().stop()
+        }
+        TaskNext.setToDo("0")
+        RobotStatus.ArrayPointExplan.postValue(0)
     }
 
     fun cancelMainScope() {
         mainScope.cancel()
     }
 
-    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>): SecondModel {
-        return SecondModel(
+    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
+        SecondModel?.postValue(SecondModel(
             picPlayTime = mData[position]!!.big_picplaytime,
-            file = Universal.robotFile + mData[position]!!.rootmapname + "/" + mData[position]!!.routename + "/big/",
+            file = mData[position]!!.big_imagefile?.toString(),
             type = mData[position]!!.big_type,
             textPosition = mData[position]!!.big_textposition,
             fontLayout = mData[position]!!.big_fontlayout,
-            fontContent = mData[position]!!.big_fontcontent.toString(),
-            fontBackGround = mData[position]!!.big_fontbackground.toString(),
-            fontColor = mData[position]!!.big_fontcolor.toString(),
+            fontContent = mData[position]!!.big_fontcontent?.toString(),
+            fontBackGround = mData[position]!!.big_fontbackground?.toString(),
+            fontColor = mData[position]!!.big_fontcolor?.toString(),
             fontSize = mData[position]!!.big_fontsize
-        )
+        ))
+        sdScreenStatus!!.postValue(2)
+        i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
 
+    fun splitString(input: String, length: Int): List<String> {
+        val result: MutableList<String> = ArrayList()
+        var startIndex = 0
+        while (startIndex < input.length) {
+            var endIndex = startIndex + length
+            if (endIndex > input.length) {
+                endIndex = input.length
+            }
+            val substring = input.substring(startIndex, endIndex)
+            result.add(substring)
+            startIndex = endIndex
+        }
+        return result
+    }
 }
 
 

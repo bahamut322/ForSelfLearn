@@ -43,7 +43,7 @@ public class BaseViewModel extends ViewModel {
         //获取拓展名
         String fileEnd = fName.substring(fName.lastIndexOf(".") + 1).toLowerCase();
         isImageFile = fileEnd.equals("jpg") || fileEnd.equals("png") || fileEnd.equals("gif")
-                || fileEnd.equals("jpeg") || fileEnd.equals("bmp");
+                || fileEnd.equals("jpeg") || fileEnd.equals("bmp") || fileEnd.equals("JPG");
         return isImageFile;
     }
 

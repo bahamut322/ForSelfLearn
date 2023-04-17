@@ -1,11 +1,13 @@
 package com.sendi.deliveredrobot.adapter
 
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.TextView
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.MyResultModel
@@ -50,34 +52,12 @@ class ChangePointGridViewAdapter(private val context: Context, private val items
             holder.itemTextView.isEnabled = false;
         }
         holder.itemTextView.text = items[position]!!.name
-        holder.itemTextView.setOnClickListener {
 
-            //弹窗
-            val changePointDialog = ChangingPointDialog(context)
-
-            MainScope().launch(Dispatchers.Default) {
-                changePointDialog.show()
-                changePointDialog.askTv.text = items[position]!!.name
-                changePointDialog.Sure.setOnClickListener {
-                    val taskModel = TaskModel(
-                        location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context)
-                            .getDao()
-                            .queryPoint(items[position]!!.name)
-                    )
-                    val bill = ExplanationBill.createBill(taskModel = taskModel)
-                    BillManager.addAllAtIndex(bill, position)
-                    BillManager.currentBill()!!.currentTask()
-                }
-                changePointDialog.No.setOnClickListener{
-                    changePointDialog.dismiss();
-                }
-            }
-        }
         return view!!
     }
 
     private class ViewHolder(view: View) {
-        val itemTextView: Button = view.findViewById(R.id.pointName)
+        val itemTextView: TextView = view.findViewById(R.id.pointName)
     }
 
 }

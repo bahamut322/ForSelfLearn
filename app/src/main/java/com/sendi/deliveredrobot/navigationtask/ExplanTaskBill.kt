@@ -59,7 +59,7 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
         val tempQueue = LinkedList<AbstractTask>()
         tempQueue.apply {
             add(
-                StartGuideTask(
+                StartExplanTask(
                     TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
@@ -102,6 +102,16 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                     R.id.StartExplantionFragment
                 )
             )
+            add(
+                ArrayPointExplanTask(
+                    taskModel = TaskModel(
+                        location = taskModel?.location,
+                        endTarget = endTarget(),
+                        taskId = taskId(),
+                        bill = this@ExplanTaskBill
+                    )
+                )
+            )
             // step 11：到达目的地
             add(
                 ExplanArriveTask(
@@ -113,6 +123,7 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                     )
                 )
             )
+
             // step 12：完成任务task
             add(
                 FinishGuideTask(
@@ -124,6 +135,7 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                     )
                 )
             )
+
 //            add(
 //                AllFinishGuideTask(
 //                    TaskModel(

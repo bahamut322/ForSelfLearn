@@ -44,10 +44,12 @@ public class MediaPlayerHelper {
             }
             new AudioMngHelper(MyApplication.context).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());//设置语音音量
             try {
-                mMediaPlayer.setDataSource(fileName);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
-                startTimer();
+                if(fileName!=null) {
+                    mMediaPlayer.setDataSource(fileName);
+                    mMediaPlayer.prepare();
+                    mMediaPlayer.start();
+                    startTimer();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

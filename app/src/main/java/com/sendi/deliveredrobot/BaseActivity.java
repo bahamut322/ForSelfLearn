@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -93,13 +95,14 @@ public class BaseActivity extends AppCompatActivity {
          * 按下home键盘
          * 在次进入app时广告屏正常显示广告
          */
-        if (RobotStatus.INSTANCE.getMPresentation().getValue() != null && RobotStatus.INSTANCE.getMPresentation().getValue() == 1) {
-            RobotStatus.INSTANCE.getNewUpdata().postValue(1);
-        }
         //判断副屏是否存在再去启动轮播控件
         if (mPresentation != null) {
             advanceView.setResume();
         }
+        //重启双屏异显
+        ShowPresentationByMediarouter();
+        ShowPresentationByDisplaymanager();
+        RobotStatus.INSTANCE.getNewUpdata().postValue(1);
     }
 
     @Override
@@ -302,24 +305,37 @@ public class BaseActivity extends AppCompatActivity {
 
 
     private void getFilesAllName(String path) {
-        //传入指定文件夹的路径
         File file = new File(path);
-        File[] files = file.listFiles();
-        assert files != null;
-        advanceView.removeAllViews();
-        advanceView.initView();
-        List<Advance> imagePaths = new ArrayList<>();
-        for (File value : files) {
-            if (baseViewModel.checkIsImageFile(value.getPath())) {
-                //图片
-                imagePaths.add(new Advance(value.getPath(), "2"));
+        if (mPresentation!=null) {
+            advanceView.removeAllViews();
+            advanceView.initView();
+        }
+        if (file.isFile()) {
+            // This is a file
+            List<Advance> fileList = new ArrayList<>();
+            if (baseViewModel.checkIsImageFile(file.getPath())) {
+                fileList.add(new Advance(file.getPath(), "2")); // image
             } else {
-                //视频
-                imagePaths.add(new Advance(value.getPath(), "1"));
+                fileList.add(new Advance(file.getPath(), "1")); // video
             }
-            advanceView.setData(imagePaths);//将数据传入到控件中显示
+            advanceView.setData(fileList);
+        } else if (file.isDirectory()) {
+            // This is a directory
+            File[] files = file.listFiles();
+            if (files != null) {
+                List<Advance> fileList = new ArrayList<>();
+                for (File value : files) {
+                    if (baseViewModel.checkIsImageFile(value.getPath())) {
+                        fileList.add(new Advance(value.getPath(), "2")); // image
+                    } else {
+                        fileList.add(new Advance(value.getPath(), "1")); // video
+                    }
+                }
+                advanceView.setData(fileList);
+            }
         }
     }
+
 
     /**
      * @param picPlayTime    轮播时间

@@ -54,13 +54,13 @@ class ChooseGuidePlaceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fromType = arguments?.getString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE)
-        AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolume!! / 2)
+//        AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolume!! / 2)
         MainScope().launch(Dispatchers.Default) {
             if (CommonHelper.atChargePointFloor()) {
                 //如果是在充电桩的楼层
-                AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolumeLobby / 2)
+//                AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolumeLobby / 2)
             }else{
-                AudioMngHelper(requireContext()).setVoice100((viewModelBasicSetting.basicConfig.guideVolume ?: 40) / 2)
+//                AudioMngHelper(requireContext()).setVoice100((viewModelBasicSetting.basicConfig.guideVolume ?: 40) / 2)
             }
             val publicAreaPointsList =
                 DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()

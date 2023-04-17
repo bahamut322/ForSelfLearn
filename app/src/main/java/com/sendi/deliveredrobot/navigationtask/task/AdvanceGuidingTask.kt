@@ -41,7 +41,7 @@ class AdvanceGuidingTask(
             putExtra(NAVIGATE_ID, navigateId)
         })
         //step1设置速度
-        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
+//        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
         DialogHelper.loadingDialog.dismiss()
     }

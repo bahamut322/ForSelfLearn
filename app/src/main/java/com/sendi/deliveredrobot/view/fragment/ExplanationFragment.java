@@ -92,7 +92,7 @@ public class ExplanationFragment extends Fragment {
         binding.imageViewSetting.setOnClickListener(v -> {
             fromeSettingDialog.show();
             RobotStatus.INSTANCE.getPassWordToSetting().observe(getViewLifecycleOwner(), it -> {
-                if (RobotStatus.INSTANCE.getPassWordToSetting().getValue()) {
+                if (Boolean.TRUE.equals(RobotStatus.INSTANCE.getPassWordToSetting().getValue())) {
                     controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
                     fromeSettingDialog.dismiss();
                     RobotStatus.INSTANCE.getPassWordToSetting().postValue(false);
@@ -120,7 +120,7 @@ public class ExplanationFragment extends Fragment {
 
                 centerToLiftDistance = binding.explainRv.getWidth() / 2;
 
-                int childViewHeight = UiUtils.dip2px(getContext(), 400); //43是当前已知的 Item的高度
+                int childViewHeight = UiUtils.dip2px(getContext(), 400); //400是当前已知的 Item的高度
                 childViewHalfCount = (binding.explainRv.getWidth() / childViewHeight + 1) / 2;
                 initData();
                 findView();
@@ -253,6 +253,8 @@ public class ExplanationFragment extends Fragment {
                 vh.imgStart.setVisibility(View.VISIBLE);
                 vh.imgEnd.setVisibility(View.VISIBLE);
                 vh.textNameImg.setVisibility(View.VISIBLE);
+                setViewSize(vh.bottomImg, 320, 56);
+                vh.bottomImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.select_explanation_bottom));
             } else {
                 //居中item的布局样式
                 if (selectPosition == position) {
@@ -262,21 +264,26 @@ public class ExplanationFragment extends Fragment {
                     setViewSize(vh.imageView, 288, 334);
                     vh.view.setSelected(true);
                     setViewSize(vh.imgBottom, 240, 4);
+                    setViewSize(vh.bottomImg, 320, 56);
                     vh.imgBottom.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_explanation_bottom));
                     vh.imgStart.setVisibility(View.VISIBLE);
                     vh.imgEnd.setVisibility(View.VISIBLE);
                     vh.textNameImg.setVisibility(View.VISIBLE);
+                    vh.bottomImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.select_explanation_bottom));
                 } else {
                     vh.tv.setTextColor(getResources().getColor(R.color.Awhite));
                     vh.view.setSelected(false);
                     vh.tv.setTextSize(28);
                     setViewSize(vh.view, 290, 407);
                     setViewSize(vh.imageView, 258, 320);
+                    setViewSize(vh.bottomImg, 290, 48);
                     vh.imgBottom.setImageDrawable(getContext().getResources().getDrawable(R.drawable.img_explanation_bottom_false));
                     setViewSize(vh.imgBottom, 220, 4);
                     vh.imgStart.setVisibility(View.GONE);
                     vh.imgEnd.setVisibility(View.GONE);
                     vh.textNameImg.setVisibility(View.GONE);
+                    vh.bottomImg.setImageDrawable(getContext().getResources().getDrawable(R.drawable.un_select_explan_bottom));
+
                 }
             }
             if (mDatas.get(position) == null) {
@@ -314,7 +321,7 @@ public class ExplanationFragment extends Fragment {
 
             public TextView tv;
             public View view;
-            public ImageView imageView, imgBottom, imgStart, imgEnd, textNameImg;
+            public ImageView imageView, imgBottom, imgStart, imgEnd, textNameImg,bottomImg;
 
             public VH(@NonNull View itemView) {
                 super(itemView);
@@ -325,6 +332,7 @@ public class ExplanationFragment extends Fragment {
                 imgStart = itemView.findViewById(R.id.imgStart);
                 imgEnd = itemView.findViewById(R.id.imgEnd);
                 textNameImg = itemView.findViewById(R.id.name_bg_img);
+                bottomImg = itemView.findViewById(R.id.bottomImg);
             }
         }
     }

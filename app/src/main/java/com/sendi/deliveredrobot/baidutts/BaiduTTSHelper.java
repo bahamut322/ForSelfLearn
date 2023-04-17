@@ -214,7 +214,9 @@ public class BaiduTTSHelper {
         InitConfig config = getInitConfig(listener, params);
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }
-
+    public void resume(){
+        synthesizer.resume();
+    }
     public void resetParam(){
         Map<String, String> params = new HashMap<>();
         // 以下参数均为选填

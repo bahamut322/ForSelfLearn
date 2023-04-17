@@ -20,7 +20,6 @@ import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
 import com.sendi.deliveredrobot.entity.BasicSetting
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
@@ -58,6 +57,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var timeChangeReceiver: TimeChangeReceiver
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
+
     @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +137,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                             .queryChargePoint()
                     RobotStatus.originalLocation = queryPoint
                     RobotStatus.currentLocation = RobotStatus.originalLocation
-                    LogUtil.d("当前所在楼层" + RobotStatus.currentLocation!!.floorName)
+//                    LogUtil.d("当前所在楼层" + RobotStatus.currentLocation!!.floorName)
                 }
             }
         }
@@ -443,8 +443,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     Universal.fontSize
                 )
             }
-            if (sdScreenStatus!!.value == 3){
-//                renovate()
+            if (sdScreenStatus!!.value == 2) {
+                advanceView.removeAllViews()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     RobotStatus.SecondModel!!.value?.picPlayTime!!,
@@ -459,13 +459,19 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 )
             }
         }
+        RobotStatus.SecondModel!!.observe(this) {
+            advanceView.removeAllViews()
+            layoutThis(
+                it?.picPlayTime!!,
+                it.file,
+                it.type!!,
+                it.textPosition!!,
+                it.fontLayout!!,
+                it.fontContent,
+                it.fontBackGround,
+                it.fontColor,
+                it.fontSize!!
+            )
+        }
     }
-
-//    private fun renovate() {
-//        if (mPresentation != null) {
-//            mPresentation.dismiss()
-//        }
-//        ShowPresentationByMediarouter()
-//        ShowPresentationByDisplaymanager()
-//    }
 }

@@ -629,6 +629,52 @@ ORDER BY CAST(map_point.name as INTEGER)
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     fun queryAllPoints(): List<QueryPointEntity>
 
+    @Query(
+        """
+SELECT
+	point_name,
+	floor_name,
+	point_id,
+	root_map_id,
+	sub_map_id,
+	route_id,
+	route_path,
+	sub_path,
+	x,
+	y,
+	w,
+	point_direction,
+    type
+FROM
+(
+SELECT
+	map_point.name AS point_name,
+	relationship_lift.floor_name AS floor_name,
+	map_point.id AS point_id,
+	relationship_point.root_map_id AS root_map_id,
+	map_sub.id AS sub_map_id,
+	map_route.id AS route_id,
+	map_route.path AS route_path,
+	map_sub.path AS sub_path,
+	map_point.x AS x,
+	map_point.y AS y,
+	map_point.w AS w,
+	map_point.direction AS point_direction,
+    map_point.type AS type
+FROM
+	relationship_point
+  INNER JOIN relationship_lift ON relationship_point.sub_map_id = relationship_lift.sub_map_id
+	INNER JOIN map_sub ON relationship_point.sub_map_id = map_sub.id
+	INNER JOIN map_point ON relationship_point.point_id = map_point.id
+	INNER JOIN map_route ON relationship_point.route_id = map_route.id
+WHERE
+relationship_point.root_map_id = :rootMapId
+ORDER BY CAST(map_point.name as INTEGER)
+)
+    """
+    )
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    fun queryAllPoint(rootMapId: Int): List<QueryPointEntity>
 
     /**
      * @describe 查询root_map下的所有楼层的所有普通点的集合

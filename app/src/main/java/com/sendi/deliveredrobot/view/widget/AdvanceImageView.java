@@ -13,6 +13,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 
 import java.util.Objects;
@@ -39,22 +40,21 @@ public class AdvanceImageView extends RelativeLayout {
 
     public  void initView() {
         imageView = new ImageView(getContext());
-
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        if (Universal.picTypeNum == 2) {//平铺(正常图)
+        if (QuerySql.ADV().getPicType() == 2) {//平铺(正常图)
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+           imageView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));//设置整个布局的参数
             //背景颜色
-            if (Objects.equals(Universal.fontBackGround, "")){
+            if (Objects.equals(QuerySql.ADV().getFontBackGround(), "")){
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setBackgroundColor(Color.WHITE);
             }else {
-                if (Universal.fontBackGround == null){
+                if (QuerySql.ADV().getFontBackGround() == null){
                     imageView.setBackgroundColor(Color.WHITE);
                 }else {
-                    imageView.setBackgroundColor(Color.parseColor(Universal.fontBackGround + ""));
+                    imageView.setBackgroundColor(Color.parseColor(QuerySql.ADV().getFontBackGround() + ""));
                 }
             }
-            imageView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));//设置整个布局的参数
         } else {//全图(铺满整个屏幕)
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setLayoutParams(new RelativeLayout.LayoutParams(1080, 1920));//设置整个布局的参数
@@ -63,8 +63,21 @@ public class AdvanceImageView extends RelativeLayout {
     }
 
     public void setImage(String path) {
-        Glide.with(getContext()).load(path).into(imageView);
-
-
+        //tmd，我也不知道为啥有时候显示不全，又不想算这个傻逼副屏，只好多个判断
+        if (QuerySql.ADV().getPicType() == 2) {
+            Glide.with(getContext()).load(path).into(imageView);
+        }else {
+            Glide.with(getContext().getApplicationContext())
+                    .setDefaultRequestOptions(
+                            new RequestOptions()
+//                                    .frame(3000000)
+                                    .centerCrop()
+                                    .error(R.drawable.ic_loading_2170e7)
+                                    .placeholder(R.drawable.qmui_icon_notify_error)
+                                    .override(1920, 1080)//设置图片宽高
+                    )
+                    .load(path)
+                    .into(imageView);
+        }
     }
 }

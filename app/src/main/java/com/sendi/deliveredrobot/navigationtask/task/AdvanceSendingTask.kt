@@ -33,7 +33,7 @@ class AdvanceSendingTask(private val cmd:Int, taskModel: TaskModel?) : AbstractT
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, R.id.sendingFragment)
         })
-        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
+//        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
 //        ROSHelper.navigateTo(taskModel!!.location!!)
         ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
         DialogHelper.loadingDialog.dismiss()

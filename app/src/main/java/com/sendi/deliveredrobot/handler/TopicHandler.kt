@@ -9,6 +9,8 @@ import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.ros.observable.BinaryObserver
 import com.sendi.deliveredrobot.ros.observable.Subject
 import com.sendi.deliveredrobot.topic.*
+import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -21,12 +23,13 @@ import navigation_base_msgs.State
 object TopicHandler {
     lateinit var navController: NavController
     private val mainScope = MainScope()
+    lateinit var binaryObserver: BinaryObserver
 //    private val mutex = Mutex()
 
     fun create(navController: NavController) {
         this.navController = navController
         // 1.客户端注册
-        object : BinaryObserver(Subject.getInstance()) {
+        binaryObserver = object : BinaryObserver(Subject.getInstance()) {
             override fun receivedMessage(rosResult: RosResult<*>?) {
                 super.receivedMessage(rosResult)
                 when (rosResult?.url) {
@@ -152,7 +155,7 @@ object TopicHandler {
         rosResult: RosResult<*>?,
         navController: NavController
     ) {
-       VoicePromptTopic.handle(rosResult,navController)
+        VoicePromptTopic.handle(rosResult,navController)
     }
 
     /**

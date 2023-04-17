@@ -21,7 +21,6 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dp_50"
             android:layout_centerHorizontal="true"
-            android:background="#999"
             android:scaleType="fitCenter"
             android:src="@drawable/anim_login_start_loading" />
 

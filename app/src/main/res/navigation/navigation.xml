@@ -127,11 +127,8 @@
             app:popExitAnim="@anim/fade_out" />
 
         <action
-            android:id="@+id/action_homeFragment_to_settingHomeFragment"
-            app:destination="@id/settingHomeFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_cameraPreviewFragment"
-            app:destination="@id/cameraPreviewFragment" />
+            android:id="@+id/action_homeFragment_to_planSettingFragment"
+            app:destination="@id/planSettingFragment" />
         <action
             android:id="@+id/action_homeFragment_to_standbyFragment"
             app:destination="@id/standbyFragment" />
@@ -141,6 +138,20 @@
         <action
             android:id="@+id/action_homeFragment_to_explanationFragment"
             app:destination="@+id/ExplanationFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/planSettingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.PlanSettingFragment"
+        android:label="planSettingFragment">
+        <action
+            android:id="@+id/action_planSettingFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_planSettingFragment_to_settingHomeFragment"
+            app:destination="@id/settingHomeFragment" />
+        <action
+            android:id="@+id/action_planSettingFragment_to_cameraPreviewFragment"
+            app:destination="@id/cameraPreviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"

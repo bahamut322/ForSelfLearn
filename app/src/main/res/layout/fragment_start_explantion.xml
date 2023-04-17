@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="data"
+            type="com.sendi.deliveredrobot.model.ExplantionNameModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@drawable/img_strat_explation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +32,7 @@
             android:background="@drawable/bg_img_halo"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/con"
+            android:id="@+id/parentCon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="60dp"
@@ -43,169 +44,161 @@
                 android:layout_height="553dp"
                 android:background="@drawable/bg_start_explanation_item"
                 android:divider="@null"
-                app:layout_constraintBottom_toBottomOf="@+id/con"
-                app:layout_constraintStart_toStartOf="@+id/con"
-                app:layout_constraintTop_toTopOf="@+id/con" />
+                app:layout_constraintBottom_toBottomOf="@+id/parentCon"
+                app:layout_constraintStart_toStartOf="@+id/parentCon"
+                app:layout_constraintTop_toTopOf="@+id/parentCon" />
+
+            <LinearLayout
+                android:id="@+id/nameLin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_60"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/contentCL"
+                app:layout_constraintStart_toStartOf="@+id/contentCL"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/statusTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="当前讲解:"
+                    android:textColor="@color/white"
+                    android:textSize="40sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/nowExplanation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@{data.name}"
+                    android:textColor="@color/white"
+                    android:textSize="40sp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/contentCL"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/dp_59"
+                android:layout_height="@dimen/dp_600"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pointList"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/nameLin">
 
                 <View
                     android:id="@+id/view26"
                     android:layout_width="@dimen/dp_1010"
                     android:layout_height="480dp"
-                    android:layout_marginTop="@dimen/dp_52"
                     android:background="@drawable/bg_explanation_acceptstation"
-                    app:layout_constraintBottom_toBottomOf="@+id/contentCL"
                     app:layout_constraintEnd_toEndOf="@+id/contentCL"
                     app:layout_constraintStart_toStartOf="@+id/contentCL"
-                    app:layout_constraintTop_toBottomOf="@+id/nameLin" />
+                    app:layout_constraintTop_toTopOf="parent" />
                 <!--显示图片-->
                 <ImageView
                     android:id="@+id/pointImage"
-                    android:layout_width="522dp"
+                    android:layout_width="0dp"
                     android:layout_height="414dp"
                     android:layout_marginStart="@dimen/dp_32"
                     android:scaleType="fitXY"
-                    android:src="@drawable/have_sound_svg"
+                    android:layout_marginEnd="@dimen/dp_32"
                     app:layout_constraintBottom_toBottomOf="@+id/view26"
-                    app:layout_constraintStart_toStartOf="@+id/view26"
-                    app:layout_constraintTop_toTopOf="@+id/view26"
-                    tools:src="@tools:sample/avatars" />
-                <!--显示文字-->
-                <TextView
-                    android:id="@+id/pointTv"
-                    android:layout_width="522dp"
-                    android:layout_height="414dp"
-                    android:layout_marginStart="@dimen/dp_32"
-                    app:layout_constraintBottom_toBottomOf="@+id/view26"
+                    app:layout_constraintEnd_toStartOf="@+id/contentLin"
                     app:layout_constraintStart_toStartOf="@+id/view26"
                     app:layout_constraintTop_toTopOf="@+id/view26" />
 
                 <LinearLayout
-                    android:id="@+id/nameLin"
+                    android:id="@+id/contentLin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_60"
-                    android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="@+id/view26"
                     app:layout_constraintEnd_toEndOf="@+id/view26"
-                    app:layout_constraintStart_toStartOf="@+id/view26"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/tv"
+                        android:id="@+id/pointName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="当前讲解:"
+                        android:layout_marginTop="@dimen/sp_32"
+                        android:layout_marginBottom="@dimen/dp_20"
                         android:textColor="@color/white"
-                        android:textSize="40sp"
-                        tools:ignore="HardcodedText" />
+                        android:textSize="@dimen/sp_32"
+                        app:layout_constraintBottom_toTopOf="@+id/view2"
+                        app:layout_constraintStart_toStartOf="@+id/view2" />
 
-                    <TextView
-                        android:id="@+id/nowExplanation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="XXXXX"
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="368dp"
+                        android:layout_height="@dimen/dp_1"
+                        android:layout_marginBottom="@dimen/dp_24"
+                        android:alpha="0.7"
+                        android:background="@color/white"
+                        app:layout_constraintBottom_toTopOf="@+id/acceptstationTv"
+                        app:layout_constraintEnd_toEndOf="@+id/acceptstationTv"
+                        app:layout_constraintStart_toStartOf="@+id/acceptstationTv" />
+
+
+                    <com.sendi.deliveredrobot.view.widget.SongLyricTextView
+                        android:id="@+id/acceptstationTv"
+                        android:layout_width="368dp"
+                        android:layout_height="@dimen/dp_325"
+                        android:layout_marginEnd="@dimen/dp_26"
+                        android:layout_marginBottom="@dimen/dp_37"
+                        android:alpha="0.6"
+                        android:letterSpacing="0.2"
+                        android:lineSpacingMultiplier="1.0"
                         android:textColor="@color/white"
-                        android:textSize="40sp"
+                        android:textSize="@dimen/sp_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/view26"
+                        app:layout_constraintEnd_toEndOf="@+id/view26"
                         tools:ignore="HardcodedText" />
-
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/pointName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_32"
-                    android:text="@string/Sendi"
+                <Button
+                    android:id="@+id/finishBtn"
+                    android:layout_width="@dimen/dp_204"
+                    android:layout_height="@dimen/dp_72"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:background="@drawable/bg_button"
+                    android:gravity="center"
+                    android:text="结束讲解"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sp_32"
-                    app:layout_constraintStart_toEndOf="@+id/pointImage"
-                    app:layout_constraintTop_toTopOf="@+id/pointImage" />
+                    android:textSize="32sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/ChangingOver"
+                    app:layout_constraintEnd_toStartOf="@+id/ChangingOver"
+                    app:layout_constraintTop_toTopOf="@+id/ChangingOver" />
 
-                <View
-                    android:id="@+id/view2"
-                    android:layout_width="368dp"
-                    android:layout_height="@dimen/dp_1"
-                    android:layout_marginTop="@dimen/dp_20"
-                    android:alpha="0.7"
-                    android:background="@color/white"
-                    app:layout_constraintStart_toStartOf="@+id/pointName"
-                    app:layout_constraintTop_toBottomOf="@+id/pointName" />
-
-                <TextView
-                    android:id="@+id/acceptstationTv"
-                    android:layout_width="368dp"
-                    android:layout_height="@dimen/dp_325"
-                    android:layout_marginTop="@dimen/sp_24"
-                    android:alpha="0.6"
-                    android:text="紫荆关，是中国古代的军事防御工事，是一道高大、坚固而且连绵不断的长垣，用以限隔敌骑的行动。长城不是一道单纯孤立的城墙，而是以城墙为主体，同大量的城、障、亭、标相结合的防御体系，界八大奇"
+                <Button
+                    android:id="@+id/ChangingOver"
+                    android:layout_width="@dimen/dp_204"
+                    android:layout_height="@dimen/dp_72"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:background="@drawable/bg_button"
+                    android:gravity="center"
+                    android:text="切换其他点"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sp_24"
-                    app:layout_constraintStart_toStartOf="@+id/view2"
-                    app:layout_constraintTop_toBottomOf="@+id/view2"
-                    tools:ignore="HardcodedText" />
+                    android:textSize="32sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/nextTaskBtn"
+                    app:layout_constraintEnd_toStartOf="@+id/nextTaskBtn"
+                    app:layout_constraintTop_toTopOf="@+id/nextTaskBtn" />
+
+                <Button
+                    android:id="@+id/nextTaskBtn"
+                    android:layout_width="@dimen/dp_204"
+                    android:layout_height="@dimen/dp_72"
+                    android:layout_marginTop="@dimen/dp_48"
+                    android:background="@drawable/dialog_btn_true_bg"
+                    android:gravity="center"
+                    android:text="下一个点"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    app:layout_constraintEnd_toEndOf="@+id/view26"
+                    app:layout_constraintTop_toBottomOf="@+id/view26" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <Button
-                android:id="@+id/finishBtn"
-                android:layout_width="@dimen/dp_204"
-                android:layout_height="@dimen/dp_72"
-                android:layout_marginEnd="@dimen/dp_32"
-                android:background="@drawable/bg_button"
-                android:gravity="center"
-                android:text="结束讲解"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                app:layout_constraintBottom_toBottomOf="@+id/ChangingOver"
-                app:layout_constraintEnd_toStartOf="@+id/ChangingOver"
-                app:layout_constraintTop_toTopOf="@+id/ChangingOver" />
-
-            <Button
-                android:id="@+id/ChangingOver"
-                android:layout_width="@dimen/dp_204"
-                android:layout_height="@dimen/dp_72"
-                android:layout_marginEnd="@dimen/dp_32"
-                android:background="@drawable/bg_button"
-                android:gravity="center"
-                android:text="切换其他点"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                app:layout_constraintBottom_toBottomOf="@+id/nextTaskBtn"
-                app:layout_constraintEnd_toStartOf="@+id/nextTaskBtn"
-                app:layout_constraintTop_toTopOf="@+id/nextTaskBtn" />
-
-            <Button
-                android:id="@+id/nextTaskBtn"
-                android:layout_width="@dimen/dp_204"
-                android:layout_height="@dimen/dp_72"
-                android:background="@drawable/dialog_btn_true_bg"
-                android:gravity="center"
-                android:text="下一个点"
-                android:layout_marginEnd="@dimen/dp_64"
-                android:layout_marginBottom="@dimen/dp_39"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <include
-            android:id="@+id/ChangeFragment"
-            layout="@layout/fragment_changing_over"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

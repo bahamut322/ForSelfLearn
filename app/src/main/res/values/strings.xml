@@ -102,7 +102,7 @@
     <string name="begin_hand_push">开始手推</string>
     <string name="dock_success">连接成功！</string>
     <string name="dock_fail">对接失败</string>
-    <string name="please_press_button_and_push_me_to_charge">请按下急停按钮，将我推到充电桩处充电</string>
+    <string name="please_press_button_and_push_me_to_charge">请按下急停按钮\n 将我推到充电桩处充电</string>
     <string name="please_let_me_return">请先让我回充电桩补充精力吧</string>
     <string name="low_power">电量不足</string>
     <string name="please_input_take_object_code">请输取件码，及时取走您的物品：</string>
@@ -197,7 +197,7 @@
     <string name="floor_code_hint">如：4</string>
     <string name="give_up">放弃</string>
     <string name="choose_relocate_remind">请选择就近房间号并将我推至该房间门前，然后点击关仓按钮，我将会继续任务或返航</string>
-    <string name="navigate_fail">导航失败，定位丢失，可推动机器人前往重定位</string>
+    <string name="navigate_fail">导航失败，定位丢失\n可推动机器人前往重定位</string>
     <string name="go_to_relocation">前往重定位</string>
     <string name="go_back_charge">返回充电桩</string>
     <string name="clear_all_fix">清除所有修正</string>
@@ -350,7 +350,7 @@
     <string name="please_do_not_crowd_me_2">你好，麻烦让一下，我无法过去呢</string>
     <string name="please_do_not_crowd_me_3">请不要一直挡在我前面，我急着工作呢</string>
     <string name="please_do_not_crowd_me_4">请不要打扰我工作，不然我就要生气了</string>
-    <string name="sorry_please_try_manual_handling">抱歉，请先尝试人工处理。\n注意：电动舱门，请勿强开！</string>
+    <string name="sorry_please_try_manual_handling">抱歉，请先尝试人工处理！</string>
     <string name="range">Range</string>
     <string name="please_input_range">请输入到内点的距离</string>
     <string name="elevator">电梯</string>
@@ -481,4 +481,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="speaking">下面开始讲解：%s</string>
+    <string name="plan">今日计划与任务</string>
+    <string name="Visitor_Route">参观路线</string>
+    <string name="Task_time">任务时间</string>
+    <string name="Task_Status">任务状态</string>
+    <string name="settingAndfunction">设置及其他功能</string>
+    <string name="setting">设置</string>
+    <string name="explanation_Special">专场讲解</string>
+    <string name="door_temp">门岗测温</string>
+    <string name="return_home">回桩</string>
 </resources>

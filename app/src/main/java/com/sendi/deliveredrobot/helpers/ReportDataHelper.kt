@@ -57,7 +57,7 @@ object ReportDataHelper {
             //{"taskList":[{"endTarget":"room1","gate":-1,"mileage":0,"robotPose":[-13.95066,4.7072687,-1.7874314],"status":1,"target":"room1","taskId":"G020221207194221","taskStage":15,"time":1670413342116,"updateMap":[-0.43,-0.15,-0.49,-0.69,-0.21,-0.66,4.81,-1.5,4.58,0.05,0.53,0.18,0.61,0.45,1.64,2.31,-0.69,0.92,-0.59,0.18,-0.76,8.22,0.04,0.0,0.0,0.0]}],"type":"taskPoseData"}
             taskId = taskModel?.taskId?:""
             target = taskModel?.location?.pointName?:""
-            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
+//            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
             val pose = ROSHelper.getPose()
             val poseArray = floatArrayOf(pose?.x?.toFloat()?:-1f, pose?.y?.toFloat()?:-1f, pose?.theta?.toFloat()?:-1f)
             robotPose = poseArray

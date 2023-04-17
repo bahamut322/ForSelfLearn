@@ -2,9 +2,12 @@ package com.sendi.deliveredrobot.service
 
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.model.Map
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
@@ -18,8 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
 import org.litepal.LitePal.where
 import java.io.File
@@ -108,27 +109,89 @@ class UpdateReturn {
                     }
                 }
 
+                sendMapData()
                 Universal.MapName = queryAllMapPointsDao.queryCurrentMapName();
-
-                val jsonObject = JSONObject()//实例话JsonObject()
+                val jsonObject = JSONObject()//时间戳
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
-                jsonObject["areas"] = queryAllMapPointsDao.queryAreaMapPoint()
-                jsonObject["curMapName"] = queryAllMapPointsDao.queryCurrentMapName()
                 jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
                 jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
-                jsonObject["maps"] = mapPoint
-                //发送Mqtt
-                MqttService.publish(JSONObject.toJSONString(jsonObject),true)
+                CloudMqttService.publish(JSONObject.toJSONString(jsonObject),true)
 
 
             }
         }
     }
-
-
+    fun resume(){
+        MainScope().launch(){
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+        }
+    }
+    fun pause(){
+        MainScope().launch(){
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+        }
+    }
+    fun stop(){
+        MainScope().launch(){
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+        }
+    }
+    fun sendMapData(){
+        MainScope().launch(Dispatchers.Default) {
+            val rootMapList = queryAllMapPointsDao.queryRootMap()
+            val maps = ArrayList<Map>()
+            val areasOriginal = queryAllMapPointsDao.queryPublicArea()
+            val areas = ArrayList<Area>().apply {
+                areasOriginal.map {
+                    this.add(
+                        Area(
+                            id = it.id,
+                            name = it.name ?: ""
+                        )
+                    )
+                }
+            }
+            val currentMapName = queryAllMapPointsDao.queryCurrentMapName()
+            rootMapList?.forEach { rootMap ->
+                val queryFloorPoints = queryAllMapPointsDao.queryAllPoint(rootMap.id)
+                val floorPointsMap = queryFloorPoints.groupBy {
+                    it.floorName
+                }
+                val floors = ArrayList<Floor>()
+                for (entry in floorPointsMap) {
+                    val points = ArrayList<Point>()
+                    for (queryPointEntity in entry.value) {
+                        points.add(
+                            Point(
+                                areaId = queryPointEntity.type ?: -1,
+                                pointName = queryPointEntity.pointName ?: "",
+                                x = "${queryPointEntity.x?:"0.0"}".toDouble(),
+                                y = "${queryPointEntity.y?:"0.0"}".toDouble(),
+                                w = "${queryPointEntity.w?:"0.0"}".toDouble()
+                            )
+                        )
+                    }
+                    floors.add(Floor("${entry.key}", points))
+                }
+                maps.add(
+                    Map(
+                        floorList = floors,
+                        mapName = rootMap.name ?: "",
+                        mapTimeStamp = System.currentTimeMillis()
+                    )
+                )
+            }
+            val uploadMapDataModel = UploadMapDataModel(
+                areas = areas,
+                curMapName = currentMapName ?: "",
+                maps = maps
+            )
+            MqttService.publish(uploadMapDataModel.toString(), true)
+        }
+    }
     fun fileSize(fileName: String): Int {
         val file = File(fileName)
         val files = file.listFiles()
@@ -155,6 +218,7 @@ class UpdateReturn {
             pointId?.map {
                 pointIdList?.add(it.pointId!!)
             }
+            LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointIdList)}")
             //设置充电桩；默认查询到的第一个数据
             dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
             val queryPoint =

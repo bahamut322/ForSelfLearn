@@ -5,6 +5,7 @@ import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -32,7 +33,7 @@ class SendingTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, R.id.sendingFragment)
         })
-        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
+        ROSHelper.setSpeed("${QuerySql.QueryBasic().getGoExplanationPoint()}")
         ROSHelper.navigateTo(taskModel!!.location!!)
         DialogHelper.loadingDialog.dismiss()
     }

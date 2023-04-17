@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.entity;
 
 import android.database.Cursor;
 
+import com.sendi.deliveredrobot.model.ADVModel;
 import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
@@ -269,6 +270,29 @@ public class QuerySql {
             cursor.close();
         }
         return model;
+    }
+
+    public static ADVModel ADV(){
+        ADVModel advModel = new ADVModel();
+        String sql = "SELECT * FROM advertisingconfigdb";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // 构造实体对象
+                advModel.setType(cursor.getInt(cursor.getColumnIndex("type")));
+                advModel.setPicType(cursor.getInt(cursor.getColumnIndex("pictype")));
+                advModel.setPicPlayTime(cursor.getInt(cursor.getColumnIndex("picplaytime")));
+                advModel.setFontContent(cursor.getString(cursor.getColumnIndex("fontcontent")));
+                advModel.setFontColor(cursor.getString(cursor.getColumnIndex("fontcolor")));
+                advModel.setFontSize(cursor.getInt(cursor.getColumnIndex("fontsize")));
+                advModel.setFontLayout(cursor.getInt(cursor.getColumnIndex("fontlayout")));
+                advModel.setFontBackGround(cursor.getString(cursor.getColumnIndex("fontbackground")));
+                advModel.setTextPosition(cursor.getInt(cursor.getColumnIndex("textposition")));
+                advModel.setVideoAudio(cursor.getInt(cursor.getColumnIndex("videoaudio")));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return advModel;
     }
 
     /**

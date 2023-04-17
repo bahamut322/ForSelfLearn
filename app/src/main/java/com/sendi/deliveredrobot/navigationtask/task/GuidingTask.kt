@@ -36,8 +36,9 @@ class GuidingTask(
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, navigateId)
         })
+        RobotStatus.ArrayPointExplan.postValue(0)
         //step1设置速度
-        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
+//        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         ROSHelper.navigateTo(taskModel!!.location!!)
         DialogHelper.loadingDialog.dismiss()
     }

@@ -1,7 +1,12 @@
 package com.sendi.deliveredrobot.view.widget;
 
+/**
+ * @Author Swn
+ * @describe
+ * @Data 2023-04-13 12:35
+ */
 
-public class NextTask {
+public class TaskNext {
     public interface OnChangeListener {    // 创建interface类
         void onChange();    // 值改变
     }
@@ -12,15 +17,17 @@ public class NextTask {
         onChangeListener = onChange;
     }
 
-    private static Boolean NextTasK;
+    private static String toDo;
 
-    public static Boolean getNextTasK() {
-        return NextTasK;
+    public static String getToDo() {
+        return toDo;
     }
 
-    public static void setNextTasK(Boolean NextTasK) {
-        NextTask.NextTasK = NextTasK;
-        onChangeListener.onChange();
+    public static void setToDo(String toDo) {
+        TaskNext.toDo = toDo;
+        if (onChangeListener!=null) {
+            onChangeListener.onChange();
+        }
     }
 }
 

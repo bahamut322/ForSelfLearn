@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -35,7 +36,6 @@ import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.deliveredrobot.view.widget.NextTask
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
@@ -92,7 +92,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun showTipsView() {
         println("无操作")
         fromeSettingDialog!!.dismiss()
-//        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
     }
 
     override fun onCreateView(
@@ -178,9 +178,6 @@ class HomeFragment : Fragment(), IMainView {
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(view)
         LogUtil.i("待机时间：" + Universal.sleepTime)
-        //设置速度
-        ROSHelper.setSpeed("0.4")
-        NextTask.setNextTasK(true)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -188,9 +185,6 @@ class HomeFragment : Fragment(), IMainView {
             } else {
                 mPresenter?.startTipsTimer()
             }
-        }
-        binding.speak.setOnClickListener {
-            BaiduTTSHelper.getInstance().speak("你好你好，欢迎")
         }
 
 
@@ -244,7 +238,7 @@ class HomeFragment : Fragment(), IMainView {
             //弹窗点击事件。回到主页面
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {
-                    controller!!.navigate(R.id.action_homeFragment_to_settingHomeFragment)
+                    controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
                     PassWordToSetting.postValue(false)
                     fromeSettingDialog!!.dismiss()
                 }
@@ -399,11 +393,11 @@ class HomeFragment : Fragment(), IMainView {
             "智能讲解" -> {
                 controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                 Log.d("TAG", "点击智能讲解 ")
-                SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
+                    SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
             }
             "轻应用" -> {
                 //跳转到测温模式
-                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
+//                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d("TAG", "点击轻应用")
             }
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()

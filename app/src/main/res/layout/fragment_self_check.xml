@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.fragment.SelfCheckFragment"
-        android:background="@color/color_self_check_bg"
         >
 
         <ImageView
             android:id="@+id/boot_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:src="@drawable/self_login"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,6 +47,7 @@
             android:text="开机自检中......"
             android:textColor="@color/color_A0BAEF"
             android:textSize="20dp"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

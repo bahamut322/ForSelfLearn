@@ -7,7 +7,7 @@ package com.sendi.deliveredrobot.model
 data class pointConfigVOList(
     val name : String?,
     val walkText : String? = "",
-    val explanationText : String? = "",
+    val explanation : String? = "",
     val walkVoice : String? = "",
     val explanationVoice : String? = "",
     val scope : Int?,

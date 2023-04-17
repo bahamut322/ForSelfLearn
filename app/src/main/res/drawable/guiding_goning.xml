@@ -1,0 +1,12 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false"
+    android:duration="1000">
+
+    <item android:drawable="@drawable/guiding_going" android:duration="100" />
+    <item android:drawable="@drawable/guiding_going1" android:duration="100" />
+    <item android:drawable="@drawable/guiding_going1" android:duration="100" />
+    <item android:drawable="@drawable/guiding_going1" android:duration="100" />
+    <item android:drawable="@drawable/guiding_going1" android:duration="100" />
+    <item android:drawable="@drawable/guiding_going1" android:duration="100" />
+
+</animation-list>

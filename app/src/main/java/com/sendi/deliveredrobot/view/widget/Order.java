@@ -19,7 +19,9 @@ public class Order {
 
     public static void setFlage(String flage) {
         Order.flage = flage;
-        onChangeListener.onChange();
+        if (onChangeListener!=null) {
+            onChangeListener.onChange();
+        }
     }
 }
 

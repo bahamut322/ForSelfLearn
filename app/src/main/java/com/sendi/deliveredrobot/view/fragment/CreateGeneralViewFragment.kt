@@ -645,12 +645,12 @@ class CreateGeneralViewFragment : Fragment() {
                                 .findFirst(MapRevise::class.java)
                             LogUtil.d("原数据: $mapRevise")
                             mapRevise.time = Date().time //更新isMale字段为false
-                            val isUpdateSucc: Boolean = mapRevise.save() //改成用save()保存字段
-                            LogUtil.d("更新time是否成功：$isUpdateSucc")
-                            mapRevise = where("mapName = ?", "mapRevise")
-                                .findFirst(MapRevise::class.java)
+//                            val isUpdateSucc: Boolean = mapRevise.save() //改成用save()保存字段
+//                            LogUtil.d("更新time是否成功：$isUpdateSucc")
+//                            mapRevise = where("mapName = ?", "mapRevise")
+//                                .findFirst(MapRevise::class.java)
                             LogUtil.d("新数据: $mapRevise")
-                            mapRevise.save()
+//                            mapRevise.save()
                         }
 
                         for (item in viewModel.relationshipData) {

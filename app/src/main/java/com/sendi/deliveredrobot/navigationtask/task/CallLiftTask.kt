@@ -32,10 +32,10 @@ class CallLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
     //    var recheckStatusTime = 60
     override suspend fun execute() {
         if(taskModel?.taskId?.startsWith("D") == true || taskModel?.taskId?.startsWith("wx") == true){
-            AudioMngHelper(MyApplication.instance!!).setVoice100(basicSettingViewModel.value.basicConfig.sendVolumeLift / 2)
+//            AudioMngHelper(MyApplication.instance!!).setVoice100(basicSettingViewModel.value.basicConfig.sendVolumeLift / 2)
         }
         if(taskModel?.taskId?.startsWith("G") == true){
-            AudioMngHelper(MyApplication.instance!!).setVoice100(basicSettingViewModel.value.basicConfig.guideVolumeLift / 2)
+//            AudioMngHelper(MyApplication.instance!!).setVoice100(basicSettingViewModel.value.basicConfig.guideVolumeLift / 2)
         }
         //查询楼层编码
 //        val relationshipLift =

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/img_goback"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/returnImg"
+        android:layout_width="@dimen/dp_32"
+        android:layout_height="@dimen/dp_32"
+        android:src="@drawable/ic_return_deep"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_68"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView56"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_198"
+        android:text="@string/please_select"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_40"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <GridView
+        android:id="@+id/pointGV"
+        android:layout_width="996dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_238"
+        android:layout_marginEnd="@dimen/dp_238"
+        android:layout_marginTop="@dimen/dp_8"
+        android:numColumns="3"
+        android:verticalSpacing="@dimen/dp_48"
+        android:horizontalSpacing="@dimen/dp_48"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView56" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_button"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#40FFFFFF">
+        <View
+            android:id="@+id/view13"
+            android:layout_width="@dimen/dp_640"
+            android:layout_height="@dimen/dp_328"
+            android:background="@drawable/setting_item_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/askLin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/dp_97"
+            app:layout_constraintEnd_toEndOf="@+id/view13"
+            app:layout_constraintStart_toStartOf="@+id/view13"
+            app:layout_constraintTop_toTopOf="@+id/view13" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.6"
+                android:layout_gravity="center"
+                android:text="您要切换至"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32"
+                />
+
+            <TextView
+                android:id="@+id/askTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Abnormal_face"
+                android:textColor="@color/color_00EEFF"
+                android:textSize="@dimen/sp_32"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="吗？"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32"
+                android:alpha="0.6"
+                android:layout_gravity="center" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/No_Exit"
+            android:layout_width="@dimen/dp_204"
+            android:layout_height="@dimen/dp_72"
+            android:elevation="@dimen/dp_20"
+            android:layout_marginStart="@dimen/dp_100"
+            android:background="@drawable/dialog_btn_false_bg"
+            android:text="@string/cancel1"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_32"
+            android:layout_marginTop="@dimen/dp_63"
+            app:layout_constraintStart_toStartOf="@+id/view13"
+            app:layout_constraintTop_toBottomOf="@+id/askLin" />
+
+        <Button
+            android:id="@+id/Yes_Exit"
+            android:layout_width="@dimen/dp_204"
+            android:layout_height="@dimen/dp_72"
+            android:background="@drawable/dialog_btn_true_bg"
+            android:elevation="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_63"
+            android:layout_marginEnd="@dimen/dp_100"
+            android:text="@string/sure"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_32"
+            app:layout_constraintEnd_toEndOf="@+id/view13"
+            app:layout_constraintTop_toBottomOf="@+id/askLin" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
