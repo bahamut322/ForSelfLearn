@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
@@ -39,6 +40,10 @@ public class ProcessClickDialog extends Dialog {
         continueBtn = findViewById(R.id.continueBtn);
         finishBtn = findViewById(R.id.finishBtn);
         nextBtn = findViewById(R.id.nextBtn);
+        if (BillManager.INSTANCE.billList().size() == 1){
+            nextBtn.setBackgroundResource(R.drawable.bg_button_1);
+            nextBtn.setEnabled(false);
+        }
         otherBtn = findViewById(R.id.otherBtn);
         continueBtn.setOnClickListener(view->{
             new UpdateReturn().resume();

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.view.inputfilter.IMainView;
 
@@ -37,7 +38,7 @@ public class MainPresenter {
      * @see [类、类#方法、类#成员]
      */
     public void startTipsTimer() {
-        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*60);
+        mMainHandler.postDelayed(tipsShowRunable, (long) QuerySql.robotConfig().getSleepTime() *1000*60);
     }
 
     /**
@@ -53,7 +54,7 @@ public class MainPresenter {
     public void resetTipsTimer() {
         tipsIsShowed = false;
         mMainHandler.removeCallbacks(tipsShowRunable);
-        mMainHandler.postDelayed(tipsShowRunable, (long) Universal.sleepTime *1000*60);
+        mMainHandler.postDelayed(tipsShowRunable, (long) QuerySql.robotConfig().getSleepTime() *1000*60);
     }
 
     public class MainHandler extends Handler {

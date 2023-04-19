@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
@@ -51,7 +52,7 @@ class StandbyFragment : Fragment() {
         controller = Navigation.findNavController(view)
         baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         getFilesAllNames(Universal.Standby)
-        //返回主页面
+        //返回主页面——还需要做分情况处理
         binding.imageButton.setOnClickListener {
             controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
         }

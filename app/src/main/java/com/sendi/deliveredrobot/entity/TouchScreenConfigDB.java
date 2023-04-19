@@ -24,6 +24,46 @@ public class TouchScreenConfigDB extends LitePalSupport {
     private int touch_textPosition;
     //图片存储位置
     private String touch_imageFile;
+    //行走中图片
+    private String touch_walkPic;
+    //被阻挡
+    private String touch_blockPic;
+    //到点
+    private String touch_arrivePic;
+    //任务结束时返回
+    private String touch_overTaskPic;
+
+    public String getTouch_walkPic() {
+        return touch_walkPic;
+    }
+
+    public void setTouch_walkPic(String touch_walkPic) {
+        this.touch_walkPic = touch_walkPic;
+    }
+
+    public String getTouch_blockPic() {
+        return touch_blockPic;
+    }
+
+    public void setTouch_blockPic(String touch_blockPic) {
+        this.touch_blockPic = touch_blockPic;
+    }
+
+    public String getTouch_arrivePic() {
+        return touch_arrivePic;
+    }
+
+    public void setTouch_arrivePic(String touch_arrivePic) {
+        this.touch_arrivePic = touch_arrivePic;
+    }
+
+    public String getTouch_overTaskPic() {
+        return touch_overTaskPic;
+    }
+
+    public void setTouch_overTaskPic(String touch_overTaskPic) {
+        this.touch_overTaskPic = touch_overTaskPic;
+    }
 
     public int getTouch_type() {
         return touch_type;

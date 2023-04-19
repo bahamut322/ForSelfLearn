@@ -92,7 +92,9 @@ class HomeFragment : Fragment(), IMainView {
     override fun showTipsView() {
         println("无操作")
         fromeSettingDialog!!.dismiss()
-        controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+        if (QuerySql.robotConfig().sleep == 1){
+            controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+        }
     }
 
     override fun onCreateView(
@@ -177,7 +179,7 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(view)
-        LogUtil.i("待机时间：" + Universal.sleepTime)
+        LogUtil.i("待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -238,9 +240,9 @@ class HomeFragment : Fragment(), IMainView {
             //弹窗点击事件。回到主页面
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {
+                    fromeSettingDialog!!.dismiss()
                     controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
                     PassWordToSetting.postValue(false)
-                    fromeSettingDialog!!.dismiss()
                 }
             }
 

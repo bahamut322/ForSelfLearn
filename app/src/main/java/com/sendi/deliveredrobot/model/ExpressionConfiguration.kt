@@ -20,5 +20,6 @@ data class ExpressionConfiguration(
     val walkPic: String?,
     val blockPic: String?,
     val arrivePic: String?,
-    val overTaskPic: String?
+    val overTaskPic: String?,
+    val sleepPic: String?
 )

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentReadyForTaskBinding
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -32,7 +33,6 @@ class ReadyForTaskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        Glide.with(this).asGif().load(R.raw.ready_for_task).into(binding.imgReadyForTask)
         binding.bottomAlarmTextViewReadyForTask.apply {
             bottomAlarmText1 = getString(R.string.i_ready_to_work_excuse_me)
         }

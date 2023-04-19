@@ -8,7 +8,10 @@ import android.media.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
+import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
+import com.sendi.deliveredrobot.camera.IRUVC
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.ClientManager
 import com.sendi.deliveredrobot.ros.DispatchService
@@ -39,7 +42,10 @@ object CheckSelfHelper {
 
     /** 镭射检测 */
     val laserCheckComplete = MutableLiveData(false)
-
+    /**红外摄像头(测温)*/
+    @SuppressLint("StaticFieldLeak")
+    var p2camera: IRUVC? = null
+    private val syncimage = SynchronizedBitmap()
 
 //    // 急停按钮状态(默认-1)
 //    private var stopButtonStatus = -1
@@ -63,7 +69,7 @@ object CheckSelfHelper {
         // 倒计时观察
         val seconds = MutableLiveData(time)
         var progress = 0;
-        var tempFlag = 0;
+        var tempFlag = 256;
         var initRosTopic = false;
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
@@ -123,6 +129,7 @@ object CheckSelfHelper {
             }
         }
         while (!checkSelfComplete && !countdownComplete) {
+            LogUtil.i("=========LASER_SCAN===while")
             // ======================================订阅topic======================================
             /**
              * 代码初始化完成之后，会将所有topic添加到SubManager中
@@ -147,6 +154,12 @@ object CheckSelfHelper {
                     continue
                 }
             }
+
+            if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
+                RobotStatus.stopButtonPressed.value == 0){
+                checkSelfComplete = true
+            }
+            LogUtil.i("=========LASER_SCAN===${laserCheckComplete.value}")
             if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
                 tempFlag = tempFlag or 0x01
                 progress++
@@ -190,10 +203,23 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("扬声器检测通过")
             }
-
-            if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
-                RobotStatus.stopButtonPressed.value == 0){
-                checkSelfComplete = true
+            if (temp()!=null && tempFlag and 0x80 == 0){
+                tempFlag = tempFlag or 0x80
+                progress++
+                //关闭红外
+                mOnCheckChangeListener.onCheckProgress(progress)
+                LogUtil.i("红外(测温)检测通过")
+                if (p2camera != null) {
+                    p2camera!!.unregisterUSB()
+                    p2camera!!.stop()
+                }
+                syncimage.valid = false
+            }
+            if (checkInfrared() && tempFlag and 0x100 == 0){
+                tempFlag = tempFlag or 0x100
+                progress++
+                mOnCheckChangeListener.onCheckProgress(progress)
+                LogUtil.i("红外(机器人导航)检测通过")
             }
             delay(1000L)
 
@@ -216,6 +242,8 @@ object CheckSelfHelper {
      * @describe 红外自检
      */
     private fun checkInfrared(): Boolean {
+        val response:InfraredManageResponse
+        val result:Int
         // ------------------------------------------------------------------------
         // 1.检查激光雷达数据 -> RobotStatus.scanAvaliable.get()
         // 2.检查红外摄像头 -> InfraredManageClient
@@ -227,9 +255,15 @@ object CheckSelfHelper {
         // 2.调用ClientManager方法，接收返回值
         val rosResult = ClientManager.sendClientMsg(client)
         if(rosResult.response == null) return false
-        val response: InfraredManageResponse = rosResult.response as InfraredManageResponse
-        val result = response.result
+        try {
+            response = rosResult.response as InfraredManageResponse
+            result = response.result
+
+        }catch (e:java.lang.Exception){
+            return false
+        }
         return result == 1
+
     }
 
     /**
@@ -273,6 +307,13 @@ object CheckSelfHelper {
             }
         }
         return false
+    }
+    fun temp(): IRUVC? {
+        if (p2camera == null) {
+            p2camera = IRUVC(Universal.cameraHeight, Universal.cameraWidth, MyApplication.context, syncimage)
+            p2camera?.registerUSB()
+        }
+        return p2camera
     }
     /**
      * 麦克风检测

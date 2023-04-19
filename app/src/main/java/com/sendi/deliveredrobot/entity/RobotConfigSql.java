@@ -4,7 +4,8 @@ import org.litepal.crud.LitePalSupport;
 
 //机器人默认配置数据库
 public class RobotConfigSql extends LitePalSupport {
-    private int audioType;//声音类型
+    //注释原因：在基础设置统一管理
+//    private int audioType;//声音类型
     private String wakeUpWord;//唤醒词
     private int sleep;//是否启动用待机
     private  int sleepTime;//多少分钟没操作进入待机
@@ -47,13 +48,13 @@ public class RobotConfigSql extends LitePalSupport {
         this.timeStamp = timeStamp;
     }
 
-    public int getAudioType() {
-        return audioType;
-    }
-
-    public void setAudioType(int audioType) {
-        this.audioType = audioType;
-    }
+//    public int getAudioType() {
+//        return audioType;
+//    }
+//
+//    public void setAudioType(int audioType) {
+//        this.audioType = audioType;
+//    }
 
     public String getWakeUpWord() {
         return wakeUpWord;

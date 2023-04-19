@@ -6,7 +6,7 @@ public class FunctionSkip {
 
     public static int selectFunction() {
         int itemNum = -1;
-        if (QuerySql.QueryBasic().getDefaultValue().split(" ").length == 1) {
+        if (QuerySql.QueryBasic().getDefaultValue()!=null&&QuerySql.QueryBasic().getDefaultValue().split(" ").length == 1) {
             if (Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "智能引领 ")){
                 itemNum = 0;
             }else if(Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "智能讲解 ")){

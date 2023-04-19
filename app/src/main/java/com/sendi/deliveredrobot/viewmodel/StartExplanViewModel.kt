@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.viewmodel
 
+import android.os.CountDownTimer
 import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -62,7 +63,7 @@ class StartExplanViewModel : ViewModel() {
         }
     }
 
-    fun test(selectName: String) {
+    fun recombine(selectName: String) {
         var position = 0
         Universal.selectMapPoint = true
         for (i in mDatas!!.indices) {
@@ -282,6 +283,9 @@ class StartExplanViewModel : ViewModel() {
     fun nextTask(array: Boolean) {
         currentBill()?.executeNextTask()
         if (!array) {
+            Universal.progress = 0
+            Universal.taskNum = 0
+            RobotStatus.speakNumber.postValue(null)
             UpdateReturn().stop()
         }
         TaskNext.setToDo("0")

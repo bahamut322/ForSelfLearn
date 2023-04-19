@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.handler
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.navigation.NavController
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.ros.SubManager
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import navigation_base_msgs.State
+import kotlin.math.log
 
 /**
  * @describe topic处理
@@ -52,7 +54,8 @@ object TopicHandler {
                         // 取消订阅并移除topic（只需要接收一次topic发布的消息，例如自检时镭射扫描状态上报，接收一次之后可以取消订阅）
                         SubManager.delSub(ClientConstant.LASER_SCAN)
                         mainScope.launch(Dispatchers.Main) {
-                            CheckSelfHelper.laserCheckComplete.value = true
+                            LogUtil.i("=========LASER_SCAN")
+                            CheckSelfHelper.laserCheckComplete.postValue(true)
                         }
                     }
                     ClientConstant.ROBOT_POSE -> {

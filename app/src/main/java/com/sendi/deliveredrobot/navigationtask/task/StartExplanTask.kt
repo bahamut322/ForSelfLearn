@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_GUIDE
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -39,10 +40,13 @@ class StartExplanTask(taskModel: TaskModel) : AbstractTask(taskModel)  {
         RobotStatus.currentStatus = TYPE_GUIDE
         IdleGateDataHelper.reportIdleGateCount()
         withContext(Dispatchers.Main){
-            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
+//            if (Universal.lastValue == null || !Universal.lastValue.equals(taskModel?.location?.pointName?:"")) { // 检查新值和上一个值是否相同
+//                Universal.lastValue = taskModel?.location?.pointName?:""; // 更新上一个值为新值
+//                // 在这里处理新值，比如更新UI或执行其他逻辑
+//                // 这里假设你需要将新值设置给某个变量，可以像下面这样写：
+//            }
 
         }
-
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

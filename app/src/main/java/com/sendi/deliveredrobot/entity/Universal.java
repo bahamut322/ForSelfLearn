@@ -9,7 +9,6 @@ import java.util.List;
  */
 
 public class Universal {
-    //首次进入讲解
     //异常人脸温度的界值
     public static float TemperatureMax = 38;
     //红外摄像头的分辨率Width
@@ -25,11 +24,11 @@ public class Universal {
     //机器人音色选择
     public static String RobotMode = "男声";
     //存放待机视频/图片/GIF的目录
-    public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby";
+    public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
     //存放正常情况下的图片/视频
-    public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary";
+    public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary/";
     //存放副屏广告图
-    public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV";
+    public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV/";
     //下载地址
     public static String pathDownload = "http://172.168.201.34:9055/management_res/";
     //机器人主要存放的路径
@@ -104,6 +103,7 @@ public class Universal {
     public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
+
 
     public static boolean selectMapPoint = false;
 }

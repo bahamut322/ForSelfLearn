@@ -13,19 +13,19 @@
         android:layout_height="match_parent"
         app:layoutDescription="@xml/fragment_guide_arrive_scene"
         tools:context=".view.fragment.ReadyForTaskFragment"
-        android:background="@drawable/backgournd4"
+        android:background="@drawable/img_goback"
         >
 
         <ImageView
             android:id="@+id/imgReadyForTask"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/image_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            android:src="@drawable/robot_docking_img" />
 
         <com.sendi.deliveredrobot.view.widget.BottomAlarmTextView
             android:id="@+id/bottomAlarmTextViewReadyForTask"

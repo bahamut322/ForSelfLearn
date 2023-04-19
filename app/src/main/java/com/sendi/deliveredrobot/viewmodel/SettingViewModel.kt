@@ -16,6 +16,9 @@ class SettingViewModel : ViewModel() {
         }
     }
 
+    /**
+     * 音色
+     */
     fun randomVoice(i: Int,speak: String) {
         val params = getParam(speak)
         if (i == 1) {
@@ -28,7 +31,7 @@ class SettingViewModel : ViewModel() {
     }
 
     /**
-     * 音色
+     * 语速
      */
 
     fun timbres(speed: String) {
@@ -40,5 +43,4 @@ class SettingViewModel : ViewModel() {
             randomVoice(3, speed)
         }
     }
-
 }

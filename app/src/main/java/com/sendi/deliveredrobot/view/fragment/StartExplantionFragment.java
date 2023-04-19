@@ -1,22 +1,26 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Layout;
@@ -89,6 +93,9 @@ public class StartExplantionFragment extends Fragment {
     String targetName = "";
 
     private ExplantionNameModel explantionNameModel;
+    private boolean isCountdownRunning = false;
+    private CountDownTimer countDownTimer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,16 @@ public class StartExplantionFragment extends Fragment {
     public void onStop() {
         super.onStop();
         viewModel.cancelMainScope();
+        stopCountdown();
+        isCountdownRunning = false;
+    }
+
+    private void stopCountdown() {
+        if (isCountdownRunning) {
+            countDownTimer.cancel();
+            LogUtil.INSTANCE.i(this + "倒计时停止");
+            isCountdownRunning = false;
+        }
     }
 
     private void status() {
@@ -124,6 +141,7 @@ public class StartExplantionFragment extends Fragment {
         binding.setData(explantionNameModel);
         controller = Navigation.findNavController(view);
         arrayPoint.postValue(false);
+        LogUtil.INSTANCE.d("进入讲解页面");
         // 创建任务Consumer
         Consumer<String> taskConsumer = task -> {
             // 执行任务的代码
@@ -159,7 +177,7 @@ public class StartExplantionFragment extends Fragment {
             binding.acceptstationTv.stopPlay();
             processClickDialog.dismiss();
         });
-        binding.nextTaskBtn.setOnClickListener(v ->{
+        binding.nextTaskBtn.setOnClickListener(v -> {
             BaiduTTSHelper.getInstance().stop();
             taskQueue.clear();
             viewModel.nextTask(true);
@@ -173,7 +191,46 @@ public class StartExplantionFragment extends Fragment {
         binding.parentCon.setOnClickListener(v -> {
             processDialog();
         });
+//        RobotStatus.INSTANCE.getExplanationTaskFinish().observe(getViewLifecycleOwner(), integer -> {
+//            if (integer == 1) {
+//                Log.d("TAG", "onViewCreated: yemiangenggai");
+//                binding.goingLin.setVisibility(View.VISIBLE);
+//                binding.contentCL.setVisibility(View.GONE);
+//                binding.goingImg.setVisibility(View.GONE);
+//                binding.nowGoingTv.setText("讲解结束");
+//                binding.nowGoingTv.setTextSize(60);
+//                binding.nowGoingTv.setTextColor(Color.WHITE);
+//                binding.nowGoingTv.setText("即将返回");
+//                binding.nowGoingTv.setTextSize(32);
+//                binding.nowGoingTv.setTextColor(ContextCompat.getColor(getContext(), R.color.color_00EEFF));
+//                startCountdown();
+//                RobotStatus.INSTANCE.getExplanationTaskFinish().postValue(0);
+//            }
+//        });
+//
     }
+
+//
+//    private void startCountdown() {
+//        if (!isCountdownRunning) {
+//            countDownTimer = new CountDownTimer(QuerySql.QueryBasic().getWhetherTime() * 1000L, 1000) {
+//                @SuppressLint("SetTextI18n")
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    new UpdateReturn().pause();
+//                    binding.tvDownTime.setVisibility(View.VISIBLE);
+//                    binding.tvDownTime.setText((int) (millisUntilFinished / 1000) + "");
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    LogUtil.INSTANCE.i(this + "倒计时结束");
+//                    new UpdateReturn().resume();
+//                }
+//            }.start();
+//            isCountdownRunning = true;
+//        }
+//    }
 
 
     @Override
@@ -193,7 +250,7 @@ public class StartExplantionFragment extends Fragment {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     binding.pointList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                centerToTopDistance =  binding.pointList.getHeight() / 2;
+                centerToTopDistance = binding.pointList.getHeight() / 2;
                 findView();
             }
         });
@@ -205,7 +262,7 @@ public class StartExplantionFragment extends Fragment {
                 if (Objects.equals(mDatas.get(i).getName(), s)) {
                     Log.d("TAG", "onClick: " + i);
                     scrollToCenter(i);
-                    viewModel.secondScreenModel(i,mDatas);
+                    viewModel.secondScreenModel(i, mDatas);
                 }
             }
         }), 500);
@@ -307,20 +364,21 @@ public class StartExplantionFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             VH vh = (VH) holder;
+            holder.itemView.setClickable(false);
             if (position == 0) {
                 vh.tvTopLine.setVisibility(View.INVISIBLE);
             }
             if (selectPosition == position) {
                 taskQueue.clear();
                 BaiduTTSHelper.getInstance().stop();
+                RobotStatus.INSTANCE.getSpeakNumber().postValue(null);
                 //当前点显示的文字&图片
                 vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
                 binding.parentCon.setBackgroundResource(0);
-                binding.statusTv.setText("正在前往:");
+                binding.goingLin.setVisibility(View.VISIBLE);
+                binding.goingName.setText(mDatas.get(position).getName());
                 binding.parentCon.setClickable(true);
-                binding.nowExplanation.setText(mDatas.get(position).getName());
-
                 binding.contentCL.setVisibility(View.GONE);
                 //带光晕的背景图
                 Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.startImg);
@@ -328,8 +386,6 @@ public class StartExplantionFragment extends Fragment {
                 vh.tvTopLine.setImageResource(R.drawable.anim_login_start_loading);
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
-
-
 
                 //有讲解内容
                 if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "")) {
@@ -354,7 +410,7 @@ public class StartExplantionFragment extends Fragment {
                         LogUtil.INSTANCE.i("currentPosition : " + currentPosition + " totalDuration :" + totalDuration);
                         new Handler(Looper.getMainLooper()).post(() ->
                                 RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
-                                    if (currentPosition >= totalDuration && integer == 1 ) {
+                                    if (currentPosition >= totalDuration && integer == 1) {
                                         LogUtil.INSTANCE.i("到点并且播放完成");
 //                                        arrayPoint.postValue(true);
                                         arrayToDo(mDatas, position);
@@ -366,7 +422,7 @@ public class StartExplantionFragment extends Fragment {
                 if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "") && !Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
 //                    Universal.Model = "讲解";
                     RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
-                        if (integer == 1 ) {
+                        if (integer == 1) {
 //                            arrayPoint.postValue(true);
                             arrayToDo(mDatas, position);
                         }
@@ -445,15 +501,19 @@ public class StartExplantionFragment extends Fragment {
 
 
     private void arrayToDo(ArrayList<MyResultModel> mDatas, int position) {
-        if (Universal.selectMapPoint){
+        if (Universal.selectMapPoint) {
             return;
         }
         nextTaskToDo = true;
-
+        if (BillManager.INSTANCE.billList().size() == 1) {
+            binding.nextTaskBtn.setVisibility(View.GONE);
+        }
         binding.parentCon.setClickable(false);
         binding.contentCL.setVisibility(View.VISIBLE);
         binding.parentCon.setBackgroundResource(R.drawable.bg);
         binding.statusTv.setText("正在讲解:");
+
+        binding.nowExplanation.setText(mDatas.get(position).getName());
         Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.pointImage);
         if (!Objects.equals(mDatas.get(position).getExplanationtext(), "")) {
             binding.pointName.setText(mDatas.get(position).getName());
@@ -468,7 +528,7 @@ public class StartExplantionFragment extends Fragment {
             //将第一页的内容再次等分成BaiduTTS可以朗读的范围
             Universal.taskNum = splitString(textEqually.get(beforePage), 45).size();
             RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
-                Log.d("TAG", "当前进度: "+integer);
+                Log.d("TAG", "当前进度: " + integer);
                 if (nextTaskToDo) {
                     binding.acceptstationTv.startPlayLine(
                             integer,
@@ -491,7 +551,7 @@ public class StartExplantionFragment extends Fragment {
                         Universal.taskNum = splitString(textEqually.get(beforePage), 45).size();
                         nextTaskToDo = true;
                     }
-                }else if (beforePage >= page){
+                } else if (beforePage >= page) {
                     viewModel.getCountDownTimer().start();
                     taskQueue.clear();
                 }
@@ -530,6 +590,7 @@ public class StartExplantionFragment extends Fragment {
 //            Universal.Model = "切换下一个点";
             BaiduTTSHelper.getInstance().stop();
             taskQueue.clear();
+            binding.acceptstationTv.stopPlay();
             viewModel.nextTask(false);
             processClickDialog.dismiss();
         });
@@ -542,8 +603,7 @@ public class StartExplantionFragment extends Fragment {
     private void changeDialog() {
         changingOverDialog.show();
         new UpdateReturn().pause();
-
-        Log.d("TAG", "当前讲解点: " + targetName);
+//        Log.d("TAG", "当前讲解点: " + targetName);
         ChangePointGridViewAdapter adapter = new ChangePointGridViewAdapter(getContext(), viewModel.inForListData(), targetName);
         changingOverDialog.pointGV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -557,7 +617,7 @@ public class StartExplantionFragment extends Fragment {
                 BaiduTTSHelper.getInstance().stop();
                 binding.acceptstationTv.stopPlay();
                 taskQueue.clear();
-                viewModel.test(viewModel.inForListData().get(position).getName());
+                viewModel.recombine(viewModel.inForListData().get(position).getName());
                 changingOverDialog.dismiss();
             });
             changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
@@ -567,6 +627,7 @@ public class StartExplantionFragment extends Fragment {
             new UpdateReturn().resume();
         });
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

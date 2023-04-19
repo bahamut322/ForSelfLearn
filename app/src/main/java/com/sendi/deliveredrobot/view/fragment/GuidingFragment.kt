@@ -262,62 +262,7 @@ class GuidingFragment : Fragment() {
             }
 //            binding.textTime.text = CommonHelper.getTimeSpan(it, 1.39f)
         }
-        SafeStateTopic.setSafeStateListener { safeState ->
-            when (safeState.safeState) {
-                SafeState.STATE_IS_TRIGGING -> {
-                    //按下
-                    LogUtil.i("急停按下按下")
-//                    if (binding.motionLayoutGuiding.currentState != R.id.state3) {
-//                        //如果当前不在暂停状态
-//                        if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE){
-//                            mainScope.launch {
-//                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-//                            }
-//                        }
-//                    } else if (binding.motionLayoutGuiding.currentState == R.id.state3) {
-//                        timer?.cancel()
-//                    }
-                    timer2?.cancel()
-                    timer2?.purge()
-                }
-                SafeState.STATE_IS_NOT_TRIGGING -> {
-                    //抬起
-                    LogUtil.i("急停抬起抬起")
-//                    if (binding.motionLayoutGuiding.currentState == R.id.state3) {
-//                        //如果当前不在导航状态
-//                        timer = Timer()
-//                        timer?.schedule(object : TimerTask() {
-//                            override fun run() {
-//                                mainScope.launch {
-//                                    withContext(Dispatchers.Main) {
-//                                        seconds.value = seconds.value?.minus(1)
-//                                    }
-//                                }
-//                            }
-//                        }, Date(), 1000)
-//                    } else {
-//                        if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE){
-//                            mainScope.launch {
-//                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-//                            }
-//                        }
-//                    }
-                    mainScope.launch(Dispatchers.Default) {
-                        if (CommonHelper.atChargePointFloor()) {
-//                            AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolumeLobby / 2)
-//                            if (binding.motionLayoutGuiding.currentState != R.id.state3) {
-//                                timer2 = Timer()
-//                                timer2Schedule()
-//                            }
-                        } else {
-//                            AudioMngHelper(requireContext()).setVoice100(
-//                                (viewModelBasicSetting.basicConfig.guideVolume ?: 40) / 2
-//                            )
-                        }
-                    }
-                }
-            }
-        }
+
     }
 
     /**

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
@@ -50,7 +51,7 @@ public class FromeSettingDialog extends Dialog {
         errorTv = findViewById(R.id.errorhint);
 
         YesExit.setOnClickListener(v -> {
-            if (Objects.equals(passwordEt.getContent(), Universal.password)){
+            if (Objects.equals(passwordEt.getContent(), QuerySql.robotConfig().getPassword())){
                 cancel();
                 dismiss();
                 RobotStatus.INSTANCE.getPassWordToSetting().postValue(true);

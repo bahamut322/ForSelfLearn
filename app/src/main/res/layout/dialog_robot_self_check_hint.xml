@@ -96,16 +96,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:alpha="0.8"
+        android:gravity="center"
         android:includeFontPadding="false"
         android:lineSpacingExtra="14sp"
-        android:gravity="center"
-        android:alpha="0.8"
         android:text="@string/please_try_reboot"
         android:textColor="@color/white"
         android:textSize="@dimen/small_text_size"
-        app:layout_constraintEnd_toEndOf="@+id/view30"
+        app:layout_constraintEnd_toEndOf="@+id/view19"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toStartOf="@+id/view29"
+        app:layout_constraintStart_toStartOf="@+id/view19"
         app:layout_constraintTop_toBottomOf="@+id/textViewDate" />
 
     <Button

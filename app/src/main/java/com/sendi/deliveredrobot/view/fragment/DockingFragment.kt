@@ -37,7 +37,7 @@ class DockingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        Glide.with(this).asGif().load(R.raw.docking).into(binding.imageViewDocking)
+//        Glide.with(this).asGif().load(R.raw.docking).into(binding.imageViewDocking)
         binding.textViewBeginPush.apply {
             isClickable = true
             setOnClickListener {
@@ -46,12 +46,12 @@ class DockingFragment : Fragment() {
 //                var res = ROSHelper.controlDock(RobotCommand.CMD_STOP)
                 if(res){
                     isAutoDocking = false
-                    binding.handChargDockingCl.apply {
-                        visibility = View.VISIBLE
-                    }
-                    binding.autoChargDockingCl.apply {
-                        visibility = View.GONE
-                    }
+//                    binding.handChargDockingCl.apply {
+//                        visibility = View.VISIBLE
+//                    }
+//                    binding.autoChargDockingCl.apply {
+//                        visibility = View.GONE
+//                    }
                 }else{
                     ToastUtil.show(getString(R.string.hand_dock_fail))
                 }

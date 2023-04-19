@@ -288,18 +288,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginTop="@dimen/dp_41"
-                    android:text="@string/audio_setup"
+                    android:text="@string/volume_setting"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_32"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
-
 
                 <View
                     android:id="@+id/view3"
                     android:layout_width="@dimen/dp_1010"
                     android:layout_height="@dimen/dp_232"
                     android:layout_marginTop="@dimen/dp_24"
+
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -399,6 +399,7 @@
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginTop="@dimen/dp_41"
                     android:text="@string/timbre"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_32"
                     app:layout_constraintStart_toStartOf="parent"
@@ -409,6 +410,7 @@
                     android:layout_width="@dimen/dp_1010"
                     android:layout_height="@dimen/dp_120"
                     android:layout_marginTop="@dimen/dp_24"
+                    android:visibility="gone"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -421,6 +423,7 @@
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginTop="@dimen/dp_48"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="@+id/view7"
                     app:layout_constraintTop_toTopOf="@+id/view7">
 
@@ -493,6 +496,7 @@
                     android:layout_marginStart="@dimen/sp_32"
                     android:layout_marginTop="@dimen/dp_41"
                     android:text="@string/Expression_Settings"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_32"
                     app:layout_constraintStart_toStartOf="parent"
@@ -503,6 +507,7 @@
                     android:layout_width="@dimen/dp_1010"
                     android:layout_height="@dimen/dp_120"
                     android:layout_marginTop="@dimen/dp_24"
+                    android:visibility="gone"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -515,6 +520,7 @@
                     android:layout_marginStart="@dimen/dp_32"
                     android:alpha="0.7"
                     android:text="@string/Whether"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
@@ -526,6 +532,7 @@
                     android:layout_width="@dimen/dp_56"
                     android:layout_height="@dimen/dp_48"
                     android:layout_marginEnd="@dimen/dp_32"
+                    android:visibility="gone"
                     android:button="@drawable/selector_switch_track"
                     app:layout_constraintBottom_toBottomOf="@+id/view8"
                     app:layout_constraintEnd_toEndOf="@+id/view8"

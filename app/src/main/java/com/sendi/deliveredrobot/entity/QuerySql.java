@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.model.ADVModel;
 import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
+import com.sendi.deliveredrobot.model.RobotConfigModel;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.model.SendRoutesModel;
 
@@ -295,6 +296,31 @@ public class QuerySql {
         return advModel;
     }
 
+    /**
+     * 机器人基础配置
+     * @return
+     */
+    public static RobotConfigModel robotConfig(){
+        RobotConfigModel robotConfigModel = new RobotConfigModel();
+        String sql = "SELECT * FROM robotconfigsql";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                robotConfigModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                robotConfigModel.setSleep(cursor.getInt(cursor.getColumnIndex("sleep")));
+                if (cursor.getString(cursor.getColumnIndex("password"))==null) {
+                    robotConfigModel.setPassword("8888");
+                }else {
+                    robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
+                }
+                robotConfigModel.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
+                robotConfigModel.setWakeUpList(cursor.getString(cursor.getColumnIndex("wakeuplist")));
+                robotConfigModel.setSleepTime(cursor.getInt(cursor.getColumnIndex("sleeptime")));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return robotConfigModel;
+    }
     /**
      * 将查询到的int转为Boolean
      * @param data 数据

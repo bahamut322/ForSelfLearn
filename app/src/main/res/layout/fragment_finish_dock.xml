@@ -12,60 +12,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.fragment.DockingFragment"
-        android:background="@drawable/background5">
+        android:background="@drawable/img_goback">
 
-        <com.sendi.deliveredrobot.view.widget.RightAlarmView
-            android:id="@+id/rightAlarmView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <View
+            android:id="@+id/view33"
+            android:layout_width="540dp"
+            android:layout_height="@dimen/dp_248"
+            android:background="@drawable/shape_gradient_1a4fba_0e40a4_corners_10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/textView83"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_148"
             android:text="@string/dock_success"
             android:textColor="@color/color_4D6FBE"
             android:textSize="@dimen/large_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline49"
-            app:layout_constraintTop_toTopOf="@+id/guideline94"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="@+id/view33"
+            app:layout_constraintStart_toStartOf="@+id/view33"
+            app:layout_constraintTop_toTopOf="@+id/view33" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline49"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="922dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline94"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="342dp" />
 
         <ImageView
             android:id="@+id/imageViewFinishDock"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline103"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:layout_width="@dimen/dp_168"
+            android:layout_height="@dimen/dp_238"
+            android:layout_marginBottom="@dimen/dp_24"
+            android:src="@drawable/robot_dock_success_img"
+            app:layout_constraintBottom_toTopOf="@+id/textView83"
+            app:layout_constraintEnd_toEndOf="@+id/view33"
+            app:layout_constraintStart_toStartOf="@+id/view33" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline103"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="800dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

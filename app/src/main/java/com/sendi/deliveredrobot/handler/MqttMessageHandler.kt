@@ -31,6 +31,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 
@@ -210,6 +211,7 @@ object MqttMessageHandler {
                             openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
                             openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
+                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/")
                             val pointIterator = route.pointConfigVOList.iterator()
                             //路线名字
                             routeDB.routeName = route.routeName
@@ -415,6 +417,44 @@ object MqttMessageHandler {
                                         touchScreenConfigDB.touch_textPosition =
                                             point.touchScreenConfig.argFont.textPosition
                                     }
+                                    if(point.touchScreenConfig.argPicGroup !=null){
+                                        //行走中
+                                        touchScreenConfigDB.touch_walkPic =
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"+point.touchScreenConfig.argPicGroup.walkPic
+                                        Thread {
+                                                downloadFile(
+                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.walkPic,
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"
+                                                )
+                                        }.start()
+                                        //被阻挡
+                                        touchScreenConfigDB.touch_blockPic=
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"+point.touchScreenConfig.argPicGroup.blockPic
+                                        Thread {
+                                            downloadFile(
+                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.blockPic,
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"
+                                            )
+                                        }.start()
+                                        //到点
+                                        touchScreenConfigDB.touch_arrivePic=
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"+point.touchScreenConfig.argPicGroup.arrivePic
+                                        Thread {
+                                            downloadFile(
+                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.arrivePic,
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"
+                                            )
+                                        }.start()
+                                        //返回
+                                        touchScreenConfigDB.touch_overTaskPic =
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"+point.touchScreenConfig.argPicGroup.overTaskPic
+                                        Thread {
+                                            downloadFile(
+                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.overTaskPic,
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+"group/"
+                                            )
+                                        }.start()
+                                    }
                                     touchScreenConfigDB.save()
                                     pointConfigVODB.touchScreenConfigDB = touchScreenConfigDB
                                 }
@@ -502,7 +542,22 @@ object MqttMessageHandler {
                     createFolder()
                     Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
                     val robotConfigSql = RobotConfigSql()
-                    robotConfigSql.audioType = robotConfig.audioType!!
+                    //更新数据——基础设置
+                    val values = ContentValues()
+                    values.put("robotmode", UpdateReturn().audioName(robotConfig.audioType!!))
+                    val whereArgs = arrayOf(QuerySql.QueryBasicId().toString() + "")
+                    UpDataSQL.update("basicsetting", values, "id = ?", whereArgs)
+                   //单独处理女声
+                    if (robotConfig.audioType == 0){
+                        UpdateReturn().randomVoice(1, QuerySql.QueryBasic().speechSpeed.toString())
+                    }else {
+                        UpdateReturn().randomVoice(
+                            robotConfig.audioType,
+                            QuerySql.QueryBasic().speechSpeed.toString()
+                        )
+                    }
+                    //音色——放到基础设置统一管理
+//                    robotConfigSql.audioType = robotConfig.audioType!!
                     robotConfigSql.wakeUpWord = robotConfig.wakeUpWord
                     robotConfigSql.sleep = robotConfig.sleep!!
                     robotConfigSql.sleepTime = robotConfig.sleepTime!!
@@ -528,12 +583,13 @@ object MqttMessageHandler {
                             println("收到：argRadio 暂无")
                         }
                         if (robotConfig.argConfig.argPicGroup != null) {
-                            println("收到 未编写argPicGroup")
+                           Universal.sleepContentName = robotConfig.argConfig.argPicGroup.sleepPic
                         }
                     }
                     robotConfigSql.save()
                     updateConfig()
                 }
+
                 "sendAppletTask" -> {
                     // 小程序下发任务
                     ToastUtil.show("收到远程任务..")
@@ -695,7 +751,7 @@ object MqttMessageHandler {
                 if (fileNames!!.isNotEmpty()) {
                     for (i in 0 until fileNames!!.size) {
                         downloadFile(
-                            "http://172.168.201.34:9055/management_res/" + fileNames!![i],
+                            "http://172.168.201.34:9055/management_res" + fileNames!![i],
                             Universal.Secondary
                         )
                     }
@@ -772,7 +828,10 @@ object MqttMessageHandler {
         val startTime = System.currentTimeMillis()
         LogUtil.e("开始下载：$url")
         DialogHelper.loadingDialog.show()
-        val okHttpClient = OkHttpClient()
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS) // 设置超时时间为60秒
+            .build()
+
         val request: Request = Request.Builder().url(url).build()
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

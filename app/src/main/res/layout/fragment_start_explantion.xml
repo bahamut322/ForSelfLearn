@@ -31,6 +31,109 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_img_halo"/>
 
+        <LinearLayout
+            android:id="@+id/goingLin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_280"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/startImg">
+        <LinearLayout
+            android:id="@+id/goingImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/going"
+                android:layout_width="@dimen/dp_48"
+                android:layout_height="@dimen/dp_48"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:gravity="center"
+                android:src="@drawable/guiding_going"
+                app:layout_constraintBottom_toTopOf="@+id/RoomName"
+                app:layout_constraintStart_toStartOf="@+id/RoomName" />
+
+            <ImageView
+                android:id="@+id/going1"
+                android:layout_width="@dimen/dp_48"
+                android:layout_height="@dimen/dp_48"
+                android:gravity="center"
+                android:src="@drawable/guiding_going1"
+                app:layout_constraintBottom_toBottomOf="@+id/going"
+                app:layout_constraintStart_toEndOf="@+id/going" />
+
+            <ImageView
+                android:id="@+id/going2"
+                android:layout_width="@dimen/dp_48"
+                android:layout_height="@dimen/dp_48"
+                android:gravity="center"
+                android:src="@drawable/guiding_going1"
+                app:layout_constraintBottom_toBottomOf="@+id/going1"
+                app:layout_constraintStart_toEndOf="@+id/going1"
+                tools:layout_editor_absoluteY="284dp" />
+
+            <ImageView
+                android:id="@+id/going3"
+                android:layout_width="@dimen/dp_48"
+                android:layout_height="@dimen/dp_48"
+                android:gravity="center"
+                android:src="@drawable/guiding_going1"
+                app:layout_constraintBottom_toBottomOf="@+id/going2"
+                app:layout_constraintStart_toEndOf="@+id/going2"
+                tools:layout_editor_absoluteY="284dp" />
+        </LinearLayout>
+            <TextView
+                android:id="@+id/nowGoingTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/going_to"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_5"
+                android:textColor="@color/color_00EEFF"
+                android:textSize="@dimen/sp_32"/>
+            <TextView
+                android:id="@+id/going_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_40"
+                android:textSize="64sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/downTimeLin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_64"
+            android:layout_marginBottom="@dimen/dp_64"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <TextView
+                android:id="@+id/tvDownTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:gravity="bottom"
+                android:text="@string/min"
+                android:textColor="@color/white"
+                android:textSize="64sp"
+                />
+        <TextView
+            android:id="@+id/textView66"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S"
+            android:alpha="0.6"
+            android:textSize="@dimen/sp_40"
+            android:textColor="@color/white"
+            />
+
+
+        </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parentCon"
             android:layout_width="match_parent"
@@ -48,52 +151,54 @@
                 app:layout_constraintStart_toStartOf="@+id/parentCon"
                 app:layout_constraintTop_toTopOf="@+id/parentCon" />
 
-            <LinearLayout
-                android:id="@+id/nameLin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_60"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/contentCL"
-                app:layout_constraintStart_toStartOf="@+id/contentCL"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/statusTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="当前讲解:"
-                    android:textColor="@color/white"
-                    android:textSize="40sp"
-                    tools:ignore="HardcodedText" />
-
-                <TextView
-                    android:id="@+id/nowExplanation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@{data.name}"
-                    android:textColor="@color/white"
-                    android:textSize="40sp"
-                    tools:ignore="HardcodedText" />
-
-            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/contentCL"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="@dimen/dp_59"
-                android:layout_height="@dimen/dp_600"
+                android:layout_height="match_parent"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pointList"
-                app:layout_constraintTop_toBottomOf="@+id/nameLin">
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/nameLin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_60"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="@+id/contentCL"
+                    app:layout_constraintStart_toStartOf="@+id/contentCL"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/statusTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="当前讲解:"
+                        android:textColor="@color/white"
+                        android:textSize="40sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/nowExplanation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@{data.name}"
+                        android:textColor="@color/white"
+                        android:textSize="40sp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
 
                 <View
                     android:id="@+id/view26"
                     android:layout_width="@dimen/dp_1010"
                     android:layout_height="480dp"
+                    android:layout_marginTop="@dimen/dp_139"
                     android:background="@drawable/bg_explanation_acceptstation"
                     app:layout_constraintEnd_toEndOf="@+id/contentCL"
                     app:layout_constraintStart_toStartOf="@+id/contentCL"
@@ -104,8 +209,8 @@
                     android:layout_width="0dp"
                     android:layout_height="414dp"
                     android:layout_marginStart="@dimen/dp_32"
-                    android:scaleType="fitXY"
                     android:layout_marginEnd="@dimen/dp_32"
+                    android:scaleType="fitXY"
                     app:layout_constraintBottom_toBottomOf="@+id/view26"
                     app:layout_constraintEnd_toStartOf="@+id/contentLin"
                     app:layout_constraintStart_toStartOf="@+id/view26"
@@ -118,7 +223,7 @@
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="@+id/view26"
                     app:layout_constraintEnd_toEndOf="@+id/view26"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="@+id/view26">
 
                     <TextView
                         android:id="@+id/pointName"
@@ -158,6 +263,15 @@
                         app:layout_constraintEnd_toEndOf="@+id/view26"
                         tools:ignore="HardcodedText" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="@+id/view26"
+                    app:layout_constraintTop_toBottomOf="@+id/view26"
+                    android:layout_marginTop="@dimen/dp_48"
+                    >
                 <Button
                     android:id="@+id/finishBtn"
                     android:layout_width="@dimen/dp_204"
@@ -168,9 +282,7 @@
                     android:text="结束讲解"
                     android:textColor="@color/white"
                     android:textSize="32sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/ChangingOver"
-                    app:layout_constraintEnd_toStartOf="@+id/ChangingOver"
-                    app:layout_constraintTop_toTopOf="@+id/ChangingOver" />
+                   />
 
                 <Button
                     android:id="@+id/ChangingOver"
@@ -181,23 +293,21 @@
                     android:gravity="center"
                     android:text="切换其他点"
                     android:textColor="@color/white"
-                    android:textSize="32sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/nextTaskBtn"
-                    app:layout_constraintEnd_toStartOf="@+id/nextTaskBtn"
-                    app:layout_constraintTop_toTopOf="@+id/nextTaskBtn" />
+                    android:textSize="32sp" />
 
                 <Button
                     android:id="@+id/nextTaskBtn"
                     android:layout_width="@dimen/dp_204"
                     android:layout_height="@dimen/dp_72"
-                    android:layout_marginTop="@dimen/dp_48"
                     android:background="@drawable/dialog_btn_true_bg"
                     android:gravity="center"
                     android:text="下一个点"
                     android:textColor="@color/white"
-                    android:textSize="32sp"
-                    app:layout_constraintEnd_toEndOf="@+id/view26"
-                    app:layout_constraintTop_toBottomOf="@+id/view26" />
+                    android:textSize="32sp" />
+                </LinearLayout>
+
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -413,8 +413,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         sdScreenStatus!!.observe(this) {
-            if (sdScreenStatus!!.value == 0) {
-//                renovate()
+            if (sdScreenStatus!!.value == 0 && mPresentation!=null) {
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     advertisingConfigDB.picPlayTime * 1000,
@@ -428,8 +427,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     advertisingConfigDB.fontSize
                 )
             }
-            if (sdScreenStatus!!.value == 1) {
-//                renovate()
+            if (sdScreenStatus!!.value == 1 && mPresentation!=null) {
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     Universal.picPlayTime * 1000,
@@ -443,7 +441,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     Universal.fontSize
                 )
             }
-            if (sdScreenStatus!!.value == 2) {
+            if (sdScreenStatus!!.value == 2 && mPresentation!=null) {
                 advanceView.removeAllViews()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
@@ -460,18 +458,20 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         RobotStatus.SecondModel!!.observe(this) {
-            advanceView.removeAllViews()
-            layoutThis(
-                it?.picPlayTime!!,
-                it.file,
-                it.type!!,
-                it.textPosition!!,
-                it.fontLayout!!,
-                it.fontContent,
-                it.fontBackGround,
-                it.fontColor,
-                it.fontSize!!
-            )
+            if (mPresentation!=null) {
+                advanceView.removeAllViews()
+                layoutThis(
+                    it?.picPlayTime!!,
+                    it.file,
+                    it.type!!,
+                    it.textPosition!!,
+                    it.fontLayout!!,
+                    it.fontContent,
+                    it.fontBackGround,
+                    it.fontColor,
+                    it.fontSize!!
+                )
+            }
         }
     }
 }

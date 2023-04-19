@@ -82,6 +82,7 @@ object RobotStatus {
     var targetName : MutableLiveData<String?>? = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData()//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
+    var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
 
     fun setStatus(status: Int){
         previousStatus = currentStatus

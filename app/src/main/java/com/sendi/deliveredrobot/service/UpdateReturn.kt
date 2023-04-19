@@ -1,8 +1,11 @@
 package com.sendi.deliveredrobot.service
 
 import com.alibaba.fastjson.JSONObject
+import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -25,6 +28,19 @@ import org.litepal.LitePal
 import org.litepal.LitePal.where
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.dropLastWhile
+import kotlin.collections.forEach
+import kotlin.collections.groupBy
+import kotlin.collections.indices
+import kotlin.collections.iterator
+import kotlin.collections.map
+import kotlin.collections.mapValues
+import kotlin.collections.set
+import kotlin.collections.toTypedArray
 
 
 class UpdateReturn {
@@ -242,20 +258,8 @@ class UpdateReturn {
         //机器人基础配置
         val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
         for (robotConfigDatas in robotConfigData) {
-            Universal.audioType = robotConfigDatas.audioType
-            Universal.wakeUpWord = robotConfigDatas.wakeUpWord
-            Universal.sleep = robotConfigDatas.sleep
-            Universal.sleepTime = robotConfigDatas.sleepTime
-            Universal.wakeUpType = robotConfigDatas.wakeUpList
-            Universal.sleepType = robotConfigDatas.sleepType
-            Universal.picType = robotConfigDatas.picType
             Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
             Universal.mapName = robotConfigDatas.mapName
-            Universal.password = robotConfigDatas.password
-            //设置默认密码
-            if (robotConfigDatas.password == null) {
-                Universal.password = "8888"
-            }
         }
         //门岗配置
         val replyGateConfigData: List<ReplyGateConfig> =
@@ -279,6 +283,57 @@ class UpdateReturn {
         }
     }
 
+    /**
+     * 云平台返回的声音设置数字转为中文
+     * @param Num 收到云平台音色配置的数据
+     */
+    fun audioName(Num : Int): String {
+        var audioModel = ""
+        //注：云平台下发的0代表女声，在BaiduTTS中1代表女生
+        if (Num == 0){
+            audioModel = "女声"
+        }else if (Num == 2){
+            audioModel = "男声"
+        }else if (Num == 3){
+            audioModel = "童声"
+        }
+        return audioModel
+    }
+    private fun getParam(speak:String): kotlin.collections.Map<String, String> {
+        return HashMap<String, String>().apply {
+            this[SpeechSynthesizer.PARAM_SPEAKER] = "4"
+            this[SpeechSynthesizer.PARAM_VOLUME] = "15"
+            this[SpeechSynthesizer.PARAM_SPEED] = speak
+            this[SpeechSynthesizer.PARAM_PITCH] = "5"
+        }
+    }
+
+    /**
+     * BaiduTTS音色
+     */
+    fun randomVoice(i: Int,speak: String) {
+        val params = getParam(speak)
+        if (i == 1) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_FEMALE)//女
+        } else if (i == 2) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_MALE)//男
+        } else if (i == 3) {
+            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
+        }
+    }
+
+    /**
+     * BaiduTTS语速
+     */
+    fun timbres(speed: String) {
+        if ("男声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(2, speed)
+        } else if ("女声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(1, speed)
+        } else if ("童声" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(3, speed)
+        }
+    }
     /**
      * 将以逗号分隔的字符串转换为字符串数组；
      * 第二种方法：

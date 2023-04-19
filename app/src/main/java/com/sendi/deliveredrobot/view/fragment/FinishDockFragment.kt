@@ -33,7 +33,6 @@ class FinishDockFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        Glide.with(this).asGif().load(R.raw.dock_success).into(binding.imageViewFinishDock)
         MainScope().launch {
             virtualTaskExecute(2, "结束自主充电")
             MyApplication.instance!!.sendBroadcast(
