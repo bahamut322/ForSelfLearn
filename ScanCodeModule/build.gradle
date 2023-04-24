@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+//        applicationId "com.vguang.vbarlib"
+        minSdkVersion 8
+        targetSdkVersion 21
+
+        ndk {
+            moduleName "vbar_api"
+        }
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+//    implementation files('src/main/jniLibs/android-support-v4.jar')
+    implementation files('src/main/jniLibs/jna.jar')
+}
