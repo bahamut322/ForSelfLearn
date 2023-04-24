@@ -4,6 +4,6 @@ import com.sendi.deliveredrobot.model.TaskModel
 
 object ExplanationBill: ITaskBillFactory {
     override fun createBill(taskModel: TaskModel?): List<ITaskBill> {
-        return ExplanTaskBill(taskModel).billBuild()
+        return ExplainTaskBill(taskModel).billBuild()
     }
 }

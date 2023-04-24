@@ -19,6 +19,7 @@ import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.Order
+import com.sendi.deliveredrobot.view.widget.Stat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -284,9 +285,9 @@ object NavigationStateTopic {
                     ToastUtil.show(msg)
                     LogUtil.e(msg)
                 } else if (state.state == 2) {
-                    RobotStatus.RobotStat.postValue(2)
+                    Stat.setFlage(2)
                 } else if (state.state == 3) {
-                    RobotStatus.RobotStat.postValue(3)
+                    Stat.setFlage(3)
                 }
             }
         }

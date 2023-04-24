@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -14,32 +13,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BaseActivity
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
-import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
-import com.sendi.deliveredrobot.view.widget.AdvanceVideoView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
-import org.litepal.LitePal.findAll
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -188,6 +180,36 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
+
+//        val b = Vbar()
+//        binding.imageView2.setOnClickListener {
+//            thread {
+//                b.vbarOpen()
+//            }
+//            val t = object : Thread() {
+//                override fun run() {
+//                    super.run()
+//                    while (true) {
+//                        val str = b.resultsingle
+//                        if (str != null) {
+//                            (object : java.lang.Runnable {
+//                                override fun run() {
+//                                    run {
+//                                        LogUtil.i("ddasdq"+str)
+//                                    }
+//                                }
+//                            })
+//                        }
+//                        try {
+//                            sleep(1)
+//                        } catch (e: InterruptedException) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//                }
+//            }
+//            t.start()
+//        }
 
 
         if (QuerySql.QueryBasic().identifyVip == true) {
@@ -421,7 +443,7 @@ class HomeFragment : Fragment(), IMainView {
     private fun calculateEnglish(String: String): String {
         var str = "English"
         if ("智能引领" == String) {
-            str = "GUIDACE"
+            str = "GUIDANCE"
         } else if ("智能讲解" == String) {
             str = "COMMENTARY"
         } else if ("智能问答" == String) {

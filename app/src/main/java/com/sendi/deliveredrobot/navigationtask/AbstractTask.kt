@@ -53,6 +53,7 @@ abstract class AbstractTask(
             beforeReportData(taskDto)
             if (BuildConfig.IS_REPORT) {
 //                MainScope().launch {
+                //发送消息
                 reportData()
 //                }
             }

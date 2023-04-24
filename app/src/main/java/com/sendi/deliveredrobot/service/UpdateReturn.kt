@@ -236,7 +236,9 @@ class UpdateReturn {
             }
             LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointIdList)}")
             //设置充电桩；默认查询到的第一个数据
-            dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
+            if(pointIdList!=null) {
+                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
+            }
             val queryPoint =
                 dao.queryChargePoint()
             RobotStatus.originalLocation = queryPoint

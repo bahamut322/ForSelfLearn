@@ -7,6 +7,7 @@ package com.sendi.deliveredrobot.service;
  * @since 2021-11-09
  */
 public enum TaskStageEnum {
+    StartExplaining("开始讲解的",0),
     ALLStartTask("任务开始",0),
     FinishGuideTask("引领结束",1),
     FinishSendTask("送物结束",1),

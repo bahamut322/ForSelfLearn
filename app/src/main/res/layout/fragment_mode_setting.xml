@@ -189,7 +189,7 @@
                 <View
                     android:id="@+id/view11"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="800dp"
+                    android:layout_height="650dp"
                     android:layout_marginTop="24dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -278,7 +278,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_24"
-                    android:text="@string/Speed_of_speech_max"
+                    android:text="15"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/explain"
@@ -405,6 +405,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_92"
                     android:alpha="0.7"
+                    android:visibility="gone"
                     android:text="@string/End_Allow"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -417,6 +418,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_70"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/textView36"
                     app:layout_constraintStart_toEndOf="@+id/textView36"
                     app:layout_constraintTop_toTopOf="@+id/textView36">
@@ -445,6 +447,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_208"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/linearLayout8"
                     app:layout_constraintStart_toEndOf="@+id/linearLayout8"
                     app:layout_constraintTop_toTopOf="@+id/linearLayout8">

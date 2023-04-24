@@ -150,249 +150,249 @@ class GoBackFragment : Fragment() {
 //            bottomAlarmText1 = resources.getString(R.string.go_back)
 //        }
 //        Universal.Model = "返回"
-        binding.imageViewGoBack.apply {
-            isEnabled = false
-            gifGoBack.into(this)
-            setOnClickListener {
-                isEnabled = false
-                RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_DEFAULT
-                mainScope.launch {
-                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)){
-                        state = 1
-                    }else{
-                        ToastUtil.show("暂停失败，请重试")
-                        isEnabled = true
-                    }
-                }
-            }
-        }
-        binding.buttonGuide.apply {
-            isEnabled = false
-            setOnClickListener {
-                isEnabled = false
-                if (seconds.value!! > 0) {
-                    timer?.cancel()
-                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
-                        LowPowerDialog(requireContext(), lowPowerDialogListener = object :
-                            LowPowerDialog.LowPowerDialogListener {
-                            override fun timeUp(dialog: LowPowerDialog) {
-                                mainScope.launch {
-                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                                        timer?.cancel()
-                                        state = 0
-                                        dialog.dismiss()
-                                    }else{
-                                        isEnabled = true
-                                        ToastUtil.show("继续失败，请重试")
-                                    }
-                                }
-                            }
-
-                            override fun buttonPress(dialog: LowPowerDialog) {
-                                mainScope.launch {
-                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                                        timer?.cancel()
-                                        state = 0
-                                        dialog.dismiss()
-                                    }else{
-                                        isEnabled = true
-                                        ToastUtil.show("继续失败，请重试")
-                                    }
-                                }
-                            }
-                        }).show()
-                        return@setOnClickListener
-                    }
-                    when (basicSettingViewModel?.basicConfig?.guideModeVerifyPassword) {
-                        0 -> {
-                            findNavController().navigate(
-                                R.id.inputRoomNumberFragment,
-                                Bundle().apply {
-                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_GUIDE)
-                                },
-                            )
-                        }
-//                        1 -> {
+//        binding.imageViewGoBack.apply {
+//            isEnabled = false
+//            gifGoBack.into(this)
+//            setOnClickListener {
+//                isEnabled = false
+//                RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_DEFAULT
+//                mainScope.launch {
+//                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)){
+//                        state = 1
+//                    }else{
+//                        ToastUtil.show("暂停失败，请重试")
+//                        isEnabled = true
+//                    }
+//                }
+//            }
+//        }
+//        binding.buttonGuide.apply {
+//            isEnabled = false
+//            setOnClickListener {
+//                isEnabled = false
+//                if (seconds.value!! > 0) {
+//                    timer?.cancel()
+//                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
+//                        LowPowerDialog(requireContext(), lowPowerDialogListener = object :
+//                            LowPowerDialog.LowPowerDialogListener {
+//                            override fun timeUp(dialog: LowPowerDialog) {
+//                                mainScope.launch {
+//                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                                        timer?.cancel()
+//                                        state = 0
+//                                        dialog.dismiss()
+//                                    }else{
+//                                        isEnabled = true
+//                                        ToastUtil.show("继续失败，请重试")
+//                                    }
+//                                }
+//                            }
+//
+//                            override fun buttonPress(dialog: LowPowerDialog) {
+//                                mainScope.launch {
+//                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                                        timer?.cancel()
+//                                        state = 0
+//                                        dialog.dismiss()
+//                                    }else{
+//                                        isEnabled = true
+//                                        ToastUtil.show("继续失败，请重试")
+//                                    }
+//                                }
+//                            }
+//                        }).show()
+//                        return@setOnClickListener
+//                    }
+//                    when (basicSettingViewModel?.basicConfig?.guideModeVerifyPassword) {
+//                        0 -> {
 //                            findNavController().navigate(
-//                                R.id.inputPasswordFragment,
+//                                R.id.inputRoomNumberFragment,
 //                                Bundle().apply {
 //                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_GUIDE)
 //                                },
 //                            )
 //                        }
-                    }
-
-                }
-            }
-        }
-
-        binding.buttonSend.apply {
-            isEnabled = false
-            setOnClickListener {
-                isEnabled = false
-                if (seconds.value!! > 0) {
-                    timer?.cancel()
-                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
-                        LowPowerDialog(requireContext(), lowPowerDialogListener = object :
-                            LowPowerDialog.LowPowerDialogListener {
-                            override fun timeUp(dialog: LowPowerDialog) {
-                                mainScope.launch {
-                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                                        timer?.cancel()
-                                        state = 0
-                                        dialog.dismiss()
-                                    }else{
-                                        isEnabled = true
-                                        ToastUtil.show("继续失败，请重试")
-                                    }
-                                }
-                            }
-
-                            override fun buttonPress(dialog: LowPowerDialog) {
-                                mainScope.launch {
-                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                                        timer?.cancel()
-                                        state = 0
-                                        dialog.dismiss()
-                                    }else{
-                                        isEnabled = true
-                                        ToastUtil.show("继续失败，请重试")
-                                    }
-                                }
-                            }
-                        }).show()
-                        return@setOnClickListener
-                    }
-                    when (basicSettingViewModel?.basicConfig?.sendModeVerifyPassword) {
-                        0 -> {
-                            findNavController().navigate(
-                                R.id.putObjectFragment,
-                                Bundle().apply {
-                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_SEND)
-                                },
-                            )
-                        }
-//                        1 -> {
-//                            findNavController().navigate(
+////                        1 -> {
+////                            findNavController().navigate(
 ////                                R.id.inputPasswordFragment,
+////                                Bundle().apply {
+////                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_GUIDE)
+////                                },
+////                            )
+////                        }
+//                    }
+//
+//                }
+//            }
+//        }
+
+//        binding.buttonSend.apply {
+//            isEnabled = false
+//            setOnClickListener {
+//                isEnabled = false
+//                if (seconds.value!! > 0) {
+//                    timer?.cancel()
+//                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
+//                        LowPowerDialog(requireContext(), lowPowerDialogListener = object :
+//                            LowPowerDialog.LowPowerDialogListener {
+//                            override fun timeUp(dialog: LowPowerDialog) {
+//                                mainScope.launch {
+//                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                                        timer?.cancel()
+//                                        state = 0
+//                                        dialog.dismiss()
+//                                    }else{
+//                                        isEnabled = true
+//                                        ToastUtil.show("继续失败，请重试")
+//                                    }
+//                                }
+//                            }
+//
+//                            override fun buttonPress(dialog: LowPowerDialog) {
+//                                mainScope.launch {
+//                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                                        timer?.cancel()
+//                                        state = 0
+//                                        dialog.dismiss()
+//                                    }else{
+//                                        isEnabled = true
+//                                        ToastUtil.show("继续失败，请重试")
+//                                    }
+//                                }
+//                            }
+//                        }).show()
+//                        return@setOnClickListener
+//                    }
+//                    when (basicSettingViewModel?.basicConfig?.sendModeVerifyPassword) {
+//                        0 -> {
+//                            findNavController().navigate(
+//                                R.id.putObjectFragment,
 //                                Bundle().apply {
 //                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_SEND)
 //                                },
 //                            )
 //                        }
-                    }
-                }
-            }
-        }
-        binding.textViewBack.apply {
-            isEnabled = false
-            setOnClickListener {
-                isEnabled = false
-                mainScope.launch {
-                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                        timer?.cancel()
-                        state = 0
-                    }else{
-                        isEnabled = true
-                        ToastUtil.show("继续失败，请重试")
-                    }
-                }
-
-            }
-        }
-        state = 0
-        seconds.observe(viewLifecycleOwner) {
-            if (it < 1) {
-                mainScope.launch {
-                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
-                        timer?.cancel()
-                        state = 0
-                    }else{
-                        ToastUtil.show("继续失败，请重试")
-                    }
-                }
-            }
-            binding.textViewSecond.text = CommonHelper.getTimeSpan(it, 1.33f)
-        }
-        SafeStateTopic.setSafeStateListener {
-                safeState ->
-            when (safeState.safeState) {
-                SafeState.STATE_IS_TRIGGING -> {
-                    //按下
-                    if (state == 0) {
-                        //如果当前不在暂停状态
-                        if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
-                            mainScope.launch {
-                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                            }
-                        }
-                    } else if (state == 1) {
-                        timer?.cancel()
-                    }
-                    timer2?.cancel()
-                    timer2?.purge()
-
-                }
-                SafeState.STATE_IS_NOT_TRIGGING -> {
-                    //抬起
-                    if (state == 1) {
-                        //如果当前不在导航状态
-                        timer = Timer()
-                        timer?.schedule(object : TimerTask() {
-                            override fun run() {
-                                mainScope.launch {
-                                    withContext(Dispatchers.Main) {
-                                        seconds.value = seconds.value?.minus(1)
-                                    }
-                                }
-                            }
-                        }, Date(), 1000)
-                    } else {
-                        if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE) {
-                            mainScope.launch {
-                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-                            }
-                        }
-                    }
-                    mainScope.launch {
-                        if (CommonHelper.atChargePointFloor()){
-//                                if(binding.motionLayoutGoBack.currentState != R.id.state3){
-                            if(state == 0){
-                                if(BillManager.currentBill()?.taskId()?.startsWith("D") == true || BillManager.currentBill()?.taskId()?.startsWith("wx") == true){
-//                                    AudioMngHelper(MyApplication.instance!!).setVoice100(
-//                                        (basicSettingViewModel?.basicConfig?.sendVolumeLobby?: 60) / 2)
-                                }
-                                if(BillManager.currentBill()?.taskId()?.startsWith("G") == true){
-//                                    AudioMngHelper(MyApplication.instance!!).setVoice100(
-//                                        (basicSettingViewModel?.basicConfig?.guideVolumeLobby?:40) / 2)
-                                }
-                                timer2 = Timer()
-                                timer2Schedule()
-                            }
-                        }
-                    }
-                }
-                SafeState.TYPE_MOTOR_CURRENT -> {
-                    when (safeState.safeState) {
-                        SafeState.STATE_IS_TRIGGING -> {
-                            LogUtil.i("进入堵转状态")
-                            if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
-                                mainScope.launch(Dispatchers.Default) {
-                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)) {
-                                        withContext(Dispatchers.Main){
-//                                            DialogHelper.getChassisExceptionDialog().show()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        SafeState.STATE_IS_NOT_TRIGGING -> {
-                            LogUtil.i("退出堵转状态")
-                        }
-                    }
-                }
-            }
-        }
+////                        1 -> {
+////                            findNavController().navigate(
+//////                                R.id.inputPasswordFragment,
+////                                Bundle().apply {
+////                                    putString(InputPasswordFromType.INPUT_PASSWORD_FROM_TYPE, InputPasswordFromType.GO_BACKING_SEND)
+////                                },
+////                            )
+////                        }
+//                    }
+//                }
+//            }
+//        }
+//        binding.textViewBack.apply {
+//            isEnabled = false
+//            setOnClickListener {
+//                isEnabled = false
+//                mainScope.launch {
+//                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                        timer?.cancel()
+//                        state = 0
+//                    }else{
+//                        isEnabled = true
+//                        ToastUtil.show("继续失败，请重试")
+//                    }
+//                }
+//
+//            }
+//        }
+//        state = 0
+//        seconds.observe(viewLifecycleOwner) {
+//            if (it < 1) {
+//                mainScope.launch {
+//                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
+//                        timer?.cancel()
+//                        state = 0
+//                    }else{
+//                        ToastUtil.show("继续失败，请重试")
+//                    }
+//                }
+//            }
+//            binding.textViewSecond.text = CommonHelper.getTimeSpan(it, 1.33f)
+//        }
+//        SafeStateTopic.setSafeStateListener {
+//                safeState ->
+//            when (safeState.safeState) {
+//                SafeState.STATE_IS_TRIGGING -> {
+//                    //按下
+//                    if (state == 0) {
+//                        //如果当前不在暂停状态
+//                        if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
+//                            mainScope.launch {
+//                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+//                            }
+//                        }
+//                    } else if (state == 1) {
+//                        timer?.cancel()
+//                    }
+//                    timer2?.cancel()
+//                    timer2?.purge()
+//
+//                }
+//                SafeState.STATE_IS_NOT_TRIGGING -> {
+//                    //抬起
+//                    if (state == 1) {
+//                        //如果当前不在导航状态
+//                        timer = Timer()
+//                        timer?.schedule(object : TimerTask() {
+//                            override fun run() {
+//                                mainScope.launch {
+//                                    withContext(Dispatchers.Main) {
+//                                        seconds.value = seconds.value?.minus(1)
+//                                    }
+//                                }
+//                            }
+//                        }, Date(), 1000)
+//                    } else {
+//                        if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE) {
+//                            mainScope.launch {
+//                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+//                            }
+//                        }
+//                    }
+//                    mainScope.launch {
+//                        if (CommonHelper.atChargePointFloor()){
+////                                if(binding.motionLayoutGoBack.currentState != R.id.state3){
+//                            if(state == 0){
+//                                if(BillManager.currentBill()?.taskId()?.startsWith("D") == true || BillManager.currentBill()?.taskId()?.startsWith("wx") == true){
+////                                    AudioMngHelper(MyApplication.instance!!).setVoice100(
+////                                        (basicSettingViewModel?.basicConfig?.sendVolumeLobby?: 60) / 2)
+//                                }
+//                                if(BillManager.currentBill()?.taskId()?.startsWith("G") == true){
+////                                    AudioMngHelper(MyApplication.instance!!).setVoice100(
+////                                        (basicSettingViewModel?.basicConfig?.guideVolumeLobby?:40) / 2)
+//                                }
+//                                timer2 = Timer()
+//                                timer2Schedule()
+//                            }
+//                        }
+//                    }
+//                }
+//                SafeState.TYPE_MOTOR_CURRENT -> {
+//                    when (safeState.safeState) {
+//                        SafeState.STATE_IS_TRIGGING -> {
+//                            LogUtil.i("进入堵转状态")
+//                            if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
+//                                mainScope.launch(Dispatchers.Default) {
+//                                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)) {
+//                                        withContext(Dispatchers.Main){
+////                                            DialogHelper.getChassisExceptionDialog().show()
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        SafeState.STATE_IS_NOT_TRIGGING -> {
+//                            LogUtil.i("退出堵转状态")
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**

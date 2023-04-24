@@ -117,9 +117,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             if (progressSpeak != RobotStatus.INSTANCE.getSpeakNumber().getValue().length()) {
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
-            } else if (utteranceId.equals("explantion")) {
-                RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
             }
+        }else if (utteranceId.equals("explantion")) {
+            RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
         }
     }
 

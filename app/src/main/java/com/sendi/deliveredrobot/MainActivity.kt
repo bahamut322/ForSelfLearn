@@ -97,7 +97,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navigationReceiver.navController = navController
         registerReceiver(navigationReceiver, IntentFilter(ACTION_NAVIGATE))
         RobotStatus.PassWordToSetting.postValue(false);
-        RobotStatus.speaking.postValue(0)
         //-----------------设置状态栏状态receiver--------------------
         val intentFilter = IntentFilter()
         intentFilter.addAction(Intent.ACTION_TIME_TICK) //每分钟变化

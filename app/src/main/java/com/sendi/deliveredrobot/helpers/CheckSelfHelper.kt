@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.hardware.usb.UsbDevice
 import android.media.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
+import com.infisense.iruvc.usb.UVCCamera
 import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.camera.IRUVC
@@ -68,9 +70,9 @@ object CheckSelfHelper {
         countdownComplete = false
         // 倒计时观察
         val seconds = MutableLiveData(time)
-        var progress = 0;
-        var tempFlag = 256;
-        var initRosTopic = false;
+        var progress = 0
+        var tempFlag = 384//转为二进制之后，对应自检
+        var initRosTopic = false
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
             ClientConstant.SAFE_STATE_TOPIC,
@@ -203,7 +205,7 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("扬声器检测通过")
             }
-            if (temp()!=null && tempFlag and 0x80 == 0){
+            if (temp() && tempFlag and 0x80 == 0){
                 tempFlag = tempFlag or 0x80
                 progress++
                 //关闭红外
@@ -308,12 +310,13 @@ object CheckSelfHelper {
         }
         return false
     }
-    fun temp(): IRUVC? {
+    fun temp(): Boolean {
         if (p2camera == null) {
             p2camera = IRUVC(Universal.cameraHeight, Universal.cameraWidth, MyApplication.context, syncimage)
             p2camera?.registerUSB()
         }
-        return p2camera
+        return !(p2camera!!.uvcCamera == null || !p2camera!!.uvcCamera.getOpenStatus())
+
     }
     /**
      * 麦克风检测

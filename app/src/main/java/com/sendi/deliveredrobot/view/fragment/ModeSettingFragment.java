@@ -62,22 +62,25 @@ public class ModeSettingFragment extends Fragment {
         //去往讲解点速度
         binding.ExplanationSpeed.setRange(0.3f, 1.2f, 1);
         //讲解语速
-        binding.explain.setRange(1, 6, 1);
+        binding.explain.setRange(1, 15, 0);
         //逗留时间
-        binding.stay.setRange(1, 180, 1);
+        binding.stay.setRange(1, 180, 0);
         //打断任务触控点暂停时间
-        binding.BreakTask.setRange(1, 180, 1);
+        binding.BreakTask.setRange(1, 180, 0);
         //巡逻速度
         binding.patrolSpeed.setRange(0.3f, 1.2f, 1);
         //巡逻过程中暂停时间
-        binding.suspension.setRange(1, 180, 1);
+        binding.suspension.setRange(1, 180, 0);
 
 
         //讲解结束方式判断
         if (QuerySql.QueryBasic().getExplanationFinish() == 0) {
             binding.AgainCB.setChecked(true);
-        } else {
+        } else if (QuerySql.QueryBasic().getExplanationFinish() == 1){
             binding.otherCB.setChecked(true);
+        }else if (QuerySql.QueryBasic().getExplanationFinish() == 2){
+            binding.otherCB.setChecked(true);
+            binding.AgainCB.setChecked(true);
         }
         //测温模式选择判断
         if (QuerySql.QueryBasic().getTempMode() == 0) {
@@ -192,20 +195,15 @@ public class ModeSettingFragment extends Fragment {
         binding.AgainCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 binding.AgainCB.setChecked(true);
-                binding.otherCB.setChecked(false);
-            } else {
-                binding.AgainCB.setChecked(false);
             }
         });
         //讲解结束允许：选择其他路线
         binding.otherCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 binding.otherCB.setChecked(true);
-                binding.AgainCB.setChecked(false);
-            } else {
-                binding.otherCB.setChecked(false);
             }
         });
+
         //异常警告方式：语音播报
         binding.Announcements.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -295,11 +293,14 @@ public class ModeSettingFragment extends Fragment {
                 values.put("tempmode",1);
             }
             //讲解结束允许统计
-            if (binding.AgainCB.isChecked()) {
+            if (binding.AgainCB.isChecked()&& !binding.otherCB.isChecked()) {
                 values.put("explanationfinish",0);
             }
-            if (binding.otherCB.isChecked()) {
+            if (binding.otherCB.isChecked()&&!binding.AgainCB.isChecked()) {
                 values.put("explanationfinish",1);
+            }
+            if (binding.otherCB.isChecked()&& binding.AgainCB.isChecked()){
+                values.put("explanationfinish",2);
             }
             //异常警告方式统计
             if (binding.Announcements.isChecked()) {

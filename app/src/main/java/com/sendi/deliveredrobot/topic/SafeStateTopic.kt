@@ -5,6 +5,7 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_CHARGING
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_IDLE
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
@@ -40,6 +41,7 @@ object SafeStateTopic {
                 mutex.withLock {
                     if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
                         LogUtil.d("急停按下")
+                        BaiduTTSHelper.getInstance().pause()
                         IdleGateDataHelper.reportIdleGateCount(0)
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_PRESSED
@@ -70,6 +72,7 @@ object SafeStateTopic {
                     } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
+                        BaiduTTSHelper.getInstance().resume()
                         IdleGateDataHelper.reportIdleGateCount()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED

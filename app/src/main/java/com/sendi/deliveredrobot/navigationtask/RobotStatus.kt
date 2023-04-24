@@ -44,7 +44,7 @@ object RobotStatus {
     //电量供应状态
     val batterySupplyStatus: MutableLiveData<Byte> = MutableLiveData(-1)
     var chargeStatus: MutableLiveData<Boolean> = MutableLiveData(false) //是否充电中
-    val RobotStat : MutableLiveData<Int> = MutableLiveData()
+//    val RobotStat : MutableLiveData<Int> = MutableLiveData()
     var selfChecking = 0 //0-正在自检，1-非自检
     var lowPowerBacking = false //低电量自动回充
     var docking = false //自主回充状态
@@ -74,7 +74,6 @@ object RobotStatus {
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var speakNumber : MutableLiveData<String> = MutableLiveData();//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>();//记录智能讲解朗读的内容
-    var speaking : MutableLiveData<Int?> = MutableLiveData()//记录百度语音是否在说话
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
     var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item

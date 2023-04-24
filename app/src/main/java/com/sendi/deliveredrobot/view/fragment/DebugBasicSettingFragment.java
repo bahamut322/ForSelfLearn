@@ -39,7 +39,6 @@ public class DebugBasicSettingFragment extends Fragment {
     String TAG = "TAGDebugBasicSettingFragment";
     FragmentBasicSettingBinding binding;
     public StringBuffer stringBuffer = new StringBuffer();
-
     SettingViewModel viewModel;
     SharedPreferences sp;
     SharedPreferences.Editor editor;

@@ -111,7 +111,9 @@ public class BaseActivity extends AppCompatActivity {
         // Listen for changes to media routes.
         mMediaRouter.removeCallback(mMediaRouterCallback);
         mDisplayManager.unregisterDisplayListener(mDisplayListener);
-        advanceView.setPause();
+        if (mPresentation!=null) {
+            advanceView.setPause();
+        }
         Log.i(TAG, "双屏异显onPause");
     }
 

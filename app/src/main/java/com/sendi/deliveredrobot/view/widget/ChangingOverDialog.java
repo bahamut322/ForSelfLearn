@@ -47,6 +47,10 @@ public class ChangingOverDialog extends Dialog {
 
     }
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+    }
 
     /**
      * 调用弹窗全屏显示方法
@@ -65,7 +69,6 @@ public class ChangingOverDialog extends Dialog {
 
     @Override
     protected void onStop() {
-        new UpdateReturn().resume();
         super.onStop();
     }
 

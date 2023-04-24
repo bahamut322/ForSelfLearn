@@ -1,3 +1,4 @@
 rootProject.name = "DeliveredRobot"
 include ':app'
 include ':wifimanager'
+include ':ScanCodeModule'

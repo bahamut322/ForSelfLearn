@@ -33,6 +33,7 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
+import com.vguang.Vbar
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
@@ -83,7 +84,6 @@ class SelfCheckFragment : Fragment() {
                     DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
                         .queryBasicConfig()
                 basicSettingViewModel.basicConfig = basicConfig
-
                 //-------------------自检---------------------
                 var mStartProgressBar = 0
                 var resCheck = 0;
@@ -109,62 +109,62 @@ class SelfCheckFragment : Fragment() {
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
-//                if (resCheck != 0x1FF) {
-//                    LogUtil.d("打印收到数据——— $resCheck")
-//                    withContext(Dispatchers.Main) {
-//                        var errorCode = ""
-//                        if (BuildConfig.IS_DEBUG) {
-//                            if (resCheck and 0x01 != 0x01) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "镭射异常"
-//                            }
-//                            if (resCheck and 0x02 != 0x02) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "电量异常"
-//                            }
-//                            if (resCheck and 0x04 != 0x04) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "急停异常"
-//                            }
-//                            if (resCheck and 0x08 != 0x08) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "副屏启动异常"
-//                            }
-//                            if (resCheck and 0x10 != 0x10) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "摄像头异常"
-//                            }
-//                            if (resCheck and 0x20 != 0x20) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "麦克风异常"
-//                            }
-//                            if (resCheck and 0x40 != 0x40) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "扬声器异常"
-//                            }
-//                            if (resCheck and 0x80 != 0x80) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "红外(测温)异常"
-//                            }
-//                            if (resCheck and 0x100 != 0x100) {
-//                                errorCode =
-//                                    (if ("" == errorCode) "" else "$errorCode,") + "红外(导航)异常"
-//                            }
-//                        } else {
-//                            errorCode = resCheck.toHexString();
-//                        }
-//                        DialogHelper.selfCheckDialog(
-//                            "启动异常",
-//                            "请尝试重启",
-//                            errorCode,
-//                            false,
-//                            false,
-//                            null
-//                        )
-//                            .show()
-//                        Log.d("TAG", "initSelfCheck: " + resCheck.toHexString())
-//                    }
-//                } else {
+                if (resCheck != 0x1FF) {
+                    LogUtil.d("打印收到数据——— $resCheck")
+                    withContext(Dispatchers.Main) {
+                        var errorCode = ""
+                        if (BuildConfig.IS_DEBUG) {
+                            if (resCheck and 0x01 != 0x01) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "镭射异常"
+                            }
+                            if (resCheck and 0x02 != 0x02) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "电量异常"
+                            }
+                            if (resCheck and 0x04 != 0x04) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "急停异常"
+                            }
+                            if (resCheck and 0x08 != 0x08) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "副屏启动异常"
+                            }
+                            if (resCheck and 0x10 != 0x10) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "摄像头异常"
+                            }
+                            if (resCheck and 0x20 != 0x20) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "麦克风异常"
+                            }
+                            if (resCheck and 0x40 != 0x40) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "扬声器异常"
+                            }
+                            if (resCheck and 0x80 != 0x80) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "红外(测温)异常"
+                            }
+                            if (resCheck and 0x100 != 0x100) {
+                                errorCode =
+                                    (if ("" == errorCode) "" else "$errorCode,") + "红外(导航)异常"
+                            }
+                        } else {
+                            errorCode = resCheck.toHexString();
+                        }
+                        DialogHelper.selfCheckDialog(
+                            "启动异常",
+                            "请尝试重启",
+                            errorCode,
+                            false,
+                            false,
+                            null
+                        )
+                            .show()
+                        Log.d("TAG", "initSelfCheck: " + resCheck.toHexString())
+                    }
+                } else {
                     //硬件自检通过
 //                    //初始化机器人序列号
 //                    //设置底盘时间
@@ -291,7 +291,7 @@ class SelfCheckFragment : Fragment() {
                     }
                 }
             }
-//        }
+        }
     }
 
     /**
@@ -335,7 +335,7 @@ class SelfCheckFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_self_check, container, false)
         binding = DataBindingUtil.bind(mView)!!

@@ -1,24 +1,25 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import android.content.Intent
-import com.sendi.deliveredrobot.*
+import com.sendi.deliveredrobot.ACTION_NAVIGATE
+import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.NAVIGATE_ID
+import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.helpers.SpeakHelper
-import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
-import kotlinx.coroutines.launch
 
 /**
- * @describe:引领中
+ * @Author Swn
+ * @describe 某一段讲解到达
+ * @Data 2023-04-24 16:11
  */
-class GuidingTask(
+class ExplainingTask (
     taskModel: TaskModel?, private val navigateId:Int
 ) : AbstractTask(taskModel) {
 

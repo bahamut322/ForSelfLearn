@@ -1,6 +1,8 @@
 package com.sendi.deliveredrobot.entity;
 
 
+import android.annotation.SuppressLint;
+
 import java.util.List;
 
 /**
@@ -24,14 +26,18 @@ public class Universal {
     //机器人音色选择
     public static String RobotMode = "男声";
     //存放待机视频/图片/GIF的目录
+    @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
     //存放正常情况下的图片/视频
+    @SuppressLint("SdCardPath")
     public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary/";
     //存放副屏广告图
+    @SuppressLint("SdCardPath")
     public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV/";
     //下载地址
     public static String pathDownload = "http://172.168.201.34:9055/management_res/";
     //机器人主要存放的路径
+    @SuppressLint("SdCardPath")
     public static String robotFile = "/mnt/sdcard/X8ROBOT/";
     //待机图片名字
     public static String sleepContentName = "";
@@ -97,14 +103,11 @@ public class Universal {
     public static String mapName;
     //密码
     public static String password;
-    //当前状态
-//    public static String Model = "开始";
     //播放进度
     public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
-
-
+    public static String lastValue = null;
     public static boolean selectMapPoint = false;
 }
 

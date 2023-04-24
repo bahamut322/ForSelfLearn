@@ -45,7 +45,7 @@ class StartExplanViewModel : ViewModel() {
         return mDatas
     }
 
-    fun finishTask(array: Boolean) {
+    fun finishTask() {
         MainScope().launch {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
@@ -53,10 +53,8 @@ class StartExplanViewModel : ViewModel() {
 //            BillManager.currentBill()!!.earlyFinish()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
 //            Universal.Model = "结束讲解"
-            ready.postValue(0)
-            if (!array) {
-                currentBill()?.executeNextTask()
-            }
+//            ready.postValue(0)
+
             BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
@@ -88,11 +86,8 @@ class StartExplanViewModel : ViewModel() {
                         .queryPoint(inForListData()!![index]!!.name),
                 )
                 val bill = createBill(taskModel = taskModel)
-//                BillManager.addAllAtIndex(bill, index)
                 BillManager.addAllLast(bill)
             }
-//            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-//            Universal.Model = "切换点讲解"
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")

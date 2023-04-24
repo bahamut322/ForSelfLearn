@@ -13,11 +13,11 @@ import com.sendi.deliveredrobot.service.TaskTypeEnum
 import java.util.*
 
 /**
- * @author heky
- * @date 2022-08-23
+ * @author Swn
+ * @date 2023-04-23
  * @description 智能讲解任务清单
  */
-class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
+class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
     init {
         setEndTarget(taskModel?.location?.pointName ?: "")
         setTaskId(TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.GUIDING))
@@ -32,7 +32,7 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
 
     override suspend fun earlyFinish() {
         for (task in taskQueue) {
-            if (task is FinishGuideTask) {
+            if (task is FinishExplainTask) {
                 task.status = -1
                 task.enum = task.configEnum()
                 task.beforeReportData(task.taskDto)
@@ -59,12 +59,12 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
         val tempQueue = LinkedList<AbstractTask>()
         tempQueue.apply {
             add(
-                StartExplanTask(
+                StartExplainTask(
                     TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     )
                 )
             )
@@ -74,7 +74,7 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     )
                 )
             )
@@ -85,19 +85,19 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     ),
                     type = TYPE_GUIDE
                 )
             )
             // step 10：到目的地task
             add(
-                GuidingTask(
+                ExplainingTask(
                     TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     ),
                     R.id.StartExplantionFragment
                 )
@@ -108,30 +108,30 @@ class ExplanTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     )
                 )
             )
             // step 11：到达目的地
             add(
-                ExplanArriveTask(
+                ExplainArriveTask(
                     TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     )
                 )
             )
 
             // step 12：完成任务task
             add(
-                FinishGuideTask(
+                FinishExplainTask(
                     taskModel = TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
-                        bill = this@ExplanTaskBill
+                        bill = this@ExplainTaskBill
                     )
                 )
             )

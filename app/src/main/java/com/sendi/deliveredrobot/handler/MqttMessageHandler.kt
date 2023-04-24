@@ -36,7 +36,7 @@ import kotlin.concurrent.thread
 
 
 /**
- *   @author: heky
+ *   @author: Swn
  *   @date: 2021/8/18 12:01
  *   @describe: MQTT消息处理(订阅X8)
  */
@@ -115,7 +115,6 @@ object MqttMessageHandler {
                 "replyAdvertisementConfig" -> {
                     val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
-                    if (advertisingConfig.timeStamp!! > QuerySql.advTimeStamp()) {
                         deleteAll(AdvertisingConfigDB::class.java)
                         deleteFiles(File(Universal.advertisement))
                         RobotStatus.advertisingConfig?.value = advertisingConfig
@@ -159,9 +158,7 @@ object MqttMessageHandler {
                         }
                         advertisingConfigDB.save()
                         updateConfig()
-                    } else {
-                        LogUtil.d("不用更新")
-                    }
+
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
@@ -182,12 +179,12 @@ object MqttMessageHandler {
                                 true
                             )
                             deleteAll(
-                                BigScreenConfigDB::class.java,
+                                TouchScreenConfigDB::class.java,
                                 "pointconfigvodb_id = ?",
                                 QuerySql.pointConfigVoDB_id(routeList[route].routeName).toString()
                             )
                             deleteAll(
-                                TouchScreenConfigDB::class.java,
+                                BigScreenConfigDB::class.java,
                                 "pointconfigvodb_id = ?",
                                 QuerySql.pointConfigVoDB_id(routeList[route].routeName).toString()
                             )

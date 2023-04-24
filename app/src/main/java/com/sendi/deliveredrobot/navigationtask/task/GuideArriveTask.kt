@@ -33,7 +33,7 @@ class GuideArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, R.id.guideArriveFragment)
         })
-        virtualTaskExecute(2, "引领到达")
+        virtualTaskExecute(1, "引领到达")
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

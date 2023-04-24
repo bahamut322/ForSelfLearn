@@ -20,13 +20,13 @@ public class IRUVC {
     private final IFrameCallback iFrameCallback;
     private final Context context;
     public UVCCamera uvcCamera;
-    private USBMonitor mUSBMonitor;
+    public USBMonitor mUSBMonitor;
     private int cameraWidth;
     private int cameraHeight;
     private byte[] image;
     private byte[] temperature;
     private SynchronizedBitmap syncimage;
-    private int pid=0x5840;
+    public int pid=0x5840;
     public boolean valid = false;
     private static final String TAG = "IRUVC";
     private boolean isRequest=false;
@@ -73,7 +73,6 @@ public class IRUVC {
                         }
                     }
                 }
-
             }
 
             // called by taking out usb device
@@ -115,18 +114,15 @@ public class IRUVC {
             public void onCancel(UsbDevice device) {
             }
         });
-        iFrameCallback = new IFrameCallback() {
-            @Override
-            public void onFrame(byte[] frame) {
-                if(isRequest){
-                    Log.w(TAG, "onFrame");
-                    ImgByteDealFunction.setImgBytes(frame);
-
-                }
-
-
+        iFrameCallback = frame -> {
+            if(isRequest){
+                Log.w(TAG, "onFrame");
+                ImgByteDealFunction.setImgBytes(frame);
 
             }
+
+
+
         };
 
     }
@@ -153,7 +149,7 @@ public class IRUVC {
     public List<UsbDevice> getUsbDeviceList() {
         List<DeviceFilter> deviceFilters = DeviceFilter
                 .getDeviceFilters(context, com.infisense.iruvc.libusbcamera.R.xml.device_filter);
-        if (mUSBMonitor == null || deviceFilters == null)
+        if (mUSBMonitor == null || deviceFilters == null )
 //            throw new NullPointerException("mUSBMonitor ="+mUSBMonitor+"deviceFilters=;"+deviceFilters);
             return null;
         // matching all of filter devices
@@ -190,29 +186,6 @@ public class IRUVC {
 
     }
 
-//    public void stop()
-//    {
-//        if (uvcCamera != null) {
-//            if(uvcCamera.getOpenStatus()){
-//                try {
-//                    uvcCamera.stopPreview();
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//            final UVCCamera camera;
-//            camera = uvcCamera;
-//            uvcCamera = null;
-//            try {
-//                Thread.sleep(200);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            camera.stopPreview();
-//            camera.destroy();
-//        }
-//    }
 
     public void stop()
     {
@@ -229,3 +202,4 @@ public class IRUVC {
     }
 
 }
+
