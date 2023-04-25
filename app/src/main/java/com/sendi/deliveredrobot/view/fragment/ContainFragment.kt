@@ -36,15 +36,15 @@ class ContainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        binding.imageView.apply {
-            Glide.with(this).asGif().load(R.raw.contain).into(this)
-        }
+//        binding.imageView.apply {
+//            Glide.with(this).asGif().load(R.raw.contain).into(this)
+//        }
         binding.motionLayoutContain.apply {
             transitionToState(R.id.state2)
         }
-        binding.bottomAlarmTextView.apply {
-            bottomAlarmText1 = resources.getString(R.string.please_do_not_crowd_me)
-        }
+//        binding.bottomAlarmTextView.apply {
+//            bottomAlarmText1 = resources.getString(R.string.please_do_not_crowd_me)
+//        }
 //        val excuseMe = getString(R.string.excuse_me)
 //        timer.schedule(object :TimerTask(){
 //            override fun run() {

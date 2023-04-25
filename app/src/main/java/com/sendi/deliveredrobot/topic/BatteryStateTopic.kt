@@ -124,7 +124,7 @@ object BatteryStateTopic {
                         // 如果处于无任务待机
                         RobotStatus.lowPowerBacking = true
                         ToastUtil.show(MyApplication.instance!!.getString(R.string.start_low_power_auto_charging))
-                        val billList = RemoteOrderPutBillFactory.createBill(taskModel = TaskModel())
+                        val billList = GoBackTaskBillFactory.createBill(taskModel = TaskModel())
                         BillManager.addAllAtIndex(billList)
                         BillManager.currentBill()?.executeNextTask()
                         return@launch

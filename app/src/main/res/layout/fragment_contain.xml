@@ -11,29 +11,22 @@
         android:id="@+id/motionLayoutContain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/img_goback"
         app:layoutDescription="@xml/fragment_contain_scene"
         tools:context=".view.fragment.IntoLiftFragment">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="488dp"
+            android:layout_height="@dimen/dp_400"
+            android:src="@drawable/contain"
             android:contentDescription="@string/image_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.sendi.deliveredrobot.view.widget.BottomAlarmTextView
-            android:id="@+id/bottomAlarmTextView"
-            android:layout_width="match_parent"
-            android:layout_height="179dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>
