@@ -17,13 +17,14 @@ object RobotStatus {
     var SERIAL_NUMBER = "" //序列号
     const val CALL_LIFT_AND_MOVE_TIMES = 10 //重试电梯次数阈值
     const val RETRY_DOCK_MAX_TIMES = 3
-    const val LOW_POWER_VALUE = 10 // 低电量阈值
+    const val LOW_POWER_VALUE = 15 // 低电量阈值
     const val SHUT_DOWN_VALUE = 5 // 低电量阈值
     var callLiftAndMoveTimes = 0       //重试电梯次数
     var callingLift = false //正在呼叫电梯
     var inLiftFlow = false //正在电梯流程内（start: callLift, end: outLift)
     var mqttConnected = false //mqtt连接状态
     var retryDockTimes = 0      //重试自主充电次数
+    var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
 
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点

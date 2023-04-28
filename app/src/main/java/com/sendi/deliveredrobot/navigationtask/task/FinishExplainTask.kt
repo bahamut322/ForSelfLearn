@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.utils.LogUtil
 
 /**
  * @Author Swn
@@ -21,8 +22,14 @@ class FinishExplainTask (var status:Int = 1, taskModel: TaskModel) : AbstractTas
         }
     }
 
+    override fun reportTaskDto() {
+        if (BillManager.billList().size<=1) {
+            super.reportTaskDto()
+        }
+    }
+
     override fun configEnum(): TaskStageEnum {
-        return TaskStageEnum.FinishGuideTask
+            return TaskStageEnum.FinishExplainTask
     }
 
     override suspend fun execute() {

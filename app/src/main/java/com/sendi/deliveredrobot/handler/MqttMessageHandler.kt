@@ -221,9 +221,7 @@ object MqttMessageHandler {
                             //路线背景图
                             if (route.backgroundPic != "") {
                                 routeDB.backgroundPic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (route.backgroundPic!!).substring(
-                                        (route.backgroundPic).lastIndexOf("/") + 1
-                                    ) //路线背景图
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch" //路线背景图
                                 Thread {
                                         downloadFile(
                                             Universal.pathDownload + route.backgroundPic,
@@ -377,11 +375,7 @@ object MqttMessageHandler {
                                         //图片路径
                                         if (point.touchScreenConfig.argPic.pics != null) {
                                             touchScreenConfigDB.touch_imageFile =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (point.touchScreenConfig.argPic.pics).substring(
-                                                    (point.touchScreenConfig.argPic.pics).lastIndexOf(
-                                                        "/"
-                                                    ) + 1
-                                                )
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch"
                                             val touchPicFile =
                                                 UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
                                             Thread {

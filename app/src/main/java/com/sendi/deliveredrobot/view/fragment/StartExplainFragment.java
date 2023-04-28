@@ -37,20 +37,25 @@ import com.sendi.deliveredrobot.databinding.FragmentStartExplantionBinding;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.ReportDataHelper;
 import com.sendi.deliveredrobot.model.ExplantionNameModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
+import com.sendi.deliveredrobot.service.TaskStageEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.ChangingOverDialog;
 
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
 import com.sendi.deliveredrobot.view.widget.Stat;
+import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -59,7 +64,7 @@ import java.util.Objects;
  * @author swn
  * @describe 开始智能讲解
  */
-public class StartExplantionFragment extends Fragment {
+public class StartExplainFragment extends Fragment {
 
     FragmentStartExplantionBinding binding;
     NavController controller;
@@ -67,13 +72,14 @@ public class StartExplantionFragment extends Fragment {
     private int centerToTopDistance; //RecyclerView高度的一半 ,也就是控件中间位置到顶部的距离 ，
     private final int childViewHalfCount = 0; //当前RecyclerView一半最多可以存在几个Item
     private StartExplanViewModel viewModel;
+    private BaseViewModel baseViewModel;
     private ArrayList<MyResultModel> mDatas = new ArrayList<>();
     private TaskQueues<String> taskQueue;
     private ProcessClickDialog processClickDialog;
     private ChangingOverDialog changingOverDialog;
-    private int beforePage;
+    private int beforePage = 0;
     boolean nextTaskToDo = true;
-
+    Handler handler;
     String targetName = "";
 
     private ExplantionNameModel explantionNameModel;
@@ -90,7 +96,6 @@ public class StartExplantionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         LogUtil.INSTANCE.d("onCreate页面进入");
         explantionNameModel = new ExplantionNameModel();
-        viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
         Consumer<String> taskConsumer = task -> {
             // 执行任务的代码
             if (BuildConfig.IS_SPEAK) {
@@ -101,8 +106,7 @@ public class StartExplantionFragment extends Fragment {
         // 创建TaskQueue实例
         taskQueue = new TaskQueues<>(taskConsumer);
         // 创建任务Consumer
-        mDatas = new ArrayList<>();
-        mDatas = viewModel.inForListData();
+
     }
 
     @Override
@@ -116,12 +120,12 @@ public class StartExplantionFragment extends Fragment {
         Stat.setOnChangeListener(() -> {
             if (Stat.getFlage() == 2) {
                 //暂停
-//                taskQueue.pause();
+                taskQueue.pause();
                 MediaPlayerHelper.pause();
                 BaiduTTSHelper.getInstance().pause();
             } else if (Stat.getFlage() == 3) {
                 //继续
-//                taskQueue.resume();
+                taskQueue.resume();
                 MediaPlayerHelper.resume();
                 BaiduTTSHelper.getInstance().resume();
             }
@@ -134,14 +138,18 @@ public class StartExplantionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.setData(explantionNameModel);
+        handler = new Handler();
         controller = Navigation.findNavController(view);
         nextTaskToDo = true;
         LogUtil.INSTANCE.d("onViewCreated进入讲解页面");
         status();
+        baseViewModel = new ViewModelProvider(this).get(BaseViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
+        mDatas = new ArrayList<>();
+        mDatas = viewModel.inForListData();
         RobotStatus.INSTANCE.getSpeakContinue().observe(getViewLifecycleOwner(), integer -> {
             if (integer == 1) {
                 Log.d("", "onViewCreated: 讲解打断，重新计算");
-                taskQueue.clear();
                 BaiduTTSHelper.getInstance().stop();
                 splitString(RobotStatus.INSTANCE.getSpeakNumber().getValue(), 45);
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
@@ -210,10 +218,10 @@ public class StartExplantionFragment extends Fragment {
                     Log.d("TAG", "onClick: " + i);
                     itemTarget = i;
                     scrollToCenter(i);
-                    explanGonningSpeak(mDatas, i,false);
                     viewModel.secondScreenModel(i, mDatas);
                     if (Universal.lastValue == null || !Universal.lastValue.equals(s)) { // 检查新值和上一个值是否相同
-                        explanGonningSpeak(mDatas, i,true);
+                        explanGonningSpeak(mDatas, i, true);
+                        beforePage = 0;
                         Universal.lastValue = s; // 更新上一个值为新值
                     }
                 }
@@ -330,18 +338,45 @@ public class StartExplantionFragment extends Fragment {
                 binding.parentCon.setBackgroundResource(0);
                 binding.goingLin.setVisibility(View.VISIBLE);
                 binding.goingName.setText(mDatas.get(position).getName());
-                if (QuerySql.QueryBasic().getWhetherInterrupt()) {
-                    binding.parentCon.setClickable(true);
-                } else {
-                    binding.parentCon.setClickable(false);
-                }
+                binding.parentCon.setClickable(QuerySql.QueryBasic().getWhetherInterrupt());
                 binding.contentCL.setVisibility(View.GONE);
                 //带光晕的背景图
-                Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.startImg);
+                Glide.with(getContext()).load(BaseViewModel.getFilesAllName(mDatas.get(position).getTouch_imagefile()).get(0)).into(binding.startImg);
                 //帧动画
                 vh.tvTopLine.setImageResource(R.drawable.anim_login_start_loading);
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
+                if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "")) {
+                    RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
+                        if (integer1 == 1 && taskQueue.isCompleted()) {
+                            Log.d("TAG", "是否结束");
+                            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, viewModel.taskDto());
+                            arrayToDo(mDatas, position);
+
+                        }
+                    });
+                }
+                if (!Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
+                    MediaPlayerHelper.setOnProgressListener((currentPosition, totalDuration) -> {
+                        LogUtil.INSTANCE.i("currentPosition : " + currentPosition + " totalDuration :" + totalDuration);
+                        new Handler(Looper.getMainLooper()).post(() ->
+                                RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
+                                    if (currentPosition >= totalDuration && integer == 1) {
+                                        LogUtil.INSTANCE.i("到点并且播放完成");
+                                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, viewModel.taskDto());
+                                        arrayToDo(mDatas, position);
+                                    }
+                                }));
+                    });
+                    if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "") && !Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
+//                    Universal.Model = "讲解";
+                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
+                            if (integer == 1) {
+                                arrayToDo(mDatas, position);
+                            }
+                        });
+                    }
+                }
 
             } else {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
@@ -382,7 +417,7 @@ public class StartExplantionFragment extends Fragment {
 
     public List<String> splitString(String input, int length) {
         List<String> result = new ArrayList<>();
-//        taskQueue.clear();
+        taskQueue.clear();
         int startIndex = 0;
         while (startIndex < input.length()) {
             int endIndex = startIndex + length;
@@ -402,114 +437,97 @@ public class StartExplantionFragment extends Fragment {
         return result;
     }
 
-    private void explanGonningSpeak(ArrayList<MyResultModel> mDatas, int position ,boolean tr) {
+    private void explanGonningSpeak(ArrayList<MyResultModel> mDatas, int position, boolean tr) {
         Log.d("TAG", "开始途径播报");
         //有讲解内容
         if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "")) {
             if (tr) {
                 splitString(mDatas.get(position).getWalktext(), 45);
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(mDatas.get(position).getWalktext());
+                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, viewModel.taskDto());
+//                new StartChannelBroadcastType(BillManager.INSTANCE.currentBill().currentTask().taskModel());
+
             }
-            //观察是否结束
-            RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
-                Log.d("TAG", "explanGonningSpeak: 是否结束");
-                if (integer1 == 1 && taskQueue.isCompleted()) {
-                    arrayToDo(mDatas, position);
-                }
-            });
         }
         //如果有mp3
         if (!Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
-//                    Universal.Model = "讲解";
             if (tr) {
                 MediaPlayerHelper.play(mDatas.get(position).getWalkvoice(), "1");
+                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, viewModel.taskDto());
+
             }
-            MediaPlayerHelper.setOnProgressListener((currentPosition, totalDuration) -> {
-                LogUtil.INSTANCE.i("currentPosition : " + currentPosition + " totalDuration :" + totalDuration);
-                new Handler(Looper.getMainLooper()).post(() ->
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
-                            if (currentPosition >= totalDuration && integer == 1) {
-                                LogUtil.INSTANCE.i("到点并且播放完成");
-                                arrayToDo(mDatas, position);
-                            }
-                        }));
-            });
-        }
-        //当讲解内容和mp3都为空
-        if (!Objects.equals(Objects.requireNonNull(mDatas).get(position).getWalktext(), "") && !Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
-//                    Universal.Model = "讲解";
-            RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
-                if (integer == 1) {
-                    arrayToDo(mDatas, position);
-                }
-            });
         }
     }
 
     private void arrayToDo(ArrayList<MyResultModel> mDatas, int position) {
+        LogUtil.INSTANCE.d("到点降级：" + Universal.selectMapPoint);
         if (Universal.selectMapPoint) {
             return;
         }
         nextTaskToDo = true;
-        if (BillManager.INSTANCE.billList().size() == 1) {
-            binding.nextTaskBtn.setVisibility(View.GONE);
-        }
         binding.parentCon.setClickable(false);
         binding.contentCL.setVisibility(View.VISIBLE);
         binding.parentCon.setBackgroundResource(R.drawable.bg);
         binding.statusTv.setText("正在讲解:");
-
         binding.nowExplanation.setText(mDatas.get(position).getName());
-        Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.pointImage);
+//        Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.pointImage);
+        getFilesAllName(mDatas.get(position).getTouch_imagefile());
+
         if (!Objects.equals(mDatas.get(position).getExplanationtext(), "")) {
+            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, viewModel.taskDto());
             binding.pointName.setText(mDatas.get(position).getName());
 //            Universal.Model = "讲解";
             LogUtil.INSTANCE.i("到点讲解文字:" + mDatas.get(position).getExplanationtext());
-            List<String> textEqually = viewModel.splitString(mDatas.get(position).getExplanationtext(), 130);
+            List<String> textEqually = viewModel.splitString(mDatas.get(position).getExplanationtext(), 135);
             //页数
             int page = textEqually.size();
             //显示第一页
-            beforePage = 0;
             binding.acceptstationTv.setText(textEqually.get(beforePage));
             //将第一页的内容再次等分成BaiduTTS可以朗读的范围
             Universal.taskNum = splitString(textEqually.get(beforePage), 45).size();
             RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                 Log.d("TAG", "当前进度: " + integer);
-                if (nextTaskToDo) {
+                if (nextTaskToDo && integer <= textEqually.get(beforePage).length()) {
                     binding.acceptstationTv.startPlayLine(
                             integer,
                             textEqually.get(beforePage).length(),
                             ((long) QuerySql.QueryBasic().getSpeechSpeed() * textEqually.get(beforePage).length()) * 1000);
-                }
-                if (beforePage < page && integer == textEqually.get(beforePage).length() && taskQueue.isCompleted()) {
-                    nextTaskToDo = false;
-                    RobotStatus.INSTANCE.getProgress().postValue(0);
-//                    taskQueue.clear();
+                } else if (integer > textEqually.get(beforePage).length()) {
                     Universal.progress = 0;
-                    Universal.taskNum = 0;
-                    BaiduTTSHelper.getInstance().stop();
+                }
+                if (integer == textEqually.get(beforePage).length() && taskQueue.isCompleted()) {
+                    Log.i("TAG", "页数, progress：" + beforePage + ";进度:" + integer + "当前进度：" + Universal.progress);
+                    nextTaskToDo = false;
                     beforePage++;
-                    if (beforePage < page) {
+                    if (beforePage <= page - 1) {
+                        RobotStatus.INSTANCE.getProgress().postValue(0);
+                        Universal.taskNum = 0;
+                        Universal.progress = 0;
+                        taskQueue.clear();
                         binding.acceptstationTv.stopPlay();
                         LogUtil.INSTANCE.d("当前在多少页: " + beforePage);
                         binding.acceptstationTv.setText(textEqually.get(beforePage));
-//                        taskQueue.clear();
                         Universal.taskNum = splitString(textEqually.get(beforePage), 45).size();
                         nextTaskToDo = true;
+                    } else if (beforePage > page - 1 && taskQueue.isCompleted()) {
+                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, viewModel.taskDto());
+                        Log.d("TAG", "arrayToDo: 进入倒计时");
+                        viewModel.getCountDownTimer().start();
+                        taskQueue.clear();
+                        beforePage = 0;
+                        Universal.progress = 0;
                     }
-                } else if (beforePage >= page) {
-                    viewModel.getCountDownTimer().start();
-                    taskQueue.clear();
                 }
             });
 
         } else if (!Objects.equals(mDatas.get(position).getExplanationvoice(), "")) {
-//            Universal.Model = "讲解";
+            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, viewModel.taskDto());
             LogUtil.INSTANCE.i("到点讲解音频路径:" + mDatas.get(position).getExplanationvoice());
             MediaPlayerHelper.play(mDatas.get(position).getExplanationvoice(), "1");
             MediaPlayerHelper.setOnProgressListener((currentPosition, totalDuration) -> {
                 if (currentPosition >= totalDuration) {
                     viewModel.getCountDownTimer().start();
+                    ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, viewModel.taskDto());
                 }
             });
 //           });
@@ -565,10 +583,11 @@ public class StartExplantionFragment extends Fragment {
             changingOverDialog.Sure.setOnClickListener(v -> {
                 Universal.taskNum = 0;
                 Universal.progress = 0;
+                taskQueue.clear();
                 BaiduTTSHelper.getInstance().stop();
                 binding.acceptstationTv.stopPlay();
-                changingOverDialog.dismiss();
                 viewModel.recombine(viewModel.inForListData().get(position).getName());
+                changingOverDialog.dismiss();
             });
             changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
         });
@@ -585,4 +604,34 @@ public class StartExplantionFragment extends Fragment {
         super.onDestroy();
     }
 
+    public void getFilesAllName(String path) {
+        File file = new File(path);
+        binding.pointImage.removeAllViews();
+        binding.pointImage.initView();
+        if (file.isFile()) {
+            // This is a file
+            List<Advance> fileList = new ArrayList<>();
+            if (BaseViewModel.checkIsImageFile(file.getPath())) {
+                fileList.add(new Advance(file.getPath(), "2")); // image
+            } else {
+                fileList.add(new Advance(file.getPath(), "1")); // video
+            }
+            binding.pointImage.setData(fileList);
+        } else if (file.isDirectory()) {
+            // This is a directory
+            File[] files = file.listFiles();
+            if (files != null) {
+                List<Advance> fileList = new ArrayList<>();
+                for (File value : files) {
+                    if (BaseViewModel.checkIsImageFile(value.getPath())) {
+                        fileList.add(new Advance(value.getPath(), "2")); // image
+                    } else {
+                        fileList.add(new Advance(value.getPath(), "1")); // video
+                    }
+                }
+                binding.pointImage.setData(fileList);
+
+            }
+        }
+    }
 }

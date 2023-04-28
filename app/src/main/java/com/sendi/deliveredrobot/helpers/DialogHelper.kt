@@ -11,9 +11,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
+import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.topic.BatteryStateTopic
 import com.sendi.deliveredrobot.view.widget.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -44,8 +48,9 @@ class DialogHelper {
         lateinit var dockFailDialog: Dialog
         lateinit var pullOutAdapterDialog: Dialog
         lateinit var exceptionWaitForHelpDialog: Dialog
-        lateinit var chargingDialog:Dialog
-        lateinit var loadingDialog:Dialog
+        lateinit var chargingDialog: Dialog
+        lateinit var loadingDialog: Dialog
+        lateinit var lowPowerGoBack : Dialog
         var myCustomPopupWin: MyCustomPopupWin? = null
 
         /**
@@ -60,15 +65,22 @@ class DialogHelper {
             dockFailDialog = DockFailDialog(activity)
             pullOutAdapterDialog = PullOutAdapterDialog(activity)
             exceptionWaitForHelpDialog = ExceptionWaitForHelpDialog(activity, needBlur = false)
-            loadingDialog = LoadingDialog(activity,R.style.simpleDialogStyle)
+            loadingDialog = LoadingDialog(activity, R.style.simpleDialogStyle)
+            lowPowerGoBack = LowPowerDialog(activity,R.style.simpleDialogStyle)
         }
 
         /**
          * 初始化-自检提示Dialog
          */
         @SuppressLint("InflateParams")
-        fun selfCheckDialog(title:String,content:String,errorCode:String,enableCloseBtn:Boolean,enableConfirmBtn:Boolean,
-                            dialogListener: DialogListener?): Dialog {
+        fun selfCheckDialog(
+            title: String,
+            content: String,
+            errorCode: String,
+            enableCloseBtn: Boolean,
+            enableConfirmBtn: Boolean,
+            dialogListener: DialogListener?
+        ): Dialog {
             val mWindowWidth: Int
             val mWindowHeight: Int
             val dialog =
@@ -77,28 +89,28 @@ class DialogHelper {
                 .inflate(R.layout.dialog_robot_self_check_hint, null)
             val displayMetrics = MyApplication.instance!!.resources.displayMetrics
             dialogView.findViewById<ImageView>(R.id.imageViewClose).apply {
-                if(enableCloseBtn){
+                if (enableCloseBtn) {
                     visibility = View.VISIBLE
                     isClickable = true
-                }else{
+                } else {
                     visibility = View.GONE
                 }
                 setOnClickListener {
-                    dialogListener ?.cancel()
+                    dialogListener?.cancel()
                     dialog.dismiss()
                 }
             }
 
             dialogView.findViewById<Button>(R.id.confirm_btn).apply {
-                if(enableConfirmBtn){
+                if (enableConfirmBtn) {
                     visibility = View.VISIBLE
                     isClickable = true
-                }else{
+                } else {
                     visibility = View.GONE
                 }
                 setOnClickListener {
                     dialog.dismiss()
-                    dialogListener ?.confirm()
+                    dialogListener?.confirm()
                 }
             }
 
@@ -110,9 +122,9 @@ class DialogHelper {
             }
 
             dialogView.findViewById<TextView>(R.id.error_code_tv).apply {
-                if(errorCode.equals("")){
+                if (errorCode.equals("")) {
                     visibility = View.GONE
-                }else{
+                } else {
                     text = String.format("错误编码：%1\$s", errorCode)
                 }
             }
@@ -189,10 +201,32 @@ class DialogHelper {
             }
         }
 
-        fun getSendFailDialog(message: String,activity: Activity,sendFailListener: SendFailDialog.SendFailListener): Dialog{
-            return SendFailDialog(message,activity, sendFailListener = sendFailListener)
+        fun getSendFailDialog(
+            message: String,
+            activity: Activity,
+            sendFailListener: SendFailDialog.SendFailListener
+        ): Dialog {
+            return SendFailDialog(message, activity, sendFailListener = sendFailListener)
         }
+
+//        fun lowPowerGoBack() :Dialog{
+//            return LowPowerDialog(MainActivity.instance, lowPowerDialogListener = object :
+//                LowPowerDialog.LowPowerDialogListener {
+//                override fun timeUp(dialog: LowPowerDialog) {
+//                    dialog.dismiss()
+//                    MainScope().launch {
+//                        ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+//                    }
+//
+//                }
+//                override fun buttonPress(dialog: LowPowerDialog) {
+//                    dialog.dismiss()
+//                    MainScope().launch {
+//                        ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+//                    }
+//                }
+//            })
+//        }
+
     }
-
-
 }

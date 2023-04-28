@@ -7,10 +7,21 @@ package com.sendi.deliveredrobot.service;
  * @since 2021-11-09
  */
 public enum TaskStageEnum {
-    StartExplaining("开始讲解的",0),
     ALLStartTask("任务开始",0),
     FinishGuideTask("引领结束",1),
     FinishSendTask("送物结束",1),
+    /**
+     * 讲解
+     */
+    FinishExplainTask("讲解结束",1),
+    StartExplaining("开始讲解",70),
+    GoExplainPoint("前往讲解点中",71),
+    StartChannelBroadcast("开始途径播报",72),
+    FinishChannelBroadcast("途径播报完成",73),
+    ArrayExplainPoint("到达讲解点",74),
+    StartArrayBroadcast("开始到点播报",75),
+    FinishArrayBroadcast("到点播报完成",76),
+    InterruptExplain("中断讲解",77),
     AllFinishTask("全部任务结束",10),
     AllFinishSendTask("全部送物结束",2),
     AllFinishGuideTask("全部引领结束",3),
@@ -50,8 +61,10 @@ public enum TaskStageEnum {
     PreLoadMapTask("预加载地图", 39),
     WaitForResume("等待恢复",40),
     Error("状态异常", -1),
-    Idle("空闲",-2);
 
+    GoSummoningPoint("去往召唤点",60),
+    ArraySummoningPoint("到达召唤点",61),
+    Idle("空闲",-2);
 
     private final String name;
 

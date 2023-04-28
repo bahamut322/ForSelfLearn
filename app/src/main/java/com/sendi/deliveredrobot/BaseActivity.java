@@ -306,7 +306,7 @@ public class BaseActivity extends AppCompatActivity {
             };
 
 
-    private void getFilesAllName(String path) {
+    public void getFilesAllName(String path) {
         File file = new File(path);
         if (mPresentation!=null) {
             advanceView.removeAllViews();

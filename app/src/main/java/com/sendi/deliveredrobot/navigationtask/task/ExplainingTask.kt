@@ -24,7 +24,7 @@ class ExplainingTask (
 ) : AbstractTask(taskModel) {
 
     override fun configEnum(): TaskStageEnum {
-        return TaskStageEnum.GuidingTask
+        return TaskStageEnum.GoExplainPoint
     }
 
     override suspend fun execute() {

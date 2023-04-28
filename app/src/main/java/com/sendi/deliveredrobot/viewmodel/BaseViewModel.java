@@ -2,6 +2,10 @@ package com.sendi.deliveredrobot.viewmodel;
 
 import androidx.lifecycle.ViewModel;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class BaseViewModel extends ViewModel {
     //更具字符串长度添加换行符
     public String getLength(String string) {
@@ -46,5 +50,21 @@ public class BaseViewModel extends ViewModel {
                 || fileEnd.equals("jpeg") || fileEnd.equals("bmp") || fileEnd.equals("JPG");
         return isImageFile;
     }
+
+    public static List<String> getFilesAllName(String path){
+        //传入指定文件夹的路径
+        File file = new File(path);
+        File[] files = file.listFiles();
+        List<String> imagePaths = new ArrayList<>();
+        for(int i = 0; i < files.length; i++){
+            if(checkIsImageFile(files[i].getPath())){
+                imagePaths.add(files[i].getPath());
+            }
+
+        }
+        return imagePaths;
+    }
+
+
 
 }

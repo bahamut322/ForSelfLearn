@@ -20,7 +20,7 @@ import java.util.*
 class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
     init {
         setEndTarget(taskModel?.location?.pointName ?: "")
-        setTaskId(TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.GUIDING))
+        setTaskId(TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.EXPLAIN))
         floorName = taskModel?.location?.floorName?:""
         val tempList = createTaskQueue(taskModel)
         taskQueue.addAll(tempList)

@@ -60,7 +60,8 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
 //                            remoteOrderModel = taskModel!!.remoteOrderModel!!,
 //                            type = type
 //                        )
-                        val tempList = RemoteOrderSendBillFactory.createBill(TaskModel(remoteOrderModel = taskModel?.remoteOrderModel), type = type)
+                        val tempList = RemoteOrderSendBillFactory.createBill(TaskModel(
+                            remoteOrderModel = taskModel?.remoteOrderModel), type = type)
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {
@@ -80,7 +81,8 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
 //                            remoteOrderModel = taskModel!!.remoteOrderModel!!,
 //                            type = type
 //                        )
-                        val tempList = RemoteOrderSendBillFactory.createBill(TaskModel(remoteOrderModel = taskModel?.remoteOrderModel), type = type)
+                        val tempList = RemoteOrderSendBillFactory.createBill(TaskModel(
+                            remoteOrderModel = taskModel?.remoteOrderModel), type = type)
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {

@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
-import com.sendi.deliveredrobot.TYPE_EXPLAN
+import com.sendi.deliveredrobot.TYPE_GUIDE
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -25,17 +26,21 @@ class StartExplainTask(taskModel: TaskModel) : AbstractTask(taskModel)  {
     }
 
     override fun reportTaskDto() {
-        ReportDataHelper.reportTaskStartDto(
-            TYPE_EXPLAN, this@StartExplainTask.taskModel?:TaskModel()
-        )
+        if (Universal.twice) {
+            ReportDataHelper.reportTaskStartDto(
+                TYPE_GUIDE, this@StartExplainTask.taskModel ?: TaskModel()
+            )
+            Universal.twice = false
+        }
+
     }
 
     override fun configEnum(): TaskStageEnum {
-        return TaskStageEnum.StartExplaining
+        return TaskStageEnum.ALLStartTask
     }
 
     override suspend fun execute() {
-        RobotStatus.currentStatus = TYPE_EXPLAN
+        RobotStatus.currentStatus = TYPE_GUIDE
         IdleGateDataHelper.reportIdleGateCount()
         withContext(Dispatchers.Main){
             RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")

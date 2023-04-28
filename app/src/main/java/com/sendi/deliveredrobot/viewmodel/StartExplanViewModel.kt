@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.viewmodel
 
-import android.os.CountDownTimer
 import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -16,7 +15,6 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
-import com.sendi.deliveredrobot.navigationtask.ITaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.SecondModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
@@ -24,8 +22,8 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
+import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.UpdateReturn
-import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.LogUtil.i
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.*
@@ -67,7 +65,7 @@ class StartExplanViewModel : ViewModel() {
         for (i in mDatas!!.indices) {
             if (mDatas!![i]!!.name == selectName) {
                 Log.d("TAG", "onClick: $i")
-                position = i;
+                position = i
                 break
             }
         }
@@ -148,13 +146,7 @@ class StartExplanViewModel : ViewModel() {
         }
     }
 
-    fun taskName(): String {
-        return BillManager.findNextBill()!!.currentTask()!!.taskModel!!.location!!.name!!
-    }
 
-    fun taskList(): LinkedList<ITaskBill> {
-        return BillManager.billList()
-    }
 
     /**
      * 将数字转换为汉字
@@ -277,10 +269,10 @@ class StartExplanViewModel : ViewModel() {
     //下一个任务
     fun nextTask(array: Boolean) {
         currentBill()?.executeNextTask()
+        Universal.progress = 0
+        Universal.taskNum = 0
+        RobotStatus.speakNumber.postValue(null)
         if (!array) {
-            Universal.progress = 0
-            Universal.taskNum = 0
-            RobotStatus.speakNumber.postValue(null)
             UpdateReturn().stop()
         }
         TaskNext.setToDo("0")
@@ -306,7 +298,9 @@ class StartExplanViewModel : ViewModel() {
         sdScreenStatus!!.postValue(2)
         i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
-
+    fun taskDto(): TaskDto {
+        return TaskDto().apply { status = 1 }
+    }
     fun splitString(input: String, length: Int): List<String> {
         val result: MutableList<String> = ArrayList()
         var startIndex = 0

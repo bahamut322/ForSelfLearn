@@ -18,7 +18,6 @@ import com.google.android.material.tabs.TabLayout
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentChooseGuidePlaceBinding
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.PlaceModel

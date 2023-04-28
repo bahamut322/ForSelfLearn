@@ -1,12 +1,14 @@
 package com.sendi.deliveredrobot.topic
 
 import chassis_msgs.DockState
+import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.ros.dto.RosResult
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -32,11 +34,17 @@ object DockStateTopic {
                         if(BillManager.currentBill() != null && BillManager.currentBill()?.firstPeek() is BeginDockTask){
                             BillManager.currentBill()?.executeNextTask()
                         }
+                        //设置当前位置
+                        if(RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER && RobotStatus.batteryStateNumber.value == false){
+                            UpdateReturn().mapSetting(true)
+                            RobotStatus.batteryStateNumber.postValue(true)
+                        }
                         "充电中"
                     }
                     DockState.Outdocking -> {
                         //退出充电中
                         "退出充电中"
+
                     }
                     DockState.DockingTimeOut -> {
                         RobotStatus.docking = false
@@ -71,6 +79,7 @@ object DockStateTopic {
                     DockState.OutdockingOk -> {
                         //退出充电成功
                         BillManager.currentBill()?.executeNextTask()
+
                         "退出充电成功"
                     }
                     else -> ""

@@ -109,5 +109,6 @@ public class Universal {
     public static int taskNum = 0;
     public static String lastValue = null;
     public static boolean selectMapPoint = false;
+    public static boolean twice = false;
 }
 

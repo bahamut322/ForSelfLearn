@@ -10,14 +10,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentDebuggingBinding
+import com.sendi.deliveredrobot.room.entity.MapConfig
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.DebuggingViewModel
+import kotlin.concurrent.thread
 
 
 /**
@@ -32,8 +35,18 @@ class DebuggingFragment : Fragment() {
     private lateinit var binding: FragmentDebuggingBinding
     var controller: NavController? = null
 
-    private val tabName = arrayOf("标签设置", "激光地图设置", "路径设置", "目标点设置", "巡航定点设置", "单行道设置", "虚拟墙设置", "限速区设置", "调试")
-    private  var fragmentList = ArrayList<Fragment>()
+    private val tabName = arrayOf(
+        "标签设置",
+        "激光地图设置",
+        "路径设置",
+        "目标点设置",
+        "巡航定点设置",
+        "单行道设置",
+        "虚拟墙设置",
+        "限速区设置",
+        "调试"
+    )
+    private var fragmentList = ArrayList<Fragment>()
     val viewModel by viewModels<DebuggingViewModel>({ requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,9 +69,9 @@ class DebuggingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         controller = Navigation.findNavController(view)
-        if(!isNavigationViewInit){//初始化过视图则不再进行view和data初始化
+        if (!isNavigationViewInit) {//初始化过视图则不再进行view和data初始化
             isNavigationViewInit = true
-        }else{
+        } else {
             binding.llayoutLogin.visibility = View.GONE
         }
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +95,7 @@ class DebuggingFragment : Fragment() {
         fragmentList.add(AutoCruiseFragment())
 
         viewModel.currentSettingPosition.observe(viewLifecycleOwner) {
-            if(it < fragmentList.size){
+            if (it < fragmentList.size) {
                 val bt = parentFragmentManager.beginTransaction()
                 bt.replace(R.id.flayout_container, fragmentList[it])
                 bt.commit()
@@ -90,17 +103,17 @@ class DebuggingFragment : Fragment() {
         }
     }
 
-    fun initView(view: View){
+    fun initView(view: View) {
         binding.btnLogin.apply {
             setOnClickListener {
                 var accountStr = binding.edtAccount.getText().toString().trim { it <= ' ' }
                 var passwordStr = binding.edtPwd.getText().toString().trim { it <= ' ' }
-                if (accountStr == "" ||  passwordStr == "") {
+                if (accountStr == "" || passwordStr == "") {
                     ToastUtil.show(resources.getString(R.string.str_debug_login_input_tip))
-                }else{
-                    if (accountStr.equals("admin") && passwordStr.equals("sendirobot")){
+                } else {
+                    if (accountStr.equals("admin") && passwordStr.equals("sendirobot")) {
                         binding.llayoutLogin.visibility = View.GONE
-                    }else{
+                    } else {
                         ToastUtil.show(resources.getString(R.string.str_debug_login_error_tip))
                     }
                 }
@@ -116,6 +129,7 @@ class DebuggingFragment : Fragment() {
             setOnClickListener {
                 UpdateReturn().method()
                 controller!!.navigate(R.id.action_debuggingFragment_to_settingHomeFragment)
+
             }
         }
         binding.tablayoutDebug.apply {
@@ -125,7 +139,7 @@ class DebuggingFragment : Fragment() {
         }
         val debugItems =
             MyApplication.instance!!.resources!!.getStringArray(R.array.debug_items)
-        binding.tablayoutDebug.initTab(debugItems,viewModel.currentSettingPosition.value!!)
+        binding.tablayoutDebug.initTab(debugItems, viewModel.currentSettingPosition.value!!)
     }
 
     override fun onDestroy() {

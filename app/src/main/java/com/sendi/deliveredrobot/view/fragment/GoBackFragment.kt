@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,19 +8,25 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.findNavController
+import chassis_msgs.SafeState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
-import com.sendi.deliveredrobot.helpers.CommonHelper
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
-import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.TaskQueue
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.view.widget.LowPowerDialog
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
 import java.util.*
@@ -32,7 +37,6 @@ class GoBackFragment : Fragment() {
     private var timer: Timer? = null
     private var timer2:Timer? = null
     private lateinit var seconds: MutableLiveData<Int>
-    private lateinit var gifGoBack:RequestBuilder<Drawable>
     private lateinit var mainScope: CoroutineScope
     private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
 
@@ -49,13 +53,6 @@ class GoBackFragment : Fragment() {
                         virtualTaskExecute(5, "GoBackFragment语音前")
                         if (CommonHelper.atChargePointFloor()) {
                             //如果是在充电桩的楼层
-                            if (BillManager.currentBill()?.taskId()?.startsWith("D") == true || BillManager.currentBill()?.taskId()?.startsWith(
-                                    "wx"
-                                ) == true
-                            )
-                            if (BillManager.currentBill()?.taskId()?.startsWith("G") == true) {
-
-                            }
                             timer2?.cancel()
                             timer2?.purge()
                             timer2 = Timer()
@@ -63,13 +60,11 @@ class GoBackFragment : Fragment() {
                         }
                     }
                 }
-                binding.imageViewGoBack.isEnabled = true
                 seconds.value = 30
                 LogUtil.i("current:state2")
             }
             1 -> {
                 IdleGateDataHelper.reportIdleGateCount(0)
-//                resetButton()
                 timer?.cancel()
                 timer2?.cancel()
                 timer2?.purge()
@@ -91,10 +86,6 @@ class GoBackFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        gifGoBack =  Glide.with(this).asDrawable().load(R.drawable.img_goback)
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -113,6 +104,12 @@ class GoBackFragment : Fragment() {
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
+//        if (RobotStatus.lowPowerBacking) {
+//            MainScope().launch {
+//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+//            }
+//            DialogHelper.lowPowerGoBack()
+//        }
     }
 
     /**
@@ -125,7 +122,7 @@ class GoBackFragment : Fragment() {
         timer2!!.schedule(object : TimerTask() {
             override fun run() {
                 mainScope.launch(Dispatchers.IO) {
-                    if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return@launch
+                    if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return@launch
                     SpeakHelper.speakWithoutStop(welcome1)
                     SpeakHelper.speakWithoutStop(welcome2)
                     SpeakHelper.speakWithoutStop(welcome3)

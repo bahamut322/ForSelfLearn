@@ -8,9 +8,6 @@ import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
-import com.sendi.deliveredrobot.navigationtask.task.AdvanceSendingTask
-import com.sendi.deliveredrobot.navigationtask.task.GoBackTask
-import com.sendi.deliveredrobot.navigationtask.task.SendingTask
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -59,7 +56,7 @@ object BatteryStateTopic {
                         RobotStatus.currentStatus = TYPE_CHARGING
                         if (!RobotStatus.docking) {
                             //非自动回充状态下
-                            if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
+                            if ((RobotStatus.batteryPower.value!! * 100).toInt() <= RobotStatus.LOW_POWER_VALUE) {
                                 if ("chargeFragment" != navController.currentDestination?.label ?: "") {
                                     MyApplication.instance!!.sendBroadcast(
                                         Intent().apply {
@@ -76,6 +73,7 @@ object BatteryStateTopic {
                     } else {
                         // 切换到非充电状态
                         LogUtil.i("退出充电")
+                        RobotStatus.batteryStateNumber.postValue(false)
                         withContext(Dispatchers.Main){
                             RobotStatus.chargeStatus.value = false
                         }
@@ -126,7 +124,7 @@ object BatteryStateTopic {
                         ToastUtil.show(MyApplication.instance!!.getString(R.string.start_low_power_auto_charging))
                         val billList = GoBackTaskBillFactory.createBill(taskModel = TaskModel())
                         BillManager.addAllAtIndex(billList)
-                        BillManager.currentBill()?.executeNextTask()
+                        DialogHelper.lowPowerGoBack.show()
                         return@launch
                     }
 
@@ -152,7 +150,7 @@ object BatteryStateTopic {
                             ToastUtil.show(MyApplication.instance!!.getString(R.string.start_low_power_auto_charging))
                             val billList = RemoteOrderPutBillFactory.createBill(taskModel = TaskModel())
                             BillManager.addAllAtIndex(billList)
-                            BillManager.currentBill()?.executeNextTask()
+                            DialogHelper.lowPowerGoBack.show()
                         }
                     }
                 }

@@ -1294,4 +1294,14 @@ object ROSHelper {
         }
         return createOneWayResponse
     }
+    fun setDispatchFloorId(id: Int) {
+        val clientParamSpeed = HashMap<String, Any>()
+        clientParamSpeed["name"] = "/navigation_base/sch_floor_id"
+        clientParamSpeed["value"] = "$id"
+        val speedClient = Client(ClientConstant.SET_PARAM, clientParamSpeed)
+        val rosResultSpeed = ClientManager.sendClientMsg(speedClient)
+        if (rosResultSpeed.isFlag) {
+            LogUtil.i("设置FloorID成功::id::$id")
+        }
+    }
 }

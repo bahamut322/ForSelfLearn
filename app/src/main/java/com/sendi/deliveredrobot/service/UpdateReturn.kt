@@ -9,9 +9,11 @@ import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.UploadMapHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.model.Map
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -20,6 +22,7 @@ import com.sendi.deliveredrobot.room.entity.SendFloor
 import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -89,13 +92,14 @@ class UpdateReturn {
 
                 val mapPoint: ArrayList<SendMapPoint> = ArrayList()
 
-                for (i in 0 until mapList.size ){
+                for (i in 0 until mapList.size) {
                     val mapId = debugDao.selectMapId(mapList[i])
 
-                    val query = queryAllMapPointsDao.queryAllMapsPoints().groupBy { it.name as String }
-                        .mapValues { (_, maps) ->
-                            maps.groupBy { it.floorName as String }
-                        }
+                    val query =
+                        queryAllMapPointsDao.queryAllMapsPoints().groupBy { it.name as String }
+                            .mapValues { (_, maps) ->
+                                maps.groupBy { it.floorName as String }
+                            }
                     var sendFloor: ArrayList<SendFloor> = ArrayList()
                     val iterator = query.iterator()
                     //解析query
@@ -106,16 +110,16 @@ class UpdateReturn {
                         while (iterator1.hasNext()) {
                             sendFloor = ArrayList()
                             val (key1, value1) = iterator1.next()
-                            val sendFloor1 = SendFloor(key1,value1)
+                            val sendFloor1 = SendFloor(key1, value1)
                             sendFloor.add(sendFloor1)
                         }
                         //添加数据
                         //查询地图修改的时间戳
                         val isExist = where("mapName = ?", key).count(MapRevise::class.java) > 0
-                        if (!isExist){
+                        if (!isExist) {
                             val sendMapPoint = SendMapPoint(0, key, sendFloor)
                             mapPoint.add(sendMapPoint)
-                        }else {
+                        } else {
                             val tipsList: List<MapRevise> = where(
                                 "mapName = ?", key
                             ).find(MapRevise::class.java)
@@ -133,29 +137,34 @@ class UpdateReturn {
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
                 jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
-                jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
-                CloudMqttService.publish(JSONObject.toJSONString(jsonObject),true)
+                jsonObject["routes"] =
+                    QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
+                CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
 
 
             }
         }
     }
-    fun resume(){
-        MainScope().launch(){
+
+    fun resume() {
+        MainScope().launch() {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
         }
     }
-    fun pause(){
-        MainScope().launch(){
+
+    fun pause() {
+        MainScope().launch() {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
         }
     }
-    fun stop(){
-        MainScope().launch(){
+
+    fun stop() {
+        MainScope().launch() {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
         }
     }
-    fun sendMapData(){
+
+    fun sendMapData() {
         MainScope().launch(Dispatchers.Default) {
             val rootMapList = queryAllMapPointsDao.queryRootMap()
             val maps = ArrayList<Map>()
@@ -184,9 +193,9 @@ class UpdateReturn {
                             Point(
                                 areaId = queryPointEntity.type ?: -1,
                                 pointName = queryPointEntity.pointName ?: "",
-                                x = "${queryPointEntity.x?:"0.0"}".toDouble(),
-                                y = "${queryPointEntity.y?:"0.0"}".toDouble(),
-                                w = "${queryPointEntity.w?:"0.0"}".toDouble()
+                                x = "${queryPointEntity.x ?: "0.0"}".toDouble(),
+                                y = "${queryPointEntity.y ?: "0.0"}".toDouble(),
+                                w = "${queryPointEntity.w ?: "0.0"}".toDouble()
                             )
                         )
                     }
@@ -208,13 +217,14 @@ class UpdateReturn {
             MqttService.publish(uploadMapDataModel.toString(), true)
         }
     }
+
     fun fileSize(fileName: String): Int {
         val file = File(fileName)
         val files = file.listFiles()
         return files.size
     }
 
-    fun mapSetting() {
+    fun mapSetting(batteryState:Boolean = false) {
         val mapSettingBoolean: Boolean
         DialogHelper.loadingDialog.show()
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
@@ -236,25 +246,46 @@ class UpdateReturn {
             }
             LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointIdList)}")
             //设置充电桩；默认查询到的第一个数据
-            if(pointIdList!=null) {
+            if (pointIdList != null) {
                 dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
+                RobotStatus.originalLocation = pointId?.get(0)!!
             }
-            val queryPoint =
-                dao.queryChargePoint()
-            RobotStatus.originalLocation = queryPoint
-            mapSettingBoolean = ROSHelper.setNavigationMap(
-                labelMapName = RobotStatus.bootLocation!!.subPath!!,
-                pathMapName = RobotStatus.bootLocation!!.routePath!!
-            )
-            if (mapSettingBoolean) {
-                LogUtil.d("mapSetting: 地图设置成功")
-                DialogHelper.loadingDialog.dismiss()
-            } else {
-                LogUtil.d("mapSetting: 地图设置失败")
-                DialogHelper.loadingDialog.dismiss()
+            if (batteryState) {
+                if (pointId != null) {
+                    var retryTime = 10  // 设置地图次数
+                    DialogHelper.loadingDialog.show()
+                    //切换地图
+                    var switchMapResult: Boolean
+                    do {
+                        switchMapResult = ROSHelper.setNavigationMap(
+                            pointId[0].subPath ?: "",
+                            pointId[0].routePath ?: ""
+                        )
+                        retryTime--
+                    } while (!switchMapResult && retryTime > 0)
+                    ROSHelper.setPoseClient(pointId[0])
+                    //查看切换锚点是否成功
+                    var result: Boolean
+                    do {
+                        result =
+                            ROSHelper.getParam("/finish_update_pose") == "1"
+                        if (!result) {
+//                        virtualTaskExecute(2, "设置页查看锚点")
+                            retryTime--
+                        }
+                    } while (!result && retryTime > 0)
+                    if (retryTime <= 0) {
+                        ToastUtil.show("设置地图失败")
+                    } else {
+                        LogUtil.i("finish_update_pose成功")
+                    }
+                    UploadMapHelper.uploadMap()
+                    DialogHelper.loadingDialog.dismiss()
+                }
             }
         }
     }
+
 
     fun assignment() {
         //机器人基础配置
@@ -289,31 +320,32 @@ class UpdateReturn {
      * 云平台返回的声音设置数字转为中文
      * @param Num 收到云平台音色配置的数据
      */
-    fun audioName(Num : Int): String {
+    fun audioName(Num: Int): String {
         var audioModel = ""
         //注：云平台下发的0代表女声，在BaiduTTS中1代表女生
-        if (Num == 0){
+        if (Num == 0) {
             audioModel = "女声"
-        }else if (Num == 2){
+        } else if (Num == 2) {
             audioModel = "男声"
-        }else if (Num == 3){
+        } else if (Num == 3) {
             audioModel = "童声"
         }
         return audioModel
     }
-    private fun getParam(speak:String): kotlin.collections.Map<String, String> {
+
+    private fun getParam(speak: String): kotlin.collections.Map<String, String> {
         return HashMap<String, String>().apply {
             this[SpeechSynthesizer.PARAM_SPEAKER] = "4"
             this[SpeechSynthesizer.PARAM_VOLUME] = "15"
             this[SpeechSynthesizer.PARAM_SPEED] = speak
-            this[SpeechSynthesizer.PARAM_PITCH] = "5"
+            this[SpeechSynthesizer.PARAM_PITCH] = "15"
         }
     }
 
     /**
      * BaiduTTS音色
      */
-    fun randomVoice(i: Int,speak: String) {
+    fun randomVoice(i: Int, speak: String) {
         val params = getParam(speak)
         if (i == 1) {
             BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_FEMALE)//女
@@ -336,6 +368,7 @@ class UpdateReturn {
             randomVoice(3, speed)
         }
     }
+
     /**
      * 将以逗号分隔的字符串转换为字符串数组；
      * 第二种方法：

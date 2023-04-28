@@ -63,7 +63,8 @@ object RemoteOrderHelper {
                     mainScope.launch {
                         mutex.withLock {
 //                        val result = TaskQueueFactory.createTask(remoteOrderModel)
-                            val billList = RemoteOrderPutBillFactory.createBill(taskModel = TaskModel(remoteOrderModel = remoteOrderModel))
+                            val billList = RemoteOrderPutBillFactory.createBill(taskModel = TaskModel(
+                                remoteOrderModel = remoteOrderModel))
                             val result = billList.isEmpty()
                             if(result){
                                 ToastUtil.show("创建远程任务失败，没有空闲仓体")

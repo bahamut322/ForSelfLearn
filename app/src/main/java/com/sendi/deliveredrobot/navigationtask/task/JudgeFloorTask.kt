@@ -43,7 +43,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = taskModel?.location,
                             endTarget = taskModel?.endTarget ?: "",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill
+                            bill = taskModel?.bill
                         )
                     )
                 )
@@ -62,7 +62,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                                     location = liftOutSide,
                                     endTarget = taskModel?.endTarget?:"",
                                     taskId = tempTaskId,
-                                    bill= taskModel?.bill
+                                    bill = taskModel?.bill
                                 ),
                                 R.id.guidingFragment
                             )
@@ -78,7 +78,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                                     },
                                     endTarget = taskModel?.endTarget?:"",
                                     taskId = tempTaskId,
-                                    bill= taskModel?.bill
+                                    bill = taskModel?.bill
                                 )
                             )
                         )
@@ -91,7 +91,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                                     location = liftOutSide,
                                     endTarget = taskModel?.endTarget?:"",
                                     taskId = tempTaskId,
-                                    bill= taskModel?.bill
+                                    bill = taskModel?.bill
                                 ),
                                 R.id.goBackFragment
                             )
@@ -106,7 +106,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = liftOutSide,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -116,7 +116,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                         location = liftOutSide,
                         endTarget = taskModel?.endTarget?:"",
                         taskId = tempTaskId,
-                        bill= taskModel?.bill,
+                        bill = taskModel?.bill,
                         elevator = needTransferResultModel.elevator
                     )
                 ))
@@ -127,7 +127,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = RobotStatus.currentLocation,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -138,7 +138,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = RobotStatus.currentLocation,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -149,7 +149,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = toLocation,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -161,7 +161,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = toLocation,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -173,7 +173,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = toLocation,
                             endTarget = taskModel?.endTarget?:"",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )
@@ -185,7 +185,7 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int) : AbstractTask
                             location = toLocation,
                             endTarget = taskModel?.endTarget ?: "",
                             taskId = tempTaskId,
-                            bill= taskModel?.bill,
+                            bill = taskModel?.bill,
                             elevator = needTransferResultModel.elevator
                         )
                     )

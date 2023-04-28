@@ -89,7 +89,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             }
         }
         previousProgress = progress; // 更新前一次的 progress
-
+        Log.i(TAG, "播放进度1, Universal.progress：" + Universal.progress + ";Universal.taskNum:" + Universal.taskNum);
         Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
         if (utteranceId.equals("explantion")) {
             progressSpeak = progress;
@@ -117,9 +117,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             if (progressSpeak != RobotStatus.INSTANCE.getSpeakNumber().getValue().length()) {
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
+            } else if (utteranceId.equals("explantion")) {
+                RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
             }
-        }else if (utteranceId.equals("explantion")) {
-            RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
         }
     }
 

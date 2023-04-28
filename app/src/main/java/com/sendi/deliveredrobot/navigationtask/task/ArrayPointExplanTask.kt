@@ -29,12 +29,12 @@ class ArrayPointExplanTask(var status: Int = 1, taskModel: TaskModel) : Abstract
     }
 
     override fun configEnum(): TaskStageEnum {
-        return TaskStageEnum.FinishGuideTask
+            return TaskStageEnum.ArrayExplainPoint
     }
 
     override suspend fun execute() {
-        RobotStatus.ArrayPointExplan.postValue(1)
         LogUtil.i("TODO 到达讲解点")
+        RobotStatus.ArrayPointExplan.postValue(1)
         TaskNext.setOnChangeListener {
             if (TaskNext.getToDo() == "1"){
                 LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")

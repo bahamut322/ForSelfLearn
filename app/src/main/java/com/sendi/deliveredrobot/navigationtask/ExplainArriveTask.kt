@@ -13,9 +13,9 @@ import com.sendi.deliveredrobot.utils.LogUtil
  * @describe:某一段讲解到达
  */
 class ExplainArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
-
+    override fun reportTaskDto() {}
     override fun configEnum(): TaskStageEnum {
-        return TaskStageEnum.GuideArriveTask
+        return TaskStageEnum.FinishArrayBroadcast
     }
 
     override suspend fun execute() {

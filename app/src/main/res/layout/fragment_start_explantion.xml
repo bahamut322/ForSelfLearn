@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.StartExplantionFragment">
+        tools:context=".view.fragment.StartExplainFragment">
 
 
 
@@ -204,7 +204,7 @@
                     app:layout_constraintStart_toStartOf="@+id/contentCL"
                     app:layout_constraintTop_toTopOf="parent" />
                 <!--显示图片-->
-                <ImageView
+                <com.sendi.deliveredrobot.view.widget.AdvanceView
                     android:id="@+id/pointImage"
                     android:layout_width="0dp"
                     android:layout_height="414dp"
@@ -251,7 +251,7 @@
                     <com.sendi.deliveredrobot.view.widget.SongLyricTextView
                         android:id="@+id/acceptstationTv"
                         android:layout_width="368dp"
-                        android:layout_height="@dimen/dp_325"
+                        android:layout_height="@dimen/dp_345"
                         android:layout_marginEnd="@dimen/dp_26"
                         android:layout_marginBottom="@dimen/dp_37"
                         android:alpha="0.6"

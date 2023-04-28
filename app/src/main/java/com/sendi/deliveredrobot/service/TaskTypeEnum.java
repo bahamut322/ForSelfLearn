@@ -9,7 +9,8 @@ package com.sendi.deliveredrobot.service;
 public enum TaskTypeEnum {
     DELIVERY("送物模式", 1, "D"),
     GUIDING("引领模式", 2, "G"),
-    USHER("迎宾模式", 3, "U");
+    USHER("迎宾模式", 3, "U"),
+    EXPLAIN("讲解模式",4,"E");
 
 
     private String name;

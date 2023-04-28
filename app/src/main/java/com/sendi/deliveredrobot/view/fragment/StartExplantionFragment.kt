@@ -50,7 +50,7 @@
 // * @author swn
 // * @describe 开始智能讲解
 // */
-//class StartExplantionFragment : Fragment() {
+//class StartExplainFragment : Fragment() {
 //    var binding: FragmentStartExplantionBinding? = null
 //    var controller: NavController? = null
 //    private var mAdapter: MAdapter? = MAdapter()

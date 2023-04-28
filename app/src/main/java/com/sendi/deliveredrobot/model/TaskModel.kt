@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.model
 
 import com.sendi.deliveredrobot.navigationtask.ITaskBill
-import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 
 data class TaskModel(

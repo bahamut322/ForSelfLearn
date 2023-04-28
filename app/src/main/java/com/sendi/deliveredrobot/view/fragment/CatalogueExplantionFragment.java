@@ -29,6 +29,7 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
 import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.helpers.ROSHelper;
@@ -74,6 +75,7 @@ public class CatalogueExplantionFragment extends Fragment {
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {
             viewModel.start();
+            Universal.twice = true;
             SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getStartText());
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
