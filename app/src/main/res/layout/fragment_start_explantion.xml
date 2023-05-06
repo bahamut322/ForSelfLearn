@@ -53,6 +53,7 @@
                 android:layout_marginBottom="@dimen/dp_5"
                 android:gravity="center"
                 android:src="@drawable/guiding_going"
+                tools:ignore="ContentDescription"
                 app:layout_constraintBottom_toTopOf="@+id/RoomName"
                 app:layout_constraintStart_toStartOf="@+id/RoomName" />
 
@@ -63,7 +64,8 @@
                 android:gravity="center"
                 android:src="@drawable/guiding_going1"
                 app:layout_constraintBottom_toBottomOf="@+id/going"
-                app:layout_constraintStart_toEndOf="@+id/going" />
+                app:layout_constraintStart_toEndOf="@+id/going"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/going2"
@@ -71,6 +73,7 @@
                 android:layout_height="@dimen/dp_48"
                 android:gravity="center"
                 android:src="@drawable/guiding_going1"
+                tools:ignore="ContentDescription"
                 app:layout_constraintBottom_toBottomOf="@+id/going1"
                 app:layout_constraintStart_toEndOf="@+id/going1"
                 tools:layout_editor_absoluteY="284dp" />
@@ -81,6 +84,7 @@
                 android:layout_height="@dimen/dp_48"
                 android:gravity="center"
                 android:src="@drawable/guiding_going1"
+                tools:ignore="ContentDescription"
                 app:layout_constraintBottom_toBottomOf="@+id/going2"
                 app:layout_constraintStart_toEndOf="@+id/going2"
                 tools:layout_editor_absoluteY="284dp" />
@@ -204,7 +208,18 @@
                     app:layout_constraintStart_toStartOf="@+id/contentCL"
                     app:layout_constraintTop_toTopOf="parent" />
                 <!--显示图片-->
-                <com.sendi.deliveredrobot.view.widget.AdvanceView
+<!--                <com.sendi.deliveredrobot.view.widget.AdvanceView-->
+<!--                    android:id="@+id/pointImage"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="414dp"-->
+<!--                    android:layout_marginStart="@dimen/dp_32"-->
+<!--                    android:layout_marginEnd="@dimen/dp_32"-->
+<!--                    android:scaleType="fitXY"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/view26"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/contentLin"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/view26"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/view26" />-->
+                <ImageView
                     android:id="@+id/pointImage"
                     android:layout_width="0dp"
                     android:layout_height="414dp"
@@ -279,7 +294,7 @@
                     android:layout_marginEnd="@dimen/dp_32"
                     android:background="@drawable/bg_button"
                     android:gravity="center"
-                    android:text="结束讲解"
+                    android:text="@string/finish_explain"
                     android:textColor="@color/white"
                     android:textSize="32sp"
                    />
@@ -291,7 +306,7 @@
                     android:layout_marginEnd="@dimen/dp_32"
                     android:background="@drawable/bg_button"
                     android:gravity="center"
-                    android:text="切换其他点"
+                    android:text="@string/other_point"
                     android:textColor="@color/white"
                     android:textSize="32sp" />
 
@@ -301,7 +316,7 @@
                     android:layout_height="@dimen/dp_72"
                     android:background="@drawable/dialog_btn_true_bg"
                     android:gravity="center"
-                    android:text="下一个点"
+                    android:text="@string/next_point"
                     android:textColor="@color/white"
                     android:textSize="32sp" />
                 </LinearLayout>

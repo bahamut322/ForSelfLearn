@@ -2,6 +2,12 @@ package com.sendi.deliveredrobot.navigationtask;
 
 import androidx.core.util.Consumer;
 
+import com.sendi.deliveredrobot.helpers.ReportDataHelper;
+import com.sendi.deliveredrobot.service.TaskStageEnum;
+import com.sendi.deliveredrobot.service.UpdateReturn;
+import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -49,8 +55,8 @@ public class TaskQueues<T> {
         return completedTasks == totalTasks;
     }
 
-    public boolean isTaskQueueCompleted() {
-        return isCompleted();
+    public synchronized boolean isTaskQueueCompleted() {
+        return completedTasks != 0 && totalTasks != 0 && isCompleted();
     }
 
     private void runNextTask() {

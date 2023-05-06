@@ -378,4 +378,7 @@ class UpdateReturn {
     fun splitStr(str: String): Array<String?> {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
+    fun taskDto(): TaskDto {
+        return TaskDto().apply { status = 1 }
+    }
 }

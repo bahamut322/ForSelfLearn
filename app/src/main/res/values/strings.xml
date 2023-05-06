@@ -466,6 +466,7 @@
     <string name="Voice_Announcements">语音播报</string>
     <string name="Follow_nearby">就近跟随</string>
     <string name="Patrol_speed">巡逻速度</string>
+    <string name="hand_charge_dock">手推至充电桩</string>
     <string name="Patrol_suspension">巡逻过程中暂停时间</string>
     <string name="Intelligent_temperature">智能测温</string>
     <string name="Temp_mode">测温模式</string>
@@ -490,4 +491,7 @@
     <string name="explanation_Special">专场讲解</string>
     <string name="door_temp">门岗测温</string>
     <string name="return_home">回桩</string>
+    <string name="finish_explain">结束讲解</string>
+    <string name="other_point">切换其他点</string>
+    <string name="next_point">下一个点</string>
 </resources>

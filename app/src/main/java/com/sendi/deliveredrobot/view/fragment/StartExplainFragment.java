@@ -341,7 +341,12 @@ public class StartExplainFragment extends Fragment {
                 binding.parentCon.setClickable(QuerySql.QueryBasic().getWhetherInterrupt());
                 binding.contentCL.setVisibility(View.GONE);
                 //带光晕的背景图
-                Glide.with(getContext()).load(BaseViewModel.getFilesAllName(mDatas.get(position).getTouch_imagefile()).get(0)).into(binding.startImg);
+//                Glide.with(getContext()).load(BaseViewModel.getFilesAllName(mDatas.get(position).getTouch_imagefile()).get(0)).into(binding.startImg);//轮播
+                Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.startImg);
+                if (taskQueue.isTaskQueueCompleted()){
+                    ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, new UpdateReturn().taskDto());
+                    Log.d("TAG", "onBindViewHolder: 任务完成");
+                }
                 //帧动画
                 vh.tvTopLine.setImageResource(R.drawable.anim_login_start_loading);
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
@@ -350,7 +355,6 @@ public class StartExplainFragment extends Fragment {
                     RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
                         if (integer1 == 1 && taskQueue.isCompleted()) {
                             Log.d("TAG", "是否结束");
-                            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, viewModel.taskDto());
                             arrayToDo(mDatas, position);
 
                         }
@@ -363,7 +367,7 @@ public class StartExplainFragment extends Fragment {
                                 RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> {
                                     if (currentPosition >= totalDuration && integer == 1) {
                                         LogUtil.INSTANCE.i("到点并且播放完成");
-                                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, viewModel.taskDto());
+                                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishChannelBroadcast, new UpdateReturn().taskDto());
                                         arrayToDo(mDatas, position);
                                     }
                                 }));
@@ -444,7 +448,7 @@ public class StartExplainFragment extends Fragment {
             if (tr) {
                 splitString(mDatas.get(position).getWalktext(), 45);
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(mDatas.get(position).getWalktext());
-                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, viewModel.taskDto());
+                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, new UpdateReturn().taskDto());
 //                new StartChannelBroadcastType(BillManager.INSTANCE.currentBill().currentTask().taskModel());
 
             }
@@ -453,14 +457,14 @@ public class StartExplainFragment extends Fragment {
         if (!Objects.equals(mDatas.get(position).getWalkvoice(), null)) {
             if (tr) {
                 MediaPlayerHelper.play(mDatas.get(position).getWalkvoice(), "1");
-                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, viewModel.taskDto());
+                ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartChannelBroadcast, new UpdateReturn().taskDto());
 
             }
         }
     }
 
     private void arrayToDo(ArrayList<MyResultModel> mDatas, int position) {
-        LogUtil.INSTANCE.d("到点降级：" + Universal.selectMapPoint);
+        LogUtil.INSTANCE.d("到点讲解：" + Universal.selectMapPoint);
         if (Universal.selectMapPoint) {
             return;
         }
@@ -470,11 +474,11 @@ public class StartExplainFragment extends Fragment {
         binding.parentCon.setBackgroundResource(R.drawable.bg);
         binding.statusTv.setText("正在讲解:");
         binding.nowExplanation.setText(mDatas.get(position).getName());
-//        Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.pointImage);
-        getFilesAllName(mDatas.get(position).getTouch_imagefile());
+       Glide.with(getContext()).load(mDatas.get(position).getTouch_imagefile()).into(binding.pointImage);
+//        getFilesAllName(mDatas.get(position).getTouch_imagefile());//轮播
 
         if (!Objects.equals(mDatas.get(position).getExplanationtext(), "")) {
-            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, viewModel.taskDto());
+            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, new UpdateReturn().taskDto());
             binding.pointName.setText(mDatas.get(position).getName());
 //            Universal.Model = "讲解";
             LogUtil.INSTANCE.i("到点讲解文字:" + mDatas.get(position).getExplanationtext());
@@ -510,7 +514,7 @@ public class StartExplainFragment extends Fragment {
                         Universal.taskNum = splitString(textEqually.get(beforePage), 45).size();
                         nextTaskToDo = true;
                     } else if (beforePage > page - 1 && taskQueue.isCompleted()) {
-                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, viewModel.taskDto());
+                        ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, new UpdateReturn().taskDto());
                         Log.d("TAG", "arrayToDo: 进入倒计时");
                         viewModel.getCountDownTimer().start();
                         taskQueue.clear();
@@ -521,13 +525,13 @@ public class StartExplainFragment extends Fragment {
             });
 
         } else if (!Objects.equals(mDatas.get(position).getExplanationvoice(), "")) {
-            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, viewModel.taskDto());
+            ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.StartArrayBroadcast, new UpdateReturn().taskDto());
             LogUtil.INSTANCE.i("到点讲解音频路径:" + mDatas.get(position).getExplanationvoice());
             MediaPlayerHelper.play(mDatas.get(position).getExplanationvoice(), "1");
             MediaPlayerHelper.setOnProgressListener((currentPosition, totalDuration) -> {
                 if (currentPosition >= totalDuration) {
                     viewModel.getCountDownTimer().start();
-                    ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, viewModel.taskDto());
+                    ReportDataHelper.INSTANCE.reportTaskDto(BillManager.INSTANCE.currentBill().currentTask().taskModel(), TaskStageEnum.FinishArrayBroadcast, new UpdateReturn().taskDto());
                 }
             });
 //           });
@@ -604,34 +608,35 @@ public class StartExplainFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void getFilesAllName(String path) {
-        File file = new File(path);
-        binding.pointImage.removeAllViews();
-        binding.pointImage.initView();
-        if (file.isFile()) {
-            // This is a file
-            List<Advance> fileList = new ArrayList<>();
-            if (BaseViewModel.checkIsImageFile(file.getPath())) {
-                fileList.add(new Advance(file.getPath(), "2")); // image
-            } else {
-                fileList.add(new Advance(file.getPath(), "1")); // video
-            }
-            binding.pointImage.setData(fileList);
-        } else if (file.isDirectory()) {
-            // This is a directory
-            File[] files = file.listFiles();
-            if (files != null) {
-                List<Advance> fileList = new ArrayList<>();
-                for (File value : files) {
-                    if (BaseViewModel.checkIsImageFile(value.getPath())) {
-                        fileList.add(new Advance(value.getPath(), "2")); // image
-                    } else {
-                        fileList.add(new Advance(value.getPath(), "1")); // video
-                    }
-                }
-                binding.pointImage.setData(fileList);
-
-            }
-        }
-    }
+    //TODO 轮播
+//    public void getFilesAllName(String path) {
+//        File file = new File(path);
+//        binding.pointImage.removeAllViews();
+//        binding.pointImage.initView();
+//        if (file.isFile()) {
+//            // This is a file
+//            List<Advance> fileList = new ArrayList<>();
+//            if (BaseViewModel.checkIsImageFile(file.getPath())) {
+//                fileList.add(new Advance(file.getPath(), "2")); // image
+//            } else {
+//                fileList.add(new Advance(file.getPath(), "1")); // video
+//            }
+//            binding.pointImage.setData(fileList);
+//        } else if (file.isDirectory()) {
+//            // This is a directory
+//            File[] files = file.listFiles();
+//            if (files != null) {
+//                List<Advance> fileList = new ArrayList<>();
+//                for (File value : files) {
+//                    if (BaseViewModel.checkIsImageFile(value.getPath())) {
+//                        fileList.add(new Advance(value.getPath(), "2")); // image
+//                    } else {
+//                        fileList.add(new Advance(value.getPath(), "1")); // video
+//                    }
+//                }
+//                binding.pointImage.setData(fileList);
+//
+//            }
+//        }
+//    }
 }

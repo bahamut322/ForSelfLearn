@@ -298,9 +298,6 @@ class StartExplanViewModel : ViewModel() {
         sdScreenStatus!!.postValue(2)
         i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
-    fun taskDto(): TaskDto {
-        return TaskDto().apply { status = 1 }
-    }
     fun splitString(input: String, length: Int): List<String> {
         val result: MutableList<String> = ArrayList()
         var startIndex = 0

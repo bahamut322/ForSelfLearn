@@ -11,6 +11,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.fragment.DockingFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/hand_charg_docking_cl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@drawable/img_goback"
+            tools:context=".view.fragment.DockingFragment"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="161dp">
+
+            <ImageView
+                android:id="@+id/imageView16"
+                android:layout_width="437dp"
+                android:layout_height="@dimen/dp_358"
+                android:src="@drawable/handchargdocking"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hand_charge_dock"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_36"
+                android:layout_marginTop="@dimen/dp_40"
+                app:layout_constraintEnd_toEndOf="@+id/imageView16"
+                app:layout_constraintStart_toStartOf="@+id/imageView16"
+                app:layout_constraintTop_toBottomOf="@+id/imageView16" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/auto_charg_docking_cl"
             android:layout_width="match_parent"
@@ -36,7 +69,7 @@
                 android:layout_marginTop="148dp"
                 android:text="@string/docking"
                 android:textColor="@color/white"
-                android:textSize="@dimen/dp_36"
+                android:textSize="@dimen/sp_36"
                 app:layout_constraintEnd_toEndOf="@+id/view33"
                 app:layout_constraintStart_toStartOf="@+id/view33"
                 app:layout_constraintTop_toTopOf="@+id/view33" />
@@ -67,13 +100,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:id="@+id/hand_charg_docking_cl"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/hand_docking"-->
-<!--            android:visibility="gone"-->
-<!--            />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

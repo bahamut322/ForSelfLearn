@@ -195,22 +195,23 @@ class SelfCheckFragment : Fragment() {
                     UploadMapHelper.uploadMap()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id
-                        val floorId = RobotStatus.bootLocation?.floorName?.hashCode()?:-1
+                        val floorId = RobotStatus.bootLocation?.floorName?.hashCode() ?: -1
                         ROSHelper.setDispatchFloorId(floorId)
                         ROSHelper.setNavigationMap(
                             labelMapName = RobotStatus.bootLocation!!.subPath!!,
                             pathMapName = RobotStatus.bootLocation!!.routePath!!
                         )
-                        LogUtil.d("SelfCheck"+"开始设置默认充电桩的点")
+                        LogUtil.d("SelfCheck" + "开始设置默认充电桩的点")
                         var setPoseRes = ROSHelper.setPoseClient(RobotStatus.bootLocation!!)
-                        LogUtil.d("SelfCheck"+"设置默认充电桩的点完成")
+                        LogUtil.d("SelfCheck" + "设置默认充电桩的点完成")
                         if (RobotStatus.adapterState.value == SafeState.STATE_IS_TRIGGING) {
                             //适配器已接入
                             if (RobotStatus.batterySupplyStatus.value == BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                 //充电中
                                 LogUtil.i("手动充电中")
                                 withContext(Dispatchers.Main) {
-                                    val chargingDialog = DialogHelper.initChargingDialog(this@SelfCheckFragment)
+                                    val chargingDialog =
+                                        DialogHelper.initChargingDialog(this@SelfCheckFragment)
                                     chargingDialog.show()
                                     RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                         if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
@@ -252,9 +253,9 @@ class SelfCheckFragment : Fragment() {
                                 LogUtil.i("自动充电中");
                                 withContext(Dispatchers.Main) {
                                     //判断当前电量是否小于最低电,小于则去充电
-                                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE)
-                                    {
-                                        val chargingDialog = DialogHelper.initChargingDialog(this@SelfCheckFragment)
+                                    if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
+                                        val chargingDialog =
+                                            DialogHelper.initChargingDialog(this@SelfCheckFragment)
                                         chargingDialog.show()
                                         RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                             if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
