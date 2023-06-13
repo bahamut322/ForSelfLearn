@@ -63,7 +63,6 @@ class StandbyFragment : Fragment() {
         val file = File(path)
         val files = file.listFiles()!!
         imagePaths = ArrayList()
-        binding.Standby.initView()
         for (value in files) {
             if (checkIsImageFile(value.path)) {
                 //图片

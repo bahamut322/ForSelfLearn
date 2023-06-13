@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -104,11 +105,11 @@ class GoBackFragment : Fragment() {
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
-//        if (RobotStatus.lowPowerBacking) {
-//            MainScope().launch {
-//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+//        if (QuerySql.queryMyData(RobotStatus.selectRoutMapItem!!.value!!)[0].touch_type == 4) {
+//            binding.goBackTv.visibility = View.GONE
+//            binding.imageViewGoBack.apply {
+//                Glide.with(this).asGif().load(QuerySql.queryMyData(RobotStatus.selectRoutMapItem!!.value!!)[0].touch_overTaskPic).into(this)
 //            }
-//            DialogHelper.lowPowerGoBack()
 //        }
     }
 

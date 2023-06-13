@@ -19,9 +19,12 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
+import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
 import com.sendi.deliveredrobot.entity.BasicSetting
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
+import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -33,6 +36,8 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
+import com.sendi.deliveredrobot.view.widget.AdvanceView
+import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -40,6 +45,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.findAll
+import org.litepal.LitePal.findFirst
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -191,6 +197,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         }
                     }
                 }
+
                 false -> {
                     binding.imageViewFlash.visibility = View.GONE
                     with(binding.imageViewPowerStatus) {
@@ -202,6 +209,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         }
                     }
                 }
+
                 else -> {}
             }
         }
@@ -224,6 +232,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         }
                     }
                 }
+
                 false -> {
                     binding.imageViewFlash.visibility = View.GONE
                     with(binding.imageViewPowerStatus) {
@@ -262,6 +271,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     connectWifi.level() in -99..-88 || connectWifi.level() in -87..-66 || connectWifi.level() in -65 until 55 -> setBackgroundResource(
                         R.drawable.ic_wifi_level_1
                     )
+
                     connectWifi.level() >= -55 -> setBackgroundResource(R.drawable.ic_wifi_level_2)
                 }
             }
@@ -412,10 +422,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         sdScreenStatus!!.observe(this) {
-            if (sdScreenStatus!!.value == 0 && mPresentation!=null) {
+            renovate()
+            advertisingConfigDB = findFirst(AdvertisingConfigDB::class.java) //查询副屏第一条数据
+            if (sdScreenStatus!!.value == 0 && mPresentation != null && advertisingConfigDB != null) {
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
-                    advertisingConfigDB.picPlayTime * 1000,
+                    advertisingConfigDB.picPlayTime,
                     Universal.advertisement,
                     advertisingConfigDB.type,
                     advertisingConfigDB.textPosition,
@@ -423,13 +435,17 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     advertisingConfigDB.fontContent,
                     advertisingConfigDB.fontBackGround,
                     advertisingConfigDB.fontColor,
-                    advertisingConfigDB.fontSize
+                    advertisingConfigDB.fontSize,
+                    advertisingConfigDB.picType,
+                    advertisingConfigDB.videolayout,
+                    advertisingConfigDB.videoAudio
                 )
             }
-            if (sdScreenStatus!!.value == 1 && mPresentation!=null) {
+            if (sdScreenStatus!!.value == 1 && mPresentation != null) {
+                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
-                    Universal.picPlayTime * 1000,
+                    Universal.picPlayTime,
                     Universal.Secondary,
                     Universal.bigScreenType,
                     Universal.textPosition,
@@ -437,11 +453,14 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     Universal.fontContent,
                     Universal.fontBackGround,
                     Universal.fontColor,
-                    Universal.fontSize
+                    Universal.fontSize,
+                    Universal.picTypeNum,
+                    Universal.TempVideoLayout,
+                    Universal.AllvideoAudio
                 )
             }
-            if (sdScreenStatus!!.value == 2 && mPresentation!=null) {
-                advanceView.removeAllViews()
+            if (sdScreenStatus!!.value == 2 && mPresentation != null) {
+                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 layoutThis(
                     RobotStatus.SecondModel!!.value?.picPlayTime!!,
@@ -452,13 +471,16 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     RobotStatus.SecondModel!!.value?.fontContent,
                     RobotStatus.SecondModel!!.value?.fontBackGround,
                     RobotStatus.SecondModel!!.value?.fontColor,
-                    RobotStatus.SecondModel!!.value?.fontSize!!
+                    RobotStatus.SecondModel!!.value?.fontSize!!,
+                    RobotStatus.SecondModel!!.value?.picType!!,
+                    RobotStatus.SecondModel!!.value?.videolayout!!,
+                    RobotStatus.SecondModel!!.value?.videoAudio!!
                 )
             }
         }
         RobotStatus.SecondModel!!.observe(this) {
-            if (mPresentation!=null) {
-                advanceView.removeAllViews()
+            renovate()
+            if (mPresentation != null) {
                 layoutThis(
                     it?.picPlayTime!!,
                     it.file,
@@ -468,9 +490,20 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     it.fontContent,
                     it.fontBackGround,
                     it.fontColor,
-                    it.fontSize!!
+                    it.fontSize!!,
+                    it.picType!!,
+                    it.videolayout!!,
+                    it.videoAudio!!
                 )
             }
         }
+    }
+    private fun renovate() {
+        if (mPresentation != null) {
+            mPresentation.dismiss()
+            mPresentation = null
+        }
+        ShowPresentationByDisplaymanager()
+
     }
 }

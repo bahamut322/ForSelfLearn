@@ -59,7 +59,7 @@ class StartExplanViewModel : ViewModel() {
         }
     }
 
-    fun recombine(selectName: String) {
+    fun recombine(selectName: String, array: Boolean) {
         var position = 0
         Universal.selectMapPoint = true
         for (i in mDatas!!.indices) {
@@ -86,11 +86,16 @@ class StartExplanViewModel : ViewModel() {
                 val bill = createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+            if (!array) {
+                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+            }
             BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
             Universal.selectMapPoint = false
+            if (array) {
+                currentBill()?.executeNextTask()
+            }
         }
     }
 
@@ -145,7 +150,6 @@ class StartExplanViewModel : ViewModel() {
             currentBill()?.executeNextTask()
         }
     }
-
 
 
     /**
@@ -227,6 +231,7 @@ class StartExplanViewModel : ViewModel() {
                     ""
                 } else "一"
             }
+
             2 -> return "二"
             3 -> return "三"
             4 -> return "四"
@@ -268,11 +273,13 @@ class StartExplanViewModel : ViewModel() {
 
     //下一个任务
     fun nextTask(array: Boolean) {
+//        UpdateReturn().stop()
         currentBill()?.executeNextTask()
         Universal.progress = 0
         Universal.taskNum = 0
         RobotStatus.speakNumber.postValue(null)
         if (!array) {
+            Universal.nextPointGo = 1
             UpdateReturn().stop()
         }
         TaskNext.setToDo("0")
@@ -284,20 +291,26 @@ class StartExplanViewModel : ViewModel() {
     }
 
     fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
-        SecondModel?.postValue(SecondModel(
-            picPlayTime = mData[position]!!.big_picplaytime,
-            file = mData[position]!!.big_imagefile?.toString(),
-            type = mData[position]!!.big_type,
-            textPosition = mData[position]!!.big_textposition,
-            fontLayout = mData[position]!!.big_fontlayout,
-            fontContent = mData[position]!!.big_fontcontent?.toString(),
-            fontBackGround = mData[position]!!.big_fontbackground?.toString(),
-            fontColor = mData[position]!!.big_fontcolor?.toString(),
-            fontSize = mData[position]!!.big_fontsize
-        ))
+        SecondModel?.postValue(
+            SecondModel(
+                picPlayTime = mData[position]!!.big_picplaytime,
+                file = mData[position]!!.big_imagefile?.toString(),
+                type = mData[position]!!.big_type,
+                textPosition = mData[position]!!.big_textposition,
+                fontLayout = mData[position]!!.big_fontlayout,
+                fontContent = mData[position]!!.big_fontcontent?.toString(),
+                fontBackGround = mData[position]!!.big_fontbackground?.toString(),
+                fontColor = mData[position]!!.big_fontcolor?.toString(),
+                fontSize = mData[position]!!.big_fontsize,
+                picType = mData[position]!!.big_pictype,
+                videolayout = mData[position]!!.videolayout,
+                videoAudio = mData[position]!!.big_videoaudio
+            )
+        )
         sdScreenStatus!!.postValue(2)
         i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
+
     fun splitString(input: String, length: Int): List<String> {
         val result: MutableList<String> = ArrayList()
         var startIndex = 0

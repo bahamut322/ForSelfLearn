@@ -18,8 +18,8 @@ public class TaskQueues<T> {
     private final Consumer<T> taskConsumer;
     private boolean isRunning = false;
     private boolean isPaused = false;
-    private int totalTasks = 0;
-    private int completedTasks = 0;
+    private static int totalTasks = 0;
+    private static int completedTasks = 0;
 
     public TaskQueues(Consumer<T> taskConsumer) {
         this.taskConsumer = taskConsumer;
@@ -51,11 +51,11 @@ public class TaskQueues<T> {
         completedTasks = 0;
     }
 
-    public synchronized boolean isCompleted() {
+    public static synchronized boolean isCompleted() {
         return completedTasks == totalTasks;
     }
 
-    public synchronized boolean isTaskQueueCompleted() {
+    public static synchronized boolean isTaskQueueCompleted() {
         return completedTasks != 0 && totalTasks != 0 && isCompleted();
     }
 

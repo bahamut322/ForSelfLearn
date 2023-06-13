@@ -17,11 +17,13 @@ import com.sendi.deliveredrobot.baidutts.util.Auth;
 import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
 import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MP3Player;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -179,10 +181,11 @@ public class BaiduTTSHelper {
         if (TextUtils.isEmpty(text)) {
             text = "没有指定名称的话，小迪不知道怎么走啦";
         }
+        Order.setFlage("1");
         //播报语音音量
-        new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());
         MediaPlayerHelper.pause();
         RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
+        new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());
         int result = synthesizer.speak(text);
 //        LogUtil.INSTANCE.i(text);
     }
@@ -197,10 +200,12 @@ public class BaiduTTSHelper {
     }
 
     public void speaks(String text, String utteranceId) {
+        Order.setFlage("1");
         MediaPlayerHelper.pause();
-        new AudioMngHelper(context).setVoice100((int) QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
+        new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         synthesizer.speak(text, utteranceId);
+
     }
 
     public void setParam(Map<String, String> params, String voiceType){

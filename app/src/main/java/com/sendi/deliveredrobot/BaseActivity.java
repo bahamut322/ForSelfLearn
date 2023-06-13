@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Presentation;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.hardware.display.DisplayManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.MediaRouter;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
 import com.sendi.deliveredrobot.entity.QuerySql;
@@ -44,9 +47,13 @@ import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
+import com.sendi.deliveredrobot.view.widget.AdvanceVideoView;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
+import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.view.widget.VerticalTextView;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
+
+import net.sf.json.JSONString;
 
 import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
@@ -88,7 +95,6 @@ public class BaseActivity extends AppCompatActivity {
         // Register to receive events from the display manager.
         mDisplayManager.registerDisplayListener(mDisplayListener, null);
         Show(flag);
-        Log.i(TAG, "双屏异显onResume");
         /**
          * 处理情况：
          * 自检通过之后回到主页面
@@ -97,6 +103,7 @@ public class BaseActivity extends AppCompatActivity {
          */
         //判断副屏是否存在再去启动轮播控件
         if (mPresentation != null) {
+            Log.i(TAG, "双屏异显onResume");
             advanceView.setResume();
         }
         //重启双屏异显
@@ -111,7 +118,7 @@ public class BaseActivity extends AppCompatActivity {
         // Listen for changes to media routes.
         mMediaRouter.removeCallback(mMediaRouterCallback);
         mDisplayManager.unregisterDisplayListener(mDisplayListener);
-        if (mPresentation!=null) {
+        if (mPresentation != null) {
             advanceView.setPause();
         }
         Log.i(TAG, "双屏异显onPause");
@@ -137,7 +144,6 @@ public class BaseActivity extends AppCompatActivity {
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
         SharedPreferences sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
         videoAudio = (int) sp.getFloat("videoAudio", 0); // 视频音量
-        advertisingConfigDB = LitePal.findFirst(AdvertisingConfigDB.class); //查询副屏第一条数据
         DebugDao debugDao = DataBaseDeliveredRobotMap.Companion.getDatabase(
                 Objects.requireNonNull(
                         MyApplication.Companion.getInstance()
@@ -162,7 +168,7 @@ public class BaseActivity extends AppCompatActivity {
 //            Resources resources = getContext().getResources();
             mDisplayManager.getDisplay(90);
             // Inflate the layout.
-            setContentView(R.layout.presentation_content);
+            mPresentation.setContentView(R.layout.presentation_content);
             frameLayout = findViewById(R.id.frameLayout);
             constraintLayout2 = findViewById(R.id.constraintLayout2);
             advanceView = findViewById(R.id.Spread_out);
@@ -179,8 +185,14 @@ public class BaseActivity extends AppCompatActivity {
                 constraintLayout2.setLayoutParams(params);
                 constraintLayout2.setRotation(270);
             });
+            Order.setOnChangeListener(() -> {
+                if (Objects.equals(Order.getFlage(), "1")) {
+                    advanceView.mediaStop();
+                } else {
+                    advanceView.mediaRestart();
+                }
+            });
         }
-
 
         @Override
         protected void onStop() {
@@ -192,15 +204,6 @@ public class BaseActivity extends AppCompatActivity {
             super.onStart();
         }
 
-        /**
-         * 重新加载Activity
-         */
-        public void aReady() {
-            finish();
-            overridePendingTransition(0, 0);
-            startActivity(getIntent());
-            overridePendingTransition(0, 0);
-        }
     }
 
     public final DisplayManager.DisplayListener mDisplayListener =
@@ -216,7 +219,7 @@ public class BaseActivity extends AppCompatActivity {
                     Log.d(TAG, "Display #" + displayId + " changed.");
                     Show(flag);
                     //重新连接广告屏的时候F
-                    RobotStatus.INSTANCE.getNewUpdata().postValue(1);
+//                    RobotStatus.INSTANCE.getNewUpdata().postValue(1);
                 }
 
                 @Override
@@ -275,6 +278,7 @@ public class BaseActivity extends AppCompatActivity {
             //  mPresentation.setOnDismissListener(mOnDismissListener);
             try {
                 mPresentation.show();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             } catch (WindowManager.InvalidDisplayException ex) {
                 Log.w(TAG, "Couldn't show presentation!  Display was removed in "
                         + "the meantime.", ex);
@@ -304,9 +308,11 @@ public class BaseActivity extends AppCompatActivity {
                     Show(flag);
                 }
             };
-
-
-    public void getFilesAllName(String path) {
+    private void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) {
+        Universal.time = picPlayTime;
+        Universal.pic = PicType;
+        Universal.videolayout = videolayout;
+        Universal.AllvideoAudio = AllvideoAudio;
         File file = new File(path);
         if (mPresentation!=null) {
             advanceView.removeAllViews();
@@ -337,6 +343,31 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+//    public void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) {
+//        Universal.time = picPlayTime;
+//        Universal.pic = PicType;
+//        Universal.videolayout = videolayout;
+//        Universal.AllvideoAudio = AllvideoAudio;
+//        //传入指定文件夹的路径
+//        File file = new File(path);
+//        File[] files = file.listFiles();
+//        assert files != null;
+//        advanceView.removeAllViews();
+//        advanceView.initView();
+//        List<Advance> imagePaths = new ArrayList<>();
+//        for (File value : files) {
+//            if (baseViewModel.checkIsImageFile(value.getPath())) {
+//                // 图片
+//                imagePaths.add(new Advance(value.getPath(), "2"));
+//            } else {
+//                // 视频
+//                Log.d(TAG, "getFilesAllName: " + value.getPath());
+//                imagePaths.add(new Advance(value.getPath(), "1")); // video
+////                advanceVideoView.addVideo(value.getPath());
+//            }
+//        }
+//        advanceView.setData(imagePaths); // 将数据传入到控件中显示
+//    }
 
 
     /**
@@ -349,15 +380,16 @@ public class BaseActivity extends AppCompatActivity {
      * @param fontBackGround 背景颜色
      * @param fontColor      文字颜色
      * @param fontSize       文字大小：1-大，2-中，3-小,
+     * @param PicType        图片样式
+     * @param videolayout    视频显示样式
+     * @param AllvideoAudio  是否播放声音
      */
-    public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize) {
-        //轮播时间
-        AdvancePagerAdapter.time = picPlayTime;
+    public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio) {
         switch (type) {
             case 1:
             case 2:
                 //读取文件
-                getFilesAllName(file);
+                getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
                 verticalTV.setVisibility(View.GONE);
                 horizontalTV.setVisibility(View.GONE);
                 advanceView.setVisibility(View.VISIBLE);
@@ -368,7 +400,7 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case 7:
                 //读取文件
-                getFilesAllName(file);
+                getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
                 if (textPosition == 0) {
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
                     horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中

@@ -9,7 +9,8 @@ package com.sendi.deliveredrobot.model
  */
 data class VideoConfiguration(
     val videos: String,
-    val videoAudio: Int ,
+    val videoAudio: Int? = 1 ,
     val videoFrame: String?,
-    val videoPlayType : Int? = 1
+    val videoPlayType : Int? = 1,
+    val videoLayOut : Int? = 0
 )

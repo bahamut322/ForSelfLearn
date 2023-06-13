@@ -7,23 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.R
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
-@SuppressLint("InflateParams")
-class DistractedDialog(
+class BrieFingDialog (
     context: Context,
     themeResId: Int = R.style.simpleDialogStyle,
     needBlur: Boolean = true,
 ) : HideNavigationBarDialog(context = context, themeResId = themeResId, needBlur = needBlur) {
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
-    private var textViewDate:TextView
-    private var textTip:TextView
+    private var textViewDate: TextView
+    private var textTip: TextView
     init {
         val mWindowWidth: Int
         val mWindowHeight: Int
@@ -37,6 +36,7 @@ class DistractedDialog(
             }
         }
         textTip = dialogView.findViewById(R.id.tipTV)
+        textTip.text = "请把我推到充电桩后再操作"
         textViewDate = dialogView.findViewById(R.id.textViewDate)
         mWindowWidth = displayMetrics.widthPixels
         mWindowHeight = displayMetrics.heightPixels

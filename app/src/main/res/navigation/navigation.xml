@@ -404,6 +404,8 @@
         <action
             android:id="@+id/action_selfCheckFragment_to_guideFragment"
             app:destination="@id/GuideFragment" />
+        <action android:id="@+id/action_selfCheckFragment_to_settingFragment"
+            app:destination="@+id/settingHomeFragment"/>
 
     </fragment>
     <fragment

@@ -4,9 +4,12 @@ package com.sendi.deliveredrobot.view.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.viewpager.widget.ViewPager;
+
+import com.sendi.deliveredrobot.entity.Universal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,7 @@ public class AdvanceView extends RelativeLayout {
     }
 
     public void clear() {
-        viewPager.setAdapter(null);
+        viewPager.invalidate();
     }
 
     public void initView() {
@@ -45,7 +48,12 @@ public class AdvanceView extends RelativeLayout {
     public void setData(List<Advance> advances) {
         adapter.setData(advances);
     }
-
+    public void mediaStop(){
+            adapter.mediaStop();
+    }
+    public void mediaRestart(){
+            adapter.mediaRestart();
+    }
     public void setPause(){
         adapter.setPause();
     }

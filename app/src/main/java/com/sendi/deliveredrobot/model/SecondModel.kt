@@ -9,5 +9,8 @@ data class SecondModel(
     var fontContent: String? = "",
     var fontBackGround: String? = "",
     var fontColor: String? = "",
-    var fontSize: Int? = 0
+    var fontSize: Int? = 0,
+    var picType: Int? = 1,
+    var videolayout : Int? = 0,
+    var videoAudio : Int? = 1
 )

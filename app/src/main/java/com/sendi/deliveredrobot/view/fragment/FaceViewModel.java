@@ -20,6 +20,7 @@ import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.entity.FaceTips;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 
 import org.litepal.LitePal;
@@ -158,7 +159,7 @@ public class FaceViewModel extends ViewModel {
                             System.out.println("Max value is in position " + (max_index + 1));
                             //查询相似度最大的那个的人脸特征
                             List<FaceTips> tipsList = LitePal.where("faceCharacteristic = ?", faceTipsList.get((max_index)).getFaceCharacteristic()).find(FaceTips.class);
-                            if (max_value > 0.88f) {
+                            if (max_value > 0.88f && QuerySql.QueryBasic().getIdentifyVip()) {
                                 Toast.makeText(MyApplication.Companion.getInstance(), "你好！" + tipsList.get(0).getName(), Toast.LENGTH_SHORT).show();
                                 if (BuildConfig.IS_SPEAK) {
                                     BaiduTTSHelper.getInstance().speak("你好:"+tipsList.get(0).getName());

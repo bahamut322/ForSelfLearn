@@ -208,18 +208,7 @@
                     app:layout_constraintStart_toStartOf="@+id/contentCL"
                     app:layout_constraintTop_toTopOf="parent" />
                 <!--显示图片-->
-<!--                <com.sendi.deliveredrobot.view.widget.AdvanceView-->
-<!--                    android:id="@+id/pointImage"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="414dp"-->
-<!--                    android:layout_marginStart="@dimen/dp_32"-->
-<!--                    android:layout_marginEnd="@dimen/dp_32"-->
-<!--                    android:scaleType="fitXY"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/view26"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/contentLin"-->
-<!--                    app:layout_constraintStart_toStartOf="@+id/view26"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/view26" />-->
-                <ImageView
+                <com.sendi.deliveredrobot.view.widget.AdvanceView
                     android:id="@+id/pointImage"
                     android:layout_width="0dp"
                     android:layout_height="414dp"
@@ -230,6 +219,17 @@
                     app:layout_constraintEnd_toStartOf="@+id/contentLin"
                     app:layout_constraintStart_toStartOf="@+id/view26"
                     app:layout_constraintTop_toTopOf="@+id/view26" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/pointImage"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="414dp"-->
+<!--                    android:layout_marginStart="@dimen/dp_32"-->
+<!--                    android:layout_marginEnd="@dimen/dp_32"-->
+<!--                    android:scaleType="fitXY"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/view26"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/contentLin"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/view26"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/view26" />-->
 
                 <LinearLayout
                     android:id="@+id/contentLin"
@@ -322,8 +322,18 @@
                 </LinearLayout>
 
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/argPic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

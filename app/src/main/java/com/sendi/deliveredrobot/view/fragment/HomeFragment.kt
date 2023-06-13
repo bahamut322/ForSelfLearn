@@ -16,29 +16,26 @@ import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.QuerySql
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
+import com.sendi.deliveredrobot.model.SameName
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
-import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.deliveredrobot.view.widget.LowPowerDialog
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
+import org.json.JSONObject
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
 
 
 /**
@@ -56,6 +53,7 @@ class HomeFragment : Fragment(), IMainView {
     private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
     private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
+    private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
 
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
@@ -178,7 +176,7 @@ class HomeFragment : Fragment(), IMainView {
 //        }
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
-        controller = Navigation.findNavController(view)
+        controller = Navigation.findNavController(requireView())
         LogUtil.i("待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
@@ -188,38 +186,14 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
-//        val b = Vbar()
-//        binding.imageView2.setOnClickListener {
-//            thread {
-//                b.vbarOpen()
-//            }
-//            val t = object : Thread() {
-//                override fun run() {
-//                    super.run()
-//                    while (true) {
-//                        val str = b.resultsingle
-//                        if (str != null) {
-//                            (object : java.lang.Runnable {
-//                                override fun run() {
-//                                    run {
-//                                        LogUtil.i("ddasdq"+str)
-//                                    }
-//                                }
-//                            })
-//                        }
-//                        try {
-//                            sleep(1)
-//                        } catch (e: InterruptedException) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//                }
-//            }
-//            t.start()
-//        }
+//        val array1 = arrayOf("sdcard/1.jpg", "sdcard/2.jpg")
+//        val array2 = arrayOf("/33/1.jpg", "/33/3.jpg","/33/5.jpg")
+//        compareArrays(array1,array2)
+//        LogUtil.d("打印数据ing： ${
+//            com.alibaba.fastjson.JSONObject.toJSONString(compareArrays(array1,array2))}")
 
 
-        if (QuerySql.QueryBasic().identifyVip == true) {
+        if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4) ) {
             faceViewModel?.suerfaceInit(binding.SurfaceView)
             if (QuerySql.QueryBasic().defaultValue != "") {
                 binding.homeClay.setBackgroundResource(R.drawable.guests_open_bg)
@@ -270,7 +244,11 @@ class HomeFragment : Fragment(), IMainView {
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {
                     fromeSettingDialog!!.dismiss()
-                    controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
+                    try {
+                        controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
+                    }catch (e:Exception){
+
+                    }
                     PassWordToSetting.postValue(false)
                 }
             }
@@ -419,15 +397,26 @@ class HomeFragment : Fragment(), IMainView {
         when (Onclick) {
 //            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
-                controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
+                if(RobotStatus.batteryStateNumber.value == false){
+                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                }else {
+                    controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
+                }
             }
             "智能讲解" -> {
-                controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
-                Log.d("TAG", "点击智能讲解 ")
+                if(RobotStatus.batteryStateNumber.value == false){
+                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                }else {
+                    controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
+                    Log.d("TAG", "点击智能讲解 ")
                     SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
+                }
             }
             "轻应用" -> {
                 //跳转到测温模式
+                Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
 //                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d("TAG", "点击轻应用")
             }

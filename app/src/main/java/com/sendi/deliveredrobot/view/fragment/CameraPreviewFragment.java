@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class CameraPreviewFragment extends Fragment {
         binding = DataBindingUtil.bind(view);
         DialogHelper.loadingDialog.show();
         new TimeThread().start(); //启动新的线程
-        initViews();
+//        initViews();
         //副屏状态
         RobotStatus.INSTANCE.getSdScreenStatus().postValue(1);
         features = new float[1][512];
@@ -258,6 +259,7 @@ public class CameraPreviewFragment extends Fragment {
 
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         String[] cameraIds = new String[0];
+        Log.d("TAG", "Surface:"+ Arrays.toString(cameraIds));
         try {
             cameraIds = manager.getCameraIdList();
         } catch (CameraAccessException e) {
@@ -272,8 +274,6 @@ public class CameraPreviewFragment extends Fragment {
             }
 
         }
-
-        c.setDisplayOrientation(0);//预览图与手机方向一致
 
         SurfaceHolder sh = binding.svCamera.getHolder();// 绑定SurfaceView，取得SurfaceHolder对象
         //启动预览，到这里就能正常预览
@@ -540,10 +540,6 @@ public class CameraPreviewFragment extends Fragment {
 
     }
 
-    private void initViews() {
-        if (Usbcontorl.isload)
-            Usbcontorl.usb3803_mode_setting(1);//打开5V
-    }
 
     //写一个线程，线程里面无限循环，每隔一秒发送一个消息,在主线程里面处理消息并更新时间。
     class TimeThread extends Thread {

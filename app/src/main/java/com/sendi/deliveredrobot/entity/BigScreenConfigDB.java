@@ -33,6 +33,16 @@ public class BigScreenConfigDB extends LitePalSupport {
     //图片存储名字
     private String imageFile;
 
+    private int videolayout;
+
+    public int getVideolayout() {
+        return videolayout;
+    }
+
+    public void setVideolayout(int videolayout) {
+        this.videolayout = videolayout;
+    }
+
     public int getType() {
         return type;
     }

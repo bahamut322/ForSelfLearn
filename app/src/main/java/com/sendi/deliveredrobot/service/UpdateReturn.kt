@@ -313,6 +313,7 @@ class UpdateReturn {
             Universal.bigScreenType = replyGateConfigDatas.bigScreenType
             Universal.textPosition = replyGateConfigDatas.textPosition
             Universal.TemperatureMax = replyGateConfigDatas.temperatureThreshold
+            Universal.TempVideoLayout = replyGateConfigDatas.videolayout
         }
     }
 

@@ -8,6 +8,8 @@ import com.baidu.tts.client.SpeechSynthesizeBag;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
+import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.utils.LogUtil;
 
 import java.util.ArrayList;
@@ -44,7 +46,6 @@ public class MySyntherizer implements MainHandlerConstant {
     protected boolean init(InitConfig config) {
 
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
-
         mSpeechSynthesizer.setContext(context);
         LogUtil.INSTANCE.i( "包名:" + context.getPackageName());
 
@@ -99,6 +100,7 @@ public class MySyntherizer implements MainHandlerConstant {
         if (!isInitied) {
             throw new RuntimeException("TTS 还未初始化");
         }
+        new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         return mSpeechSynthesizer.speak(text, utteranceId);
     }
 
@@ -121,6 +123,7 @@ public class MySyntherizer implements MainHandlerConstant {
             // SpeechSynthesizer.getInstance() 不要连续调用
             throw new RuntimeException("TTS 还未初始化");
         }
+        Log.d(TAG, "synthesize: "+text);
         return mSpeechSynthesizer.synthesize(text, utteranceId);
     }
 

@@ -38,6 +38,7 @@ object DockStateTopic {
                         if(RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER && RobotStatus.batteryStateNumber.value == false){
                             UpdateReturn().mapSetting(true)
                             RobotStatus.batteryStateNumber.postValue(true)
+                            DialogHelper.briefingDialog.dismiss()
                         }
                         "充电中"
                     }

@@ -70,6 +70,11 @@ public class QuerySql {
                 model.setTouch_fontsize(cursor.getInt(cursor.getColumnIndex("touch_fontsize")));
                 model.setTouch_type(cursor.getInt(cursor.getColumnIndex("touch_type")));
                 model.setTouch_textposition(cursor.getInt(cursor.getColumnIndex("touch_textposition")));
+                model.setTouch_walkPic(cursor.getString(cursor.getColumnIndex("touch_walkpic")));
+                model.setTouch_blockPic(cursor.getString(cursor.getColumnIndex("touch_blockpic")));
+                model.setTouch_arrivePic(cursor.getString(cursor.getColumnIndex("touch_arrivepic")));
+                model.setTouch_overTaskPic(cursor.getString(cursor.getColumnIndex("touch_overtaskpic")));
+                model.setVideolayout(cursor.getInt(cursor.getColumnIndex("videolayout")));
                 list.add(model);
             } while (cursor.moveToNext());
             cursor.close();
@@ -99,6 +104,19 @@ public class QuerySql {
             cursor.close();
         }
         return list;
+    }
+
+    public static String routeName() {
+        String sql = "SELECT routedb.rootmapname FROM routedb ";
+        String name = "";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                name = (cursor.getString(cursor.getColumnIndex("rootmapname")));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return name;
     }
 
     /**
@@ -243,7 +261,7 @@ public class QuerySql {
                 model.setEtiquette(etique);
                 model.setExplanationFinish(cursor.getInt(cursor.getColumnIndex("explanationfinish")));
                 model.setGoExplanationPoint(cursor.getFloat(cursor.getColumnIndex("goexplanationpoint")));
-                model.setVoiceVolume(cursor.getFloat(cursor.getColumnIndex("voicevolume")));
+                model.setVoiceVolume(cursor.getInt(cursor.getColumnIndex("voicevolume")));
                 boolean IdentifyVip = intToBoolean(cursor.getInt(cursor.getColumnIndex("identifyvip")));
                 model.setIdentifyVip(IdentifyVip);
                 model.setPatrolStayTime(cursor.getInt(cursor.getColumnIndex("patrolstaytime")));
@@ -257,7 +275,7 @@ public class QuerySql {
                 model.setTempMode(cursor.getInt(cursor.getColumnIndex("tempmode")));
                 boolean Intelligent = intToBoolean(cursor.getInt(cursor.getColumnIndex("intelligent")));
                 model.setIntelligent(Intelligent);
-                model.setVideoVolume(cursor.getFloat(cursor.getColumnIndex("videovolume")));
+                model.setVideoVolume(cursor.getInt(cursor.getColumnIndex("videovolume")));
                 model.setLeadingSpeed(cursor.getFloat(cursor.getColumnIndex("leadingspeed")));
                 model.setRobotMode(cursor.getString(cursor.getColumnIndex("robotmode")));
                 model.setPatrolContent(cursor.getString(cursor.getColumnIndex("patrolcontent")));

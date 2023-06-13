@@ -9,8 +9,8 @@ public class BasicModel {
     private String robotMode;//机器人音色
     private Boolean Intelligent;//智能语音
     private Boolean Etiquette;//礼仪迎宾
-    private float voiceVolume;//语音音量
-    private float videoVolume; //视频音量
+    private int voiceVolume;//语音音量
+    private int videoVolume; //视频音量
     private Boolean expression;//操作屏表情
     private Boolean identifyVip;//识别Vip人脸迎宾
     private float leadingSpeed;//引领速度
@@ -68,19 +68,19 @@ public class BasicModel {
         Etiquette = etiquette;
     }
 
-    public float getVoiceVolume() {
+    public int getVoiceVolume() {
         return voiceVolume;
     }
 
-    public void setVoiceVolume(float voiceVolume) {
+    public void setVoiceVolume(int voiceVolume) {
         this.voiceVolume = voiceVolume;
     }
 
-    public float getVideoVolume() {
+    public int getVideoVolume() {
         return videoVolume;
     }
 
-    public void setVideoVolume(float videoVolume) {
+    public void setVideoVolume(int videoVolume) {
         this.videoVolume = videoVolume;
     }
 

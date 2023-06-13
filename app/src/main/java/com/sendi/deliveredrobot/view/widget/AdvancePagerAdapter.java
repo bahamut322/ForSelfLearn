@@ -14,14 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
-    private final Context context;
+    private Context context;
     private ViewPager viewPager;
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
+
     private int current = 0;
-    public static int time = Universal.picPlayTime * 1000;
+    public static int time = 0;
     private boolean pause;
     private Thread thread;
+
     private int lastPosition = -1;
 
     public AdvancePagerAdapter(Context context, ViewPager viewPager) {
@@ -34,6 +36,10 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
         if (advances.size() == 0) return;
         this.datas = advances;
         list.clear();
+        time = Universal.time * 1000;
+        if (time == 0) {
+            time = 3000;
+        }
         if (advances != null) {
             addView(advances.get(advances.size() - 1));
             if (advances.size() > 1) { //多于1个要循环
@@ -45,18 +51,18 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
         }
         viewPager.addOnPageChangeListener(this);
         notifyDataSetChanged();
-        //在外层，将mViewPager初始位置设置为1即可
-        if (advances.size() > 1) { //多于1个，才循环并开启定时器
+
+        if (advances.size() > 1) {
             viewPager.setCurrentItem(1);
             startTimer();
         }
-        if (advances.get(0).type.equals("1")) {//第一个是视频不播放这边优化了一下
+        if (advances.get(0).type.equals("1")) {
             ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).setVideo(mediaPlayer -> {
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
             });
         }
-
     }
+
 
     private void addView(Advance advance) {
         if (advance.type.equals("1")) {
@@ -135,8 +141,6 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        // 由于viewpager的预加载机制onPageSelected这里面加载videoview 放的跟玩一样  等操作完成后再播放videoview就香了  很丝滑
-        Log.d("", "");
         if (state == 0) {
             if (list.size() > 1) { //多于1，才会循环跳转
                 if (lastPosition != -1 && lastPosition != viewPager.getCurrentItem() && list.get(lastPosition) instanceof AdvanceVideoView) {
@@ -156,6 +160,18 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
                 }
                 lastPosition = viewPager.getCurrentItem();
             }
+        }
+    }
+
+    public void mediaStop() {
+        if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
+            ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaStop();
+        }
+    }
+
+    public void mediaRestart() {
+        if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
+            ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaRestart();
         }
     }
 

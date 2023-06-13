@@ -83,6 +83,7 @@ object RobotStatus {
     var progress : MutableLiveData<Int> = MutableLiveData()//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
+    var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
 
     fun setStatus(status: Int){
         previousStatus = currentStatus

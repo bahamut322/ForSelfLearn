@@ -75,6 +75,52 @@ public class MyResultModel {
     private Object touch_fontsize;
     private int touch_type;
     private int touch_textposition;
+    private String touch_walkPic;
+    private String touch_blockPic;
+    private String touch_arrivePic;
+    private String touch_overTaskPic;
+
+    private int videolayout;
+
+    public int getVideolayout() {
+        return videolayout;
+    }
+
+    public void setVideolayout(int videolayout) {
+        this.videolayout = videolayout;
+    }
+
+    public String getTouch_walkPic() {
+        return touch_walkPic;
+    }
+
+    public void setTouch_walkPic(String touch_walkPic) {
+        this.touch_walkPic = touch_walkPic;
+    }
+
+    public String getTouch_blockPic() {
+        return touch_blockPic;
+    }
+
+    public void setTouch_blockPic(String touch_blockPic) {
+        this.touch_blockPic = touch_blockPic;
+    }
+
+    public String getTouch_arrivePic() {
+        return touch_arrivePic;
+    }
+
+    public void setTouch_arrivePic(String touch_arrivePic) {
+        this.touch_arrivePic = touch_arrivePic;
+    }
+
+    public String getTouch_overTaskPic() {
+        return touch_overTaskPic;
+    }
+
+    public void setTouch_overTaskPic(String touch_overTaskPic) {
+        this.touch_overTaskPic = touch_overTaskPic;
+    }
 
     public String getRootmapname() {
         return rootmapname;

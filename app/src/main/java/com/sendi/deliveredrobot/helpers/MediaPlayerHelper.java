@@ -75,9 +75,9 @@ public class MediaPlayerHelper {
             }, 2000); // 延迟2秒执行
 
         }
-        if (mMediaPlayer == null && !isPaused){
-            Order.setFlage("0");
-        }
+//        if (mMediaPlayer == null && !isPaused){
+//            Order.setFlage("0");
+//        }
     }
 
     public static void stop() {

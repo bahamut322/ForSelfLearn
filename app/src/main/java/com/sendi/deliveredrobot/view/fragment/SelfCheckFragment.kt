@@ -109,6 +109,7 @@ class SelfCheckFragment : Fragment() {
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
+                LogUtil.d("wwadwa:"+resCheck)
                 if (resCheck != 0x1FF) {
                     LogUtil.d("打印收到数据——— $resCheck")
                     withContext(Dispatchers.Main) {
@@ -376,7 +377,7 @@ class SelfCheckFragment : Fragment() {
 
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
-        Looper.prepare();
+        Looper.prepare()
         when (FunctionSkip.selectFunction()) {
             //智能引领
             0 -> {
@@ -403,6 +404,9 @@ class SelfCheckFragment : Fragment() {
             //不只有一个选项
             4 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+            }
+            -1 ->{
+                controller!!.navigate(R.id.action_selfCheckFragment_to_settingFragment)
             }
         }
         Looper.loop();

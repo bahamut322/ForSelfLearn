@@ -288,6 +288,10 @@ public class MySeekBar extends BaseCustomView {
                         }
                     }
                     cur = (event.getX() - seekMargin) / (baseViewWidth - 2 * seekMargin) * (max - min) + min;
+                    if (cur < min)
+                    {
+                        cur = min;
+                    }
                     invalidate();
                 } else {
                     return false;

@@ -1,8 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
-import com.sendi.deliveredrobot.MyApplication.Companion.instance
-import com.sendi.deliveredrobot.entity.QuerySql
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.RobotMileageHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -11,7 +9,6 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.TaskNext
 
 /**
@@ -34,14 +31,17 @@ class ArrayPointExplanTask(var status: Int = 1, taskModel: TaskModel) : Abstract
 
     override suspend fun execute() {
         LogUtil.i("TODO 到达讲解点")
-        RobotStatus.ArrayPointExplan.postValue(1)
-        TaskNext.setOnChangeListener {
-            if (TaskNext.getToDo() == "1"){
-                LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
-                BillManager.currentBill()?.executeNextTask()
-                TaskNext.setToDo("0")
-                RobotStatus.ArrayPointExplan.postValue(0)
+        if (Universal.nextPointGo == 0) {
+            RobotStatus.ArrayPointExplan.postValue(1)
+            TaskNext.setOnChangeListener {
+                if (TaskNext.getToDo() == "1") {
+                    LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
+                    BillManager.currentBill()?.executeNextTask()
+                    TaskNext.setToDo("0")
+                    RobotStatus.ArrayPointExplan.postValue(0)
+                }
             }
         }
+        Universal.nextPointGo = 0
     }
 }

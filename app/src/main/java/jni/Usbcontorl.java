@@ -30,7 +30,7 @@ public class Usbcontorl extends Usbjni{
                  if (reader != null) {
                      try {
                          reader.close();
-                     } catch (IOException e1) {
+                     } catch (IOException ignored) {
                      }
                  }
              }

@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,8 +46,8 @@ public class DebugBasicSettingFragment extends Fragment {
     SharedPreferences.Editor editor;
     public String timbre = "男声";//默认音色
     View view;
-    Float robotAudio;
-    Float videoAudio;
+    int robotAudio;
+    int videoAudio;
     ContentValues values;
 
     @Override
@@ -54,12 +56,11 @@ public class DebugBasicSettingFragment extends Fragment {
         binding = DataBindingUtil.bind(view);
         viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
         values = new ContentValues();
-
-        assert binding != null;
         binding.seekbarMusic.setRange(0, 100, 0);//设置机器人语音调节范围
         binding.seekbarVoice.setRange(0, 100, 0);//设置视频音量调节范围
+        assert binding != null;
 
-
+        AudioManager audioManager = (AudioManager) MyApplication.context.getSystemService(Context.AUDIO_SERVICE);
         binding.seekbarMusic.setCur(QuerySql.QueryBasic().getVoiceVolume());
         binding.seekbarVoice.setCur(QuerySql.QueryBasic().getVideoVolume());
         timbres(QuerySql.QueryBasic().getRobotMode());//选中音色方法
@@ -96,19 +97,22 @@ public class DebugBasicSettingFragment extends Fragment {
         });
         binding.cbEtiquette.setOnCheckedChangeListener((compoundButton, b) -> {
             values.put("etiquette",BooleanToInt(b));
+            if (viewModel.isNumCharOne(4)){
+                Toast.makeText(getContext(),"未检测到RGB摄像头，人脸识别开启无效",Toast.LENGTH_LONG).show();
+            }
         });
 
         //机器人语音
         binding.seekbarMusic.setOnSeekBarChangeListener(current -> {
-            robotAudio = binding.seekbarMusic.getCur();
+            robotAudio = (int) binding.seekbarMusic.getCur();
             Log.d(TAG, "设置机器人语音：" + robotAudio);
             values.put("voicevolume",robotAudio);
         });
 
         //音频音量
         binding.seekbarVoice.setOnSeekBarChangeListener(current -> {
-            videoAudio = binding.seekbarVoice.getCur();
-            new AudioMngHelper(MyApplication.Companion.getInstance()).setVoice100((int)binding.seekbarVoice.getCur());
+            videoAudio = (int) binding.seekbarVoice.getCur();
+            new AudioMngHelper(MyApplication.context).setVoice100((int)binding.seekbarVoice.getCur());
             Log.d(TAG, "设置音频音量：" + videoAudio);
             values.put("videovolume",videoAudio);
         });

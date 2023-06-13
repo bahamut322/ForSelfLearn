@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
-import android.hardware.usb.UsbDevice
 import android.media.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
-import com.infisense.iruvc.usb.UVCCamera
 import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.camera.IRUVC
@@ -25,8 +23,13 @@ import com.sendi.deliveredrobot.service.DeliverMqttService
 import com.sendi.deliveredrobot.service.MqttService
 import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.utils.LogUtil
+import jni.Usbcontorl
 import kotlinx.coroutines.*
 import sendi_sensor_msgs.InfraredManageResponse
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
 import java.util.*
 
 
@@ -71,7 +74,9 @@ object CheckSelfHelper {
         // 倒计时观察
         val seconds = MutableLiveData(time)
         var progress = 0
-        var tempFlag = 384//转为二进制之后，对应自检
+        //将读取文件中的内容放入变量中，用于之后判断是否可以进行测温/人脸识别
+        RobotStatus.SelfCheckNum.postValue(getFileContent((Universal.SelfCheck)))
+        var tempFlag = getFileContent((Universal.SelfCheck)).toInt(2)//转为二进制之后，对应自检
         var initRosTopic = false
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
@@ -159,9 +164,17 @@ object CheckSelfHelper {
 
             if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
                 RobotStatus.stopButtonPressed.value == 0){
-                checkSelfComplete = true
+                if (getFileContent((Universal.SelfCheck))[1] != '1'){
+                    if (temp()){
+                        checkSelfComplete = true
+                    }
+                }else{
+                    checkSelfComplete = true
+                }
             }
-            LogUtil.i("=========LASER_SCAN===${laserCheckComplete.value}")
+            LogUtil.i("=========LASER_SCAN=========${laserCheckComplete.value}")
+            LogUtil.d("读取文件内容："+getFileContent((Universal.SelfCheck)))
+            LogUtil.d("读取文件内容并且转为十进制："+ getFileContent((Universal.SelfCheck)).toInt(2))
             if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
                 tempFlag = tempFlag or 0x01
                 progress++
@@ -184,7 +197,6 @@ object CheckSelfHelper {
                 tempFlag = tempFlag or 0x08
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
-                RobotStatus.newUpdata.postValue(1)
                 LogUtil.i("副屏检测通过")
             }
             if (checkCameraHardware(MyApplication.context) && tempFlag and 0x10 == 0){
@@ -315,7 +327,7 @@ object CheckSelfHelper {
             p2camera = IRUVC(Universal.cameraHeight, Universal.cameraWidth, MyApplication.context, syncimage)
             p2camera?.registerUSB()
         }
-        return !(p2camera!!.uvcCamera == null || !p2camera!!.uvcCamera.getOpenStatus())
+        return !(p2camera!!.uvcCamera == null || !p2camera!!.uvcCamera.openStatus)
 
     }
     /**
@@ -367,4 +379,17 @@ object CheckSelfHelper {
         }
     }
 
+    //读取指定目录下的所有TXT文件的文件内容
+    private fun getFileContent(files: String): String {
+        val file = File(files)
+        val inputStream = FileInputStream(file)
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+        val stringBuilder = StringBuilder()
+        var line: String? = bufferedReader.readLine()
+        while (line != null) {
+            stringBuilder.append(line)
+            line = bufferedReader.readLine()
+        }
+        return stringBuilder.toString()
+    }
 }

@@ -1,12 +1,20 @@
 package com.sendi.deliveredrobot.baidutts.listener;
 
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
+
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
+import com.sendi.deliveredrobot.BuildConfig;
+import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 
@@ -30,8 +38,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSynthesizeStart(String utteranceId) {
         sendMessage("准备开始合成,序列号:" + utteranceId);
-        //开始合成的时候通知副屏的视频和主屏幕的mp3静音或者停止
-        Order.setFlage("1");
     }
 
     /**
@@ -45,7 +51,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId);
-        // + ";" + (engineType == 1? "离线合成":"在线合成"));
     }
 
     @Override
@@ -76,16 +81,18 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
      * @param progress    如合成“百度语音问题”这6个字， progress肯定是从0开始，到6结束。 但progress无法保证和合成到第几个字对应。
      */
     private int previousProgress = 0; // 存储前一次的 progress
+
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
-        if (previousProgress == 45 && progress == 45) {
+        new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
+        if (previousProgress == Universal.BaiduSpeakLength && progress == Universal.BaiduSpeakLength) {
             LogUtil.INSTANCE.i("连续生成两次45");
         } else {
-            if (Universal.taskNum != 0 && progress == 45) {
+            if (Universal.taskNum != 0 && progress == Universal.BaiduSpeakLength) {
                 Universal.progress++;
-                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * 45);
-            }else if (Universal.progress <= Universal.taskNum-1  && progress != 45) {
-                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * 45 + progress);
+                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * Universal.BaiduSpeakLength);
+            } else if (Universal.progress <= Universal.taskNum - 1 && progress != Universal.BaiduSpeakLength) {
+                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * Universal.BaiduSpeakLength + progress);
             }
         }
         previousProgress = progress; // 更新前一次的 progress
@@ -105,12 +112,13 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum){
+        Order.setFlage("0");
+        Log.d(TAG, "onSpeechFinish: 百度语音Finish");
+        if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum) {
             MediaPlayerHelper.resume();
-        }else if (Universal.taskNum ==0){
+        } else if (Universal.taskNum == 0) {
             MediaPlayerHelper.resume();
         }
-
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);

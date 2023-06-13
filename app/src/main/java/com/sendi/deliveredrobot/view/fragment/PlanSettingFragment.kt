@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.qmuiteam.qmui.kotlin.onClick
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentSettingPlanBinding
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
+import com.sendi.deliveredrobot.viewmodel.SettingViewModel
 
 /**
  * @Author Swn
@@ -20,8 +25,7 @@ import com.sendi.deliveredrobot.databinding.FragmentSettingPlanBinding
 class PlanSettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingPlanBinding
     private var controller: NavController? = null
-
-
+    private val viewModel by viewModels<SettingViewModel>({ requireActivity() })
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +59,11 @@ class PlanSettingFragment : Fragment() {
         //门岗测温
         binding.temp.apply {
             setOnClickListener {
-                controller!!.navigate(R.id.action_planSettingFragment_to_cameraPreviewFragment)
+                if (viewModel.isNumCharOne(1) || viewModel.isNumCharOne(4)){
+                    Toast.makeText(context, "未检测到RGB摄像头/测温摄像头", Toast.LENGTH_SHORT).show()
+                }else {
+                    controller!!.navigate(R.id.action_planSettingFragment_to_cameraPreviewFragment)
+                }
             }
         }
         //回桩

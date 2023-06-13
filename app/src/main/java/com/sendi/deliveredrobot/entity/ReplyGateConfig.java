@@ -42,6 +42,16 @@ public class ReplyGateConfig  extends LitePalSupport {
     private int picType;
     private int textPosition;
 
+    private int videolayout;
+
+    public int getVideolayout() {
+        return videolayout;
+    }
+
+    public void setVideolayout(int videolayout) {
+        this.videolayout = videolayout;
+    }
+
     public int getTextPosition() {
         return textPosition;
     }

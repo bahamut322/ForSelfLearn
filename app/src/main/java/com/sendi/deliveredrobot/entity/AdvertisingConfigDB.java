@@ -29,6 +29,15 @@ public class AdvertisingConfigDB extends LitePalSupport {
     private int textPosition;
     //视频是否播放声音
     private int videoAudio;
+    private int videolayout;
+
+    public int getVideolayout() {
+        return videolayout;
+    }
+
+    public void setVideolayout(int videolayout) {
+        this.videolayout = videolayout;
+    }
 
     public int getType() {
         return type;

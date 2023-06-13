@@ -51,6 +51,7 @@ class DialogHelper {
         lateinit var chargingDialog: Dialog
         lateinit var loadingDialog: Dialog
         lateinit var lowPowerGoBack : Dialog
+        lateinit var briefingDialog : Dialog
         var myCustomPopupWin: MyCustomPopupWin? = null
 
         /**
@@ -59,6 +60,7 @@ class DialogHelper {
         fun initDialog(_activity: Activity) {
             activity = _activity
             troubleDialog = TroubleDialog(activity)
+            briefingDialog = BrieFingDialog(activity)
             distractedDialog = DistractedDialog(activity)
             rebootDialog = TryRebootDialog(activity)
             stopDialog = ResetStopButtonDialog(activity, needBlur = false)

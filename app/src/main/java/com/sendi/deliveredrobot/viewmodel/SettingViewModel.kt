@@ -5,6 +5,11 @@ import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
 
 class SettingViewModel : ViewModel() {
     private fun getParam(speak:String): Map<String, String> {
@@ -42,5 +47,17 @@ class SettingViewModel : ViewModel() {
         } else if ("童声" == QuerySql.QueryBasic().robotMode) {
             randomVoice(3, speed)
         }
+    }
+    fun isNumCharOne(num:Int): Boolean {
+        val file = File(Universal.SelfCheck)
+        val inputStream = FileInputStream(file)
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+        val stringBuilder = StringBuilder()
+        var line: String? = bufferedReader.readLine()
+        while (line != null) {
+            stringBuilder.append(line)
+            line = bufferedReader.readLine()
+        }
+        return stringBuilder.toString().length >= 8 && stringBuilder.toString()[num] == '1'
     }
 }

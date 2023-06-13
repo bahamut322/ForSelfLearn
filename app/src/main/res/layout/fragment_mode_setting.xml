@@ -189,7 +189,7 @@
                 <View
                     android:id="@+id/view11"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="650dp"
+                    android:layout_height="550dp"
                     android:layout_marginTop="24dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -340,6 +340,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_90"
                     android:alpha="0.7"
+                    android:visibility="gone"
                     android:text="@string/Inaccessible"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
@@ -352,6 +353,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_94"
                     android:orientation="horizontal"
+                    android:visibility="gone"
+
                     app:layout_constraintBottom_toBottomOf="@+id/textView34"
                     app:layout_constraintStart_toEndOf="@+id/textView34"
                     app:layout_constraintTop_toTopOf="@+id/textView34">

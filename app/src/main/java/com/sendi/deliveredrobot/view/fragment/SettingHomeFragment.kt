@@ -41,10 +41,13 @@ class SettingHomeFragment : Fragment() {
             var versionGetResponse: VersionGetResponse? = null
             withContext(Dispatchers.Default) {
                 versionGetResponse = ROSHelper.getVersion(1) ?: return@withContext
+                LogUtil.d("地盘版本："+versionGetResponse)
             }
             if (versionGetResponse?.success == true) {
                 withContext(Dispatchers.Main) {
                     RobotStatus.chassisVersionName = versionGetResponse?.version ?: ""
+                    LogUtil.d("地盘版本："+RobotStatus.chassisVersionName)
+
                 }
             }
         }
@@ -52,7 +55,6 @@ class SettingHomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        Log.d("TAG11111one", "onStop: ")
         mainScope?.cancel()
     }
 
@@ -158,6 +160,9 @@ class SettingHomeFragment : Fragment() {
                 //不只有一个选项
                 4->{
                     controller!!.navigate(R.id.action_settingHomeFragment_to_homeFragment)
+                }
+                -1->{
+                    Toast.makeText(context, "请勾选主页面功能模块", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -25,12 +25,15 @@ public class Universal {
     public static String selectItem = null;
     //机器人音色选择
     public static String RobotMode = "男声";
+    //测温视频
+    public static int TempVideoLayout = 480;
     //存放待机视频/图片/GIF的目录
     @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
     //存放正常情况下的图片/视频
     @SuppressLint("SdCardPath")
     public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary/";
+    public static String SelfCheck= "/mnt/sdcard/X8ROBOT/SelfCheck.txt";
     //存放副屏广告图
     @SuppressLint("SdCardPath")
     public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV/";
@@ -55,7 +58,7 @@ public class Universal {
 
     //TODO 门岗管理
     //副屏轮播间隔时间
-    public static int picPlayTime = 10;
+    public static int picPlayTime = 3;
     //副屏视频是否播放声音
     public static int videoAudio = 1;
     //副屏文字
@@ -110,5 +113,16 @@ public class Universal {
     public static String lastValue = null;
     public static boolean selectMapPoint = false;
     public static boolean twice = false;
+    //轮播时间:
+    public static int time;
+    public static int nextPointGo = 0;
+    //图片布局
+    public static int pic = 1;
+    public static int BaiduSpeakLength = 45;
+
+    public static int videolayout = 0;
+
+    public static int AllvideoAudio = 0;
+
 }
 

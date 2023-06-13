@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.camera;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.infisense.iruvc.usb.UVCCamera;
 import com.infisense.iruvc.utils.SynchronizedBitmap;
 import com.sendi.deliveredrobot.utils.ImgByteDealFunction;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class IRUVC {
@@ -67,6 +69,7 @@ public class IRUVC {
                if(pid!=0 &&device.getProductId()==pid) {
                     if (uvcCamera == null || !uvcCamera.getOpenStatus()) {
                         Log.w(TAG, "USBMonitor"+"onAttach requestPermission" + pid);
+                        isDeviceConnected(context,pid);
                         if(!isRequest){
                             isRequest = true;
                             mUSBMonitor.requestPermission(device);
@@ -184,6 +187,18 @@ public class IRUVC {
         //default sync mode for some devices  Lost-Packet
         uvcCamera.startPreview();
 
+    }
+
+    public void isDeviceConnected(Context context, int productId) {
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        if (usbManager != null) {
+            HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+            for (UsbDevice device : deviceList.values()) {
+                if (device.getProductId() == productId) {
+                    return;
+                }
+            }
+        }
     }
 
 

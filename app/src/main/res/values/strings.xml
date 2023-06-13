@@ -81,7 +81,7 @@
     <string name="error_code">错误编码：%s</string>
     <string name="i_just_distracted">我刚刚走神了</string>
     <string name="i_just_distracted_2">我好像开小差了</string>
-    <string name="you_can_do_this">【您可以进行以下操作】</string>
+    <string name="you_can_do_this">您可以进行以下操作: \n 把我推到充电桩上 \n 确保充电桩前方没有遮挡物</string>
     <string name="you_can_do_this_remind_1">▪ 确保充电桩前方没有遮挡物</string>
     <string name="you_can_do_this_remind_2">▪ 把我推到充电桩上</string>
     <string name="please_try_reboot">请尝试重启</string>
