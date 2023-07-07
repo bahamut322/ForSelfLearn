@@ -69,7 +69,7 @@ public class CatalogueExplantionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        controller = Navigation.findNavController(view);
+        controller = Navigation.findNavController(requireView());
         binding = DataBindingUtil.bind(view);
         mAdapter = new CatalogueAdapter(viewModel.inForListData(), getContext());
         binding.CatalogueList.setAdapter(mAdapter);

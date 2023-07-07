@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
 import com.sendi.deliveredrobot.entity.FunctionSkip;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
@@ -78,7 +79,7 @@ public class ExplanationFragment extends Fragment {
             binding.firstFragment.setVisibility(View.VISIBLE);
             binding.llReturn.setVisibility(View.GONE);
         }
-        controller = Navigation.findNavController(view);
+        controller = Navigation.findNavController(requireView());
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> controller.navigate(R.id.action_explanationFragment_to_homeFragment));
@@ -87,7 +88,9 @@ public class ExplanationFragment extends Fragment {
             fromeSettingDialog.show();
             RobotStatus.INSTANCE.getPassWordToSetting().observe(getViewLifecycleOwner(), it -> {
                 if (Boolean.TRUE.equals(RobotStatus.INSTANCE.getPassWordToSetting().getValue())) {
-                    controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
+                    try {
+                        controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
+                    }catch (Exception ignored){}
                     fromeSettingDialog.dismiss();
                     RobotStatus.INSTANCE.getPassWordToSetting().postValue(false);
                 }
@@ -206,7 +209,7 @@ public class ExplanationFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) binding.explainRv.getLayoutManager();
         View childView = linearLayoutManager.findViewByPosition(position);
-        Log.i("ccb", "滑动后中间View的索引: " + position);
+        Log.i("ccb", "000000: " + position);
         //把当前View移动到居中位置
         if (childView == null) return;
         int childVhalf = childView.getWidth() / 2;
@@ -255,7 +258,7 @@ public class ExplanationFragment extends Fragment {
                     vh.tv.setTextColor(getResources().getColor(R.color.white));
                     vh.tv.setTextSize(32);
                     setViewSize(vh.view, 320, 448);
-                    setViewSize(vh.imageView, 288, 334);
+//                    setViewSize(vh.imageView, 288, 334);
                     vh.view.setSelected(true);
                     setViewSize(vh.imgBottom, 240, 4);
                     setViewSize(vh.bottomImg, 320, 56);
@@ -291,10 +294,16 @@ public class ExplanationFragment extends Fragment {
             final int fp = position;
             //item点击
             vh.view.setOnClickListener(v -> {
-                scrollToCenter(fp);
-                RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
-                controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
-                SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getPointListText());
+                if (!RobotStatus.INSTANCE.getBatteryStateNumber().getValue()) {
+                    Toast.makeText(getContext(), "请先对接充电桩", Toast.LENGTH_SHORT).show();
+                    DialogHelper.briefingDialog.show();
+                } else {
+                    scrollToCenter(fp);
+                    RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
+                    Log.d("TAG", "onBindViewHolder: "+mDatas.get(position).getId());
+                    controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
+                    SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getPointListText());
+                }
             });
         }
 

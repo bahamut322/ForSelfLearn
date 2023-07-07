@@ -84,6 +84,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
+        Order.setFlage("1");
         new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         if (previousProgress == Universal.BaiduSpeakLength && progress == Universal.BaiduSpeakLength) {
             LogUtil.INSTANCE.i("连续生成两次45");
@@ -112,7 +113,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        Order.setFlage("0");
+        if (TaskQueues.isCompleted()) {
+            Order.setFlage("0");
+        }
         Log.d(TAG, "onSpeechFinish: 百度语音Finish");
         if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum) {
             MediaPlayerHelper.resume();

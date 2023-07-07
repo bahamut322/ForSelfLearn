@@ -16,20 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  * @author swn
- *  * @describe  查询数据
+ * * @author swn
+ * * @describe  查询数据
  */
 public class QuerySql {
     /**
      * 笛卡尔积查询数据库讲解路线中的信息(升序排序)
+     *
      * @param routeId 当前地图的id
      */
-    public static ArrayList<MyResultModel> queryMyData(int routeId) {
+    public static ArrayList<MyResultModel> queryPointDate(int routeId) {
         ArrayList<MyResultModel> list = new ArrayList<>();
         String sql = "SELECT * FROM routedb route "
                 + "LEFT JOIN pointconfigvodb point ON " + routeId + " = point.routedb_id "
                 + "LEFT JOIN bigscreenconfigdb bigscreen ON point.id = bigscreen.pointconfigvodb_id "
                 + "LEFT JOIN touchscreenconfigdb touch ON point.id = touch.pointconfigvodb_id "
+                + "WHERE route.id = " + routeId + " "
                 + "ORDER BY scope ASC";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
@@ -90,8 +92,11 @@ public class QuerySql {
      */
     public static List<SendRoutesModel> QueryRoutesSendMessage(String rootMapName) {
         List<SendRoutesModel> list = new ArrayList<>();
-        String sql = "SELECT * FROM routedb route "
-                + "LEFT JOIN pointconfigvodb point ON (SELECT id FROM routedb WHERE routedb.rootmapname = "+"'"+rootMapName +"'"+" )  = point.routedb_id  ";
+        String sql = "SELECT DISTINCT route.routename, route.timestamp " +
+                "FROM routedb route " +
+                "LEFT JOIN pointconfigvodb point " +
+                "ON route.id = point.routedb_id " +
+                "WHERE route.rootmapname = " + "'" + rootMapName + "'";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -121,11 +126,12 @@ public class QuerySql {
 
     /**
      * 查询某个总图下所有的路线
+     *
      * @param rootMapName 当前使用的地图名字
      */
     public static List<RouteMapList> queryRoute(String rootMapName) {
         List<RouteMapList> list = new ArrayList<>();
-        String sql = "SELECT * FROM routedb WHERE routedb.rootmapname =  " +"'" + rootMapName + "'";
+        String sql = "SELECT * FROM routedb WHERE routedb.rootmapname =  " + "'" + rootMapName + "'";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -146,11 +152,12 @@ public class QuerySql {
 
     /**
      * 查询时间戳
+     *
      * @param routeName 路径名字
      */
-    public static Long queryTime(String routeName){
+    public static Long queryTime(String routeName) {
         long Time = 0L;
-        String sql = "SELECT routedb.timestamp FROM routedb WHERE routedb.routename = " +"'" + routeName + "'";
+        String sql = "SELECT routedb.timestamp FROM routedb WHERE routedb.routename = " + "'" + routeName + "'";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -163,11 +170,12 @@ public class QuerySql {
 
     /**
      * 查询routeDB的id
+     *
      * @param routeName 路径名字
      */
-    public static int routeDB_id(String routeName){
+    public static int routeDB_id(String routeName) {
         int route_id = 0;
-        String sql = "SELECT routedb.id FROM routedb WHERE routedb.routename = "+"'"+routeName+"'";
+        String sql = "SELECT routedb.id FROM routedb WHERE routedb.routename = " + "'" + routeName + "'";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -180,11 +188,12 @@ public class QuerySql {
 
     /**
      * 查询pointconfigvodb的id
+     *
      * @param routeName 路径名字
      */
-    public static int pointConfigVoDB_id(String routeName){
+    public static int pointConfigVoDB_id(String routeName) {
         int pointConfigVoDB_id = 0;
-        String sql = "SELECT pointconfigvodb.id FROM pointconfigvodb WHERE pointconfigvodb.routedb_id = (SELECT routedb.id FROM routedb WHERE routedb.routename = "+"'"+routeName+"'" +" )";
+        String sql = "SELECT pointconfigvodb.id FROM pointconfigvodb WHERE pointconfigvodb.routedb_id = (SELECT routedb.id FROM routedb WHERE routedb.routename = " + "'" + routeName + "'" + " )";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -198,7 +207,7 @@ public class QuerySql {
     /**
      * 查询讲解配置中的信息
      */
-    public static ExplainConfigModel QueryExplainConfig(){
+    public static ExplainConfigModel QueryExplainConfig() {
         ExplainConfigModel model = new ExplainConfigModel();
         String sql = "SELECT * FROM explainconfigdb";
         Cursor cursor = LitePal.findBySQL(sql);
@@ -222,9 +231,10 @@ public class QuerySql {
 
     /**
      * 查询时间戳
+     *
      * @return
      */
-    public static long advTimeStamp(){
+    public static long advTimeStamp() {
         long timestamp = 0;
         String sql = "SELECT timestamp FROM advertisingconfigdb";
         Cursor cursor = LitePal.findBySQL(sql);
@@ -237,7 +247,7 @@ public class QuerySql {
         return timestamp;
     }
 
-    public static int QueryBasicId(){
+    public static int QueryBasicId() {
         int basic_id = 0;
         String sql = "SELECT id FROM basicsetting";
         Cursor cursor = LitePal.findBySQL(sql);
@@ -249,6 +259,7 @@ public class QuerySql {
         }
         return basic_id;
     }
+
     public static BasicModel QueryBasic() {
         BasicModel model = new BasicModel();
         String sql = "SELECT * FROM basicsetting";
@@ -291,7 +302,7 @@ public class QuerySql {
         return model;
     }
 
-    public static ADVModel ADV(){
+    public static ADVModel ADV() {
         ADVModel advModel = new ADVModel();
         String sql = "SELECT * FROM advertisingconfigdb";
         Cursor cursor = LitePal.findBySQL(sql);
@@ -316,9 +327,10 @@ public class QuerySql {
 
     /**
      * 机器人基础配置
+     *
      * @return
      */
-    public static RobotConfigModel robotConfig(){
+    public static RobotConfigModel robotConfig() {
         RobotConfigModel robotConfigModel = new RobotConfigModel();
         String sql = "SELECT * FROM robotconfigsql";
         Cursor cursor = LitePal.findBySQL(sql);
@@ -326,9 +338,9 @@ public class QuerySql {
             do {
                 robotConfigModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 robotConfigModel.setSleep(cursor.getInt(cursor.getColumnIndex("sleep")));
-                if (cursor.getString(cursor.getColumnIndex("password"))==null) {
+                if (cursor.getString(cursor.getColumnIndex("password")) == null) {
                     robotConfigModel.setPassword("8888");
-                }else {
+                } else {
                     robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
                 }
                 robotConfigModel.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
@@ -339,15 +351,13 @@ public class QuerySql {
         }
         return robotConfigModel;
     }
+
     /**
      * 将查询到的int转为Boolean
+     *
      * @param data 数据
      */
-    private static Boolean  intToBoolean(int data){
-        if (data == 1){
-            return true;
-        }else {
-            return false;
-        }
+    private static Boolean intToBoolean(int data) {
+        return data == 1;
     }
 }

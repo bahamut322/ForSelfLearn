@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimerTask;
 
 import geometry_msgs.Pose2D;
 import navigation_base_msgs.CreateOneWayResponse;
@@ -38,7 +39,12 @@ public class MapTargetPointServiceImpl implements IMapTargetPointService {
         alteredPointList = new ArrayList<>(16);
         dao = DataBaseDeliveredRobotMap.Companion.getDatabase(Objects.requireNonNull(MyApplication.Companion.getInstance())).getDebug();
         temporaryStorage = new ArrayList<>(16);
-        typeList = dao.queryTypeList();
+       new Thread(new TimerTask() {
+           @Override
+           public void run() {
+               typeList = dao.queryTypeList();
+           }
+       }).start();
     }
 
     // get singleton

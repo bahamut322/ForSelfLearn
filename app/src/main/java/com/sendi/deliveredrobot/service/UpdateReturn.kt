@@ -147,19 +147,19 @@ class UpdateReturn {
     }
 
     fun resume() {
-        MainScope().launch() {
+        MainScope().launch {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
         }
     }
 
     fun pause() {
-        MainScope().launch() {
+        MainScope().launch {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
         }
     }
 
     fun stop() {
-        MainScope().launch() {
+        MainScope().launch {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
         }
     }
@@ -224,7 +224,7 @@ class UpdateReturn {
         return files.size
     }
 
-    fun mapSetting(batteryState:Boolean = false) {
+    public fun mapSetting(batteryState: Boolean = false) {
         val mapSettingBoolean: Boolean
         DialogHelper.loadingDialog.show()
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
@@ -270,8 +270,10 @@ class UpdateReturn {
                         result =
                             ROSHelper.getParam("/finish_update_pose") == "1"
                         if (!result) {
-//                        virtualTaskExecute(2, "设置页查看锚点")
-                            retryTime--
+                            MainScope().launch {
+                                virtualTaskExecute(2, "设置页查看锚点")
+                                retryTime--
+                            }
                         }
                     } while (!result && retryTime > 0)
                     if (retryTime <= 0) {
@@ -280,10 +282,10 @@ class UpdateReturn {
                         LogUtil.i("finish_update_pose成功")
                     }
                     UploadMapHelper.uploadMap()
-                    DialogHelper.loadingDialog.dismiss()
                 }
             }
         }
+        DialogHelper.loadingDialog.dismiss()
     }
 
 
@@ -379,6 +381,7 @@ class UpdateReturn {
     fun splitStr(str: String): Array<String?> {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
+
     fun taskDto(): TaskDto {
         return TaskDto().apply { status = 1 }
     }

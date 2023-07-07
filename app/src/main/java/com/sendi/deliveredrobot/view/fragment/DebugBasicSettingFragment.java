@@ -60,20 +60,19 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.seekbarVoice.setRange(0, 100, 0);//设置视频音量调节范围
         assert binding != null;
 
-        AudioManager audioManager = (AudioManager) MyApplication.context.getSystemService(Context.AUDIO_SERVICE);
-        binding.seekbarMusic.setCur(QuerySql.QueryBasic().getVoiceVolume());
-        binding.seekbarVoice.setCur(QuerySql.QueryBasic().getVideoVolume());
-        timbres(QuerySql.QueryBasic().getRobotMode());//选中音色方法
-        binding.expressionCB.setChecked(QuerySql.QueryBasic().getExpression());//是否开启表情
-        binding.cbEtiquette.setChecked(QuerySql.QueryBasic().getEtiquette());//是否开启礼仪迎宾
-        binding.cbIntelligent.setChecked(QuerySql.QueryBasic().getIntelligent());//是否开启智能语音
+        binding.seekbarMusic.setCur(viewModel.settingData().getVoiceVolume());
+        binding.seekbarVoice.setCur(viewModel.settingData().getVideoVolume());
+        timbres(viewModel.settingData().getRobotMode());//选中音色方法
+        binding.expressionCB.setChecked(viewModel.settingData().getExpression());//是否开启表情
+        binding.cbEtiquette.setChecked(viewModel.settingData().getEtiquette());//是否开启礼仪迎宾
+        binding.cbIntelligent.setChecked(viewModel.settingData().getIntelligent());//是否开启智能语音
 
-        if (QuerySql.QueryBasic().getDefaultValue() != null) {
-            for (int i = 0; i < QuerySql.QueryBasic().getDefaultValue().split(" ").length; i++) {
-                check(QuerySql.QueryBasic().getDefaultValue().split(" ")[i]);
+        if (viewModel.settingData().getDefaultValue() != null) {
+            for (int i = 0; i < viewModel.settingData().getDefaultValue().split(" ").length; i++) {
+                check(viewModel.settingData().getDefaultValue().split(" ")[i]);
             }
             //判断数据长度来，判断全选是否勾选
-            if (QuerySql.QueryBasic().getDefaultValue().split(" ").length == 4) {
+            if (viewModel.settingData().getDefaultValue().split(" ").length == 4) {
                 binding.all.setChecked(true);
             }
         }
@@ -208,15 +207,15 @@ public class DebugBasicSettingFragment extends Fragment {
 
             if (binding.BoyVoice.isChecked()) {
                 timbre = "男声";
-                viewModel.randomVoice(2,QuerySql.QueryBasic().getSpeechSpeed()+"");
+                viewModel.randomVoice(2,viewModel.settingData().getSpeechSpeed()+"");
             }
             if (binding.FemaleVoice.isChecked()) {
                 timbre = "女声";
-                viewModel.randomVoice(1,QuerySql.QueryBasic().getSpeechSpeed()+"");
+                viewModel.randomVoice(1,viewModel.settingData().getSpeechSpeed()+"");
             }
             if (binding.ChildVoice.isChecked()) {
                 timbre = "童声";
-                viewModel.randomVoice(3,QuerySql.QueryBasic().getSpeechSpeed()+"");
+                viewModel.randomVoice(3,viewModel.settingData().getSpeechSpeed()+"");
             }
             values.put("defaultvalue", stringBuffer.toString());
             values.put("robotmode", timbre);
@@ -226,7 +225,7 @@ public class DebugBasicSettingFragment extends Fragment {
         }
     }
     private static int BooleanToInt(Boolean data){
-        if (data == true){
+        if (data){
             return 1;
         }else {
             return 0;

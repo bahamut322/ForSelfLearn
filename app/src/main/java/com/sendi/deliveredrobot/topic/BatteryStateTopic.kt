@@ -1,7 +1,9 @@
 package com.sendi.deliveredrobot.topic
 
 import android.content.Intent
+import android.util.Log
 import androidx.navigation.NavController
+import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
@@ -48,6 +50,9 @@ object BatteryStateTopic {
                         LogUtil.i("正在充电")
                         withContext(Dispatchers.Main){
                             RobotStatus.chargeStatus.value = true
+                        }
+                        if (RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER) {
+                            RobotStatus.batteryStateNumber.postValue(true)
                         }
 //                        RobotStatus.currentStatus = TYPE_CHARGING
                         RobotStatus.odomPose = ROSHelper.getOdomPose()

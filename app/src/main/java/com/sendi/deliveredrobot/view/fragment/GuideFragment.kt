@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -16,10 +17,12 @@ import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
@@ -66,7 +69,7 @@ class GuideFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller = Navigation.findNavController(view)
+        controller = Navigation.findNavController(requireView())
         timer = Timer()
 //        Universal.Model="引领"
         binding.tvGuideName.text = QuerySql.QueryExplainConfig().slogan
@@ -89,14 +92,19 @@ class GuideFragment : Fragment() {
         //item点击
         binding.GvGuideList.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                } else {
+                    LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
 //                ROSHelper.navigateTo(location = queryFloorPoints[position])
 //                GuideTaskBill(TaskModel(location = queryFloorPoints[position]))
-                val endPoint = queryFloorPoints[position]
-                val taskModel = TaskModel(location = endPoint)
-                val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
-                BillManager.addAllAtIndex(bill, 0)
-                BillManager.currentBill()?.executeNextTask()
+                    val endPoint = queryFloorPoints[position]
+                    val taskModel = TaskModel(location = endPoint)
+                    val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
+                    BillManager.addAllAtIndex(bill, 0)
+                    BillManager.currentBill()?.executeNextTask()
+                }
             }
         binding.llReturn.setOnClickListener {
             controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
@@ -105,7 +113,9 @@ class GuideFragment : Fragment() {
             toSettingDialog.show()
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {
-                    controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
+                    try {
+                        controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
+                    }catch (_: Exception){}
                     toSettingDialog.dismiss()
                     PassWordToSetting.postValue(false)
                 }

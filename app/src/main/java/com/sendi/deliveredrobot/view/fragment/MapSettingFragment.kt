@@ -119,24 +119,30 @@
 //                                        dao.queryChargePoint()
 //                                    RobotStatus.originalLocation = queryPoint
 //                                    RobotStatus.currentLocation = RobotStatus.originalLocation
-//                                    if(queryPoint != null) {
+//                                    if (queryPoint != null) {
 //                                        var retryTime = 10  // 设置地图次数
 //                                        DialogHelper.loadingDialog.show()
 //                                        //切换地图
-//                                        var switchMapResult:Boolean
-//                                        do{
-//                                            switchMapResult = ROSHelper.setNavigationMap(queryPoint.subPath?:"",queryPoint.routePath?:"")
+//                                        var switchMapResult: Boolean
+//                                        do {
+//                                            switchMapResult = ROSHelper.setNavigationMap(
+//                                                queryPoint.subPath ?: "",
+//                                                queryPoint.routePath ?: ""
+//                                            )
 //                                            retryTime--
-//                                        }while (!switchMapResult && retryTime > 0)
+//                                        } while (!switchMapResult && retryTime > 0)
 //                                        ROSHelper.setPoseClient(queryPoint)
 //                                        //查看切换锚点是否成功
-//                                        var result:Boolean
-//                                        do{
-//                                            result = ROSHelper.getParam("/finish_update_pose") == "1"
-//                                            if(!result)virtualTaskExecute(2, "设置页查看锚点")
+//                                        var result: Boolean
+//                                        do {
+//                                            result =
+//                                                ROSHelper.getParam("/finish_update_pose") == "1"
+//                                            if (!result) virtualTaskExecute(2, "设置页查看锚点")
 //                                            retryTime--
-//                                        }while (!result && retryTime > 0)
-//                                        if(retryTime <= 0){ToastUtil.show("设置地图失败")}else{
+//                                        } while (!result && retryTime > 0)
+//                                        if (retryTime <= 0) {
+//                                            ToastUtil.show("设置地图失败")
+//                                        } else {
 //                                            LogUtil.i("finish_update_pose成功")
 //                                        }
 //                                        UploadMapHelper.uploadMap()
@@ -152,7 +158,7 @@
 //                }
 //                withContext(Dispatchers.Main) {
 //                    val currentMapName: String
-//                    withContext(Dispatchers.Default){
+//                    withContext(Dispatchers.Default) {
 //                        currentMapName = dao.queryCurrentMapName() ?: ""
 //                    }
 //                    mapSettingViewModel.currentMapName.value = currentMapName

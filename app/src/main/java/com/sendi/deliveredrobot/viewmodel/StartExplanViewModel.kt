@@ -39,7 +39,7 @@ class StartExplanViewModel : ViewModel() {
 
     fun inForListData(): ArrayList<MyResultModel?>? {
         mDatas = ArrayList()
-        mDatas = QuerySql.queryMyData(selectRoutMapItem!!.value!!)
+        mDatas = QuerySql.queryPointDate(selectRoutMapItem!!.value!!)
         return mDatas
     }
 
@@ -89,7 +89,6 @@ class StartExplanViewModel : ViewModel() {
             if (!array) {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             }
-            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
             Universal.selectMapPoint = false
@@ -120,12 +119,15 @@ class StartExplanViewModel : ViewModel() {
                 // 更新 UI，显示剩余时间
                 val seconds = millisUntilFinished / 1000
                 i("倒计时器：${seconds}s")
+//                if (seconds <= 1){
+//                    RobotStatus.downTime.postValue(true)
+//                }
             },
             onFinish = {
-                TaskNext.setToDo("1")
-                // 倒计时结束，执行操作
+                    TaskNext.setToDo("1")
+                    // 倒计时结束，执行操作
 //                currentBill()?.executeNextTask()
-                ready.postValue(0)
+                    ready.postValue(0)
 //                Universal.Model = "结束一段讲解"
             }
         )
@@ -274,6 +276,7 @@ class StartExplanViewModel : ViewModel() {
     //下一个任务
     fun nextTask(array: Boolean) {
 //        UpdateReturn().stop()
+        countDownTimer?.pause()
         currentBill()?.executeNextTask()
         Universal.progress = 0
         Universal.taskNum = 0

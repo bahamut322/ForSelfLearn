@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.sendi.deliveredrobot.ElevatorObject
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentLiftBinding
 import com.sendi.deliveredrobot.helpers.LiftHelper

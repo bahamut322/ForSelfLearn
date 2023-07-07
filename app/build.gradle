@@ -92,14 +92,15 @@ android {
     }
     buildFeatures{
         dataBinding = true
+        viewBinding true
     }
     packagingOptions {
         exclude "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version"
     }
     ndkVersion '20.0.5594570'
-    buildFeatures {
-        viewBinding true
-    }
+//    buildFeatures {
+//
+//    }
 }
 repositories {
     flatDir {

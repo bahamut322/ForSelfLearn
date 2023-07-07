@@ -18,6 +18,7 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -176,15 +177,23 @@ public class BaseActivity extends AppCompatActivity {
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
             //一定要在副屏的生命中中设置一下音量，否则刷新副屏的时候默认为最大声音
-            new AudioMngHelper(MyApplication.context).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());
+            new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
             //将控件设置成副屏尺寸，并且旋转270度
-            constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();
-                params.height = 1920;
-                params.width = 1080;
-                constraintLayout2.setLayoutParams(params);
-                constraintLayout2.setRotation(270);
+            constraintLayout2.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // 移除监听，避免重复调用
+                    constraintLayout2.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    // 获取constraintLayout2的LayoutParams
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout2.getLayoutParams();
+                    params.height = 1920;
+                    params.width = 1080;
+                    constraintLayout2.setLayoutParams(params);
+                    // 宽度和高度符合要求，进行旋转操作
+                    constraintLayout2.setRotation(270);
+                }
             });
+
             Order.setOnChangeListener(() -> {
                 if (Objects.equals(Order.getFlage(), "1")) {
                     advanceView.mediaStop();
@@ -308,13 +317,14 @@ public class BaseActivity extends AppCompatActivity {
                     Show(flag);
                 }
             };
+
     private void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) {
         Universal.time = picPlayTime;
         Universal.pic = PicType;
         Universal.videolayout = videolayout;
         Universal.AllvideoAudio = AllvideoAudio;
         File file = new File(path);
-        if (mPresentation!=null) {
+        if (mPresentation != null) {
             advanceView.removeAllViews();
             advanceView.initView();
         }
@@ -343,32 +353,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
-//    public void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) {
-//        Universal.time = picPlayTime;
-//        Universal.pic = PicType;
-//        Universal.videolayout = videolayout;
-//        Universal.AllvideoAudio = AllvideoAudio;
-//        //传入指定文件夹的路径
-//        File file = new File(path);
-//        File[] files = file.listFiles();
-//        assert files != null;
-//        advanceView.removeAllViews();
-//        advanceView.initView();
-//        List<Advance> imagePaths = new ArrayList<>();
-//        for (File value : files) {
-//            if (baseViewModel.checkIsImageFile(value.getPath())) {
-//                // 图片
-//                imagePaths.add(new Advance(value.getPath(), "2"));
-//            } else {
-//                // 视频
-//                Log.d(TAG, "getFilesAllName: " + value.getPath());
-//                imagePaths.add(new Advance(value.getPath(), "1")); // video
-////                advanceVideoView.addVideo(value.getPath());
-//            }
-//        }
-//        advanceView.setData(imagePaths); // 将数据传入到控件中显示
-//    }
-
 
     /**
      * @param picPlayTime    轮播时间

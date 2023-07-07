@@ -2,10 +2,12 @@ package com.sendi.deliveredrobot.navigationtask;
 
 import androidx.core.util.Consumer;
 
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.helpers.ReportDataHelper;
 import com.sendi.deliveredrobot.service.TaskStageEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
 import java.util.LinkedList;
@@ -33,7 +35,9 @@ public class TaskQueues<T> {
             runNextTask();
         }
     }
-
+    public static synchronized boolean hasTasks() {
+        return totalTasks > completedTasks;
+    }
     public synchronized void pause() {
         isPaused = true;
     }
@@ -44,11 +48,14 @@ public class TaskQueues<T> {
     }
 
     public synchronized void clear() {
-        queue.clear();
-        isRunning = false;
-        isPaused = false;
-        totalTasks = 0;
-        completedTasks = 0;
+        BaiduTTSHelper.getInstance().stop();
+        if (queue!=null) {
+            queue.clear();
+            isRunning = false;
+            isPaused = false;
+            totalTasks = 0;
+            completedTasks = 0;
+        }
     }
 
     public static synchronized boolean isCompleted() {

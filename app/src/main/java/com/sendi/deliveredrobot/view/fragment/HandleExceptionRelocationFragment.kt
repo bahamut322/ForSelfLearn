@@ -7,18 +7,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.TYPE_SEND
 import com.sendi.deliveredrobot.databinding.FragmentHandleExceptionRelocationBinding
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
-import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
-import com.sendi.deliveredrobot.navigationtask.task.JudgeFloorTask
-import com.sendi.deliveredrobot.navigationtask.task.SendingTask
-import com.sendi.deliveredrobot.navigationtask.task.StartDoubleSecondSendTask
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
@@ -28,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 /**
  * @author heky

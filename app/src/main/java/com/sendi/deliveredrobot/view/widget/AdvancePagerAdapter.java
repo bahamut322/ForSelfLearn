@@ -85,14 +85,21 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
             while (thread != null && !thread.isInterrupted()) {
                 try {
                     Thread.sleep(1000);
-                    if (!pause && !(list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView))
-                        current += 1000;
-                    if (current >= time) {
-                        viewPager.post(() -> viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true));
-                        current = 0;
-                    }
+                    viewPager.post(() -> {
+                        int currentItem = viewPager.getCurrentItem();
+                        if (!pause && currentItem < list.size() && !(list.get(currentItem) instanceof AdvanceVideoView)) {
+                            current += 1000;
+                            if (current >= time) {
+                                viewPager.setCurrentItem(currentItem + 1, true);
+                                current = 0;
+                            }
+                        }
+                    });
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    // 处理InterruptedException，例如打印异常信息或终止线程的执行
+//                    e.printStackTrace();
+                    // 终止线程的执行
+                    Thread.currentThread().interrupt();
                 }
             }
         });
@@ -164,14 +171,24 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     }
 
     public void mediaStop() {
-        if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
-            ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaStop();
+        if (list != null && viewPager.getCurrentItem() >= 0 && viewPager.getCurrentItem() < list.size()) {
+            if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
+                try {
+                    ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaStop();
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 
     public void mediaRestart() {
-        if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
-            ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaRestart();
+        if (list != null && viewPager.getCurrentItem() >= 0 && viewPager.getCurrentItem() < list.size()) {
+            if (list.get(viewPager.getCurrentItem()) instanceof AdvanceVideoView) {
+                try {
+                    ((AdvanceVideoView) list.get(viewPager.getCurrentItem())).mediaRestart();
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 

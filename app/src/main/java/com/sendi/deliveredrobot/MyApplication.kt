@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -20,6 +21,7 @@ import java.io.File
 class MyApplication : Application() {
     companion object {
         var instance: Application? = null
+        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         lateinit var faceModule: FaceModule
         var listener: DownloadBill.DownloadListener? = null
@@ -40,7 +42,7 @@ class MyApplication : Application() {
         listener = object : DownloadBill.DownloadListener {
             override fun onProgress(progress: Int) {
                 // 更新进度条
-                Log.e("TAG", "onProgress: $progress 剩余任务数：${DownloadBill.getInstance().getTaskCount()}")
+                Log.e("TAG", "onProgress: $progress 剩余任务数：${DownloadBill.getInstance().taskCount}")
                 DialogHelper.loadingDialog.show()
 
             }

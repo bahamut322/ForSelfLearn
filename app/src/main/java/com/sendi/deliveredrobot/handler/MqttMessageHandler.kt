@@ -11,7 +11,6 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.entity.*
-import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
 import com.sendi.deliveredrobot.model.*
@@ -23,15 +22,11 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
-import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.litepal.LitePal
 import org.litepal.LitePal.deleteAll
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 
@@ -110,7 +105,14 @@ object MqttMessageHandler {
                     explainConfigDB.endText = explainConfig.endText
                     explainConfigDB.interruptionText = explainConfig.interruptionText
                     explainConfigDB.timeStamp = explainConfig.timeStamp!!
-                    explainConfigDB.save()
+                    if (explainConfigDB.save()) {
+                        // 数据保存成功
+                        Log.d("TAG", "receive: 讲解配置数据保存成功")
+                        UpdateReturn().method()
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "receive: 讲解配置数据保存失败")
+                    }
                 }
                 //广告配置
                 "replyAdvertisementConfig" -> {
@@ -161,8 +163,14 @@ object MqttMessageHandler {
                     if (advertisingConfig.argConfig.argPicGroup != null) {
                         LogUtil.d("广告配置收到了argPicGroup,提示暂无此配置")
                     }
-                    advertisingConfigDB.save()
-                    updateConfig()
+                    if (advertisingConfigDB.save()) {
+                        // 数据保存成功
+                        Log.d("TAG", "receive: 广告配置数据保存成功")
+                        updateConfig()
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "receive: 广告配置数据保存失败")
+                    }
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
@@ -174,24 +182,54 @@ object MqttMessageHandler {
                     val routeDB = RouteDB()
                     //存储图片的数据库
                     val routeList = routeConfig.routeList// 路线列表对象
-                    for (route in 0 until routeList!!.size) {
-//                        val isExist =
-//                            LitePal.where("routename = ?", routeList[route].routeName)
-//                                .count(RouteDB::class.java) > 0
-                        if (QuerySql.queryTime(routeList[route].routeName) != routeList[route].timeStamp) {
-                            //删除对应文件夹
-                            if (routeList[route].timeStamp <= 0) {
-                                deleteFolderFile(
-                                    (Universal.robotFile + routeList[route].rootMapName + "/" + routeList[route].routeName),
-                                    true
-                                )
-                            }
-                            deleteAll("routedb")
-                            deleteAll("pointconfigvodb")
-                            deleteAll("touchscreenconfigdb")
-                            deleteAll("bigscreenconfigdb")
+                    val isExist =
+                        LitePal.where("routename = ?", routeList!![0].routeName)
+                            .count(RouteDB::class.java) > 0
+//                    if (isExist) {
+//                        for (route in 0 until routeList.size) {
+                    if (QuerySql.queryTime(routeList[0].routeName) != routeList[0].timeStamp && isExist) {
+                        //删除对应文件夹
+                        if (routeList[0].timeStamp <= 0) {
+                            deleteFolderFile(
+                                (Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName),
+                                true
+                            )
+                        }
+                        val routeDBID = QuerySql.routeDB_id(routeList[0].routeName)
+                        val pointConfigVoDB_id = QuerySql.pointConfigVoDB_id(routeList[0].routeName)
+
+                        val deleteTouchScreen = deleteAll(
+                            TouchScreenConfigDB::class.java,
+                            "pointconfigvodb_id = ?",
+                            pointConfigVoDB_id.toString()
+                        )
+                        val deleteBigScreen = deleteAll(
+                            BigScreenConfigDB::class.java,
+                            "pointconfigvodb_id = ?",
+                            pointConfigVoDB_id.toString()
+                        )
+                        val deletePointConfig = deleteAll(
+                            PointConfigVODB::class.java,
+                            "routedb_id = ?",
+                            routeDBID.toString()
+                        )
+                        val deleteRouteDB =
+                            deleteAll(RouteDB::class.java, "routename = ?", routeList[0].routeName)
+                        if (deleteTouchScreen > 0) {
+                            Log.e("TAG", "TouchScreenConfigDB数据删除成功")
+                        }
+                        if (deleteBigScreen > 0) {
+                            Log.e("TAG", "BigScreenConfigDB数据删除成功")
+                        }
+                        if (deletePointConfig > 0) {
+                            Log.e("TAG", "PointConfigVODB数据删除成功")
+                        }
+                        if (deleteRouteDB > 0) {
+                            Log.e("TAG", "RouteDB数据删除成功")
                         }
                     }
+//                        }
+//                    }
                     val iterator = routeList.iterator()
                     while (iterator.hasNext()) {
                         val route = iterator.next()
@@ -227,6 +265,13 @@ object MqttMessageHandler {
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + route.backgroundPic.substring(
                                         route.backgroundPic.lastIndexOf("/") + 1
                                     ) //路线背景图
+                                if (backPic.SameAll?.isNotEmpty() == true) {
+                                    for (i in backPic.SameTwo!!.indices)
+                                        deleteFolderFile(
+                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (backPic.SameTwo!![i]!!),
+                                            true
+                                        )
+                                }
                                 if (backPic.SameTwo?.isNotEmpty() == true) {
                                     Thread {
                                         for (i in backPic.SameTwo!!.indices) {
@@ -239,11 +284,7 @@ object MqttMessageHandler {
                                         }
                                     }.start()
                                 }
-                            } else {
-                                deleteFolderFile(
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/",
-                                    true
-                                )
+
                             }
                             var pointItem: List<PointConfigVODB>
                             while (pointIterator.hasNext()) {
@@ -521,7 +562,13 @@ object MqttMessageHandler {
                                 pointConfigVODB.save()
                                 pointItem.add(pointConfigVODB)
                                 routeDB.mapPointName = pointItem
-                                routeDB.save()
+                                if (routeDB.save()) {
+                                    // 数据保存成功
+                                    Log.d("TAG", "receive: 讲解点数据保存成功")
+                                } else {
+                                    // 数据保存失败
+                                    Log.d("TAG", "receive: 讲解点数据保存失败")
+                                }
                             }
                         }
                     }
@@ -584,9 +631,14 @@ object MqttMessageHandler {
                             println("收到 argPicGroup")
                         }
                     }
-                    replyGateConfig.save()
-                    updateConfig()
-
+                    if (replyGateConfig.save()) {
+                        // 数据保存成功
+                        Log.d("TAG", "receive: 机器人门岗配置数据保存成功")
+                        updateConfig()
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "receive: 机器人门岗配置数据保存失败")
+                    }
                 }
 
                 //机器人配置
@@ -645,8 +697,13 @@ object MqttMessageHandler {
                             Universal.sleepContentName = robotConfig.argConfig.argPicGroup.sleepPic
                         }
                     }
-                    robotConfigSql.save()
-                    updateConfig()
+                    if (robotConfigSql.save()) {
+                        Log.d("TAG", "receive: 广告配置数据保存成功")
+                        updateConfig()
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "receive: 广告配置数据保存失败")
+                    }
                 }
 
                 "sendAppletTask" -> {
@@ -694,6 +751,7 @@ object MqttMessageHandler {
 
                     }
                 }
+
                 else -> {}
             }
         }
@@ -780,7 +838,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(5000)
+                Thread.sleep(1000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -794,7 +852,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(10000)
+                Thread.sleep(1000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -830,7 +888,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(10000)
+                Thread.sleep(1000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -905,6 +963,7 @@ object MqttMessageHandler {
             Looper.loop()
         }
     }
+
     fun downLoadFinish() {
         Universal.pics = ""
         Universal.sleepContentName = ""

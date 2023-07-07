@@ -10,14 +10,43 @@ import android.os.CountDownTimer
  * @param onTick 倒计时中
  * @param onFinish 倒计时结束
  */
-class MyCountDownTimer(millisInFuture: Long, countDownInterval: Long, val onTick: (Long) -> Unit, val onFinish: () -> Unit) :
-    CountDownTimer(millisInFuture, countDownInterval) {
+class MyCountDownTimer(
+    millisInFuture: Long,
+    countDownInterval: Long,
+    val onTick: (Long) -> Unit,
+    val onFinish: () -> Unit
+) : CountDownTimer(millisInFuture, countDownInterval) {
+
+    private var isPaused = false
+    private var isFinished = false
 
     override fun onTick(millisUntilFinished: Long) {
-        onTick.invoke(millisUntilFinished)
+        if (!isPaused) {
+            onTick.invoke(millisUntilFinished)
+        }
     }
 
     override fun onFinish() {
-        onFinish.invoke()
+        if (!isPaused) {
+            isFinished = true
+            onFinish.invoke()
+        }
+    }
+
+    fun pause() {
+        cancel()
+        isPaused = true
+    }
+
+    fun resume() {
+        isPaused = false
+        start()
+    }
+
+    fun manuallyFinish() {
+        if (!isFinished) {
+            cancel()
+            onFinish.invoke()
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.model.BasicModel
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -59,5 +60,8 @@ class SettingViewModel : ViewModel() {
             line = bufferedReader.readLine()
         }
         return stringBuilder.toString().length >= 8 && stringBuilder.toString()[num] == '1'
+    }
+    fun settingData() : BasicModel{
+        return QuerySql.QueryBasic()
     }
 }

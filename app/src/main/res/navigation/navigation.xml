@@ -134,10 +134,10 @@
             app:destination="@id/standbyFragment" />
         <action
             android:id="@+id/action_homeFragment_to_guideFragment"
-            app:destination="@+id/GuideFragment"/>
+            app:destination="@+id/GuideFragment" />
         <action
             android:id="@+id/action_homeFragment_to_explanationFragment"
-            app:destination="@+id/ExplanationFragment"/>
+            app:destination="@+id/ExplanationFragment" />
     </fragment>
     <fragment
         android:id="@+id/planSettingFragment"
@@ -371,8 +371,9 @@
             android:id="@+id/action_settingHomeFragment_to_explanationFragment"
             app:destination="@id/ExplanationFragment" />
         <!--设置->智能引领-->
-        <action android:id="@+id/action_settingHomeFragment_to_GuideFragment"
-            app:destination="@+id/GuideFragment"/>
+        <action
+            android:id="@+id/action_settingHomeFragment_to_GuideFragment"
+            app:destination="@+id/GuideFragment" />
     </fragment>
     <fragment
         android:id="@+id/wifiSettingFragment"
@@ -404,8 +405,9 @@
         <action
             android:id="@+id/action_selfCheckFragment_to_guideFragment"
             app:destination="@id/GuideFragment" />
-        <action android:id="@+id/action_selfCheckFragment_to_settingFragment"
-            app:destination="@+id/settingHomeFragment"/>
+        <action
+            android:id="@+id/action_selfCheckFragment_to_settingFragment"
+            app:destination="@+id/planSettingFragment" />
 
     </fragment>
     <fragment
@@ -416,7 +418,17 @@
     <fragment
         android:id="@+id/finishDockFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.FinishDockFragment"
-        android:label="FinishDockFragment" />
+        android:label="FinishDockFragment">
+        <action
+            android:id="@+id/action_finishDockFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_finishDockFragment_to_GuideFragment"
+            app:destination="@+id/GuideFragment" />
+        <action
+            android:id="@+id/action_finishDockFragment_to_explanationFragment"
+            app:destination="@+id/ExplanationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/readyForTaskFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.ReadyForTaskFragment"
@@ -547,7 +559,7 @@
     <fragment
         android:id="@+id/cameraPreviewFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.CameraPreviewFragment"
-        android:label="CameraPreviewFragment" >
+        android:label="CameraPreviewFragment">
         <action
             android:id="@+id/action_cameraPreviewFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -555,7 +567,7 @@
     <fragment
         android:id="@+id/standbyFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.StandbyFragment"
-        android:label="StandbyFragment" >
+        android:label="StandbyFragment">
         <action
             android:id="@+id/action_standbyFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -570,7 +582,7 @@
         <!--智能引领->设置-->
         <action
             android:id="@+id/action_guideFragment_to_settingHomeFragment"
-            app:destination="@id/settingHomeFragment" />
+            app:destination="@id/planSettingFragment" />
     </fragment>
 
     <fragment
@@ -582,20 +594,20 @@
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_explanationFragment_to_CatalogueExplantionFragment"
-            app:destination="@id/CatalogueExplantionFragment"/>
+            app:destination="@id/CatalogueExplantionFragment" />
         <!--智能讲解->设置-->
         <action
             android:id="@+id/action_explanationFragment_to_settingHomeFragment"
-            app:destination="@+id/settingHomeFragment"/>
+            app:destination="@+id/planSettingFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/StartExplantionFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.StartExplainFragment"
         android:label="StartExplantionFragment">
-<!--        <action-->
-<!--            android:id="@+id/action_StartExplantionFragment_to_CatalogueExplantionFragment"-->
-<!--            app:destination="@id/CatalogueExplantionFragment" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_StartExplantionFragment_to_CatalogueExplantionFragment"-->
+        <!--            app:destination="@id/CatalogueExplantionFragment" />-->
     </fragment>
 
     <fragment

@@ -3,6 +3,8 @@ package com.sendi.deliveredrobot.entity;
 
 import android.annotation.SuppressLint;
 
+import com.sendi.deliveredrobot.navigationtask.TaskQueues;
+
 import java.util.List;
 
 /**
@@ -33,6 +35,7 @@ public class Universal {
     //存放正常情况下的图片/视频
     @SuppressLint("SdCardPath")
     public static String Secondary = "/mnt/sdcard/X8ROBOT/AppSecondary/";
+    @SuppressLint("SdCardPath")
     public static String SelfCheck= "/mnt/sdcard/X8ROBOT/SelfCheck.txt";
     //存放副屏广告图
     @SuppressLint("SdCardPath")
@@ -123,6 +126,6 @@ public class Universal {
     public static int videolayout = 0;
 
     public static int AllvideoAudio = 0;
-
+    public static TaskQueues<String> taskQueue;
 }
 

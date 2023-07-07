@@ -74,47 +74,47 @@ public class ModeSettingFragment extends Fragment {
 
 
         //讲解结束方式判断
-        if (QuerySql.QueryBasic().getExplanationFinish() == 0) {
+        if (viewModel.settingData().getExplanationFinish() == 0) {
             binding.AgainCB.setChecked(true);
-        } else if (QuerySql.QueryBasic().getExplanationFinish() == 1){
+        } else if (viewModel.settingData().getExplanationFinish() == 1){
             binding.otherCB.setChecked(true);
-        }else if (QuerySql.QueryBasic().getExplanationFinish() == 2){
+        }else if (viewModel.settingData().getExplanationFinish() == 2){
             binding.otherCB.setChecked(true);
             binding.AgainCB.setChecked(true);
         }
         //测温模式选择判断
-        if (QuerySql.QueryBasic().getTempMode() == 0) {
+        if (viewModel.settingData().getTempMode() == 0) {
             binding.singleTemp.setChecked(true);
         } else {
             binding.multipleTemp.setChecked(true);
         }
         //异常警告方式判断
-        if (Objects.equals(QuerySql.QueryBasic().getError(), "1")) {
+        if (Objects.equals(viewModel.settingData().getError(), "1")) {
             binding.followNearby.setChecked(true);
         } else {
             binding.Announcements.setChecked(true);
         }
-        if (QuerySql.QueryBasic().getUnArrive() == 0) {
+        if (viewModel.settingData().getUnArrive() == 0) {
             binding.skip.setChecked(true);
         } else {
             binding.repeat.setChecked(true);
         }
         //巡逻方式判断
-        if ( QuerySql.QueryBasic().getPatrolContent()!= null) {
-            for (int i = 0; i < QuerySql.QueryBasic().getPatrolContent().split(" ").length; i++) {
-                check(QuerySql.QueryBasic().getPatrolContent().split(" ")[i]);
+        if ( viewModel.settingData().getPatrolContent()!= null) {
+            for (int i = 0; i < viewModel.settingData().getPatrolContent().split(" ").length; i++) {
+                check(viewModel.settingData().getPatrolContent().split(" ")[i]);
             }
         }
-        binding.suspension.setCur(QuerySql.QueryBasic().getPatrolStayTime());
-        binding.patrolSpeed.setCur(QuerySql.QueryBasic().getPatrolSpeed());
-        binding.etiquette.setChecked(QuerySql.QueryBasic().getIdentifyVip());
-        binding.InterruptionExplanation.setChecked(QuerySql.QueryBasic().getWhetherInterrupt());
-        binding.VoiceAnnouncements.setChecked(QuerySql.QueryBasic().getVoiceAnnouncements());
-        binding.LeadingSpeed.setCur(QuerySql.QueryBasic().getLeadingSpeed());
-        binding.ExplanationSpeed.setCur(QuerySql.QueryBasic().getGoExplanationPoint());
-        binding.explain.setCur(QuerySql.QueryBasic().getSpeechSpeed());
-        binding.stay.setCur(QuerySql.QueryBasic().getStayTime());
-        binding.BreakTask.setCur(QuerySql.QueryBasic().getWhetherTime());
+        binding.suspension.setCur(viewModel.settingData().getPatrolStayTime());
+        binding.patrolSpeed.setCur(viewModel.settingData().getPatrolSpeed());
+        binding.etiquette.setChecked(viewModel.settingData().getIdentifyVip());
+        binding.InterruptionExplanation.setChecked(viewModel.settingData().getWhetherInterrupt());
+        binding.VoiceAnnouncements.setChecked(viewModel.settingData().getVoiceAnnouncements());
+        binding.LeadingSpeed.setCur(viewModel.settingData().getLeadingSpeed());
+        binding.ExplanationSpeed.setCur(viewModel.settingData().getGoExplanationPoint());
+        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
+        binding.stay.setCur(viewModel.settingData().getStayTime());
+        binding.BreakTask.setCur(viewModel.settingData().getWhetherTime());
 
 
         //VIP人脸识别

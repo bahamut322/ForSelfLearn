@@ -41,7 +41,6 @@ class DeliverMqttService : Service() {
     private var mMqttConnectOptions_deliver: MqttConnectOptions? = null
     private var timeStampReplyGateConfig_deliver: Long? = null
     private var timeStampRobotConfigSql_deliver: Long? = null
-    private val mapTargetPointServiceImpl_deliver = MapTargetPointServiceImpl.getInstance()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

@@ -15,6 +15,7 @@ import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -35,10 +36,15 @@ class ContainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
-        if (QuerySql.queryMyData(selectRoutMapItem!!.value!!)[0].touch_type == 4) {
-            binding.imageView1.apply {
-                Glide.with(this).asGif().load(QuerySql.queryMyData(selectRoutMapItem!!.value!!)[0].touch_blockPic).into(this)
+        try {
+            if (QuerySql.queryPointDate(selectRoutMapItem?.value!!)[0]?.touch_type == 4) {
+                binding.imageView1.apply {
+                    Glide.with(this).asGif()
+                        .load(QuerySql.queryPointDate(selectRoutMapItem!!.value!!)[0].touch_blockPic)
+                        .into(this)
+                }
             }
+        } catch (_: Exception) {
         }
 
         binding.motionLayoutContain.apply {
