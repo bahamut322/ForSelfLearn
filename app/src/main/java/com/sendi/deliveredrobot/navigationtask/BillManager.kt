@@ -24,6 +24,9 @@ object BillManager {
         removeBill()
         return currentBill()
     }
+    fun clearBillList(){
+        billList.clear()
+    }
 
     /**
      * @description 删除

@@ -213,7 +213,7 @@ class SelfCheckFragment : Fragment() {
                                 withContext(Dispatchers.Main) {
                                     val chargingDialog =
                                         DialogHelper.initChargingDialog(this@SelfCheckFragment)
-                                    chargingDialog.show()
+//                                    chargingDialog.show()
                                     RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                         if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                             LogUtil.i("已取消手动充电")
@@ -251,13 +251,13 @@ class SelfCheckFragment : Fragment() {
                             //适配器已拔除
                             if (RobotStatus.batterySupplyStatus.value == BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                 //充电中
-                                LogUtil.i("自动充电中");
+                                LogUtil.i("自动充电中")
                                 withContext(Dispatchers.Main) {
                                     //判断当前电量是否小于最低电,小于则去充电
                                     if ((RobotStatus.batteryPower.value!! * 100).toInt() < RobotStatus.LOW_POWER_VALUE) {
                                         val chargingDialog =
                                             DialogHelper.initChargingDialog(this@SelfCheckFragment)
-                                        chargingDialog.show()
+//                                        chargingDialog.show()
                                         RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
                                             if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                                 LogUtil.i("已取消自动充电")

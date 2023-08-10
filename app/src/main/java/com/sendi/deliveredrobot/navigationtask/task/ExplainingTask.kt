@@ -13,6 +13,8 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * @Author Swn
@@ -32,6 +34,9 @@ class ExplainingTask (
             ToastUtil.show(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
+        }
+        withContext(Dispatchers.Main){
+            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
         }
         MyApplication.instance!!.sendBroadcast(Intent().apply {
             action = ACTION_NAVIGATE

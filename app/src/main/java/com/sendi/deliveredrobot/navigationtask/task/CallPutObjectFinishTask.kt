@@ -11,7 +11,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-07
  * @description 呼叫放物结束
  */
-class CallPutObjectFinishTask(taskModel: TaskModel, type: Int, var exceptioned:Boolean = false) : AbstractTask(taskModel) {
+class CallPutObjectFinishTask(taskModel: TaskModel, type: Int, var exceptioned:Boolean = false, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.CallPutObjectFinishTask

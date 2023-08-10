@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.helpers
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.service.*
 import kotlinx.coroutines.Dispatchers
@@ -54,10 +53,8 @@ object ReportDataHelper {
             type = "taskPoseData"
         }
         with(taskDto) {
-            //{"taskList":[{"endTarget":"room1","gate":-1,"mileage":0,"robotPose":[-13.95066,4.7072687,-1.7874314],"status":1,"target":"room1","taskId":"G020221207194221","taskStage":15,"time":1670413342116,"updateMap":[-0.43,-0.15,-0.49,-0.69,-0.21,-0.66,4.81,-1.5,4.58,0.05,0.53,0.18,0.61,0.45,1.64,2.31,-0.69,0.92,-0.59,0.18,-0.76,8.22,0.04,0.0,0.0,0.0]}],"type":"taskPoseData"}
             taskId = taskModel?.taskId?:""
             target = taskModel?.location?.pointName?:""
-//            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
             val pose = ROSHelper.getPose()
             val poseArray = floatArrayOf(pose?.x?.toFloat()?:-1f, pose?.y?.toFloat()?:-1f, pose?.theta?.toFloat()?:-1f)
             robotPose = poseArray
@@ -143,7 +140,7 @@ object ReportDataHelper {
                         endTarget = taskModel.endTarget
                     }
 //                    val tempTaskId = TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.DELIVERY, DoorEnum.SECOND_DOOR, date)
-//                    TaskQueues.nextTaskId = tempTaskId
+//                    TaskQueue.nextTaskId = tempTaskId
                     robotPoseStageData.taskList.add(taskDto1)
                 }else{
                     //单任务
@@ -181,6 +178,25 @@ object ReportDataHelper {
                     taskStage = TaskStageEnum.ALLStartTask.code
                     time = System.currentTimeMillis()
                     gate = when(taskModel.remoteOrderModel?.from?.binMark){
+                        AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
+                        AbstractTask.viewModelBin2.value.binMarkBin2 -> 2
+                        else -> -1
+                    }
+                    endTarget = taskModel.endTarget
+                }
+                robotPoseStageData.taskList.add(taskDto)
+            }
+            TYPE_WELCOME -> {
+                val taskDto = TaskDto()
+                with(taskDto){
+                    taskId = taskModel.taskId
+                    target = taskModel.location?.pointName?:""
+                    robotPose = poseArray
+                    updateMap = tempUpdateMap
+                    taskStage = TaskStageEnum.ALLStartTask.code
+                    status = 1
+                    time = System.currentTimeMillis()
+                    gate = when(taskModel.location?.binMark){
                         AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
                         AbstractTask.viewModelBin2.value.binMarkBin2 -> 2
                         else -> -1

@@ -32,7 +32,7 @@
     <GridView
         android:id="@+id/pointGV"
         android:layout_width="996dp"
-        android:layout_height="wrap_content"
+        android:layout_height="520dp"
         android:layout_marginStart="@dimen/dp_238"
         android:layout_marginEnd="@dimen/dp_238"
         android:layout_marginTop="@dimen/dp_8"

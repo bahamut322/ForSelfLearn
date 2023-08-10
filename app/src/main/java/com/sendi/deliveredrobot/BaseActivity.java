@@ -13,6 +13,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRouter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -39,6 +42,7 @@ import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
@@ -60,6 +64,9 @@ import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,11 +88,13 @@ public class BaseActivity extends AppCompatActivity {
     public TextView horizontalTV;//横向文字
     public VerticalTextView verticalTV;//纵向文字
     ConstraintLayout constraintLayout2;//布局
+    LinearLayout verLin;
     int videoAudio;
     public int flag = 0;    //用于双屏显示： 0.none 1. media—router 2.display-manager
     public static final String TAG = "BaseActivity";
     private BaseViewModel baseViewModel;
     AdvertisingConfigDB advertisingConfigDB;
+    ConstraintLayout.LayoutParams layoutParams;
 
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
@@ -174,6 +183,7 @@ public class BaseActivity extends AppCompatActivity {
             constraintLayout2 = findViewById(R.id.constraintLayout2);
             advanceView = findViewById(R.id.Spread_out);
             horizontalTV = findViewById(R.id.horizontalTV);//横向文字
+            verLin = findViewById(R.id.baseline);
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
             //一定要在副屏的生命中中设置一下音量，否则刷新副屏的时候默认为最大声音
@@ -318,47 +328,49 @@ public class BaseActivity extends AppCompatActivity {
                 }
             };
 
-    private void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) {
+    private void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) throws IOException{
         Universal.time = picPlayTime;
         Universal.pic = PicType;
         Universal.videolayout = videolayout;
         Universal.AllvideoAudio = AllvideoAudio;
-        File file = new File(path);
-        if (mPresentation != null) {
-            advanceView.removeAllViews();
-            advanceView.initView();
-        }
-        if (file.isFile()) {
-            // This is a file
-            List<Advance> fileList = new ArrayList<>();
-            if (baseViewModel.checkIsImageFile(file.getPath())) {
-                fileList.add(new Advance(file.getPath(), "2")); // image
-            } else {
-                fileList.add(new Advance(file.getPath(), "1")); // video
+        try {
+            File file = new File(path);
+            if (mPresentation != null) {
+//                advanceView.removeAllViews();
+                advanceView.initView();
             }
-            advanceView.setData(fileList);
-        } else if (file.isDirectory()) {
-            // This is a directory
-            File[] files = file.listFiles();
-            if (files != null) {
+            if (file.isFile()) {
+                // This is a file
                 List<Advance> fileList = new ArrayList<>();
-                for (File value : files) {
-                    if (baseViewModel.checkIsImageFile(value.getPath())) {
-                        fileList.add(new Advance(value.getPath(), "2")); // image
-                    } else {
-                        fileList.add(new Advance(value.getPath(), "1")); // video
-                    }
+                if (baseViewModel.checkIsImageFile(file.getPath())) {
+                    fileList.add(new Advance(file.getPath(), "2")); // image
+                } else {
+                    fileList.add(new Advance(file.getPath(), "1")); // video
                 }
                 advanceView.setData(fileList);
+            } else if (file.isDirectory()) {
+                // This is a directory
+                File[] files = file.listFiles();
+                if (files != null) {
+                    List<Advance> fileList = new ArrayList<>();
+                    for (File value : files) {
+                        if (baseViewModel.checkIsImageFile(value.getPath())) {
+                            fileList.add(new Advance(value.getPath(), "2")); // image
+                        } else {
+                            fileList.add(new Advance(value.getPath(), "1")); // video
+                        }
+                    }
+                    advanceView.setData(fileList);
+                }
             }
-        }
+        }catch (Exception ignored){}
     }
 
     /**
      * @param picPlayTime    轮播时间
      * @param file           路径
      * @param type           类型： 1-图片 2-视频 6-文字 7-图片+文字
-     * @param textPosition   文字位置
+     * @param textPosition   文字x位置
      * @param fontLayout     文字方向：1-横向，2-纵向
      * @param fontContent    文字
      * @param fontBackGround 背景颜色
@@ -369,35 +381,77 @@ public class BaseActivity extends AppCompatActivity {
      * @param AllvideoAudio  是否播放声音
      */
     public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio) {
+        DialogHelper.loadingDialog.show();
+        verticalTV.setVisibility(View.GONE);
+        horizontalTV.setVisibility(View.VISIBLE);
+        advanceView.setVisibility(View.GONE);
+
+        horizontalTV.setTextSize(90);
+        horizontalTV.setText("内容加载中......");
+        horizontalTV.setTextColor(Color.parseColor("00195F" + ""));
+        horizontalTV.setGravity(Gravity.CENTER);//居中
+
         switch (type) {
             case 1:
             case 2:
                 //读取文件
-                getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
+                try {
+                    getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
+                } catch (IOException ignored) {
+
+                }
                 verticalTV.setVisibility(View.GONE);
                 horizontalTV.setVisibility(View.GONE);
                 advanceView.setVisibility(View.VISIBLE);
                 break;
             case 6:
                 advanceView.setVisibility(View.GONE);
-                textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+                try {
+                    getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
+                } catch (IOException ignored) {
+
+                }
+                layoutParams = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+                if (textPosition == 0) {
+                    horizontalTV.setGravity(Gravity.CENTER);//居中
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+                } else if (textPosition == 1) {
+                    horizontalTV.setGravity(Gravity.TOP );//居上
+                    layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParams);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+                } else if (textPosition == 2) {
+                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
+                    layoutParams.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParams);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+                }
                 break;
             case 7:
                 //读取文件
-                getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
+                try {
+                    getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
+                } catch (IOException ignored) {
+                }
+                layoutParams = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
                 if (textPosition == 0) {
+                    horizontalTV.setGravity(Gravity.CENTER);//居中
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
-                    horizontalTV.setGravity(Gravity.CENTER | Gravity.LEFT);//居中
                 } else if (textPosition == 1) {
+                    horizontalTV.setGravity(Gravity.TOP );//居上
+                    layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParams);
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
-                    horizontalTV.setGravity(Gravity.TOP | Gravity.LEFT);//居上
                 } else if (textPosition == 2) {
+                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
+                    layoutParams.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParams);
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
-                    horizontalTV.setGravity(Gravity.BOTTOM | Gravity.LEFT);//居下
                 }
                 advanceView.setVisibility(View.VISIBLE);
                 break;
         }
+        DialogHelper.loadingDialog.dismiss();
     }
 
     /**
@@ -449,6 +503,33 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void pushImage(String[] fileNames) throws IOException {
+        File file = new File(Environment.getExternalStorageDirectory().getAbsoluteFile() + "/ResProvider/default");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        for (String fileName : fileNames) {
+            String filePath = file.getAbsolutePath() + File.separator + fileName;
+            File imageFile = new File(filePath);
+            if (!imageFile.exists()) {
+                InputStream inputStream = MyApplication.context.getAssets().open(fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+
+                int len = -1;
+                byte[] buffer = new byte[1024];
+                while ((len = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+
+                fileOutputStream.close();
+                inputStream.close();
+            }
+        }
+    }
+
+
 }
 
 

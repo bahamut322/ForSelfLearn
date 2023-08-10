@@ -12,7 +12,8 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @author heky
  * @date 2021/11/15
  */
-class StartDoubleSecondSendTask(taskModel:TaskModel):AbstractTask(taskModel) {
+class StartDoubleSecondSendTask(taskModel:TaskModel, needReportData: Boolean = true):AbstractTask(taskModel, needReportData) {
+
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         RobotStatus.currentStatus = TYPE_SEND

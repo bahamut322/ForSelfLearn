@@ -6,9 +6,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.room.entity.MyRootMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import com.sendi.deliveredrobot.room.entity.RootMap
 
 class SelectChargePointListHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val frameLayoutContainer = itemView

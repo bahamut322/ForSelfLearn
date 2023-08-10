@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,8 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.pointItem
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -69,6 +72,10 @@ class GuideFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //回到主页面的时候初始化一下选择讲解点的值
+        selectRoutMapItem!!.postValue(-1)
+        pointItem!!.postValue(-1)
+
         controller = Navigation.findNavController(requireView())
         timer = Timer()
 //        Universal.Model="引领"
@@ -97,9 +104,8 @@ class GuideFragment : Fragment() {
                     DialogHelper.briefingDialog.show()
                 } else {
                     LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
-//                ROSHelper.navigateTo(location = queryFloorPoints[position])
-//                GuideTaskBill(TaskModel(location = queryFloorPoints[position]))
                     val endPoint = queryFloorPoints[position]
+                    Log.d("TAG", "onViewCreated: "+endPoint.pointDirection)
                     val taskModel = TaskModel(location = endPoint)
                     val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
                     BillManager.addAllAtIndex(bill, 0)
@@ -109,7 +115,7 @@ class GuideFragment : Fragment() {
         binding.llReturn.setOnClickListener {
             controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
         }
-        binding.imageViewSetting.setOnClickListener { v ->
+        binding.imageViewSetting.setOnClickListener {
             toSettingDialog.show()
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {

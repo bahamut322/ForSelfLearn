@@ -19,8 +19,9 @@ import com.sendi.deliveredrobot.utils.ToastUtil
 class AdvanceGuidingTask(
     private val cmd: Int,
     taskModel: TaskModel?,
-    private val navigateId: Int
-) : AbstractTask(taskModel) {
+    private val navigateId: Int,
+    needReportData: Boolean = true
+) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return when (navigateId) {
@@ -36,13 +37,15 @@ class AdvanceGuidingTask(
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, navigateId)
-        })
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
-        ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
+        val result = ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
+        if(result == 1){
+            MyApplication.instance!!.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, navigateId)
+            })
+        }
         DialogHelper.loadingDialog.dismiss()
     }
 }

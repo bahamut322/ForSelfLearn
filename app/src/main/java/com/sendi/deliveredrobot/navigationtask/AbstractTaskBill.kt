@@ -2,9 +2,12 @@ package com.sendi.deliveredrobot.navigationtask
 
 import androidx.lifecycle.ViewModelLazy
 import com.sendi.deliveredrobot.MainActivity
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
+import com.sendi.deliveredrobot.room.PointType
+import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
 import java.util.*
@@ -21,6 +24,7 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
             { MainActivity.instance.viewModelStore },
             { MainActivity.instance.defaultViewModelProviderFactory}
         )
+        val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     }
     private var endTarget: String = ""
     private var taskId: String = ""
@@ -99,11 +103,29 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
             }else{
                 val taskId = BillManager.currentBill()?.taskId()?:""
                 BillManager.removeBill()
+                //TODO 充电桩
                 // 如果后续没有任务，则返回充电桩
                 val bill = GoBackTaskBillFactory.createBill(TaskModel(
                     taskId = taskId
                 ))
                 BillManager.addAllAtIndex(bill)
+                //TODO 充电桩
+//TODO 待命点
+//                val readyPoint = dao.queryReadyPoint()
+//                when (readyPoint?.type) {
+//                    PointType.CHARGE_POINT -> {
+//                        // 如果后续没有任务，则返回充电桩
+//                        val bill = GoBackTaskBillFactory.createBill(TaskModel(
+//                            taskId = taskId
+//                        ))
+//                        BillManager.addAllAtIndex(bill)
+//                    }
+//                    PointType.READY_POINT -> {
+//                        val bill = GoBackReadyPointBillFactory.createBill(TaskModel(location = readyPoint, taskId = taskId))
+//                        BillManager.addAllAtIndex(bill)
+//                    }
+//                }
+//TODO 待命点
             }
             BillManager.currentBill()?.executeNextTask()
         }
@@ -171,7 +193,7 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
                     ))
             )
         }
-//        TaskQueues.queue.addAll(0, tempQueue)
+//        TaskQueue.queue.addAll(0, tempQueue)
         taskQueue.addAll(0, tempQueue)
     }
 

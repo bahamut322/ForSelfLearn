@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 class MapConfig(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "root_map_id") val rootMapId: Int?,
-    @ColumnInfo(name = "charge_point_id")val chargePointId:Int?
+    @ColumnInfo(name = "charge_point_id")val chargePointId:Int?,
+    @ColumnInfo(name = "ready_point_id")val readyPointId:Int?,
 )

@@ -16,7 +16,8 @@ import java.util.*
  * @date 2022-06-22
  * @description 扫描电梯门
  */
-class ScanLiftTask(taskModel: TaskModel): AbstractTask(taskModel) {
+class ScanLiftTask(taskModel: TaskModel, needReportData: Boolean = true): AbstractTask(taskModel, needReportData) {
+
     private val step = 2000L
     private val holdTime = 5
 

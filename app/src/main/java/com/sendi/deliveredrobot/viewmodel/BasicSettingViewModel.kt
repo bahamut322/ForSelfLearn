@@ -1,9 +1,6 @@
 package com.sendi.deliveredrobot.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.baidu.tts.client.SpeechSynthesizer
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.room.entity.BasicConfig
 
 /**
@@ -11,7 +8,7 @@ import com.sendi.deliveredrobot.room.entity.BasicConfig
  */
 class BasicSettingViewModel : ViewModel() {
     var basicConfig: BasicConfig
-    = BasicConfig(
+            = BasicConfig(
         appVersion = "",
         brightness = 123,
         sendSpeed = 0.7f,
@@ -33,6 +30,9 @@ class BasicSettingViewModel : ViewModel() {
         sendModeOpen = 1,
         sendModeVerifyPassword = 1,
         guideModeOpen = 1,
-        guideModeVerifyPassword = 1
+        guideModeVerifyPassword = 1,
+        usherVolume = 60,
+        usherModeOpen = 1,
+        usherModeVerifyPassword = 1
     )
 }

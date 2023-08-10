@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -21,11 +22,10 @@ import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
 import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
 import com.sendi.deliveredrobot.entity.BasicSetting
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.model.DefaultModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
@@ -36,8 +36,6 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
-import com.sendi.deliveredrobot.view.widget.AdvanceView
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -56,7 +54,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private val dateViewModel by viewModels<DateViewModel>()
-
+    private val fileNames =
+        arrayOf("advdefault.jpg", "explandefault.png", "guidedefault.png", "usherdefault.png","default_explain.gif")
     @SuppressLint("SimpleDateFormat")
     private val sdf2 = SimpleDateFormat("HH:mm")
     private lateinit var navigationReceiver: NavigationReceiver
@@ -74,9 +73,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         val basicSettings = findAll(BasicSetting::class.java)
         val basicSetting = BasicSetting()
         if (basicSettings.size == 0) {
-            basicSetting.setId(1)
+            basicSetting.id = 1
             basicSetting.save()
         }
+
+        pushImage(fileNames)
+
         AppUtils.checkPermission(this, 0)
         //检查日志
         FileUtil.checkAndDeleteLogFilesCache()
@@ -426,56 +428,111 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             advertisingConfigDB = findFirst(AdvertisingConfigDB::class.java) //查询副屏第一条数据
             if (sdScreenStatus!!.value == 0 && mPresentation != null && advertisingConfigDB != null) {
                 doubleScreen = sdScreenStatus!!.value!!
-                layoutThis(
-                    advertisingConfigDB.picPlayTime,
-                    Universal.advertisement,
-                    advertisingConfigDB.type,
-                    advertisingConfigDB.textPosition,
-                    advertisingConfigDB.fontLayout,
-                    advertisingConfigDB.fontContent,
-                    advertisingConfigDB.fontBackGround,
-                    advertisingConfigDB.fontColor,
-                    advertisingConfigDB.fontSize,
-                    advertisingConfigDB.picType,
-                    advertisingConfigDB.videolayout,
-                    advertisingConfigDB.videoAudio
-                )
+                if(advertisingConfigDB.type !=0) {
+                    layoutThis(
+                        advertisingConfigDB.picPlayTime,
+                        Universal.advertisement,
+                        advertisingConfigDB.type,
+                        advertisingConfigDB.textPosition,
+                        advertisingConfigDB.fontLayout,
+                        advertisingConfigDB.fontContent,
+                        advertisingConfigDB.fontBackGround,
+                        advertisingConfigDB.fontColor,
+                        advertisingConfigDB.fontSize,
+                        advertisingConfigDB.picType,
+                        advertisingConfigDB.videolayout,
+                        advertisingConfigDB.videoAudio
+                    )
+                }else{
+                    val defaultModel = DefaultModel(file =Universal.advDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
+                    layoutThis(
+                        defaultModel.picPlayTime!!,
+                        defaultModel.file,
+                        defaultModel.type!!,
+                        defaultModel.textPosition!!,
+                        defaultModel.fontLayout!!,
+                        defaultModel.fontContent,
+                        defaultModel.fontBackGround,
+                        defaultModel.fontColor,
+                        defaultModel.fontSize!!,
+                        defaultModel.picType!!,
+                        defaultModel.videolayout!!,
+                        defaultModel.videoAudio!!
+                    )
+                }
             }
             if (sdScreenStatus!!.value == 1 && mPresentation != null) {
                 renovate()
                 doubleScreen = sdScreenStatus!!.value!!
-                layoutThis(
-                    Universal.picPlayTime,
-                    Universal.Secondary,
-                    Universal.bigScreenType,
-                    Universal.textPosition,
-                    Universal.fontLayout,
-                    Universal.fontContent,
-                    Universal.fontBackGround,
-                    Universal.fontColor,
-                    Universal.fontSize,
-                    Universal.picTypeNum,
-                    Universal.TempVideoLayout,
-                    Universal.AllvideoAudio
-                )
+                if ( Universal.bigScreenType !=0) {
+                    layoutThis(
+                        Universal.picPlayTime,
+                        Universal.Secondary,
+                        Universal.bigScreenType,
+                        Universal.textPosition,
+                        Universal.fontLayout,
+                        Universal.fontContent,
+                        Universal.fontBackGround,
+                        Universal.fontColor,
+                        Universal.fontSize,
+                        Universal.picTypeNum,
+                        Universal.TempVideoLayout,
+                        Universal.AllvideoAudio
+                    )
+                }else{
+                    val defaultModel =DefaultModel(file = Universal.usherDefault , picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    layoutThis(
+                        defaultModel.picPlayTime!!,
+                        defaultModel.file,
+                        defaultModel.type!!,
+                        defaultModel.textPosition!!,
+                        defaultModel.fontLayout!!,
+                        defaultModel.fontContent,
+                        defaultModel.fontBackGround,
+                        defaultModel.fontColor,
+                        defaultModel.fontSize!!,
+                        defaultModel.picType!!,
+                        defaultModel.videolayout!!,
+                        defaultModel.videoAudio!!
+                    )
+                }
             }
             if (sdScreenStatus!!.value == 2 && mPresentation != null) {
                 renovate()
                 doubleScreen = sdScreenStatus!!.value!!
-                layoutThis(
-                    RobotStatus.SecondModel!!.value?.picPlayTime!!,
-                    RobotStatus.SecondModel!!.value?.file,
-                    RobotStatus.SecondModel!!.value?.type!!,
-                    RobotStatus.SecondModel!!.value?.textPosition!!,
-                    RobotStatus.SecondModel!!.value?.fontLayout!!,
-                    RobotStatus.SecondModel!!.value?.fontContent,
-                    RobotStatus.SecondModel!!.value?.fontBackGround,
-                    RobotStatus.SecondModel!!.value?.fontColor,
-                    RobotStatus.SecondModel!!.value?.fontSize!!,
-                    RobotStatus.SecondModel!!.value?.picType!!,
-                    RobotStatus.SecondModel!!.value?.videolayout!!,
-                    RobotStatus.SecondModel!!.value?.videoAudio!!
-                )
+                if (RobotStatus.SecondModel!!.value?.type!! !=0) {
+                    layoutThis(
+                        RobotStatus.SecondModel!!.value?.picPlayTime!!,
+                        RobotStatus.SecondModel!!.value?.file,
+                        RobotStatus.SecondModel!!.value?.type!!,
+                        RobotStatus.SecondModel!!.value?.textPosition!!,
+                        RobotStatus.SecondModel!!.value?.fontLayout!!,
+                        RobotStatus.SecondModel!!.value?.fontContent,
+                        RobotStatus.SecondModel!!.value?.fontBackGround,
+                        RobotStatus.SecondModel!!.value?.fontColor,
+                        RobotStatus.SecondModel!!.value?.fontSize!!,
+                        RobotStatus.SecondModel!!.value?.picType!!,
+                        RobotStatus.SecondModel!!.value?.videolayout!!,
+                        RobotStatus.SecondModel!!.value?.videoAudio!!
+                    )
+                }else{
+                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
+                    layoutThis(
+                        defaultModel.picPlayTime!!,
+                        defaultModel.file,
+                        defaultModel.type!!,
+                        defaultModel.textPosition!!,
+                        defaultModel.fontLayout!!,
+                        defaultModel.fontContent,
+                        defaultModel.fontBackGround,
+                        defaultModel.fontColor,
+                        defaultModel.fontSize!!,
+                        defaultModel.picType!!,
+                        defaultModel.videolayout!!,
+                        defaultModel.videoAudio!!
+                    )
+                }
             }
         }
         RobotStatus.SecondModel!!.observe(this) {
@@ -499,11 +556,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
     }
     private fun renovate() {
-        if (mPresentation != null) {
-            mPresentation.dismiss()
-            mPresentation = null
-        }
-        ShowPresentationByDisplaymanager()
+//        if (mPresentation != null) {
+//            mPresentation.dismiss()
+//            mPresentation = null
+//        }
+//        ShowPresentationByDisplaymanager()
 
     }
 }

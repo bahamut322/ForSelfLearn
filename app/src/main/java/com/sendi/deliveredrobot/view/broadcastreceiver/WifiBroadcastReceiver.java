@@ -87,7 +87,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
                 mWiFiSettingActivity.wifiListSetView(connectedWifiInfo.getSSID(), mWiFiSettingActivity.mConnectType);
             }
         } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction())) {
-            Log.d(TAG, "网络列表变化了");
+//            Log.d(TAG, "网络列表变化了");
             mWiFiSettingActivity.queryWifiList();
         }
 

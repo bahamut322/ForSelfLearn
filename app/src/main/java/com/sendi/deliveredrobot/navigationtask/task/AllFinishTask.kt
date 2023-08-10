@@ -13,7 +13,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  *   @date: 2021/8/24 18:07
  *   @describe: 全流程结束（此时在充电桩上）
  */
-class AllFinishTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class AllFinishTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.AllFinishTask

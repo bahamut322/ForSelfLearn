@@ -11,7 +11,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:开始返回
  */
-class GoBackTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class GoBackTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         RobotStatus.currentStatus = TYPE_GO_BACK

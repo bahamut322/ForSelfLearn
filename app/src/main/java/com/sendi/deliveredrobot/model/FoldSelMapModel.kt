@@ -1,8 +1,5 @@
 package com.sendi.deliveredrobot.model
 
-import com.sendi.deliveredrobot.room.entity.Point
-import com.sendi.deliveredrobot.room.entity.RouteMap
-import com.sendi.deliveredrobot.room.entity.SubMap
 import java.util.*
 
 /**

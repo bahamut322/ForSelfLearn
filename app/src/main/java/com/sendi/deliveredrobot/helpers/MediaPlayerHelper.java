@@ -27,12 +27,12 @@ public class MediaPlayerHelper {
     private static int currentPosition = 0;
     private static Timer mTimer;
     private static OnProgressListener mOnProgressListener;
+
     /**
-     *
      * @param fileName 文件路径
-     * @param FLage 是否播放视频声音 "1"：不 "0"：播放
+     * @param FLage    是否播放视频声音 "1"：不 "0"：播放
      */
-    public static void play(String fileName,String FLage) {
+    public static void play(String fileName, String FLage) {
 
         new Handler().postDelayed(() -> {
             // 要延迟执行的方法
@@ -42,9 +42,9 @@ public class MediaPlayerHelper {
             } else {
                 mMediaPlayer.reset();
             }
-            new AudioMngHelper(MyApplication.context).setVoice100((int) QuerySql.QueryBasic().getVideoVolume());//设置语音音量
             try {
-                if(fileName!=null) {
+                if (fileName != null) {
+                    new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                     mMediaPlayer.setDataSource(fileName);
                     mMediaPlayer.prepare();
                     mMediaPlayer.start();
@@ -97,19 +97,21 @@ public class MediaPlayerHelper {
         if (mTimer == null) {
             mTimer = new Timer();
         }
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (mMediaPlayer != null && mOnProgressListener != null) {
-                    mOnProgressListener.onProgress(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
-                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()){
-                        //恢复成视频播放声音大小
-                        stopTimer();
-                        Order.setFlage("0");
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mMediaPlayer != null && mOnProgressListener != null) {
+                        mOnProgressListener.onProgress(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
+                        try {
+                            if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
+                                //恢复成视频播放声音大小
+                                stopTimer();
+                                Order.setFlage("0");
+                            }
+                        }catch (Exception ignored){}
                     }
                 }
-            }
-        }, 0, 1000);
+            }, 0, 1000);
     }
 
     private static void stopTimer() {

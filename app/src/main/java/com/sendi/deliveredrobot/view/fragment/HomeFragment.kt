@@ -20,8 +20,10 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.model.SameName
+import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
+import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -36,6 +38,7 @@ import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -87,7 +90,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun showTipsView() {
         println("无操作")
         fromeSettingDialog!!.dismiss()
-        if (QuerySql.robotConfig().sleep == 1){
+        if (QuerySql.robotConfig().sleep == 1) {
             controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
         }
     }
@@ -186,6 +189,34 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
+
+//        val textN =
+//            "为更好地落实党中央高质量发展的首要任务，近年来，中国电信积极践行建设网络强国和数字中国方针策略，提出并全面实施“云改数转”战略，积极打造服务型、科技型、安全型企业。肇庆电信坚决执行党中央指示以及集团政策，助力肇庆千行百业数字化转型。\n" +
+//                    "因此，我们以本展厅为平台，展示各行业在数字化转型的方向与信息化改革趋势，同时与各位来宾共同探讨未来信息化发展的方向与可为的空间，为肇庆各行业高质量发展添砖加瓦！接下来，有请各位跟随我的步伐，一步步深入了解行业信息化改革的历程、现状与未来。"
+//
+//        val textEqually: List<String> =
+//            splitString(textN, 135)
+//        Log.d("TAG", "onViewCreated: ${textEqually[0]}")
+//        binding.songTv.text = textEqually[0]
+//
+//        val segments = splitTextByPunctuation(textN)
+//        for (i in segments.indices) {
+//            println("分割内容：${segments[i]},内容长度：${segments[i].length}")
+//        }
+
+
+//
+//        binding.ready.setOnClickListener {
+//            thread {
+//                val bill = GoToReadyPointBillFactory.createBill(
+//                    TaskModel(
+//                        location = dao.queryReadyPoint()
+//                    )
+//                )
+//                BillManager.addAllAtIndex(bill)
+//                BillManager.currentBill()?.executeNextTask()
+//            }
+//        }
 //        val array1 = arrayOf("sdcard/1.jpg", "sdcard/2.jpg")
 //        val array2 = arrayOf("/33/1.jpg", "/33/3.jpg","/33/5.jpg")
 //        compareArrays(array1,array2)
@@ -193,7 +224,7 @@ class HomeFragment : Fragment(), IMainView {
 //            com.alibaba.fastjson.JSONObject.toJSONString(compareArrays(array1,array2))}")
 
 
-        if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4) ) {
+        if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4)) {
             faceViewModel?.suerfaceInit(binding.SurfaceView)
             if (QuerySql.QueryBasic().defaultValue != "") {
                 binding.homeClay.setBackgroundResource(R.drawable.guests_open_bg)
@@ -217,22 +248,26 @@ class HomeFragment : Fragment(), IMainView {
                 0 -> {
                     allInvisible()
                 }
+
                 1 -> allInvisible()
                 2 -> {
                     allInvisible()
                     binding.include.view1.visibility = View.VISIBLE
                     initView1()
                 }
+
                 3 -> {
                     allInvisible()
                     binding.include.view2.visibility = View.VISIBLE
                     initView2()
                 }
+
                 4 -> {
                     allInvisible()
                     binding.include.view3.visibility = View.VISIBLE
                     initView3()
                 }
+
                 else -> {}
             }
         }
@@ -420,6 +455,7 @@ class HomeFragment : Fragment(), IMainView {
 //                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d("TAG", "点击轻应用")
             }
+
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 //            "功能模块" -> Toast.makeText(context, "功能模块", Toast.LENGTH_SHORT).show()
         }
@@ -505,6 +541,7 @@ class HomeFragment : Fragment(), IMainView {
                 // 到期
                 ExpireDeadlineDialog(requireContext()).show()
             }
+
             days in 0..5 || days == 10 -> {
                 // 1-5天到期提醒
                 val content =
@@ -522,7 +559,24 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
     }
-
+//    fun splitTextByPunctuation(text: String): List<String> {
+//        val pattern = "[，。；？]".toRegex()
+//        return text.split(pattern)
+//    }
+//    fun splitString(input: String, length: Int): List<String> {
+//        val result: MutableList<String> = ArrayList()
+//        var startIndex = 0
+//        while (startIndex < input.length) {
+//            var endIndex = startIndex + length
+//            if (endIndex > input.length) {
+//                endIndex = input.length
+//            }
+//            val substring = input.substring(startIndex, endIndex)
+//            result.add(substring)
+//            startIndex = endIndex
+//        }
+//        return result
+//    }
     /**
      * @description 判断是否满足条件出发
      */

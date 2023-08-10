@@ -11,7 +11,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-07
  * @description 呼叫取物结束
  */
-class CallTakeObjectFinishTask(taskModel: TaskModel, type:Int, var exceptioned:Boolean = false) : AbstractTask(taskModel) {
+class CallTakeObjectFinishTask(taskModel: TaskModel, type:Int, var exceptioned:Boolean = false, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         when (taskModel?.location?.binMark) {

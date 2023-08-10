@@ -40,63 +40,6 @@
             android:text="返回中....."/>
 
 
-        <ImageButton
-            android:id="@+id/buttonSend"
-            android:layout_width="409dp"
-            android:layout_height="363dp"
-            android:background="@drawable/selector_bg_button_home"
-            android:clickable="false"
-            android:contentDescription="@string/image_description"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/buttonGuide"
-            app:layout_constraintTop_toBottomOf="@+id/guideline12"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <ImageButton
-            android:id="@+id/buttonGuide"
-            android:layout_width="409dp"
-            android:layout_height="363dp"
-            android:adjustViewBounds="false"
-            android:background="@drawable/selector_bg_button_home"
-            android:clickable="false"
-            android:contentDescription="@string/image_description"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonSend"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/guideline12"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <ImageView
-            android:id="@+id/imageViewLockSend"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:contentDescription="@string/image_description"
-            android:src="@drawable/ic_lock"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
-            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
-            app:layout_constraintHorizontal_bias="0.09"
-            app:layout_constraintStart_toStartOf="@+id/buttonSend"
-            app:layout_constraintTop_toTopOf="@+id/buttonSend"
-            app:layout_constraintVertical_bias="0.07"
-            tools:ignore="ImageContrastCheck" />
-
-
-        <ImageView
-            android:id="@+id/imageViewLockGuide"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:contentDescription="@string/image_description"
-            android:src="@drawable/ic_lock"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
-            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
-            app:layout_constraintHorizontal_bias="0.09"
-            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
-            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
-            app:layout_constraintVertical_bias="0.07"
-            tools:ignore="ImageContrastCheck" />
 
 
 
@@ -179,44 +122,10 @@
             app:layout_constraintGuide_percent="0.5805" />
 
 
-        <TextView
-            android:id="@+id/imageViewGuide"
-            android:layout_width="148dp"
-            android:layout_height="148dp"
-            android:background="@drawable/ic_guide"
-            android:contentDescription="@string/image_description"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonGuide"
-            app:layout_constraintEnd_toEndOf="@+id/buttonGuide"
-            app:layout_constraintStart_toStartOf="@+id/buttonGuide"
-            app:layout_constraintTop_toTopOf="@+id/buttonGuide"
-            app:layout_constraintVertical_bias="0.1906" />
 
-        <TextView
-            android:id="@+id/imageViewSend"
-            android:layout_width="148dp"
-            android:layout_height="148dp"
-            android:background="@drawable/ic_send"
-            android:contentDescription="@string/image_description"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonSend"
-            app:layout_constraintEnd_toEndOf="@+id/buttonSend"
-            app:layout_constraintStart_toStartOf="@+id/buttonSend"
-            app:layout_constraintTop_toTopOf="@+id/buttonSend"
-            app:layout_constraintVertical_bias="0.1685"
-            tools:ignore="ImageContrastCheck" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/groupGuideButton"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="buttonGuide,imageViewGuide,imageViewLockGuide,textViewGuideTitle,textViewGuideTitleEnglish" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/groupSendButton"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="buttonSend,imageViewSend,imageViewLockSend,textViewSendTitle,textViewSendTitleEnglish" />
+
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/groupState3"

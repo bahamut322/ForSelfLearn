@@ -42,7 +42,7 @@ class ReportRobotStateService : Service() {
                     val data = generateData()
                     //3、上报
                     withContext(Dispatchers.Default){
-//                        CloudMqttService.publish(message = data.toString(), needPrintLog = BuildConfig.IS_DEBUG)
+                        CloudMqttService.publish(message = data.toString(), needPrintLog = BuildConfig.IS_DEBUG)
                     }
                 }
             }
@@ -75,7 +75,7 @@ class ReportRobotStateService : Service() {
                 updateMap = tempArrayList.toFloatArray()
                 taskStatus = when(RobotStatus.currentStatus){
                     TYPE_CHARGING -> RobotStageEnum.CHARGING.code
-                    TYPE_GUIDE, TYPE_SEND, TYPE_REMOTE_ORDER_SEND, TYPE_REMOTE_ORDER_TAKE -> RobotStageEnum.TASKING.code
+                    TYPE_GUIDE, TYPE_SEND, TYPE_REMOTE_ORDER_SEND, TYPE_REMOTE_ORDER_TAKE, TYPE_WELCOME -> RobotStageEnum.TASKING.code
                     TYPE_GO_BACK -> RobotStageEnum.BACKING.code
                     TYPE_IDLE -> RobotStageEnum.IDLE.code
                     TYPE_EXCEPTION -> RobotStageEnum.ERROR.code

@@ -16,7 +16,7 @@ import com.sendi.deliveredrobot.utils.ToastUtil
 /**
  * @describe:送物中电梯外点专用
  */
-class AdvanceSendingTask(private val cmd:Int, taskModel: TaskModel?) : AbstractTask(taskModel) {
+class AdvanceSendingTask(private val cmd:Int, taskModel: TaskModel?, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.SendingTask
@@ -29,13 +29,16 @@ class AdvanceSendingTask(private val cmd:Int, taskModel: TaskModel?) : AbstractT
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.sendingFragment)
-        })
-//        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
+        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
 //        ROSHelper.navigateTo(taskModel!!.location!!)
-        ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
+//        ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
+        val result = ROSHelper.advanceMoveTo(cmd,taskModel!!.location!!)
+        if(result == 1){
+            MyApplication.instance!!.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, R.id.sendingFragment)
+            })
+        }
         DialogHelper.loadingDialog.dismiss()
     }
 }

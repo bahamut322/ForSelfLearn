@@ -30,7 +30,7 @@ object RemoteOrderHelper {
             val from = Gson().fromJson(jsonObject.get("from"),QueryPointEntity::class.java)
             val fromName = jsonObject.get("fromName").asString
             val fromPhone = jsonObject.get("fromPhone").asString
-            val to = Gson().fromJson(jsonObject.get("to"),QueryPointEntity::class.java)
+            val to = Gson().fromJson(jsonObject.get("to"), QueryPointEntity::class.java)
             val toName = jsonObject.get("toName").asString
             val toPhone = jsonObject.get("toPhone").asString
             val store = jsonObject.get("store").asString

@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.holder.BaseRecyclerHolder
-import com.sendi.deliveredrobot.room.entity.MyRootMap
-import com.sendi.deliveredrobot.room.entity.RouteMap
 import java.util.*
 
 abstract class BaseRecyclerViewAdapter<D>: RecyclerView.Adapter<BaseRecyclerHolder> {

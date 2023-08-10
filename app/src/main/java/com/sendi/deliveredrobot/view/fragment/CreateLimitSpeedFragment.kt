@@ -1,31 +1,24 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
-import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.LINE_INFO_MODEL
-import com.sendi.deliveredrobot.LINE_NAME
-import com.sendi.deliveredrobot.SUB_MAP
 import com.sendi.deliveredrobot.databinding.FragmentCreateLimitSpeedBinding
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.LineInfoModel
 import com.sendi.deliveredrobot.model.PointCompat
 import com.sendi.deliveredrobot.room.entity.SubMap
+import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.ros.SubManager
 import com.sendi.deliveredrobot.ros.constant.ClientConstant
-import com.sendi.deliveredrobot.ros.debug.MapLaserServiceImpl
-import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.inputfilter.NumRangeInputFilter
@@ -50,7 +43,7 @@ class CreateLimitSpeedFragment : Fragment() {
 
     lateinit var binding: FragmentCreateLimitSpeedBinding
     private val numberArray = arrayOf("0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0")
-    private var pose2dList: List<PointCompat>? = null
+    private var pose2dList: ArrayList<PointCompat>? = null
     private var status: Int by Delegates.observable(STATUS_READY){
             _, _, newValue ->
         when (newValue) {
@@ -81,7 +74,7 @@ class CreateLimitSpeedFragment : Fragment() {
             }
         }
     }
-    private lateinit var subMap:SubMap
+    private lateinit var subMap: SubMap
     private lateinit var lineName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +91,6 @@ class CreateLimitSpeedFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
@@ -140,7 +132,7 @@ class CreateLimitSpeedFragment : Fragment() {
                             withContext(Dispatchers.Default){
                                 //开始创建限速区失败
 //                                if (mapLaserServiceImpl.sendLaserMapManagerMsg(2).isFlag) {
-                                    //订阅激光点
+                                //订阅激光点
                                 SubManager.sub(ClientConstant.GLOBAL_LASER)
                                 if (ROSHelper.startCreateLimitSpeed()) {
                                     withContext(Dispatchers.Main) {
@@ -165,9 +157,9 @@ class CreateLimitSpeedFragment : Fragment() {
                     STATUS_CREATING -> {
                         MainScope().launch(Dispatchers.Default) {
                             DialogHelper.loadingDialog.show()
-                                //结束创建限速区
+                            //结束创建限速区
 //                                if (mapLaserServiceImpl.sendLaserMapManagerMsg(3).isFlag) {
-                                    //解除订阅激光点
+                            //解除订阅激光点
                             SubManager.unsub(ClientConstant.GLOBAL_LASER)
                             if (ROSHelper.endCreateLimitSpeed(lineName)) {
                                 DialogHelper.loadingDialog.dismiss()
@@ -234,16 +226,16 @@ class CreateLimitSpeedFragment : Fragment() {
                     }
                 }
             }
+        }
 
-            binding.textViewReset.apply {
-                visibility = View.GONE
-                setOnClickListener {
-                    if (ROSHelper.resetLimitSpeed()){
-                        binding.laserPointsView.clearLineInfo()
-                        status = STATUS_READY
-                    }else{
-                        ToastUtil.show("重置限速区失败")
-                    }
+        binding.textViewReset.apply {
+            visibility = View.GONE
+            setOnClickListener {
+                if (ROSHelper.resetLimitSpeed()){
+                    binding.laserPointsView.clearLineInfo()
+                    status = STATUS_READY
+                }else{
+                    ToastUtil.show("重置限速区失败")
                 }
             }
         }
@@ -301,7 +293,7 @@ class CreateLimitSpeedFragment : Fragment() {
             }
             pose2dList = list
 //            LogUtil.d("tempObstacle:${list.toArray().contentToString()}")
-            binding.laserPointsView.setLineInfo(list)
+            binding.laserPointsView.setLineInfo(LineInfoModel(pose = list, name = lineName))
         }
         LaserObject.livePoints.observe(viewLifecycleOwner){
             if (it == null) {

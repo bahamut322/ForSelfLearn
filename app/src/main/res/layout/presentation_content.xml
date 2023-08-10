@@ -43,7 +43,6 @@
                 android:layout_marginTop="@dimen/dp_30"
                 android:layout_marginEnd="@dimen/dp_30"
                 android:layout_marginBottom="@dimen/dp_30"
-                android:gravity="center|left"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
@@ -55,12 +54,15 @@
                 android:id="@+id/verticalTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_45"
+                android:layout_marginTop="@dimen/dp_30"
+                android:layout_marginEnd="@dimen/dp_30"
+                android:layout_marginBottom="@dimen/dp_30"
                 android:visibility="gone"
-                app:columnLength="10"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
-                app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+                app:layout_constraintTop_toTopOf="@id/constraintLayout2"
                 app:textSize="80sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

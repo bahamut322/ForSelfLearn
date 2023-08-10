@@ -12,7 +12,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:进电梯结束
  */
-class IntoLiftFinishTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class IntoLiftFinishTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     var point: QueryPointEntity? = null
 
     override suspend fun beforeReportData(taskDto: TaskDto) {

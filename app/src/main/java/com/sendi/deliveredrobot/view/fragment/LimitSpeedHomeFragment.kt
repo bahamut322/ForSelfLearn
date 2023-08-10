@@ -63,7 +63,7 @@ class LimitSpeedHomeFragment : Fragment() {
         }
     }
     private var limitSpeedLineListAdapter: LimitSpeedLineListAdapter? = null
-    private lateinit var subMap:SubMap
+    private lateinit var subMap: SubMap
     private var firstLoad = true
     private val mapLaserServiceImpl = MapLaserServiceImpl.getInstance()
 

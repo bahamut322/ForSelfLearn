@@ -9,7 +9,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe: 小程序下单{送物}结束
  */
-class FinishRemoteOrderSendTask(taskModel: TaskModel, val type: Int, var exceptioned: Boolean = false) : AbstractTask(taskModel) {
+class FinishRemoteOrderSendTask(taskModel: TaskModel, val type: Int, var exceptioned: Boolean = false, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         when (taskModel?.location?.binMark) {

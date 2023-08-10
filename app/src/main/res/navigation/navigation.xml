@@ -430,6 +430,20 @@
             app:destination="@+id/ExplanationFragment" />
     </fragment>
     <fragment
+        android:id="@+id/FinishReadyFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.FinishReadyFragment"
+        android:label="FinishDockFragment">
+        <action
+            android:id="@+id/action_FinishReadyFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_FinishReadyFragment_to_GuideFragment"
+            app:destination="@+id/GuideFragment" />
+        <action
+            android:id="@+id/action_FinishReadyFragment_to_explanationFragment"
+            app:destination="@+id/ExplanationFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/readyForTaskFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.ReadyForTaskFragment"
         android:label="ReadyForTaskFragment" />

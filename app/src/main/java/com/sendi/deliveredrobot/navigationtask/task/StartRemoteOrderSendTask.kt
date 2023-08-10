@@ -12,7 +12,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @author heky
  * @date 2022-06-07
  */
-class StartRemoteOrderSendTask(taskModel: TaskModel, val type: Int):AbstractTask(taskModel) {
+class StartRemoteOrderSendTask(taskModel: TaskModel, val type: Int, needReportData: Boolean = true):AbstractTask(taskModel, needReportData) {
 
     override fun reportTaskDto() {
         ReportDataHelper.reportTaskStartDto(

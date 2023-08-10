@@ -82,14 +82,6 @@
         app:layout_constraintTop_toBottomOf="@+id/title_tv"
         tools:text="2021-03-23 18:14" />
 
-    <ImageView
-        android:id="@+id/imageViewClose"
-        android:layout_width="@dimen/dp_64"
-        android:layout_height="@dimen/dp_64"
-        android:background="@drawable/ic_close_circle"
-        android:contentDescription="@string/image_description"
-        app:layout_constraintEnd_toEndOf="@+id/view19"
-        app:layout_constraintTop_toTopOf="@+id/view19" />
 
     <TextView
         android:id="@+id/content_tv"

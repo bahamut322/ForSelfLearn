@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-07
  * @description 呼叫取物
  */
-class CallTakeObjectTask(taskModel: TaskModel, type:Int) : AbstractTask(taskModel) {
+class CallTakeObjectTask(taskModel: TaskModel, type:Int, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return  TaskStageEnum.CallTakeObjectTask

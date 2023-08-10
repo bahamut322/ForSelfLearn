@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.MyResultModel
+import com.sendi.deliveredrobot.view.widget.Stat.OnChangeListener
 
 
 class ChangePointGridViewAdapter(private val context: Context, private val items: List<MyResultModel?>?,private val nameString: String) : BaseAdapter() {
@@ -53,4 +54,4 @@ class ChangePointGridViewAdapter(private val context: Context, private val items
         val itemCon : ConstraintLayout = view.findViewById(R.id.pointCatalogue)
     }
 
-}//按钮禁用失败，怎么解决
+}

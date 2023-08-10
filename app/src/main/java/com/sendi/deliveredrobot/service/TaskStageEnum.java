@@ -64,6 +64,10 @@ public enum TaskStageEnum {
     StartArrayBroadcast("开始到点播报",75),
     FinishArrayBroadcast("到点播报完成",76),
     InterruptExplain("中断讲解",77),
+    GoingUsherPoint("正在前往迎宾点", 51),
+    UsherStart("迎宾开始", 50),
+    UsherEnd("迎宾结束", 59),
+    FinishUsherTask("迎宾结束",1),
     Idle("空闲",-2);
 
     private final String name;

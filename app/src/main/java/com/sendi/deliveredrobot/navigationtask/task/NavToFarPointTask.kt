@@ -14,11 +14,11 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 
 /**
- *   @author: Swn
+ *   @author: heky
  *   @date: 2021/8/24 16:06
  *   @describe: 导航到充电重置点
  */
-class NavToFarPointTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class NavToFarPointTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.NavToFarPointTask
     }
@@ -47,10 +47,12 @@ class NavToFarPointTask(taskModel: TaskModel) : AbstractTask(taskModel) {
             }
         }
 //        ROSHelper.navigateTo(queryChargeFarPoint)
-        ROSHelper.advanceMoveTo(cmd = 2, location = queryChargePoint)
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.guidingFragment)
-        })
+        val result = ROSHelper.advanceMoveTo(cmd = 2, location = queryChargePoint)
+        if (result == 1) {
+            MyApplication.instance!!.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, R.id.guidingFragment)
+            })
+        }
     }
 }

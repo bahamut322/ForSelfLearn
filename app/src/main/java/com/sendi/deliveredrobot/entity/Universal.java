@@ -3,9 +3,9 @@ package com.sendi.deliveredrobot.entity;
 
 import android.annotation.SuppressLint;
 
+import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 
-import java.util.List;
 
 /**
  * @author swn
@@ -29,6 +29,14 @@ public class Universal {
     public static String RobotMode = "男声";
     //测温视频
     public static int TempVideoLayout = 480;
+    //默认GIF
+    public static String gifDefault = "/storage/emulated/0/ResProvider/default/default_explain.gif";
+    //广告默认图
+    public static String advDefault = "/storage/emulated/0/ResProvider/default/advdefault.jpg";
+    //门岗默认图
+    public static String usherDefault = "/storage/emulated/0/ResProvider/default/usherdefault.png";
+    //讲解默认图
+    public static String explainDefault = "/storage/emulated/0/ResProvider/default/explandefault.png";
     //存放待机视频/图片/GIF的目录
     @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
@@ -41,7 +49,7 @@ public class Universal {
     @SuppressLint("SdCardPath")
     public static String advertisement = "/mnt/sdcard/X8ROBOT/robotADV/";
     //下载地址
-    public static String pathDownload = "http://172.168.201.34:9055/management_res/";
+    public static String pathDownload = BuildConfig.HTTP_HOST;
     //机器人主要存放的路径
     @SuppressLint("SdCardPath")
     public static String robotFile = "/mnt/sdcard/X8ROBOT/";

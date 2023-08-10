@@ -8,6 +8,7 @@ import android.media.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
+import com.alibaba.fastjson.JSONObject
 import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.camera.IRUVC
@@ -115,9 +116,9 @@ object CheckSelfHelper {
         DeliverMqttService.startService(MainActivity.instance)
         MqttService.startService(MainActivity.instance)
         // ================================初始化上报机器人信息SERVICE=============================
-        if(BuildConfig.IS_REPORT){
-            ReportRobotStateService.startService(MainActivity.instance)
-        }
+//        if(BuildConfig.IS_REPORT){
+//            ReportRobotStateService.startService(MainActivity.instance)
+//        }
         withContext(Dispatchers.Main){
             seconds.observe(owner) { it ->
                 if (it < 0) {

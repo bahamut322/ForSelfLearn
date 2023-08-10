@@ -9,7 +9,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-09
  * @description 开始前往放物
  */
-class StartPutTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class StartPutTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.StartRemoteOrderPutTask
     }

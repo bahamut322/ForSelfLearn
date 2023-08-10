@@ -40,7 +40,7 @@ abstract class BasePlaceBinViewModel: ViewModel() {
     fun getCurrentSelectedLocation(): QueryPointEntity? {
         if (previousRow.value!! > -1 && previousCol.value!! > -1)
             return data[previousRow.value!!][previousCol.value!!].location.apply {
-                binMark = binMarBin()
+//                binMark = binMarBin()
             }
         return null
     }

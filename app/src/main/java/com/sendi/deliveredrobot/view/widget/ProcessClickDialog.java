@@ -93,6 +93,7 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     public void dismiss() {
+        new UpdateReturn().resume();
         stopCountdown();
         isCountdownRunning = false;
         super.dismiss();

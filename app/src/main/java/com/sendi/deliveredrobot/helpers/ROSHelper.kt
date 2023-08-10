@@ -1,16 +1,16 @@
 package com.sendi.deliveredrobot.helpers
 
 import android.annotation.SuppressLint
-import android.util.Log
 import chassis_msgs.*
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.model.LiftControlLoraModel
 import com.sendi.deliveredrobot.model.LineInfoModel
 import com.sendi.deliveredrobot.model.PointCompat
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecuteFloat
-import com.sendi.deliveredrobot.room.entity.QueryAllPointEntity
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.ros.ClientManager
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
@@ -18,8 +18,8 @@ import com.sendi.deliveredrobot.ros.SubManager
 import com.sendi.deliveredrobot.ros.constant.ClientConstant
 import com.sendi.deliveredrobot.ros.constant.Constant
 import com.sendi.deliveredrobot.ros.constant.RosResultEnum
-import com.sendi.deliveredrobot.ros.debug.dto.MapResultUtil
 import com.sendi.deliveredrobot.ros.dto.Client
+import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import geometry_msgs.Pose2D
@@ -51,6 +51,7 @@ object ROSHelper {
      */
     suspend fun manageRobot(status: Int): Boolean {
         var response: ManageResponse? = null
+        DialogHelper.loadingDialog.show()
         withContext(Dispatchers.Default){
             val param = HashMap<String, Any>()
             param[Constant.CMD] = status
@@ -77,6 +78,7 @@ object ROSHelper {
                 return@withContext false
             }
         }
+        DialogHelper.loadingDialog.dismiss()
         return response?.result == 1
     }
 
@@ -87,8 +89,6 @@ object ROSHelper {
         val clientParam = HashMap<String, Any>()
         clientParam["label_map_name"] = labelMapName
         clientParam["path_map_name"] = pathMapName
-        LogUtil.i("设置地图的labelMapName：$labelMapName")
-        LogUtil.i("设置地图的pathMapName: $pathMapName")
         val setLocationMapClient = Client(ClientConstant.SET_NAVIGATION_MAP, clientParam)
         val rosResultSetNavigationMap = ClientManager.sendClientMsg(setLocationMapClient)
         if (rosResultSetNavigationMap.isFlag) {
@@ -114,14 +114,14 @@ object ROSHelper {
         val speedClient = Client(ClientConstant.SET_PARAM, clientParamSpeed)
         val rosResultSpeed = ClientManager.sendClientMsg(speedClient)
         if (rosResultSpeed.isFlag) {
-            LogUtil.i("设置速度成功：$speed")
+            LogUtil.i("设置速度成功")
         }
     }
 
     /**
      * @describe 导航到
      */
-    fun navigateTo(location: QueryPointEntity) {
+    fun navigateTo(location: QueryPointEntity): Int{
         val clientPara = HashMap<String, Any>()
         // target_pose
         val targetPose = JSONObject()
@@ -142,6 +142,7 @@ object ROSHelper {
         clientPara[Constant.DOCK_DIRECTION] = 0
         val clientMoveTo = Client(ClientConstant.MOVE_TO, clientPara)
         val rosResultMoveTo = ClientManager.sendClientMsg(clientMoveTo)
+        var result = -1
         if (rosResultMoveTo.isFlag) {
             val response = rosResultMoveTo.response as MoveToResponse
             val msg = when (response.result) {
@@ -157,59 +158,35 @@ object ROSHelper {
                 -24 -> {
                     "导航异常-看不到地图对应的标签"
                 }
+                -34 -> {
+                    sendFakeSafeTopic()
+                    "导航异常-急停被按下"
+                }
                 else -> {
                     "导航异常-其他错误"
                 }
             }
-            LogUtil.i(msg+"："+response.result)
+            result = response.result
+            LogUtil.i(msg)
         }
+        return result
     }
 
-    /**
-     * @describe 导航到
-     */
-    fun navigateToPointList(location: QueryAllPointEntity) {
-        val clientPara = HashMap<String, Any>()
-        // target_pose
-        val targetPose = JSONObject()
-        val position = JSONObject()
-        position[Constant.X] = location.x
-        position[Constant.Y] = location.y
-        position[Constant.Z] = 0.0
-        val orientation = JSONObject()
-        val quaternion = Quaternion.fromAxisAngle(Vector3.zAxis(), location.w!!)
-        orientation[Constant.X] = quaternion.x
-        orientation[Constant.Y] = quaternion.y
-        orientation[Constant.Z] = quaternion.z
-        orientation[Constant.W] = quaternion.w
-        targetPose[Constant.POSITION] = position
-        targetPose[Constant.ORIENTATION] = orientation
-        // clientPara
-        clientPara[Constant.TARGET_POSE] = targetPose
-        clientPara[Constant.DOCK_DIRECTION] = 0
-        val clientMoveTo = Client(ClientConstant.MOVE_TO, clientPara)
-        val rosResultMoveTo = ClientManager.sendClientMsg(clientMoveTo)
-        if (rosResultMoveTo.isFlag) {
-            val response = rosResultMoveTo.response as MoveToResponse
-            val msg = when (response.result) {
-                1 -> {
-                    "导航成功"
-                }
-                -2 -> {
-                    "导航异常-状态错误"
-                }
-                -3 -> {
-                    "导航异常-已经运行"
-                }
-                -24 -> {
-                    "导航异常-看不到地图对应的标签"
-                }
-                else -> {
-                    "导航异常-其他错误"
-                }
-            }
-            LogUtil.i(msg+"："+response.result)
+    private fun sendFakeSafeTopic() {
+        val rosResult = RosResult<SafeState>().apply {
+            this.url = ClientConstant.SAFE_STATE_TOPIC
+            this.isFlag = true
+            val safeStateJson = """
+                           {"header": {"stamp": {"secs": 1677739073, "nsecs": 721510500}, "frame_id": "", "seq": 1048}, "safe_type": 1, "safe_state": 1}
+                        """.trimIndent()
+            //                        val gson = Gson()
+            //                        val safeState = gson.fromJson(safeStateJson, SafeState::class.java)
+
+            val safeState = JSONObject.parseObject(safeStateJson, SafeState::class.java)
+            this.response = safeState
         }
+
+        TopicHandler.binaryObserver.receivedMessage(rosResult)
     }
 
     /**
@@ -291,7 +268,7 @@ object ROSHelper {
     /**
      * @describe 进入电梯
      */
-    fun enterLift(location: QueryPointEntity?) {
+    fun enterLift(location: QueryPointEntity?): Int {
         val clientPara = HashMap<String, Any>()
         // target_pose
         val targetPose = JSONObject()
@@ -312,6 +289,7 @@ object ROSHelper {
         clientPara[Constant.DOCK_DIRECTION] = 0
         val clientMoveTo = Client(ClientConstant.GO_TO_LIFT, clientPara)
         val rosResultMoveTo = ClientManager.sendClientMsg(clientMoveTo)
+        var result = -1
         if (rosResultMoveTo.isFlag) {
             val response = rosResultMoveTo.response as MoveToResponse
             val msg = when (response.result) {
@@ -327,18 +305,24 @@ object ROSHelper {
                 -3 -> {
                     "进入电梯:线程重复错误"
                 }
+                -34 -> {
+                    sendFakeSafeTopic()
+                    "导航异常-急停被按下"
+                }
                 else -> {
                     "进入电梯:未知错误"
                 }
             }
+            result = response.result
             LogUtil.i(msg)
         }
+        return result
     }
 
     /**
      * @describe 出电梯
      */
-    fun outLift(location: QueryPointEntity?) {
+    fun outLift(location: QueryPointEntity?): Int {
         val clientPara = HashMap<String, Any>()
         // target_pose
         val targetPose = JSONObject()
@@ -359,6 +343,7 @@ object ROSHelper {
         clientPara[Constant.DOCK_DIRECTION] = 0
         val clientMoveTo = Client(ClientConstant.OUT_OF_LIFT, clientPara)
         val rosResultMoveTo = ClientManager.sendClientMsg(clientMoveTo)
+        var result = -1
         if (rosResultMoveTo.isFlag) {
             val response = rosResultMoveTo.response as MoveToResponse
             val msg = when (response.result) {
@@ -374,12 +359,18 @@ object ROSHelper {
                 -3 -> {
                     "出电梯:线程重复错误"
                 }
+                -34 -> {
+                    sendFakeSafeTopic()
+                    "导航异常-急停被按下"
+                }
                 else -> {
                     "出电梯:未知错误"
                 }
             }
+            result = response.result
             LogUtil.i(msg)
         }
+        return result
     }
 
     /**
@@ -392,25 +383,29 @@ object ROSHelper {
         val doorCommand = Client(ClientConstant.DOOR_COMMAND, clientPara)
         val doorCommandResponse = ClientManager.sendClientMsg(doorCommand)
         if (doorCommandResponse.response == null) return -1
-        val response = doorCommandResponse.response as DoorCommandResponse
-        if (doorCommandResponse.isFlag) {
-            val msg = when (response.result) {
-                0.toByte() -> {
+        try {
+            val response = doorCommandResponse.response as DoorCommandResponse
+            if (doorCommandResponse.isFlag) {
+                val msg = when (response.result) {
+                    0.toByte() -> {
 //                    if (cmd != RobotCommand.CMD_CHECK) {
 //                        DialogHelper.loadingDialog.show()
 //                    }
-                    "控制仓门成功"
+                        "控制仓门成功"
+                    }
+                    1.toByte() -> {
+                        "控制仓门失败"
+                    }
+                    else -> {
+                        "控制仓门失败"
+                    }
                 }
-                1.toByte() -> {
-                    "控制仓门失败"
-                }
-                else -> {
-                    "控制仓门失败"
-                }
+                LogUtil.i(msg)
             }
-            LogUtil.i(msg)
+            return response.state.toInt()
+        }catch (e: Exception){
+            return -1
         }
-        return response.state.toInt()
     }
 
     fun checkStopButton(): Int {
@@ -633,7 +628,7 @@ object ROSHelper {
      * @describe 充电点、非出梯到电梯外点
      * @param cmd: 1 去充电    2 去充电修复电    3 非进出梯的时候从别的房间到电梯外点
      */
-    fun advanceMoveTo(cmd: Int,location: QueryPointEntity){
+    fun advanceMoveTo(cmd: Int,location: QueryPointEntity): Int{
         val clientPara = HashMap<String, Any>()
         // target_pose
         val targetPose = JSONObject()
@@ -657,6 +652,7 @@ object ROSHelper {
         clientPara[Constant.DOCK_DIRECTION] = 0
         val clientAdvanceMoveTo = Client(ClientConstant.ADVAN_MOVE_TO, clientPara)
         val rosResultMoveTo = ClientManager.sendClientMsg(clientAdvanceMoveTo)
+        var result = -1
         if (rosResultMoveTo.isFlag) {
             val response = rosResultMoveTo.response as AdvanMoveToResponse
             val msg = when (response.result) {
@@ -672,12 +668,18 @@ object ROSHelper {
                 -24 -> {
                     "导航异常-看不到地图对应的标签"
                 }
+                -34 -> {
+                    sendFakeSafeTopic()
+                    "导航异常-急停被按下"
+                }
                 else -> {
                     "导航异常-其他错误"
                 }
             }
-            LogUtil.i(msg+":"+response.result)
+            result = response.result
+            LogUtil.i(msg)
         }
+        return result
     }
 
     /**
@@ -1282,7 +1284,7 @@ object ROSHelper {
      * pose1 (Pose2D):内点坐标
      * pose2 (Pose2D):外点坐标
      * state (int):错误码 -10：传感器异常 -1：失败 1：成功
-    */
+     */
     fun getLiftPoint(range: Double): CreateOneWayResponse?{
         val clientPara = HashMap<String, Any>()
         clientPara["range"] = range

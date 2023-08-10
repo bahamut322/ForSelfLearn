@@ -40,7 +40,7 @@ class ExplainArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
                 putExtra(NAVIGATE_ID, R.id.explanArriveFragment)
             })
         }
-        virtualTaskExecute(2, "到达")
+        virtualTaskExecute(2, "讲解到达")
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

@@ -13,7 +13,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
  * @describe 结束讲解（某一段，并非从起点到终点）
  * @Data 2023-04-24 16:12
  */
-class FinishExplainTask (var status:Int = 1, taskModel: TaskModel) : AbstractTask(taskModel) {
+class FinishExplainTask (var status:Int = 1, taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         taskDto.apply {

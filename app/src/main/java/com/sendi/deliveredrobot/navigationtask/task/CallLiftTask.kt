@@ -20,7 +20,7 @@ import java.util.*
 /**
  * @describe:呼叫电梯
  */
-class CallLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class CallLiftTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     var recallTime = 30
 

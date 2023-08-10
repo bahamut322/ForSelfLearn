@@ -38,6 +38,7 @@ public class AdvanceView extends RelativeLayout {
         viewPager.invalidate();
     }
 
+
     public void initView() {
         viewPager = new ViewPager(getContext());
         adapter = new AdvancePagerAdapter(getContext(), viewPager);
@@ -46,13 +47,19 @@ public class AdvanceView extends RelativeLayout {
     }
 
     public void setData(List<Advance> advances) {
+//        try {
+//            clearData();
+//        }catch (Exception e){}
         adapter.setData(advances);
     }
+    public void clearData() {
+        views.clear();
+    }
     public void mediaStop(){
-            adapter.mediaStop();
+        adapter.mediaStop();
     }
     public void mediaRestart(){
-            adapter.mediaRestart();
+        adapter.mediaRestart();
     }
     public void setPause(){
         adapter.setPause();

@@ -8,7 +8,6 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.holder.LaserListHolder
 import com.sendi.deliveredrobot.holder.LimitSpeedListHolder
 import com.sendi.deliveredrobot.room.entity.QuerySubMapEntity
-import com.sendi.deliveredrobot.room.entity.SubMap
 
 /**
  *   @author: heky

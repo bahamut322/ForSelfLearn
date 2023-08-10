@@ -7,7 +7,6 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.interfaces.ITask
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.task.GuideArriveTask
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
@@ -18,12 +17,14 @@ import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 
 /**
  * describe：导航任务
  */
 abstract class AbstractTask(
-    var taskModel: TaskModel? = null
+    var taskModel: TaskModel? = null,
+    var needReportData: Boolean = true
 ): ITask {
     companion object{
         val viewModelBin1 = ViewModelLazy(
@@ -64,7 +65,9 @@ abstract class AbstractTask(
     open suspend fun beforeReportData(taskDto: TaskDto){}
 
     open fun reportTaskDto(){
-        ReportDataHelper.reportTaskDto(taskModel, enum, taskDto)
+        if (needReportData) {
+            ReportDataHelper.reportTaskDto(taskModel, enum, taskDto)
+        }
     }
 
     /**

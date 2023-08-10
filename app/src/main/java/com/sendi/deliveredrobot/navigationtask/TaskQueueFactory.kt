@@ -1,27 +1,5 @@
 package com.sendi.deliveredrobot.navigationtask
 
-import androidx.lifecycle.ViewModelLazy
-import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
-import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.model.RemoteOrderModel
-import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.task.*
-import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.BasicConfig
-import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import com.sendi.deliveredrobot.service.DoorEnum
-import com.sendi.deliveredrobot.service.TaskIdGenerator
-import com.sendi.deliveredrobot.service.TaskTypeEnum
-import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
-import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
-import java.util.*
-
 
 /**
  * @describe 任务工厂

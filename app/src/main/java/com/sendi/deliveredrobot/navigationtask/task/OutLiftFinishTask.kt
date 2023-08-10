@@ -12,7 +12,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:出电梯结束
  */
-class OutLiftFinishTask(taskModel: TaskModel, val reset: Boolean = true) : AbstractTask(taskModel) {
+class OutLiftFinishTask(taskModel: TaskModel, val reset: Boolean = true, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     var point: QueryPointEntity? = null
     override suspend fun beforeReportData(taskDto: TaskDto) {
         super.beforeReportData(taskDto)

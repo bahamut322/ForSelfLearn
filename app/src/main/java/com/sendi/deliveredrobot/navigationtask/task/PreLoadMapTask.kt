@@ -10,7 +10,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-22
  * @description 预加载地图
  */
-class PreLoadMapTask(taskModel: TaskModel): AbstractTask(taskModel) {
+class PreLoadMapTask(taskModel: TaskModel, needReportData: Boolean = true): AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.PreLoadMapTask
     }

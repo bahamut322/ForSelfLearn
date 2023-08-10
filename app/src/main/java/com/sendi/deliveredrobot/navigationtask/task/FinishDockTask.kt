@@ -21,7 +21,7 @@ import java.util.*
  *   @date: 2021/8/24 15:43
  *   @describe: 结束自动充电
  */
-class FinishDockTask(taskModel: TaskModel) : AbstractTask(taskModel){
+class FinishDockTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData){
 
     @SuppressLint("SimpleDateFormat")
     val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd-HH:mm:ss")

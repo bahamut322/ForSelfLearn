@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
@@ -20,14 +21,19 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.SecondModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
-import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.UpdateReturn
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.LogUtil.i
 import com.sendi.deliveredrobot.view.widget.TaskNext
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlin.math.log
 import kotlin.math.pow
 
 
@@ -112,6 +118,7 @@ class StartExplanViewModel : ViewModel() {
     }
 
     fun downTimer() {
+        speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
             countDownInterval = 1000, // 倒计时间隔，单位为毫秒
@@ -124,10 +131,10 @@ class StartExplanViewModel : ViewModel() {
 //                }
             },
             onFinish = {
-                    TaskNext.setToDo("1")
-                    // 倒计时结束，执行操作
+                TaskNext.setToDo("1")
+                // 倒计时结束，执行操作
 //                currentBill()?.executeNextTask()
-                    ready.postValue(0)
+                ready.postValue(0)
 //                Universal.Model = "结束一段讲解"
             }
         )
@@ -137,6 +144,7 @@ class StartExplanViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
+        BillManager.billList().clear()
         MainScope().launch(Dispatchers.Default) {
             for (i in mDatas!!.indices) {
                 val taskModel = TaskModel(
@@ -150,8 +158,14 @@ class StartExplanViewModel : ViewModel() {
             }
             ready.postValue(0)
             currentBill()?.executeNextTask()
+            LogUtil.d("任务长度："+ BillManager.billList().size)
+            if (mDatas!!.size != BillManager.billList().size){
+                LogUtil.d("正在重新添加："+ BillManager.billList().size)
+                start()
+            }
         }
     }
+
 
 
     /**
@@ -276,17 +290,19 @@ class StartExplanViewModel : ViewModel() {
     //下一个任务
     fun nextTask(array: Boolean) {
 //        UpdateReturn().stop()
-        countDownTimer?.pause()
-        currentBill()?.executeNextTask()
-        Universal.progress = 0
-        Universal.taskNum = 0
-        RobotStatus.speakNumber.postValue(null)
-        if (!array) {
-            Universal.nextPointGo = 1
-            UpdateReturn().stop()
+        mainScope.launch {
+            countDownTimer?.pause()
+            currentBill()?.executeNextTask()
+            Universal.progress = 0
+            Universal.taskNum = 0
+            speakNumber.postValue(null)
+            if (!array) {
+                Universal.nextPointGo = 1
+                UpdateReturn().stop()
+            }
+            TaskNext.setToDo("0")
+            RobotStatus.ArrayPointExplan.postValue(0)
         }
-        TaskNext.setToDo("0")
-        RobotStatus.ArrayPointExplan.postValue(0)
     }
 
     fun cancelMainScope() {
@@ -294,10 +310,16 @@ class StartExplanViewModel : ViewModel() {
     }
 
     fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
+        var file : String = ""
+        if (mData[position]!!.big_videofile !=null){
+            file = mData[position]!!.big_videofile.toString()
+        }else if (mData[position]!!.big_imagefile !=null){
+            file = mData[position]!!.big_imagefile.toString()
+        }
         SecondModel?.postValue(
             SecondModel(
                 picPlayTime = mData[position]!!.big_picplaytime,
-                file = mData[position]!!.big_imagefile?.toString(),
+                file = file,
                 type = mData[position]!!.big_type,
                 textPosition = mData[position]!!.big_textposition,
                 fontLayout = mData[position]!!.big_fontlayout,

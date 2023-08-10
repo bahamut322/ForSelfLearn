@@ -10,7 +10,9 @@ import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
@@ -46,7 +48,18 @@ public class TaskQueues<T> {
         isPaused = false;
         runNextTask();
     }
-
+    //剩余任务数（不包括当前任务）
+    public synchronized int getRemainingTasks() {
+        return queue.size();
+    }
+    //剩余任务内容（不包括当前任务）
+    public synchronized List<T> getTaskContent() {
+        return new ArrayList<>(queue);
+    }
+    //当前任务
+    public synchronized T getCurrentTaskContent() {
+        return queue.peek();
+    }
     public synchronized void clear() {
         BaiduTTSHelper.getInstance().stop();
         if (queue!=null) {

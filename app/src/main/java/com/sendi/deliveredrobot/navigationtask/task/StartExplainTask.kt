@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
  * @author Swn
  * @date 2021/11/15
  */
-class StartExplainTask(taskModel: TaskModel) : AbstractTask(taskModel)  {
+class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
@@ -42,10 +42,10 @@ class StartExplainTask(taskModel: TaskModel) : AbstractTask(taskModel)  {
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_GUIDE
         IdleGateDataHelper.reportIdleGateCount()
-        withContext(Dispatchers.Main){
-            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
-
-        }
+//        withContext(Dispatchers.Main){
+//            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
+//
+//        }
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

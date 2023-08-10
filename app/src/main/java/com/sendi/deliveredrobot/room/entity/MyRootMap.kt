@@ -1,9 +1,6 @@
 package com.sendi.deliveredrobot.room.entity
 
-import android.content.Context
 import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**

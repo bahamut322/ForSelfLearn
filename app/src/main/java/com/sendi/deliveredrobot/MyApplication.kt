@@ -50,7 +50,7 @@ class MyApplication : Application() {
                 // 下载完成
                 Log.e("TAG", "DownLoad FinishOnce")
                 if (DownloadBill.getInstance().taskCount == 0) {
-                    Log.e("TAG", "onProgress: finishAll")
+                    Log.e("TAG", "onProgress: FinishAll")
                     DialogHelper.loadingDialog.dismiss()
                     UpdateReturn().method()
                     RobotStatus.newUpdata.postValue(1)
@@ -58,7 +58,8 @@ class MyApplication : Application() {
             }
             override fun onError(e: Exception) {
                 // 下载出错
-                Log.e("TAG", "downLoad Error")
+                Log.e("TAG", "downLoad Error: $e")
+                DialogHelper.loadingDialog.dismiss()
             }
         }
 

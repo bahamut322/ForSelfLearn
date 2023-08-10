@@ -44,7 +44,7 @@ class CreateVirtualWallFragment : Fragment() {
     }
 
     lateinit var binding: FragmentCreateVirtualWallBinding
-    private var pose2dList: List<PointCompat>? = null
+    private var pose2dList: ArrayList<PointCompat>? = null
     private var status: Int by Delegates.observable(STATUS_READY) { _, _, newValue ->
         when (newValue) {
             STATUS_READY -> {
@@ -155,24 +155,26 @@ class CreateVirtualWallFragment : Fragment() {
                                 name = name,
                                 state = 0
                             )
-                            findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                                LINE_INFO_MODEL, lineInfoModel
-                            )
+                            withContext(Dispatchers.Main){
+                                findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                                    LINE_INFO_MODEL, lineInfoModel
+                                )
+                            }
                             findNavController().popBackStack()
                         }
                     }
                 }
             }
+        }
 
-            binding.textViewReset.apply {
-                visibility = View.GONE
-                setOnClickListener {
-                    if (ROSHelper.resetVirtualWall()) {
-                        binding.laserPointsView.clearLineInfo()
-                        status = STATUS_READY
-                    } else {
-                        ToastUtil.show("重置虚拟墙失败")
-                    }
+        binding.textViewReset.apply {
+            visibility = View.GONE
+            setOnClickListener {
+                if (ROSHelper.resetVirtualWall()) {
+                    binding.laserPointsView.clearLineInfo()
+                    status = STATUS_READY
+                } else {
+                    ToastUtil.show("重置虚拟墙失败")
                 }
             }
         }
@@ -196,7 +198,7 @@ class CreateVirtualWallFragment : Fragment() {
             }
             pose2dList = list
 //            LogUtil.d("tempObstacle:${list.toArray().contentToString()}")
-            binding.laserPointsView.setLineInfo(list)
+            binding.laserPointsView.setLineInfo(LineInfoModel(pose = list, name = lineName))
         }
         LaserObject.livePoints.observe(viewLifecycleOwner) {
             if (it == null) {

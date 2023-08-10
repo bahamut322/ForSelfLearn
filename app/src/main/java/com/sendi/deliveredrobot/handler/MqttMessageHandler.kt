@@ -22,6 +22,8 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
 import org.litepal.LitePal.deleteAll
@@ -235,8 +237,6 @@ object MqttMessageHandler {
                         val route = iterator.next()
                         if (route.timeStamp > 0) {
                             //创建对应文件夹。以路线名字命名(存放主屏幕)
-                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
-                            //创建对应文件夹。以路线名字命名(存放主屏幕)
                             openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
 //                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + "group/")
                             openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/")
@@ -251,6 +251,7 @@ object MqttMessageHandler {
                             routeDB.timeStamp = route.timeStamp
                             //路线背景图
                             if (route.backgroundPic?.isNotEmpty() == true) {
+                                openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                                 selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
                                 val sdcardFile =
                                     selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
@@ -451,6 +452,8 @@ object MqttMessageHandler {
                                 }
                                 //小屏
                                 if (point.touchScreenConfig!!.screen == 0) {
+                                    //创建对应文件夹。以路线名字命名(存放主屏幕)
+                                    openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+point.name+"/")
                                     val touchScreenConfigDB = TouchScreenConfigDB()
                                     //配置类型
                                     touchScreenConfigDB.touch_type =
@@ -465,7 +468,7 @@ object MqttMessageHandler {
                                         //图片路径
                                         if (point.touchScreenConfig.argPic.pics.isNotEmpty()) {
                                             val sdcardFile =
-                                                selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
+                                                selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+point.name)
                                             val picfile =
                                                 UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
                                             val touchFileName = compareArrays(sdcardFile, picfile)
@@ -474,14 +477,14 @@ object MqttMessageHandler {
                                                 deleteFolderFile(touchFileName.SameOne!![i], true)
                                             }
                                             touchScreenConfigDB.touch_imageFile =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+point.name+"/"
 
                                             if (touchFileName.SameTwo!!.isNotEmpty()) {
                                                 Thread {
                                                     for (i in touchFileName.SameTwo!!.indices) {
                                                         DownloadBill.getInstance().addTask(
                                                             Universal.pathDownload + touchFileName.SameTwo!![i],
-                                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch",
+                                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+point.name,
                                                             FileName(touchFileName.SameTwo!![i]!!),
                                                             MyApplication.listener
                                                         )
@@ -512,49 +515,73 @@ object MqttMessageHandler {
                                     }
                                     if (point.touchScreenConfig.argPicGroup != null) {
                                         //行走中
-                                        touchScreenConfigDB.touch_walkPic =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + point.touchScreenConfig.argPicGroup.walkPic
-                                        Thread {
-                                            DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.walkPic,
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                FileName(point.touchScreenConfig.argPicGroup.walkPic!!),
-                                                MyApplication.listener
-                                            )
-                                        }.start()
+                                        if (point.touchScreenConfig.argPicGroup.walkPic != "") {
+                                            touchScreenConfigDB.touch_walkPic =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
+                                                    point.touchScreenConfig.argPicGroup.walkPic!!
+                                                )
+                                            Thread {
+                                                DownloadBill.getInstance().addTask(
+                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.walkPic,
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
+                                                    FileName(point.touchScreenConfig.argPicGroup.walkPic),
+                                                    MyApplication.listener
+                                                )
+                                            }.start()
+                                        }else{
+                                            touchScreenConfigDB.touch_walkPic =Universal.gifDefault
+                                        }
                                         //被阻挡
-                                        touchScreenConfigDB.touch_blockPic =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + point.touchScreenConfig.argPicGroup.blockPic
-                                        Thread {
-                                            DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.blockPic,
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                FileName(point.touchScreenConfig.argPicGroup.blockPic!!),
-                                                MyApplication.listener
-                                            )
-                                        }.start()
+                                        if (point.touchScreenConfig.argPicGroup.blockPic !="") {
+                                            touchScreenConfigDB.touch_blockPic =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
+                                                    point.touchScreenConfig.argPicGroup.blockPic!!
+                                                )
+                                            Thread {
+                                                DownloadBill.getInstance().addTask(
+                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.blockPic,
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
+                                                    FileName(point.touchScreenConfig.argPicGroup.blockPic),
+                                                    MyApplication.listener
+                                                )
+                                            }.start()
+                                        }else{
+                                            touchScreenConfigDB.touch_blockPic =Universal.gifDefault
+                                        }
                                         //到点
-                                        touchScreenConfigDB.touch_arrivePic =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + point.touchScreenConfig.argPicGroup.arrivePic
-                                        Thread {
-                                            DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.arrivePic,
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                FileName(point.touchScreenConfig.argPicGroup.arrivePic!!),
-                                                MyApplication.listener
-                                            )
-                                        }.start()
+                                        if (point.touchScreenConfig.argPicGroup.arrivePic !="") {
+                                            touchScreenConfigDB.touch_arrivePic =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
+                                                    point.touchScreenConfig.argPicGroup.arrivePic!!
+                                                )
+                                            Thread {
+                                                DownloadBill.getInstance().addTask(
+                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.arrivePic,
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
+                                                    FileName(point.touchScreenConfig.argPicGroup.arrivePic),
+                                                    MyApplication.listener
+                                                )
+                                            }.start()
+                                        }else{
+                                            touchScreenConfigDB.touch_arrivePic =Universal.gifDefault
+                                        }
                                         //返回
-                                        touchScreenConfigDB.touch_overTaskPic =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + point.touchScreenConfig.argPicGroup.overTaskPic
-                                        Thread {
-                                            DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + point.touchScreenConfig.argPicGroup.overTaskPic,
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                FileName(point.touchScreenConfig.argPicGroup.overTaskPic!!),
-                                                MyApplication.listener
-                                            )
-                                        }.start()
+                                        if (point.touchScreenConfig.argPicGroup.overTaskPic!="") {
+                                            touchScreenConfigDB.touch_overTaskPic =
+                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
+                                                    point.touchScreenConfig.argPicGroup.overTaskPic!!
+                                                )
+                                            Thread {
+                                                DownloadBill.getInstance().addTask(
+                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.overTaskPic,
+                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
+                                                    FileName(point.touchScreenConfig.argPicGroup.overTaskPic),
+                                                    MyApplication.listener
+                                                )
+                                            }.start()
+                                        }else{
+                                            touchScreenConfigDB.touch_overTaskPic =Universal.gifDefault
+                                        }
                                     }
                                     touchScreenConfigDB.save()
                                     pointConfigVODB.touchScreenConfigDB = touchScreenConfigDB
@@ -857,7 +884,7 @@ object MqttMessageHandler {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            UpdateReturn().mapSetting()
+            UpdateReturn().settingMap()
             nullData()
             if (Universal.pics != "" || Universal.videoFile != "") {
                 if (Universal.pics != "") {

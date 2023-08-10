@@ -20,12 +20,14 @@ import java.util.*
 /**
  * @describe:进入电梯
  */
-class IntoLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class IntoLiftTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     var point: QueryPointEntity? = null
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         super.beforeReportData(taskDto)
-        point = dao.queryLiftPoint(taskModel!!.location!!.subMapId!!, PointType.LIFT_INSIDE,taskModel?.elevator?:"")
+        point = dao.queryLiftPoint(taskModel!!.location!!.subMapId!!, PointType.LIFT_INSIDE,
+            taskModel!!.elevator!!
+        )
         taskModel?.location = point?.apply {
             binMark = taskModel?.location?.binMark?: 0x11
         }
@@ -37,11 +39,6 @@ class IntoLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun execute() {
         RobotStatus.outOfLift = true
-        MyApplication.instance?.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.intoLiftFragment)
-        })
-
         if (point == null) {
             ToastUtil.show(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
@@ -85,6 +82,12 @@ class IntoLiftTask(taskModel: TaskModel) : AbstractTask(taskModel) {
                 }
             }
         }, Date(), 1000)
-        ROSHelper.enterLift(point)
+        val result = ROSHelper.enterLift(point)
+        if(result == 1){
+            MyApplication.instance?.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, R.id.intoLiftFragment)
+            })
+        }
     }
 }

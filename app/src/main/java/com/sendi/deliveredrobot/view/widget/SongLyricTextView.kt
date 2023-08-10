@@ -112,13 +112,16 @@ class SongLyricTextView @JvmOverloads constructor(
      * @param duration 播放时长
      * */
     fun startPlayLine(startIndex: Int, endIndex: Int, duration: Long) {
-        isPlaying = true
-        if (startIndex == -1) return
-        val startWidth = mPaint.measureText(this.text.substring(0, startIndex))
-        val endWidth = startWidth + mPaint.measureText(this.text.substring(startIndex, endIndex))
-        animator.setFloatValues(startWidth, endWidth)
-        animator.duration = if (duration > 0) duration else 1000
-        animator.start()
+        try {
+            isPlaying = true
+            if (startIndex == -1) return
+            val startWidth = mPaint.measureText(this.text.substring(0, startIndex))
+            val endWidth = startWidth + mPaint.measureText(this.text.substring(startIndex, endIndex))
+            animator.setFloatValues(startWidth, endWidth)
+            animator.duration = if (duration > 0) duration else 1000
+            animator.start()
+        }catch (_: Exception){}
+
     }
 
     /**

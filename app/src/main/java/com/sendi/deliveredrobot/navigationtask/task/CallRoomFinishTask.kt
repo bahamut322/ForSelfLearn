@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:呼叫房间结束
  */
-class CallRoomFinishTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
+class CallRoomFinishTask(taskModel: TaskModel?, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.CallRoomFinishTask

@@ -109,6 +109,9 @@ public class ExplanationFragment extends Fragment {
     }
 
     private void init() {
+        //回到主页面的时候初始化一下选择讲解点的值
+        RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(-1);
+        RobotStatus.INSTANCE.getPointItem().postValue(-1);
         binding.explainRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.explainRv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -124,7 +127,11 @@ public class ExplanationFragment extends Fragment {
 
             }
         });
-        binding.explainRv.postDelayed(() -> scrollToCenter(childViewHalfCount), 100L);
+        try {
+            binding.explainRv.postDelayed(() -> scrollToCenter(childViewHalfCount), 100L);
+        }catch (Exception e){
+            Log.d("TAG", "列表为空: "+e);
+        }
     }
 
     private List<RouteMapList> mDatas;
@@ -294,6 +301,7 @@ public class ExplanationFragment extends Fragment {
             final int fp = position;
             //item点击
             vh.view.setOnClickListener(v -> {
+                Universal.lastValue = null;
                 if (!RobotStatus.INSTANCE.getBatteryStateNumber().getValue()) {
                     Toast.makeText(getContext(), "请先对接充电桩", Toast.LENGTH_SHORT).show();
                     DialogHelper.briefingDialog.show();

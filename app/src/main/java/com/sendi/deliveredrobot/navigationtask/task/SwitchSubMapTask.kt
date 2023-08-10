@@ -15,7 +15,7 @@ import com.sendi.deliveredrobot.utils.ToastUtil
 /**
  * @describe:切换地图
  */
-class SwitchSubMapTask(taskModel: TaskModel? = null, private val needSwitch: Boolean = true) :
+class SwitchSubMapTask(taskModel: TaskModel? = null, private val needSwitch: Boolean = true, needReportData: Boolean = true) :
     AbstractTask(taskModel) {
 
     override fun configEnum(): TaskStageEnum {

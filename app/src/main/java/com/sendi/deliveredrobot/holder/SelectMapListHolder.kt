@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.room.entity.MyRootMap
-import com.sendi.deliveredrobot.room.entity.RootMap
 
 class SelectMapListHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val frameLayoutContainer = itemView

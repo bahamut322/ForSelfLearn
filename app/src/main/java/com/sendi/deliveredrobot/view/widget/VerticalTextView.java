@@ -10,6 +10,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 
 import com.sendi.deliveredrobot.R;
@@ -34,7 +35,6 @@ public class VerticalTextView extends View {
     private int textStyle;
     private boolean isCharCenter = false; //字符是否居中展示
     private boolean atMostHeight = true; //是否使用包裹字体的高度，减少底部可能出现的空白区域
-
     private Paint ellipsisPaint;
     private TextPaint textPaint;
     private int myMeasureWidth;

@@ -23,7 +23,7 @@ import java.util.*
 /**
  * @describe:电梯移动
  */
-class LiftMoveTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
+class LiftMoveTask(taskModel: TaskModel?, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     var recallTime = 30
     override fun configEnum(): TaskStageEnum {

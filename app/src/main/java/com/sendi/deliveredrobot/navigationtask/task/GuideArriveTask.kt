@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:某一段引领到达
  */
-class GuideArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class GuideArriveTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.GuideArriveTask

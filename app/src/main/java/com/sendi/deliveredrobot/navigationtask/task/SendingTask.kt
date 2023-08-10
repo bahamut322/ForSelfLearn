@@ -5,7 +5,6 @@ import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -17,7 +16,7 @@ import com.sendi.deliveredrobot.utils.ToastUtil
 /**
  * @describe:送物中
  */
-class SendingTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
+class SendingTask(taskModel: TaskModel?, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.SendingTask
     }
@@ -29,12 +28,14 @@ class SendingTask(taskModel: TaskModel?) : AbstractTask(taskModel) {
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.sendingFragment)
-        })
-        ROSHelper.setSpeed("${QuerySql.QueryBasic().getGoExplanationPoint()}")
-        ROSHelper.navigateTo(taskModel!!.location!!)
+        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.sendSpeed}")
+        val result = ROSHelper.navigateTo(taskModel!!.location!!)
+        if(result == 1){
+            MyApplication.instance!!.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, R.id.sendingFragment)
+            })
+        }
         DialogHelper.loadingDialog.dismiss()
     }
 }

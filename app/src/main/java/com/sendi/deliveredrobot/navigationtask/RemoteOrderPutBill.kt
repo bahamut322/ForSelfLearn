@@ -61,24 +61,52 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
     override fun createTaskQueue(taskModel: TaskModel?): LinkedList<AbstractTask> {
         val tempList = LinkedList<AbstractTask>()
 //        mutex.withLock {
-            DialogHelper.loadingDialog.show()
-            if (!IdleGateDataHelper.minusCount()){
-                DialogHelper.loadingDialog.dismiss()
-                return tempList
+        DialogHelper.loadingDialog.show()
+        if (!IdleGateDataHelper.minusCount()){
+            DialogHelper.loadingDialog.dismiss()
+            return tempList
+        }
+        val bin1 = with(viewModelBin1.value){
+            val result = previousTaskFinished /*&& previousRemoteOrderPutFinished*/ && previousRemoteOrderSendFinished && !hasBill()
+            if(result){
+                // 1仓有空
+                with(taskModel?.remoteOrderModel){
+                    this?.from?.apply {
+                        binMark = binMarkBin1
+                    }
+                    this?.to?.apply {
+                        binMark = binMarkBin1
+                    }
+                    viewModelBin1.value.remoteOrderModel = this
+                    viewModelBin1.value.setBill(this@RemoteOrderPutBill)
+                    val orderTask = createRemoteOrderTask(
+                        remoteOrderModel = this,
+                        taskType = when (this?.taskType) {
+                            "送物" -> TYPE_REMOTE_ORDER_SEND
+                            "取物" -> TYPE_REMOTE_ORDER_TAKE
+                            else -> TYPE_REMOTE_ORDER_SEND
+                        })
+                    if (orderTask != null) {
+                        tempList.addAll(orderTask)
+                    }
+                }
             }
-            val bin1 = with(viewModelBin1.value){
+            result
+        }
+        if(!bin1){
+            with(viewModelBin2.value){
                 val result = previousTaskFinished /*&& previousRemoteOrderPutFinished*/ && previousRemoteOrderSendFinished && !hasBill()
                 if(result){
-                    // 1仓有空
+                    // 2仓有空
                     with(taskModel?.remoteOrderModel){
                         this?.from?.apply {
-                            binMark = binMarkBin1
+                            binMark = binMarkBin2
                         }
                         this?.to?.apply {
-                            binMark = binMarkBin1
+                            binMark = binMarkBin2
                         }
-                        viewModelBin1.value.remoteOrderModel = this
-                        viewModelBin1.value.setBill(this@RemoteOrderPutBill)
+                        viewModelBin2.value.remoteOrderModel = this
+                        viewModelBin2.value.setBill(this@RemoteOrderPutBill)
                         val orderTask = createRemoteOrderTask(
                             remoteOrderModel = this,
                             taskType = when (this?.taskType) {
@@ -91,37 +119,9 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
                         }
                     }
                 }
-                result
             }
-            if(!bin1){
-                with(viewModelBin2.value){
-                    val result = previousTaskFinished /*&& previousRemoteOrderPutFinished*/ && previousRemoteOrderSendFinished && !hasBill()
-                    if(result){
-                        // 2仓有空
-                        with(taskModel?.remoteOrderModel){
-                            this?.from?.apply {
-                                binMark = binMarkBin2
-                            }
-                            this?.to?.apply {
-                                binMark = binMarkBin2
-                            }
-                            viewModelBin2.value.remoteOrderModel = this
-                            viewModelBin2.value.setBill(this@RemoteOrderPutBill)
-                            val orderTask = createRemoteOrderTask(
-                                remoteOrderModel = this,
-                                taskType = when (this?.taskType) {
-                                "送物" -> TYPE_REMOTE_ORDER_SEND
-                                "取物" -> TYPE_REMOTE_ORDER_TAKE
-                                else -> TYPE_REMOTE_ORDER_SEND
-                            })
-                            if (orderTask != null) {
-                                tempList.addAll(orderTask)
-                            }
-                        }
-                    }
-                }
-            }
-            DialogHelper.loadingDialog.dismiss()
+        }
+        DialogHelper.loadingDialog.dismiss()
 //            return bin1 || bin2
 //        }
         return tempList
@@ -162,32 +162,32 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
         tempList.apply {
             add(
                 StartRemoteOrderPutTask(
-                TaskModel(
-                    remoteOrderModel = remoteOrderModel,
-                    endTarget = endTarget(),
-                    taskId = remoteOrderModel?.taskId ?:"",
-                    bill = this@RemoteOrderPutBill
-                ), type)
+                    TaskModel(
+                        remoteOrderModel = remoteOrderModel,
+                        endTarget = endTarget(),
+                        taskId = remoteOrderModel?.taskId ?:"",
+                        bill = this@RemoteOrderPutBill
+                    ), type)
             )
             add(
                 StartPutTask(
-                TaskModel(
-                    remoteOrderModel?.from,
-                    endTarget = endTarget(),
-                    taskId = taskId(),
-                    bill = this@RemoteOrderPutBill
+                    TaskModel(
+                        remoteOrderModel?.from,
+                        endTarget = endTarget(),
+                        taskId = taskId(),
+                        bill = this@RemoteOrderPutBill
+                    )
                 )
-            )
             )
             add(
                 OutDockTask(
-                TaskModel(
-                    remoteOrderModel?.from,
-                    endTarget = endTarget(),
-                    taskId = taskId(),
-                    bill = this@RemoteOrderPutBill
+                    TaskModel(
+                        remoteOrderModel?.from,
+                        endTarget = endTarget(),
+                        taskId = taskId(),
+                        bill = this@RemoteOrderPutBill
+                    )
                 )
-            )
             )
             add(
                 JudgeFloorTask(
@@ -212,13 +212,13 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
             )
             add(
                 FinishPutTask(
-                TaskModel(
-                    remoteOrderModel?.from,
-                    endTarget = endTarget(),
-                    taskId = taskId(),
-                    bill = this@RemoteOrderPutBill
+                    TaskModel(
+                        remoteOrderModel?.from,
+                        endTarget = endTarget(),
+                        taskId = taskId(),
+                        bill = this@RemoteOrderPutBill
+                    )
                 )
-            )
             )
             add(
                 CallPutObjectTask(

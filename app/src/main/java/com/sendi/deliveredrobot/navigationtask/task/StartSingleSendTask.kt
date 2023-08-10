@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @author heky
  * @date 2021/11/15
  */
-class StartSingleSendTask(taskModel: TaskModel):AbstractTask(taskModel) {
+class StartSingleSendTask(taskModel: TaskModel, needReportData: Boolean = true):AbstractTask(taskModel, needReportData) {
     override suspend fun beforeReportData(taskDto: TaskDto) {
         super.beforeReportData(taskDto)
     }

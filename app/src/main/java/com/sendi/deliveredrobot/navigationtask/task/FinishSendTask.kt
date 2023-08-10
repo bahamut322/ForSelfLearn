@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:某一段{送物}流程结束
  */
-class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false ) : AbstractTask(taskModel) {
+class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, needReportData: Boolean = true ) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         when (taskModel?.location?.binMark) {

@@ -12,7 +12,7 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 import com.sendi.deliveredrobot.room.entity.Point;
 import com.sendi.deliveredrobot.room.entity.PublicArea;
 import com.sendi.deliveredrobot.room.entity.SubMap;
-import com.sendi.deliveredrobot.room.entity.SubMapName;
+
 import com.sendi.deliveredrobot.ros.ClientManager;
 import com.sendi.deliveredrobot.ros.debug.dto.MapResult;
 import com.sendi.deliveredrobot.ros.debug.dto.MapResultUtil;

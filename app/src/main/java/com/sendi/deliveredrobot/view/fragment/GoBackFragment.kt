@@ -8,9 +8,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
+import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
@@ -18,6 +20,7 @@ import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.*
+import java.lang.Exception
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -93,12 +96,19 @@ class GoBackFragment : Fragment() {
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
-//        if (QuerySql.queryMyData(RobotStatus.selectRoutMapItem!!.value!!)[0].touch_type == 4) {
-//            binding.goBackTv.visibility = View.GONE
-//            binding.imageViewGoBack.apply {
-//                Glide.with(this).asGif().load(QuerySql.queryMyData(RobotStatus.selectRoutMapItem!!.value!!)[0].touch_overTaskPic).into(this)
-//            }
-//        }
+        try {
+            if (QuerySql.queryPointDate(RobotStatus.selectRoutMapItem?.value!!)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
+                binding.goBackTv.visibility = View.GONE
+                binding.imageViewGoBack.apply {
+                    Glide.with(this)
+                        .asGif()
+                        .load(QuerySql.queryPointDate(RobotStatus.selectRoutMapItem!!.value!!)[RobotStatus.pointItem!!.value!!].touch_overTaskPic)
+                        .placeholder(R.drawable.ic_warming) // 设置默认图片
+                        .into(this)
+                }
+            }
+        } catch (_: Exception) {
+        }
     }
 
     /**

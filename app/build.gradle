@@ -53,7 +53,7 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "true")
             buildConfigField("boolean", "IS_REPORT", "true")
             buildConfigField("String", "MQTT_HOST", "\"tcp://103.215.45.135:1883\"")
-            buildConfigField("String", "HTTP_HOST", "\"http://172.168.201.34:9888\"")
+            buildConfigField("String", "HTTP_HOST", "\"http://172.168.201.34:9055/management_res\"")
             signingConfig signingConfigs.debug
             versionNameSuffix "-D"
         }
@@ -67,7 +67,7 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "false")
             buildConfigField("boolean", "IS_REPORT", "true")
             buildConfigField("String", "MQTT_HOST", "\"tcp://103.215.44.45:1883\"")
-            buildConfigField("String", "HTTP_HOST", "\"http://103.215.44.45:9888\"")
+            buildConfigField("String", "HTTP_HOST", "\"http://103.215.44.45:9891/management_res\"")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

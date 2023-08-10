@@ -77,7 +77,13 @@ class GuidingFragment : Fragment() {
                 var pointName = bill.endTarget()
                 pointName = pointName.toList().joinToString(" ")
                 binding.RoomName.text = pointName
-                SpeakHelper.speakWithoutStop(String.format(getString(R.string.hello_we_are_going_to_please_follow_me),"${bill.floorName}楼",pointName))
+                SpeakHelper.speakWithoutStop(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+            }
+            if (bill is GoToReadyPointBill) {
+                var pointName = bill.endTarget()
+                pointName = pointName.toList().joinToString(" ")
+                binding.RoomName.text = pointName
+                SpeakHelper.speakWithoutStop(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
             }
         }
 

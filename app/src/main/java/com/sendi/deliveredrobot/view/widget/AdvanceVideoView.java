@@ -86,8 +86,8 @@ public class AdvanceVideoView extends RelativeLayout {
         videoView.setOnPreparedListener(mediaPlayer -> {
             mediaPlayer1 = mediaPlayer;
             if (Universal.AllvideoAudio == 1) {
-                    new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
-                    mediaPlayer.setVolume(1, 1);
+                new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
+                mediaPlayer.setVolume(1, 1);
             } else {
                 mediaPlayer.setVolume(0, 0);
             }

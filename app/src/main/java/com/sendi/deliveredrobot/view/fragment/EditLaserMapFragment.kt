@@ -40,12 +40,12 @@ class EditLaserMapFragment : Fragment() {
     private val mapLaserServiceImpl = MapLaserServiceImpl.getInstance()
     private lateinit var dialog: HideNavigationBarDialog
     private lateinit var laserMapNameDatabase: String
-    private var laserMapId:Int = -1
+    private var laserMapId: Int = -1
     private var back = false
     private lateinit var dao: DeliveredRobotDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this){
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             LogUtil.i("back from previous")
             back = true
         }
@@ -64,20 +64,20 @@ class EditLaserMapFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         val laserMapName = arguments?.getString(SUB_MAP_NAME)
         laserMapNameDatabase = arguments?.getString(SUB_MAP_NAME_DATABASE, "") ?: ""
-        laserMapId = arguments?.getInt(SUB_MAP_ID)?:-1
+        laserMapId = arguments?.getInt(SUB_MAP_ID) ?: -1
         dialog = initCopyLaserMapDialog()
         if (laserMapName?.isNotEmpty() == true) {
             if (!back) {
                 MainScope().launch {
                     DialogHelper.loadingDialog.show()
-                    val mapResult:MapResult
+                    val mapResult: MapResult
                     withContext(Dispatchers.Default) {
                         mapResult = mapLaserServiceImpl.showLaserMap(laserMapName)
                     }
                     DialogHelper.loadingDialog.dismiss()
                     if (mapResult.isFlag) {
                         try {
-                            val staticMap:ArrayList<FloatArray>? = RosPointArrUtil.staticMap
+                            val staticMap: ArrayList<FloatArray>? = RosPointArrUtil.staticMap
 //                            val updateMap:ArrayList<FloatArray>? = RosPointArrUtil.updateMap
                             binding.laserPointsView.apply {
                                 if (staticMap != null) {
@@ -155,7 +155,7 @@ class EditLaserMapFragment : Fragment() {
                 context,
                 R.layout.item_spinner_sort,
                 R.id.textViewContent,
-                floorNameArray?: arrayOf()
+                floorNameArray ?: arrayOf()
             ).apply {
                 setDropDownViewResource(R.layout.item_spinner_drop_down_sort)
             }
@@ -167,15 +167,16 @@ class EditLaserMapFragment : Fragment() {
             isClickable = true
             setOnClickListener {
                 MainScope().launch {
-                    if(popUpsEditText.text.isNullOrEmpty()){
+                    if (popUpsEditText.text.isNullOrEmpty()) {
                         ToastUtil.show(getString(R.string.please_input_laser_name))
                         return@launch
                     }
-                    val queryLaserNameIdResult:Boolean
-                    withContext(Dispatchers.Default){
-                        queryLaserNameIdResult = dao.queryLaserNameId(popUpsEditText.text.toString()) > 0
+                    val queryLaserNameIdResult: Boolean
+                    withContext(Dispatchers.Default) {
+                        queryLaserNameIdResult =
+                            dao.queryLaserNameId(popUpsEditText.text.toString()) > 0
                     }
-                    if(queryLaserNameIdResult){
+                    if (queryLaserNameIdResult) {
                         ToastUtil.show(getString(R.string.laser_name_existed))
                         return@launch
                     }
@@ -195,11 +196,16 @@ class EditLaserMapFragment : Fragment() {
 //                        ToastUtil.show(getString(R.string.floor_code_must_be_integer))
 //                        return@launch
 //                    }
-                    withContext(Dispatchers.Default){
-                        mapLaserServiceImpl.updateCopyFile(2, popUpsEditText.text.toString(),floorNameArray?.get(spinnerFloorName.selectedItemPosition)?:"")
+                    withContext(Dispatchers.Default) {
+                        mapLaserServiceImpl.updateCopyFile(
+                            2,
+                            popUpsEditText.text.toString(),
+                            floorNameArray?.get(spinnerFloorName.selectedItemPosition) ?: ""
+                        )
                     }
                     dialog.dismiss()
-                    this@EditLaserMapFragment.findNavController().navigate(R.id.relocationLaserFragment)
+                    this@EditLaserMapFragment.findNavController()
+                        .navigate(R.id.relocationLaserFragment)
                 }
             }
         }

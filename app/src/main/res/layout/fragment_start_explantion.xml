@@ -41,54 +41,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/startImg">
-        <LinearLayout
-            android:id="@+id/goingImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/goingImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/going"
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:layout_marginBottom="@dimen/dp_5"
-                android:gravity="center"
-                android:src="@drawable/guiding_going"
-                tools:ignore="ContentDescription"
-                app:layout_constraintBottom_toTopOf="@+id/RoomName"
-                app:layout_constraintStart_toStartOf="@+id/RoomName" />
+                <ImageView
+                    android:id="@+id/going"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:gravity="center"
+                    android:src="@drawable/guiding_going"
+                    tools:ignore="ContentDescription"
+                    app:layout_constraintBottom_toTopOf="@+id/RoomName"
+                    app:layout_constraintStart_toStartOf="@+id/RoomName" />
 
-            <ImageView
-                android:id="@+id/going1"
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:gravity="center"
-                android:src="@drawable/guiding_going1"
-                app:layout_constraintBottom_toBottomOf="@+id/going"
-                app:layout_constraintStart_toEndOf="@+id/going"
-                tools:ignore="ContentDescription" />
+                <ImageView
+                    android:id="@+id/going1"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:gravity="center"
+                    android:src="@drawable/guiding_going1"
+                    app:layout_constraintBottom_toBottomOf="@+id/going"
+                    app:layout_constraintStart_toEndOf="@+id/going"
+                    tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/going2"
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:gravity="center"
-                android:src="@drawable/guiding_going1"
-                tools:ignore="ContentDescription"
-                app:layout_constraintBottom_toBottomOf="@+id/going1"
-                app:layout_constraintStart_toEndOf="@+id/going1"
-                tools:layout_editor_absoluteY="284dp" />
+                <ImageView
+                    android:id="@+id/going2"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:gravity="center"
+                    android:src="@drawable/guiding_going1"
+                    tools:ignore="ContentDescription"
+                    app:layout_constraintBottom_toBottomOf="@+id/going1"
+                    app:layout_constraintStart_toEndOf="@+id/going1"
+                    tools:layout_editor_absoluteY="284dp" />
 
-            <ImageView
-                android:id="@+id/going3"
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:gravity="center"
-                android:src="@drawable/guiding_going1"
-                tools:ignore="ContentDescription"
-                app:layout_constraintBottom_toBottomOf="@+id/going2"
-                app:layout_constraintStart_toEndOf="@+id/going2"
-                tools:layout_editor_absoluteY="284dp" />
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/going3"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:gravity="center"
+                    android:src="@drawable/guiding_going1"
+                    tools:ignore="ContentDescription"
+                    app:layout_constraintBottom_toBottomOf="@+id/going2"
+                    app:layout_constraintStart_toEndOf="@+id/going2"
+                    tools:layout_editor_absoluteY="284dp" />
+            </LinearLayout>
             <TextView
                 android:id="@+id/nowGoingTv"
                 android:layout_width="wrap_content"
@@ -126,24 +126,27 @@
                 android:textColor="@color/white"
                 android:textSize="64sp"
                 />
-        <TextView
-            android:id="@+id/textView66"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="S"
-            android:alpha="0.6"
-            android:textSize="@dimen/sp_40"
-            android:textColor="@color/white"
-            />
+            <TextView
+                android:id="@+id/textView66"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="S"
+                android:alpha="0.6"
+                android:textSize="@dimen/sp_40"
+                android:textColor="@color/white"
+                />
 
 
         </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parentCon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="60dp"
-            tools:layout_editor_absoluteY="-16dp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pointList"
@@ -219,17 +222,44 @@
                     app:layout_constraintEnd_toStartOf="@+id/contentLin"
                     app:layout_constraintStart_toStartOf="@+id/view26"
                     app:layout_constraintTop_toTopOf="@+id/view26" />
-<!--                <ImageView-->
-<!--                    android:id="@+id/pointImage"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="414dp"-->
-<!--                    android:layout_marginStart="@dimen/dp_32"-->
-<!--                    android:layout_marginEnd="@dimen/dp_32"-->
-<!--                    android:scaleType="fitXY"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/view26"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/contentLin"-->
-<!--                    app:layout_constraintStart_toStartOf="@+id/view26"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/view26" />-->
+
+                <TextView
+                    android:id="@+id/horizontalTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/view26"
+                    app:layout_constraintEnd_toStartOf="@+id/contentLin"
+                    app:layout_constraintStart_toStartOf="@+id/view26"
+                    app:layout_constraintTop_toTopOf="@+id/view26" />
+
+                <!--80大 60中 40小 -->
+                <com.sendi.deliveredrobot.view.widget.VerticalTextView
+                    android:id="@+id/verticalTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    app:columnLength="8"
+                    app:isCharCenter="true"
+                    app:layout_constraintBottom_toBottomOf="@+id/view26"
+                    app:layout_constraintEnd_toStartOf="@+id/contentLin"
+                    app:layout_constraintStart_toStartOf="@+id/view26"
+                    app:layout_constraintTop_toTopOf="@+id/view26"
+                    app:textSize="30sp" />
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/pointImage"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="414dp"-->
+                <!--                    android:layout_marginStart="@dimen/dp_32"-->
+                <!--                    android:layout_marginEnd="@dimen/dp_32"-->
+                <!--                    android:scaleType="fitXY"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="@+id/view26"-->
+                <!--                    app:layout_constraintEnd_toStartOf="@+id/contentLin"-->
+                <!--                    app:layout_constraintStart_toStartOf="@+id/view26"-->
+                <!--                    app:layout_constraintTop_toTopOf="@+id/view26" />-->
 
                 <LinearLayout
                     android:id="@+id/contentLin"
@@ -282,58 +312,54 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_48"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="@+id/view26"
-                    app:layout_constraintTop_toBottomOf="@+id/view26"
-                    android:layout_marginTop="@dimen/dp_48"
-                    >
-                <Button
-                    android:id="@+id/finishBtn"
-                    android:layout_width="@dimen/dp_204"
-                    android:layout_height="@dimen/dp_72"
-                    android:layout_marginEnd="@dimen/dp_32"
-                    android:background="@drawable/bg_button"
-                    android:gravity="center"
-                    android:text="@string/finish_explain"
-                    android:textColor="@color/white"
-                    android:textSize="32sp"
-                   />
+                    app:layout_constraintTop_toBottomOf="@+id/view26">
 
-                <Button
-                    android:id="@+id/ChangingOver"
-                    android:layout_width="@dimen/dp_204"
-                    android:layout_height="@dimen/dp_72"
-                    android:layout_marginEnd="@dimen/dp_32"
-                    android:background="@drawable/bg_button"
-                    android:gravity="center"
-                    android:text="@string/other_point"
-                    android:textColor="@color/white"
-                    android:textSize="32sp" />
+                    <Button
+                        android:id="@+id/finishBtn"
+                        android:layout_width="@dimen/dp_204"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_marginEnd="@dimen/dp_32"
+                        android:background="@drawable/bg_button"
+                        android:gravity="center"
+                        android:text="@string/finish_explain"
+                        android:textColor="@color/white"
+                        android:textSize="32sp" />
 
-                <Button
-                    android:id="@+id/nextTaskBtn"
-                    android:layout_width="@dimen/dp_204"
-                    android:layout_height="@dimen/dp_72"
-                    android:background="@drawable/dialog_btn_true_bg"
-                    android:gravity="center"
-                    android:text="@string/next_point"
-                    android:textColor="@color/white"
-                    android:textSize="32sp" />
+                    <Button
+                        android:id="@+id/ChangingOver"
+                        android:layout_width="@dimen/dp_204"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_marginEnd="@dimen/dp_32"
+                        android:background="@drawable/bg_button"
+                        android:gravity="center"
+                        android:text="@string/other_point"
+                        android:textColor="@color/white"
+                        android:textSize="32sp" />
+
+                    <Button
+                        android:id="@+id/nextTaskBtn"
+                        android:layout_width="@dimen/dp_204"
+                        android:layout_height="@dimen/dp_72"
+                        android:background="@drawable/dialog_btn_true_bg"
+                        android:gravity="center"
+                        android:text="@string/next_point"
+                        android:textColor="@color/white"
+                        android:textSize="32sp" />
                 </LinearLayout>
-
-
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <ImageView
                 android:id="@+id/argPic"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="ContentDescription" />
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

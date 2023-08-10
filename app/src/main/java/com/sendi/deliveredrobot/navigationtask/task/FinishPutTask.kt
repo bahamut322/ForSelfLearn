@@ -9,7 +9,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
  * @date 2022-06-09
  * @description 结束前往放物
  */
-class FinishPutTask(taskModel: TaskModel) : AbstractTask(taskModel) {
+class FinishPutTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.FinishRemoteOrderPutTask

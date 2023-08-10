@@ -13,6 +13,10 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentSettingPlanBinding
+import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GoBackTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
@@ -69,7 +73,9 @@ class PlanSettingFragment : Fragment() {
         //回桩
         binding.returnBlack.apply {
             setOnClickListener {
-
+                val bill = GoBackTaskBillFactory.createBill(TaskModel())
+                BillManager.addAllAtIndex(bill)
+                BillManager.currentBill()?.executeNextTask()
             }
         }
         //返回主页面

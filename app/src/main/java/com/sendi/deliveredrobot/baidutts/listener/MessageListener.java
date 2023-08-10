@@ -8,6 +8,7 @@ import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.MyApplication;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
@@ -18,6 +19,7 @@ import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,7 +30,7 @@ import java.util.Objects;
 public class MessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
     private static final String TAG = "MessageListener";
 
-    private int progressSpeak;
+    private static int progressSpeak = -1;
 
     /**
      * 播放开始，每句播放开始都会回调
@@ -99,7 +101,20 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         previousProgress = progress; // 更新前一次的 progress
         Log.i(TAG, "播放进度1, Universal.progress：" + Universal.progress + ";Universal.taskNum:" + Universal.taskNum);
         Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
-        if (utteranceId.equals("explantion")) {
+
+        if (utteranceId.equals("explanation")) {
+            if (progressSpeak == progress) {
+                // 重复数字的处理逻辑
+                Log.e(TAG, "重复值: " + progress);
+            } else {
+                // 不重复数字的处理逻辑
+                try {
+                    RobotStatus.INSTANCE.getSpeakNumber().setValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(1));
+                }catch (Exception ignored){
+                    Log.d(TAG, "onSpeechProgressChanged: 字符串截取抛出异常");
+                }
+            }
+            // 保存当前数字作为前一个数字
             progressSpeak = progress;
             Log.e(TAG, "onSpeechProgressChanged: " + progressSpeak);
         }
@@ -116,22 +131,37 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         if (TaskQueues.isCompleted()) {
             Order.setFlage("0");
         }
-        Log.d(TAG, "onSpeechFinish: 百度语音Finish");
-        if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum) {
-            MediaPlayerHelper.resume();
-        } else if (Universal.taskNum == 0) {
-            MediaPlayerHelper.resume();
-        }
+        MediaPlayerHelper.resume();
+//        if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum) {
+//            MediaPlayerHelper.resume();
+//        } else if (Universal.taskNum == 0) {
+//            MediaPlayerHelper.resume();
+//        }
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
+            Log.d(TAG, "onSpeechFinish: 百度语音Finish:"+Universal.taskQueue.getRemainingTasks());
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
-            if (progressSpeak != RobotStatus.INSTANCE.getSpeakNumber().getValue().length()) {
-                RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
-                RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
-            } else if (utteranceId.equals("explantion")) {
-                RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
-            }
+//            if (Universal.taskQueue.getRemainingTasks()!=0) {
+//                List<String> taskContent = Universal.taskQueue.getTaskContent();
+//                Log.d(TAG, "内容有: "+taskContent);
+//                StringBuilder speakContent = new StringBuilder();
+//                speakContent.append(Universal.taskQueue.getCurrentTaskContent().substring(progressSpeak));
+//                for (int i = 0; i < taskContent.size(); i++) {
+//                        speakContent.append(taskContent.get(i));
+//                }
+//                Log.d(TAG, "打断之后剩余内容: "+ speakContent);
+//                RobotStatus.INSTANCE.getSpeakNumber().postValue(speakContent.toString());
+//            }else {
+//                RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
+                Log.d(TAG, "打断之后剩余内容: "+ RobotStatus.INSTANCE.getSpeakNumber().getValue());
+//            }
+            RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
         }
+
+        if (utteranceId.equals("explanation") && Universal.progress == Universal.taskNum - 1) {
+            RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
+        }
+
     }
 
     /**

@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
 import com.sendi.deliveredrobot.model.*
-import com.sendi.deliveredrobot.navigationtask.task.ArrayPointExplanTask
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
 
@@ -17,7 +16,7 @@ object RobotStatus {
     var SERIAL_NUMBER = "" //序列号
     const val CALL_LIFT_AND_MOVE_TIMES = 10 //重试电梯次数阈值
     const val RETRY_DOCK_MAX_TIMES = 3
-    const val LOW_POWER_VALUE = 15 // 低电量阈值
+    const val LOW_POWER_VALUE = 10 // 低电量阈值
     const val SHUT_DOWN_VALUE = 5 // 低电量阈值
     var callLiftAndMoveTimes = 0       //重试电梯次数
     var callingLift = false //正在呼叫电梯
@@ -25,6 +24,7 @@ object RobotStatus {
     var mqttConnected = false //mqtt连接状态
     var retryDockTimes = 0      //重试自主充电次数
     var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
+    val statusSuccess: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点
@@ -51,7 +51,6 @@ object RobotStatus {
     var docking = false //自主回充状态
     var targetAxis: QueryPointEntity? = null //当前切换的锚点
     var outOfLift = true //是否在电梯内
-    var twoSamePlace = false //双送物任务同地点
     var autoCruise = false //自动巡航
     var liftState = true //电梯可用状态
     var ready : MutableLiveData<Int> = MutableLiveData<Int>()
@@ -76,8 +75,9 @@ object RobotStatus {
     var speakNumber : MutableLiveData<String> = MutableLiveData()//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
-    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解
-    var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData()//选择的item
+    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领
+    var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择的item
+    var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
     var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
     var targetName : MutableLiveData<String?>? = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData()//文字朗读进度
@@ -100,6 +100,7 @@ object RobotStatus {
                 TYPE_SEND -> 10
                 TYPE_REMOTE_ORDER_SEND -> 21
                 TYPE_REMOTE_ORDER_TAKE -> 20
+                TYPE_WELCOME -> 12
                 else -> -1
             }
         }

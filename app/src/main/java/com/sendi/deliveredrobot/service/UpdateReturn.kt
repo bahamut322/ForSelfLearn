@@ -1,7 +1,10 @@
 package com.sendi.deliveredrobot.service
 
+import android.util.Log
+import chassis_msgs.VersionGetResponse
 import com.alibaba.fastjson.JSONObject
 import com.baidu.tts.client.SpeechSynthesizer
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -9,10 +12,13 @@ import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
 import com.sendi.deliveredrobot.helpers.UploadMapHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.model.Map
+import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.Vire
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
@@ -21,17 +27,21 @@ import com.sendi.deliveredrobot.room.entity.MapConfig
 import com.sendi.deliveredrobot.room.entity.SendFloor
 import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
+import com.sendi.deliveredrobot.topic.DockStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.where
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.collections.List
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -60,12 +70,12 @@ class UpdateReturn {
     fun method() {
         val replyGateConfigData: List<ReplyGateConfig> =
             LitePal.findAll(ReplyGateConfig::class.java)
-        for (replyGateConfigDatas in replyGateConfigData) {
-            timeStampReplyGateConfig = replyGateConfigDatas.timeStamp
+        for (replyGateConfigDatum in replyGateConfigData) {
+            timeStampReplyGateConfig = replyGateConfigDatum.timeStamp
         }
         val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
-        for (robotConfigDatas in robotConfigData) {
-            timeStampRobotConfigSql = robotConfigDatas.timeStamp
+        for (robotConfigDatum in robotConfigData) {
+            timeStampRobotConfigSql = robotConfigDatum.timeStamp
         }
         val timeGetTime = Date().time //时间戳
         if (timeStampRobotConfigSql == null) {
@@ -93,8 +103,6 @@ class UpdateReturn {
                 val mapPoint: ArrayList<SendMapPoint> = ArrayList()
 
                 for (i in 0 until mapList.size) {
-                    val mapId = debugDao.selectMapId(mapList[i])
-
                     val query =
                         queryAllMapPointsDao.queryAllMapsPoints().groupBy { it.name as String }
                             .mapValues { (_, maps) ->
@@ -130,7 +138,7 @@ class UpdateReturn {
                 }
 
                 sendMapData()
-                Universal.MapName = queryAllMapPointsDao.queryCurrentMapName();
+                Universal.MapName = queryAllMapPointsDao.queryCurrentMapName()
                 val jsonObject = JSONObject()//时间戳
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
@@ -140,8 +148,20 @@ class UpdateReturn {
                 jsonObject["routes"] =
                     QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
-
-
+                //上报版本
+                mainScope.launch {
+                    var versionGetResponse: VersionGetResponse? = null
+                    withContext(Dispatchers.Default) {
+                        versionGetResponse = ROSHelper.getVersion(1) ?: return@withContext
+                    }
+                    if (versionGetResponse?.success == true) {
+                        val jsonObjectVersion = JSONObject()
+                        jsonObjectVersion["type"] = "uploadVersion"
+                        jsonObjectVersion["chassisVersion"] = versionGetResponse?.version ?: ""
+                        jsonObjectVersion["applicationVersion"] = BuildConfig.VERSION_NAME
+                        CloudMqttService.publish(JSONObject.toJSONString(jsonObjectVersion), true)
+                    }
+                }
             }
         }
     }
@@ -221,12 +241,10 @@ class UpdateReturn {
     fun fileSize(fileName: String): Int {
         val file = File(fileName)
         val files = file.listFiles()
-        return files.size
+        return files!!.size
     }
 
-    public fun mapSetting(batteryState: Boolean = false) {
-        val mapSettingBoolean: Boolean
-        DialogHelper.loadingDialog.show()
+    suspend fun mapSetting(batteryState: Boolean = false) {
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
         debugDao = DataBaseDeliveredRobotMap.getDatabase(
             Objects.requireNonNull(
@@ -235,59 +253,64 @@ class UpdateReturn {
         ).getDebug()
         if (Universal.mapName != "") {
             val mapId = debugDao.selectMapId(Universal.mapName)
+            val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
+            dao.updateMapConfig(MapConfig(1, mapId,null,null))
 //            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
-            //设置总图
-            dao.updateMapConfig(MapConfig(1, mapId, null))
             //查询充电桩
             val pointId = dao.queryChargePointList()
             pointId?.map {
                 pointIdList?.add(it.pointId!!)
             }
-            LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointIdList)}")
+            LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointId)}")
             //设置充电桩；默认查询到的第一个数据
-            if (pointIdList != null) {
-                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0)))
-                RobotStatus.originalLocation = pointId?.get(0)!!
+
+            if (pointIdList?.size!! > 0) {
+                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), pointIdList?.get(0)))
             }
-            if (batteryState) {
-                if (pointId != null) {
-                    var retryTime = 10  // 设置地图次数
-                    DialogHelper.loadingDialog.show()
-                    //切换地图
-                    var switchMapResult: Boolean
-                    do {
-                        switchMapResult = ROSHelper.setNavigationMap(
-                            pointId[0].subPath ?: "",
-                            pointId[0].routePath ?: ""
-                        )
-                        retryTime--
-                    } while (!switchMapResult && retryTime > 0)
-                    ROSHelper.setPoseClient(pointId[0])
-                    //查看切换锚点是否成功
-                    var result: Boolean
-                    do {
-                        result =
-                            ROSHelper.getParam("/finish_update_pose") == "1"
-                        if (!result) {
-                            MainScope().launch {
-                                virtualTaskExecute(2, "设置页查看锚点")
-                                retryTime--
-                            }
-                        }
-                    } while (!result && retryTime > 0)
-                    if (retryTime <= 0) {
-                        ToastUtil.show("设置地图失败")
-                    } else {
-                        LogUtil.i("finish_update_pose成功")
-                    }
-                    UploadMapHelper.uploadMap()
+//            if (readyPoint != null) {
+//                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), readyPoint[0].pointId))
+//            }else{
+//                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), pointIdList?.get(0)))
+//            }
+//
+//            if (batteryState) {
+            val floorId = pointId?.get(0)?.floorName?.hashCode() ?: -1
+            ROSHelper.setDispatchFloorId(floorId)
+            RobotStatus.originalLocation = pointId?.get(0)
+            Log.d("TAG", "mapSetting: "+pointId?.get(0))
+            RobotStatus.currentLocation = RobotStatus.originalLocation
+            if (pointId != null) {
+                var retryTime = 10  // 设置地图次数
+                //切换地图
+                var switchMapResult: Boolean
+                do {
+                    switchMapResult = ROSHelper.setNavigationMap(
+                        pointId[0].subPath ?: "",
+                        pointId[0].routePath ?: ""
+                    )
+                    retryTime--
+                } while (!switchMapResult && retryTime > 0)
+                ROSHelper.setPoseClient(pointId[0])
+                //查看切换锚点是否成功
+                var result: Boolean
+                do {
+                    result =
+                        ROSHelper.getParam("/finish_update_pose") == "1"
+                    if (!result) Vire(2, "设置页查看锚点")
+                    retryTime--
+                } while (!result && retryTime > 0)
+                if (retryTime <= 0) {
+                    ToastUtil.show("设置地图失败")
+                } else {
+                    LogUtil.i("finish_update_pose成功")
                 }
+                UploadMapHelper.uploadMap()
+                DialogHelper.loadingDialog.dismiss()
+
             }
         }
-        DialogHelper.loadingDialog.dismiss()
     }
-
 
     fun assignment() {
         //机器人基础配置
@@ -341,7 +364,7 @@ class UpdateReturn {
             this[SpeechSynthesizer.PARAM_SPEAKER] = "4"
             this[SpeechSynthesizer.PARAM_VOLUME] = "15"
             this[SpeechSynthesizer.PARAM_SPEED] = speak
-            this[SpeechSynthesizer.PARAM_PITCH] = "15"
+            this[SpeechSynthesizer.PARAM_PITCH] = "5"
         }
     }
 
@@ -382,6 +405,11 @@ class UpdateReturn {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
 
+    fun settingMap(){
+        mainScope.launch(Dispatchers.Default) {
+            UpdateReturn().mapSetting(true)
+        }
+    }
     fun taskDto(): TaskDto {
         return TaskDto().apply { status = 1 }
     }

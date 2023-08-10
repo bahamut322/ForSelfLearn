@@ -15,7 +15,7 @@ import java.util.*
  * @date 2022-08-25
  * @description 返回任务清单
  */
-class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
+class GoBackTaskBill(taskModel: TaskModel?, private val needReportData: Boolean = true) : AbstractTaskBill(taskModel) {
     init {
         setEndTarget(RobotStatus.originalLocation?.pointName ?: "")
         setTaskId(taskModel?.taskId ?: "")
@@ -49,7 +49,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
-                    )
+                    ),
+                    needReportData = needReportData
                 )
             )
             add(
@@ -60,7 +61,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
                     ),
-                    TYPE_GO_BACK
+                    TYPE_GO_BACK,
+                    needReportData = needReportData
                 )
             )
             add(
@@ -72,7 +74,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
                     ),
-                    navigateId = R.id.goBackFragment
+                    navigateId = R.id.goBackFragment,
+                    needReportData = needReportData
                 )
             )
             add(
@@ -82,7 +85,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
-                    )
+                    ),
+                    needReportData = needReportData
                 )
             )
             add(
@@ -92,7 +96,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
-                    )
+                    ),
+                    needReportData = needReportData
                 )
             )
             add(
@@ -102,7 +107,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
-                    )
+                    ),
+                    needReportData = needReportData
                 )
             )
             add(
@@ -112,7 +118,8 @@ class GoBackTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GoBackTaskBill
-                    )
+                    ),
+                    needReportData = needReportData
                 )
             )
         }

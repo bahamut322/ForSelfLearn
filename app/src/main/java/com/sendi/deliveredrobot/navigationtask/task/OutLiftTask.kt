@@ -26,7 +26,7 @@ import java.util.*
 /**
  * @describe:出电梯
  */
-class OutLiftTask(taskModel: TaskModel, private val needGetPose:Boolean = true, private val needHoldLiftDoor: Boolean = true) : AbstractTask(taskModel) {
+class OutLiftTask(taskModel: TaskModel, private val needGetPose:Boolean = true, private val needHoldLiftDoor: Boolean = true, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
     var point: QueryPointEntity? = null
 
     override suspend fun beforeReportData(taskDto: TaskDto) {

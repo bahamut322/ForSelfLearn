@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
  * @describe:引领中
  */
 class GuidingTask(
-    taskModel: TaskModel?, private val navigateId:Int
-) : AbstractTask(taskModel) {
+    taskModel: TaskModel?, private val navigateId:Int, needReportData: Boolean = true
+) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.GuidingTask
@@ -40,7 +40,13 @@ class GuidingTask(
 
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
-        ROSHelper.navigateTo(taskModel!!.location!!)
+        val result = ROSHelper.navigateTo(taskModel!!.location!!)
+        if(result == 1){
+            MyApplication.instance!!.sendBroadcast(Intent().apply {
+                action = ACTION_NAVIGATE
+                putExtra(NAVIGATE_ID, navigateId)
+            })
+        }
         DialogHelper.loadingDialog.dismiss()
 
     }

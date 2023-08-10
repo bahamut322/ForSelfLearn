@@ -52,10 +52,10 @@ public class AdvanceImageView extends RelativeLayout {
         }
         if (Universal.pic == 2) {
             //按比例缩放图片，使图片完整地显示在ImageView中心，如果图片比ImageView小，则不会放大
-            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageView.setScaleType(ImageView.ScaleType.CENTER);
         }else {
             //按比例缩放图片，使图片充满整个ImageView，可能会裁剪图片
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
         addView(imageView);
     }

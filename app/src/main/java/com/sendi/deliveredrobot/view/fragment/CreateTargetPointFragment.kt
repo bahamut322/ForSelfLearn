@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.adapter.TargetPointAdapter
 import com.sendi.deliveredrobot.databinding.FragmentCreateTargetPointBinding
+import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -39,6 +41,7 @@ class CreateTargetPointFragment : Fragment() {
     var areaListData: ArrayList<PublicArea> = arrayListOf()
     private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
     private val mapLaserServiceImpl = MapLaserServiceImpl.getInstance()
+    private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
 
     /** 关联的激光地图id */
     private var selectSubMapId: Int = -1
@@ -157,20 +160,42 @@ class CreateTargetPointFragment : Fragment() {
                         override fun confirm(newPoint: Point, range: Double) {
                             MainScope().launch {
                                 withContext(Dispatchers.Default) {
+                                    if (newPoint.type == PointType.LIFT_AXIS) {
+                                        //如果是电梯锚点，判断数据库中或当前队列中是否已存在电梯锚点
+                                        when (dao.existAxisPointBySubMapId(newPoint.subMapId?:-1, newPoint.elevator)) {
+                                            true -> {
+                                                ToastUtil.show(resources.getString(R.string.mark_point_fail))
+                                                return@withContext
+                                            }
+                                            false -> {
+                                                //检测
+                                                val exist = targetPoint.filter {
+                                                    it.type == PointType.LIFT_AXIS
+                                                }.any{
+                                                    it.elevator == newPoint.elevator
+                                                }
+                                                if(exist){
+                                                    ToastUtil.show(resources.getString(R.string.mark_point_fail))
+                                                    return@withContext
+                                                }
+                                            }
+                                        }
+                                    }
                                     DialogHelper.loadingDialog.show()
+
                                     val mMapResult = mapTargetPointServiceImpl.signPoint(newPoint, range)
                                     withContext(Dispatchers.Main) {
                                         ToastUtil.show(mMapResult.msg)
                                         if (mMapResult.isFlag) {
                                             when (newPoint.type) {
                                                 PointType.LIFT_OUTSIDE -> {
-                                                    val inside = mMapResult.data["inside"] as Point
+                                                    val inside = (mMapResult.data["inside"] as Point)
                                                     val outside = mMapResult.data["outside"] as Point
                                                     targetPoint.add(inside)
                                                     targetPoint.add(outside)
                                                 }
                                                 else -> {
-                                                    var tempPoint = mMapResult.data["point"] as Point
+                                                    val tempPoint = mMapResult.data["point"] as Point
                                                     targetPoint.add(tempPoint)
                                                 }
                                             }
@@ -236,6 +261,34 @@ class CreateTargetPointFragment : Fragment() {
                                 override fun confirm(mPoint: Point, range: Double) {
                                     MainScope().launch {
                                         withContext(Dispatchers.Default) {
+                                            if (mPoint.type == PointType.LIFT_AXIS) {
+                                                //如果是电梯锚点，判断数据库中或当前队列中是否已存在电梯锚点
+                                                when (dao.existAxisPointBySubMapId(mPoint.subMapId?:-1, mPoint.elevator)) {
+                                                    true -> {
+                                                        LogUtil.i("heky:true")
+                                                        val point = dao.queryPointByElevatorAndTypeAndSubMapId( PointType.LIFT_AXIS, mPoint.elevator,mPoint.subMapId?:-1)
+                                                        if (point.pointId != mPoint.id) {
+                                                            ToastUtil.show(resources.getString(R.string.mark_point_fail))
+                                                            return@withContext
+                                                        }
+                                                    }
+                                                    false -> {
+                                                        LogUtil.i("heky:false")
+                                                        val exist = targetPoint.filter {
+                                                            it.type == PointType.LIFT_AXIS
+                                                        }.any{
+                                                            it.id == mPoint.id
+                                                        }
+                                                        if(exist){
+                                                            val point = dao.queryPointByElevatorAndTypeAndSubMapId( PointType.LIFT_AXIS, mPoint.elevator,mPoint.subMapId?:-1)
+                                                            if (point.elevator == mPoint.elevator) {
+                                                                ToastUtil.show(resources.getString(R.string.mark_point_fail))
+                                                                return@withContext
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                             DialogHelper.loadingDialog.show()
                                             var mMapResult =
                                                 mapTargetPointServiceImpl.resetPoint(mPoint)
@@ -307,8 +360,6 @@ class CreateTargetPointFragment : Fragment() {
         MainScope().launch {
             withContext(Dispatchers.Default) {
                 areaListData.clear()
-                val dao =
-                    DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
 //                var mMapResult = mapTargetPointServiceImpl.types
 //                var templistData = mMapResult.data.get("typeList") as ArrayList<PublicArea>
                 val templistData = dao.queryPublicArea()

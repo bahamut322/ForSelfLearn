@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentContainBinding
 import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -37,10 +36,12 @@ class ContainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         try {
-            if (QuerySql.queryPointDate(selectRoutMapItem?.value!!)[0]?.touch_type == 4) {
+            if (QuerySql.queryPointDate(selectRoutMapItem?.value!!)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
+                binding.imageView.visibility = View.GONE
                 binding.imageView1.apply {
                     Glide.with(this).asGif()
-                        .load(QuerySql.queryPointDate(selectRoutMapItem!!.value!!)[0].touch_blockPic)
+                        .load(QuerySql.queryPointDate(selectRoutMapItem!!.value!!)[RobotStatus.pointItem!!.value!!].touch_blockPic)
+                        .placeholder(R.drawable.ic_warming) // 设置默认图片
                         .into(this)
                 }
             }

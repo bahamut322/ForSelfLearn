@@ -5,8 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.holder.SelectChargePointListHolder
-import com.sendi.deliveredrobot.holder.SelectMapListHolder
-import com.sendi.deliveredrobot.room.entity.MyRootMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 
 /**

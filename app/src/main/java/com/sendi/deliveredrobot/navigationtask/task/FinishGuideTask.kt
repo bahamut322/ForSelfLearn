@@ -11,7 +11,7 @@ import com.sendi.deliveredrobot.service.TaskStageEnum
 /**
  * @describe:结束引领（某一段，并非从起点到终点）
  */
-class FinishGuideTask(var status:Int = 1, taskModel: TaskModel) : AbstractTask(taskModel) {
+class FinishGuideTask(var status:Int = 1, taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         taskDto.apply {

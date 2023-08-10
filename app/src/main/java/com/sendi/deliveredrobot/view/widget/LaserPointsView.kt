@@ -10,12 +10,14 @@ import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.LineInfoModel
 import com.sendi.deliveredrobot.model.PointCompat
 import com.sendi.deliveredrobot.model.RectModel
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.entity.Point
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import geometry_msgs.Point32
 import geometry_msgs.Pose2D
+import java.util.Objects
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -36,24 +38,27 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
         const val MODE_ZOOM = 1
         private const val circleColor = Color.WHITE
         private val lineColor = Color.parseColor("#FF8282")
-        private val staticPointColor = Color.parseColor("#FFFFFF")
+        private val staticPointColor = Color.parseColor("#808080")
         private const val targetPointColor = Color.RED
         private const val routePointColor = Color.RED
         private const val backGroundColor = Color.BLACK
         private val limitSpeedColor = Color.parseColor("#226DE8")
         private val pointColors = arrayOf(Color.parseColor("#00FF7F"), Color.RED)
+        private val controlPointColor = Color.RED
+        private val avoidPointColor = Color.GREEN
     }
 
     private var robotPose: Pose2D? = null //机器人位置
     private var floatArrayPoints: FloatArray = FloatArray(0)    //点
     private var floatArrayPoints2: FloatArray = FloatArray(0)    //点
-//    private var floatArrayPoints2: FloatArray = FloatArray(0)    //点
+    //    private var floatArrayPoints2: FloatArray = FloatArray(0)    //点
     private var staticMap: ArrayList<FloatArray> = ArrayList() //点集合
     private var updateMap: ArrayList<FloatArray> = ArrayList() //点集合
     private var routePoint: ArrayList<FloatArray> = ArrayList() //路径点集合
+    private var routePoint2: ArrayList<FloatArray> = ArrayList() //实时路径点集合
     private var targetPoint: ArrayList<Point> = ArrayList() //目标点集合
     private var lineInfoList: ArrayList<LineInfoModel> = ArrayList() //限速区/虚拟墙点集合列表
-    private var lineInfo: ArrayList<PointCompat> = ArrayList() //限速区/虚拟墙点集合
+    private var lineInfo: LineInfoModel? = null //限速区/虚拟墙点集合
     private var listIds: ArrayList<Point32> = ArrayList(0)       //激光图编号
     private var detector: GestureDetector = GestureDetector(context, this)
     private var detector2: ScaleGestureDetector = ScaleGestureDetector(context, this)
@@ -88,7 +93,7 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
 //            LogUtil.i("/map/sub_map_info:dataSize1:${floatArrayPoints.size}")
 //            LogUtil.i("/map/sub_map_info:dataSize2:${floatArrayPoints2.size}")
 //        }else{
-            floatArrayPoints = tempFloatArray
+        floatArrayPoints = tempFloatArray
 //        }
         invalidate()
     }
@@ -195,7 +200,7 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
      * @describe 添加路径点
      */
     fun setCurrentRoutePoints(data: Pose2D) {
-        this.routePoint.add(floatArrayOf(data.x.toFloat(), data.y.toFloat(), data.theta.toFloat()))
+        this.routePoint2.add(floatArrayOf(data.x.toFloat(), data.y.toFloat(), data.theta.toFloat()))
         invalidate()
     }
 
@@ -226,9 +231,9 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
     /**
      * @describe 单条限速区/虚拟墙
      */
-    fun setLineInfo(list:List<PointCompat>){
-        this.lineInfo.clear()
-        this.lineInfo.addAll(list)
+    fun setLineInfo(lineInfoModel: LineInfoModel){
+        this.lineInfo = null
+        this.lineInfo = lineInfoModel
         invalidate()
     }
 
@@ -236,7 +241,7 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
      * @description 清除单条限速区/虚拟墙
      */
     fun clearLineInfo(){
-        this.lineInfo.clear()
+        this.lineInfo = null
         invalidate()
     }
 
@@ -266,7 +271,7 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                 isAntiAlias = false
             }
             canvas?.drawPoints(floatArrayPoints.map {
-              it * POINT_AXIS_SCALE_TIME
+                it * POINT_AXIS_SCALE_TIME
             }.toFloatArray(), paint)
         }
         //静态图
@@ -287,7 +292,7 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
         if (updateMap.isNotEmpty()) {
             paint.apply {
                 color = pointColor
-                strokeWidth = 1f
+                strokeWidth = 2f
                 strokeCap = Paint.Cap.ROUND
                 isAntiAlias = false
             }
@@ -311,24 +316,134 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
 //                    it * POINT_AXIS_SCALE_TIME
 //                }.toFloatArray(), paint)
 //            }
-            path.reset()
-            routePoint.forEachIndexed{
-                index, floats ->
-                when (index) {
-                    routePoint.size - 1 -> {
-                        if(routePoint.size - 1 == 0){
-                            path.moveTo(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME)
-                        }else{
-                            path.lineTo(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME)
+            when(RobotStatus.chassisVersionName < "3.8.0") {
+                true -> {
+                    path.reset()
+                    routePoint.forEachIndexed { index, floats ->
+                        when (index) {
+                            routePoint.size - 1 -> {
+                                if (routePoint.size - 1 == 0) {
+                                    path.moveTo(
+                                        floats[0] * POINT_AXIS_SCALE_TIME,
+                                        floats[1] * POINT_AXIS_SCALE_TIME
+                                    )
+                                } else {
+                                    path.lineTo(
+                                        floats[0] * POINT_AXIS_SCALE_TIME,
+                                        floats[1] * POINT_AXIS_SCALE_TIME
+                                    )
+                                }
+//                                if (floats.size == 3) {
+//                                    paint.apply {
+//                                        color = circleColor
+//                                        strokeWidth = 1f
+//                                        style = Paint.Style.STROKE
+//                                        isAntiAlias = false
+//                                    }
+//                                    canvas?.drawCircle(
+//                                        floats[0] * POINT_AXIS_SCALE_TIME,
+//                                        floats[1] * POINT_AXIS_SCALE_TIME,
+//                                        8f,
+//                                        paint
+//                                    )
+//                                    paint.apply {
+//                                        color = lineColor
+//                                        strokeWidth = 1f
+//                                        isAntiAlias = false
+//                                    }
+//                                    canvas?.drawLine(
+//                                        floats[0] * POINT_AXIS_SCALE_TIME,
+//                                        floats[1] * POINT_AXIS_SCALE_TIME,
+//                                        (floats[0] + cos(CommonHelper.adjustAngel(floats[2] + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
+//                                        (floats[1] + sin(CommonHelper.adjustAngel(floats[2] + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
+//                                        paint.apply {
+//                                            color = Color.BLUE
+//                                        }
+//                                    )
+//                                }
+                            }
+                            0 -> {
+                                path.moveTo(
+                                    floats[0] * POINT_AXIS_SCALE_TIME,
+                                    floats[1] * POINT_AXIS_SCALE_TIME
+                                )
+//                        canvas?.drawPoint(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME, paint)
+                            }
+                            else -> {
+                                path.lineTo(
+                                    floats[0] * POINT_AXIS_SCALE_TIME,
+                                    floats[1] * POINT_AXIS_SCALE_TIME
+                                )
+//                        canvas?.drawPoint(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME, paint)
+                            }
                         }
-                        if(floats.size == 3){
+                    }
+                    canvas?.drawPath(path, paint.apply {
+                        strokeWidth = 5f
+                        style = Paint.Style.STROKE
+                        color = Color.RED
+                        isAntiAlias = true
+                    })
+                }
+                false -> {
+                    routePoint.forEachIndexed { index, floats ->
+                        when{
+                            index % 2 == 1 -> {
+                                val prevPoint = routePoint[index - 1]
+                                canvas?.drawLine(
+                                    prevPoint[0] * POINT_AXIS_SCALE_TIME,
+                                    prevPoint[1] * POINT_AXIS_SCALE_TIME,
+                                    floats[0] * POINT_AXIS_SCALE_TIME,
+                                    floats[1] * POINT_AXIS_SCALE_TIME,
+                                    paint.apply {
+                                        strokeWidth = 5f
+                                        style = Paint.Style.STROKE
+                                        color = Color.RED
+                                        isAntiAlias = true
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (routePoint2.isNotEmpty()) {
+            paint.apply {
+                color = routePointColor
+                strokeWidth = 1f
+                strokeCap = Paint.Cap.ROUND
+                style = Paint.Style.STROKE
+                isAntiAlias = false
+            }
+            path.reset()
+            routePoint2.forEachIndexed { index, floats ->
+                when (index) {
+                    routePoint2.size - 1 -> {
+                        if (routePoint2.size - 1 == 0) {
+                            path.moveTo(
+                                floats[0] * POINT_AXIS_SCALE_TIME,
+                                floats[1] * POINT_AXIS_SCALE_TIME
+                            )
+                        } else {
+                            path.lineTo(
+                                floats[0] * POINT_AXIS_SCALE_TIME,
+                                floats[1] * POINT_AXIS_SCALE_TIME
+                            )
+                        }
+                        if (floats.size == 3) {
                             paint.apply {
                                 color = circleColor
                                 strokeWidth = 1f
                                 style = Paint.Style.STROKE
                                 isAntiAlias = false
                             }
-                            canvas?.drawCircle(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME, 8f, paint)
+                            canvas?.drawCircle(
+                                floats[0] * POINT_AXIS_SCALE_TIME,
+                                floats[1] * POINT_AXIS_SCALE_TIME,
+                                8f,
+                                paint
+                            )
                             paint.apply {
                                 color = lineColor
                                 strokeWidth = 1f
@@ -346,11 +461,17 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                         }
                     }
                     0 -> {
-                        path.moveTo(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME)
+                        path.moveTo(
+                            floats[0] * POINT_AXIS_SCALE_TIME,
+                            floats[1] * POINT_AXIS_SCALE_TIME
+                        )
 //                        canvas?.drawPoint(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME, paint)
                     }
                     else -> {
-                        path.lineTo(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME)
+                        path.lineTo(
+                            floats[0] * POINT_AXIS_SCALE_TIME,
+                            floats[1] * POINT_AXIS_SCALE_TIME
+                        )
 //                        canvas?.drawPoint(floats[0] * POINT_AXIS_SCALE_TIME, floats[1] * POINT_AXIS_SCALE_TIME, paint)
                     }
                 }
@@ -371,7 +492,14 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                     strokeCap = Paint.Cap.ROUND
                     isAntiAlias = false
                 }
-                canvas?.drawPoint((point.y?:0f) * POINT_AXIS_SCALE_TIME,(point.x?:0f) * POINT_AXIS_SCALE_TIME, paint)
+                canvas?.drawPoint(
+                    (point.y ?: 0f) * POINT_AXIS_SCALE_TIME,
+                    when (RobotStatus.chassisVersionName < "3.8.0") {
+                        true -> (point.x ?: 0f) * POINT_AXIS_SCALE_TIME
+                        false -> -(point.x ?: 0f) * POINT_AXIS_SCALE_TIME
+                    },
+                    paint
+                )
                 paint.apply {
                     textSize = 10f
                     color = targetPointColor
@@ -379,16 +507,23 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                     typeface = Typeface.MONOSPACE
                     isAntiAlias = true
                 }
-                canvas?.drawText(point.name?:"", (point.y?:0f) * POINT_AXIS_SCALE_TIME, (point.x?:0f) * POINT_AXIS_SCALE_TIME - 3f, paint)
+                canvas?.drawText(
+                    point.name ?: "",
+                    (point.y ?: 0f) * POINT_AXIS_SCALE_TIME,
+                    when (RobotStatus.chassisVersionName < "3.8.0") {
+                        true -> (point.x ?: 0f) * POINT_AXIS_SCALE_TIME - 3f
+                        false -> -(point.x ?: 0f) * POINT_AXIS_SCALE_TIME - 3f
+                    },
+                    paint
+                )
             }
         }
 
         //限速区路径列表
         if (lineInfoList.isNotEmpty()) {
             for (lineInfoModel in lineInfoList) {
-                if (lineInfoModel.pose != null && lineInfoModel.pose.isNotEmpty()) {
-                    lineInfoModel.pose.forEachIndexed { index, pointCompat ->
-                        //因为底盘原因，这里x，y需要调换
+                if (lineInfoModel.pose != null && lineInfoModel.pose!!.isNotEmpty()) {
+                    lineInfoModel.pose!!.forEachIndexed { _, pointCompat ->
                         paint.apply {
                             color = limitSpeedColor
                             strokeWidth = 1f
@@ -406,15 +541,66 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                         isAntiAlias = true
                     }
                     //绘制LineName
-                    val midEntity = lineInfoModel.pose[lineInfoModel.pose.size / 2]
+                    val midEntity = lineInfoModel.pose!![lineInfoModel.pose!!.size / 2]
                     canvas?.drawText(lineInfoModel.name, midEntity.x.toFloat() * POINT_AXIS_SCALE_TIME, midEntity.y.toFloat() * POINT_AXIS_SCALE_TIME, paint)
-//                    canvas?.drawText(lineInfoModel.name, midEntity.y.toFloat(), midEntity.x.toFloat(), paint)
+                }
+                if(lineInfoModel.pose1 != null){
+                    paint.apply {
+                        color = controlPointColor
+                        strokeWidth = 5f
+                        strokeCap = Paint.Cap.ROUND
+                        style = Paint.Style.STROKE
+                        isAntiAlias = false
+                    }
+                    val pose1 = lineInfoModel.pose1
+                    canvas?.drawPoint(
+                        pose1?.x?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,
+                        pose1?.y?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,paint)
+                    paint.apply {
+                        textSize = 10f
+                        color = controlPointColor
+                        style = Paint.Style.FILL
+                        typeface = Typeface.MONOSPACE
+                        isAntiAlias = true
+                    }
+                    canvas?.drawText(
+                        "${lineInfoModel.name}-控制点",
+                        (pose1?.x?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                        (pose1?.y?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                        paint
+                    )
+                }
+                if(lineInfoModel.pose2 != null){
+                    paint.apply {
+                        color = avoidPointColor
+                        strokeWidth = 5f
+                        strokeCap = Paint.Cap.ROUND
+                        style = Paint.Style.STROKE
+                        isAntiAlias = false
+                    }
+                    val pose2 = lineInfoModel.pose2
+                    canvas?.drawPoint(
+                        pose2?.x?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,
+                        pose2?.y?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,paint)
+                    paint.apply {
+                        textSize = 10f
+                        color = avoidPointColor
+                        style = Paint.Style.FILL
+                        typeface = Typeface.MONOSPACE
+                        isAntiAlias = true
+                    }
+                    canvas?.drawText(
+                        "${lineInfoModel.name}-避让点",
+                        (pose2?.x?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                        (pose2?.y?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                        paint
+                    )
                 }
             }
         }
 
         //单条限速区路径
-        if (lineInfo.isNotEmpty()) {
+        if (Objects.nonNull(lineInfo)) {
             paint.apply {
                 color = limitSpeedColor
                 strokeWidth = 5f
@@ -422,32 +608,87 @@ class LaserPointsView(context: Context?, attrs: AttributeSet?) : View(context, a
                 style = Paint.Style.STROKE
                 isAntiAlias = false
             }
-            for (index in lineInfo.indices) {
-                //因为底盘原因，这里x，y需要调换
-                canvas?.drawPoint(lineInfo[index].x.toFloat() * POINT_AXIS_SCALE_TIME ,lineInfo[index].y.toFloat() * POINT_AXIS_SCALE_TIME,paint)
-                // 机器人当前位置
-                if (index == lineInfo.size - 1) {
-                    paint.apply {
-                        color = circleColor
-                        strokeWidth = 1f
-                        style = Paint.Style.STROKE
-                        isAntiAlias = false
+            if (lineInfo?.pose != null) {
+                val pose = lineInfo?.pose
+                for (index in pose?.indices!!) {
+                    //因为底盘原因，这里x，y需要调换
+                    canvas?.drawPoint(pose[index].x.toFloat() * POINT_AXIS_SCALE_TIME ,pose[index].y.toFloat() * POINT_AXIS_SCALE_TIME,paint)
+                    // 机器人当前位置
+                    if (index == pose.size - 1) {
+                        paint.apply {
+                            color = circleColor
+                            strokeWidth = 1f
+                            style = Paint.Style.STROKE
+                            isAntiAlias = false
+                        }
+                        canvas?.drawCircle((pose[index].x * POINT_AXIS_SCALE_TIME).toFloat(),
+                            (pose[index].y * POINT_AXIS_SCALE_TIME).toFloat(), 8f, paint)
+                        paint.apply {
+                            color = lineColor
+                            strokeWidth = 1f
+                            isAntiAlias = false
+                        }
+                        canvas?.drawLine(
+                            (pose[index].x * POINT_AXIS_SCALE_TIME).toFloat(),
+                            (pose[index].y * POINT_AXIS_SCALE_TIME).toFloat(),
+                            (pose[index].x + cos(CommonHelper.adjustAngel(pose[index].z + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
+                            (pose[index].y + sin(CommonHelper.adjustAngel(pose[index].z + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
+                            paint
+                        )
                     }
-                    canvas?.drawCircle((lineInfo[index].x * POINT_AXIS_SCALE_TIME).toFloat(),
-                        (lineInfo[index].y * POINT_AXIS_SCALE_TIME).toFloat(), 8f, paint)
-                    paint.apply {
-                        color = lineColor
-                        strokeWidth = 1f
-                        isAntiAlias = false
-                    }
-                    canvas?.drawLine(
-                        (lineInfo[index].x * POINT_AXIS_SCALE_TIME).toFloat(),
-                        (lineInfo[index].y * POINT_AXIS_SCALE_TIME).toFloat(),
-                        (lineInfo[index].x + cos(CommonHelper.adjustAngel(lineInfo[index].z + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
-                        (lineInfo[index].y + sin(CommonHelper.adjustAngel(lineInfo[index].z + Math.PI)) * 0.8).toFloat() * POINT_AXIS_SCALE_TIME,
-                        paint
-                    )
                 }
+            }
+            if(lineInfo?.pose1 != null){
+                paint.apply {
+                    color = controlPointColor
+                    strokeWidth = 5f
+                    strokeCap = Paint.Cap.ROUND
+                    style = Paint.Style.STROKE
+                    isAntiAlias = false
+                }
+                val pose1 = lineInfo?.pose1
+                canvas?.drawPoint(
+                    pose1?.x?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,
+                    pose1?.y?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,paint)
+                paint.apply {
+                    textSize = 10f
+                    color = controlPointColor
+                    style = Paint.Style.FILL
+                    typeface = Typeface.MONOSPACE
+                    isAntiAlias = true
+                }
+                canvas?.drawText(
+                    "${lineInfo?.name?:""}-控制点",
+                    (pose1?.x?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                    (pose1?.y?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                    paint
+                )
+            }
+            if(lineInfo?.pose2 != null){
+                paint.apply {
+                    color = avoidPointColor
+                    strokeWidth = 5f
+                    strokeCap = Paint.Cap.ROUND
+                    style = Paint.Style.STROKE
+                    isAntiAlias = false
+                }
+                val pose2 = lineInfo?.pose2
+                canvas?.drawPoint(
+                    pose2?.x?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,
+                    pose2?.y?.toFloat()?.times(POINT_AXIS_SCALE_TIME) ?: 0f,paint)
+                paint.apply {
+                    textSize = 10f
+                    color = avoidPointColor
+                    style = Paint.Style.FILL
+                    typeface = Typeface.MONOSPACE
+                    isAntiAlias = true
+                }
+                canvas?.drawText(
+                    "${lineInfo?.name?:""}-避让点",
+                    (pose2?.x?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                    (pose2?.y?.times(POINT_AXIS_SCALE_TIME))?.toFloat()?:0f,
+                    paint
+                )
             }
         }
 
