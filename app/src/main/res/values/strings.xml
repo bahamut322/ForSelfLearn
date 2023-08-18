@@ -494,6 +494,8 @@
     <string name="door_temp">门岗测温</string>
     <string name="return_home">回桩</string>
     <string name="finish_explain">结束讲解</string>
+    <string name="pause_explain">暂停讲解</string>
+    <string name="already_explain">已暂停讲解</string>
     <string name="other_point">切换其他点</string>
     <string name="next_point">下一个点</string>
     <string name="mark_point_fail">标记失败,同一楼层的同一个电梯里只能创建一个锚点</string>

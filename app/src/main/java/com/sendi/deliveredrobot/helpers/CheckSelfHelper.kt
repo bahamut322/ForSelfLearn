@@ -120,7 +120,7 @@ object CheckSelfHelper {
 //            ReportRobotStateService.startService(MainActivity.instance)
 //        }
         withContext(Dispatchers.Main){
-            seconds.observe(owner) { it ->
+            seconds.observe(owner) {
                 if (it < 0) {
                     countdownComplete = true
                 }
@@ -174,8 +174,8 @@ object CheckSelfHelper {
                 }
             }
             LogUtil.i("=========LASER_SCAN=========${laserCheckComplete.value}")
-            LogUtil.d("读取文件内容："+getFileContent((Universal.SelfCheck)))
-            LogUtil.d("读取文件内容并且转为十进制："+ getFileContent((Universal.SelfCheck)).toInt(2))
+            LogUtil.d("读取自检文件内容（二进制）："+getFileContent((Universal.SelfCheck)))
+            LogUtil.d("转化自检文件内容（十进制）："+ getFileContent((Universal.SelfCheck)).toInt(2))
             if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
                 tempFlag = tempFlag or 0x01
                 progress++

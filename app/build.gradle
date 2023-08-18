@@ -54,6 +54,7 @@ android {
             buildConfigField("boolean", "IS_REPORT", "true")
             buildConfigField("String", "MQTT_HOST", "\"tcp://103.215.45.135:1883\"")
             buildConfigField("String", "HTTP_HOST", "\"http://172.168.201.34:9055/management_res\"")
+            buildConfigField("String", "UPLOAD_LOG_HTTP_HOST", "\"http://172.168.201.34:9830/business/log/uploadFile\"")
             signingConfig signingConfigs.debug
             versionNameSuffix "-D"
         }
@@ -68,6 +69,7 @@ android {
             buildConfigField("boolean", "IS_REPORT", "true")
             buildConfigField("String", "MQTT_HOST", "\"tcp://103.215.44.45:1883\"")
             buildConfigField("String", "HTTP_HOST", "\"http://103.215.44.45:9891/management_res\"")
+            buildConfigField("String", "UPLOAD_LOG_HTTP_HOST", "\"http://103.215.44.45:9888/business/log/uploadFile\"")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -160,6 +162,8 @@ dependencies {
     implementation "com.qmuiteam:qmui:2.0.0-alpha10"
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+    //ssh包
+    implementation 'ch.ethz.ganymed:ganymed-ssh2:build210'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.11.7'
 

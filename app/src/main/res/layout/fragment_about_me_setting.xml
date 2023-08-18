@@ -163,11 +163,44 @@
                     app:layout_constraintStart_toStartOf="@+id/textView46"
                     app:layout_constraintTop_toBottomOf="@+id/textView46" />
 
-                <ImageView
-                    android:layout_marginEnd="@dimen/dp_32"
-                    android:layout_width="@dimen/dp_32"
-                    android:layout_height="@dimen/dp_32"
-                    android:src="@drawable/next_iv"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearLayoutAppVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/textView48"
+                    app:layout_constraintTop_toBottomOf="@+id/textView48">
+
+                    <View
+                        android:id="@+id/viewAppVersionImage"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
+
+                    <TextView
+                        android:id="@+id/textViewAppVersionDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="0dp"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/color_49DCFA"
+                        android:textSize="@dimen/mini_text_size"
+                        android:visibility="visible"
+                        tools:text="这已经是最新版本了" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:id="@+id/textViewCheckVersion"
+                    android:layout_width="184dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="@dimen/margin_end_setting_item"
+                    android:background="@drawable/selector_bg3_button"
+                    android:gravity="center"
+                    android:text="@string/check_version"
+                    android:textColor="@color/color_A0BAEF"
+                    android:textSize="@dimen/small_small_text_size"
                     app:layout_constraintBottom_toBottomOf="@+id/textView48"
                     app:layout_constraintEnd_toEndOf="@+id/view3"
                     app:layout_constraintTop_toTopOf="@+id/textView48" />

@@ -155,6 +155,7 @@ class DeliverMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
+            LogUtil.i("MQTT:送物订阅连接成功 ")
             try {
                 mqttAndroidClient_deliver?.subscribe(
                     "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
@@ -169,7 +170,7 @@ class DeliverMqttService : Service() {
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
             arg1.printStackTrace()
-            LogUtil.i("MQTT:连接失败 ")
+            LogUtil.i("MQTT:送物订阅连接失败 ")
             RobotStatus.mqttConnected = false
             doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }

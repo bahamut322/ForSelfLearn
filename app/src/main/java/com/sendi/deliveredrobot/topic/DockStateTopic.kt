@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.topic
 
+import android.util.Log
 import chassis_msgs.DockState
 import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.RobotCommand
@@ -29,24 +30,27 @@ object DockStateTopic {
                         //对接中
                         "对接中"
                     }
+
                     DockState.Charging -> {
                         //充电中
-                        if(BillManager.currentBill() != null && BillManager.currentBill()?.firstPeek() is BeginDockTask){
+                        if (BillManager.currentBill() != null && BillManager.currentBill()
+                                ?.firstPeek() is BeginDockTask
+                        ) {
                             BillManager.currentBill()?.executeNextTask()
                         }
                         //设置当前位置
-                        if(RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER && RobotStatus.batteryStateNumber.value == false){
-                            UpdateReturn().mapSetting(true)
-                            RobotStatus.batteryStateNumber.postValue(true)
-                            DialogHelper.briefingDialog.dismiss()
-                        }
+                        UpdateReturn().mapSetting(true)
+                        RobotStatus.batteryStateNumber.postValue(true)
+                        DialogHelper.briefingDialog.dismiss()
                         "充电中"
                     }
+
                     DockState.Outdocking -> {
                         //退出充电中
                         "退出充电中"
 
                     }
+
                     DockState.DockingTimeOut -> {
                         RobotStatus.docking = false
                         //自主充电超时
@@ -66,23 +70,28 @@ object DockStateTopic {
                         }
                         "退出充电超时"
                     }
+
                     DockState.NoSignal -> {
                         //无信号
                         "无信号"
                     }
+
                     DockState.ChassisErr, DockState.ObstacleErr -> {
                         "error"
                     }
+
                     DockState.IDLE -> {
                         //空闲
                         "空闲"
                     }
+
                     DockState.OutdockingOk -> {
                         //退出充电成功
                         BillManager.currentBill()?.executeNextTask()
 
                         "退出充电成功"
                     }
+
                     else -> ""
                 }
                 LogUtil.i("自主充电--->${mag} :${state.state}")

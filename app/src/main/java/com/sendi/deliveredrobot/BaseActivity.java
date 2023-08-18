@@ -113,7 +113,7 @@ public class BaseActivity extends AppCompatActivity {
          */
         //判断副屏是否存在再去启动轮播控件
         if (mPresentation != null) {
-            Log.i(TAG, "双屏异显onResume");
+            LogUtil.INSTANCE.i( "双屏异显onResume");
             advanceView.setResume();
         }
         //重启双屏异显
@@ -131,7 +131,7 @@ public class BaseActivity extends AppCompatActivity {
         if (mPresentation != null) {
             advanceView.setPause();
         }
-        Log.i(TAG, "双屏异显onPause");
+        LogUtil.INSTANCE.i("双屏异显onPause");
     }
 
     @Override
@@ -139,7 +139,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onStop();
         // Dismiss the presentation when the activity is not visible.
         if (mPresentation != null) {
-            Log.i(TAG, "活动不可见，取消双屏异显");
+            LogUtil.INSTANCE.i("活动不可见，取消双屏异显");
             mPresentation.dismiss();
             mPresentation = null;
             //  flag=0;
@@ -245,6 +245,7 @@ public class BaseActivity extends AppCompatActivity {
                 public void onDisplayRemoved(int displayId) {
                     Log.d(TAG, "Display #" + displayId + " removed.");
                     Toast.makeText(getApplication(), "广告屏连接失败", Toast.LENGTH_SHORT).show();
+                    LogUtil.INSTANCE.i("广告屏连接失败");
                     Show(flag);
                 }
             };

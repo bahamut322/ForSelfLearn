@@ -197,6 +197,7 @@ public class BaiduTTSHelper {
     }
 
     public void pause(){
+        Order.setFlage("0");
         synthesizer.pause();
     }
 
@@ -221,6 +222,7 @@ public class BaiduTTSHelper {
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }
     public void resume(){
+        Order.setFlage("1");
         synthesizer.resume();
     }
     public void resetParam(){

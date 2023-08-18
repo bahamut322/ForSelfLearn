@@ -14,7 +14,9 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
+import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
 import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.model.log.RobotLog
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.DeliverMqttService
@@ -22,6 +24,10 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
@@ -45,6 +51,7 @@ object DeliveMqttMessageHandler {
         { MainActivity.instance.viewModelStore },
         { MainActivity.instance.defaultViewModelProviderFactory }
     )
+    private val mainScope = MainScope()
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
     private var fileNames: Array<String?>? = null//副屏内容
@@ -74,6 +81,30 @@ object DeliveMqttMessageHandler {
                         }
                     } catch (_: Exception) {
 
+                    }
+                }
+                "sendVersionInfo" -> {
+                    //版本更新信息
+                    var flag = false
+                    var size = 0
+                    var path = ""
+                    var version = ""
+                    try {
+                        flag = jsonObject.get("flag").asBoolean
+                        size = jsonObject.get("size").asInt
+                        path = jsonObject.get("path").asString
+                        version = jsonObject.get("version").asString
+                    } finally {
+                        mainScope.launch {
+                            withContext(Dispatchers.Main) {
+                                RobotStatus.versionStatusModel.value = VersionStatusModel(
+                                    flag = flag,
+                                    size = size,
+                                    path = path,
+                                    version = version
+                                )
+                            }
+                        }
                     }
                 }
 //                "callElevatorCurrentFloor" -> {

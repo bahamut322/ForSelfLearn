@@ -128,22 +128,5 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView61"
             app:layout_constraintEnd_toStartOf="@+id/textView61" />
 
-<!--        <com.sendi.deliveredrobot.view.widget.SongLyricTextView-->
-<!--            android:id="@+id/songTv"-->
-<!--            android:layout_width="368dp"-->
-<!--            android:layout_height="@dimen/dp_345"-->
-<!--            android:layout_marginEnd="@dimen/dp_26"-->
-<!--            android:alpha="0.6"-->
-<!--            android:background="@color/black_home"-->
-<!--            android:letterSpacing="0.2"-->
-<!--            android:lineSpacingMultiplier="1.0"-->
-<!--            android:maxLength="12"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="@dimen/sp_24"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

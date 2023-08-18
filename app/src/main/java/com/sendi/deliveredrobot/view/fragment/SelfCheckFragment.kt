@@ -22,6 +22,7 @@ import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
 import com.sendi.deliveredrobot.model.QueryElevatorListModel
@@ -33,7 +34,6 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
-import com.vguang.Vbar
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
@@ -378,39 +378,43 @@ class SelfCheckFragment : Fragment() {
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
         Looper.prepare()
+        UpdateReturn().deleteDirectory(Universal.AppVersion)
         when (FunctionSkip.selectFunction()) {
             //智能引领
             0 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_guideFragment)
                 Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
-                LogUtil.i("智能引领")
+                LogUtil.i("自检->智能引领")
             }
             //智能讲解
             1 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_explanationFragment)
                 Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
-                LogUtil.i("智能讲解")
+                LogUtil.i("自检->智能讲解")
             }
             //智能问答
             2 -> {
                 Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
-                LogUtil.i("智能问答")
+                LogUtil.i("自检->智能问答")
             }
             //轻应用
             3 -> {
                 Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
-                LogUtil.i("轻应用")
+                LogUtil.i("自检->轻应用")
             }
             //不只有一个选项
             4 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
+                LogUtil.i("自检->主页面")
             }
             -1 ->{
                 controller!!.navigate(R.id.action_selfCheckFragment_to_settingFragment)
+                LogUtil.i("自检->设置")
             }
         }
         Looper.loop();
     }
+
 
     fun setAnimation(view: ProgressBar, mStartProgressBar: Int, mProgressBar: Int) {
         val animator: ValueAnimator =

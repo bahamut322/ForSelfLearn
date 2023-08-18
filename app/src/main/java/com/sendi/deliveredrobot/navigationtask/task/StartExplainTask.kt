@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import com.sendi.deliveredrobot.TYPE_EXPLAN
 import com.sendi.deliveredrobot.TYPE_GUIDE
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
@@ -28,7 +29,7 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
     override fun reportTaskDto() {
         if (Universal.twice) {
             ReportDataHelper.reportTaskStartDto(
-                TYPE_GUIDE, this@StartExplainTask.taskModel ?: TaskModel()
+                TYPE_EXPLAN, this@StartExplainTask.taskModel ?: TaskModel()
             )
             Universal.twice = false
         }

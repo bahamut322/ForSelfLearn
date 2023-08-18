@@ -198,6 +198,18 @@
                         android:textColor="@color/white"
                         android:textSize="40sp"
                         tools:ignore="HardcodedText" />
+                    <TextView
+                        android:id="@+id/PauseTV"
+                        android:layout_width="@dimen/dp_204"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_marginEnd="@dimen/dp_32"
+                        android:background="@drawable/bg_explanation_acceptstation"
+                        android:gravity="center"
+                        android:layout_marginStart="@dimen/dp_15"
+                        android:text="@string/already_explain"
+                        android:visibility="gone"
+                        android:textColor="@color/white"
+                        android:textSize="32sp" />
 
                 </LinearLayout>
 
@@ -316,6 +328,17 @@
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="@+id/view26"
                     app:layout_constraintTop_toBottomOf="@+id/view26">
+
+                    <Button
+                        android:id="@+id/PauseBtn"
+                        android:layout_width="@dimen/dp_204"
+                        android:layout_height="@dimen/dp_72"
+                        android:layout_marginEnd="@dimen/dp_32"
+                        android:background="@drawable/bg_button"
+                        android:gravity="center"
+                        android:text="@string/pause_explain"
+                        android:textColor="@color/white"
+                        android:textSize="32sp" />
 
                     <Button
                         android:id="@+id/finishBtn"

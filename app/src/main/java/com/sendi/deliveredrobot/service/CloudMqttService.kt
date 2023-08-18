@@ -145,7 +145,7 @@ class CloudMqttService : Service() {
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
             Thread { UpdateReturn().assignment() }.start()
-            LogUtil.i("MQTT:连接成功 ")
+            LogUtil.i("MQTT:X8订阅连接成功 ")
             try {
                 mqttAndroidClient?.subscribe(
                     "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
@@ -160,7 +160,7 @@ class CloudMqttService : Service() {
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
             arg1.printStackTrace()
-            LogUtil.i("MQTT:连接失败 ")
+            LogUtil.i("MQTT:X8订阅连接失败 ")
             RobotStatus.mqttConnected = false
             doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }

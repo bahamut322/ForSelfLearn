@@ -41,12 +41,12 @@ class SettingHomeFragment : Fragment() {
             var versionGetResponse: VersionGetResponse? = null
             withContext(Dispatchers.Default) {
                 versionGetResponse = ROSHelper.getVersion(1) ?: return@withContext
-                LogUtil.d("地盘版本："+versionGetResponse)
+                LogUtil.d("底盘版本：$versionGetResponse")
             }
             if (versionGetResponse?.success == true) {
                 withContext(Dispatchers.Main) {
                     RobotStatus.chassisVersionName = versionGetResponse?.version ?: ""
-                    LogUtil.d("地盘版本："+RobotStatus.chassisVersionName)
+                    LogUtil.d("底盘版本：${RobotStatus.chassisVersionName}")
 
                 }
             }

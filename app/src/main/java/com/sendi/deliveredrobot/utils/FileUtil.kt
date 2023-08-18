@@ -1,7 +1,14 @@
 package com.sendi.deliveredrobot.utils
 
 import android.os.Environment
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * @description 文件处理类
@@ -22,6 +29,38 @@ object FileUtil {
                 //如果相差大于30天
                 it.delete()
             }
+        }
+    }
+    fun uploadFile(URL: String, fullPath: String, robotId: String, path: String) {
+
+        // 创建 OkHttpClient 对象
+        val client = OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .build()
+
+        // 构建上传文件的请求体
+        val mediaType = "multipart/form-data".toMediaTypeOrNull()
+        val file = File(fullPath)
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("robotId", robotId)
+            .addFormDataPart("path", path)
+            .addFormDataPart("multipartFile", file.name, file.asRequestBody(mediaType))
+            .build()
+
+        // 构建上传文件的请求
+        val request = Request.Builder()
+            .url(URL)
+            .post(requestBody)
+            .build()
+
+        // 发送上传文件的请求
+        try {
+            val response = client.newCall(request).execute()
+            LogUtil.i(response.toString())
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 }

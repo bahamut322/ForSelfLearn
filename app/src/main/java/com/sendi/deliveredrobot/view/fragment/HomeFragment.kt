@@ -8,22 +8,24 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
-import com.sendi.deliveredrobot.model.SameName
-import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
-import com.sendi.deliveredrobot.room.PointType
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -34,11 +36,8 @@ import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
-import org.json.JSONObject
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
 
 
 /**
@@ -88,10 +87,12 @@ class HomeFragment : Fragment(), IMainView {
     }
 
     override fun showTipsView() {
-        println("无操作")
+        LogUtil.i("当前在主页面${QuerySql.robotConfig().sleepTime}分钟无操作->待机页面")
         fromeSettingDialog!!.dismiss()
         if (QuerySql.robotConfig().sleep == 1) {
-            controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+            try {
+                controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+            }catch (_:Exception){}
         }
     }
 
@@ -180,7 +181,7 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(requireView())
-        LogUtil.i("待机时间：" + QuerySql.robotConfig().sleepTime)
+        LogUtil.i("当前待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -189,22 +190,6 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
-
-//        val textN =
-//            "为更好地落实党中央高质量发展的首要任务，近年来，中国电信积极践行建设网络强国和数字中国方针策略，提出并全面实施“云改数转”战略，积极打造服务型、科技型、安全型企业。肇庆电信坚决执行党中央指示以及集团政策，助力肇庆千行百业数字化转型。\n" +
-//                    "因此，我们以本展厅为平台，展示各行业在数字化转型的方向与信息化改革趋势，同时与各位来宾共同探讨未来信息化发展的方向与可为的空间，为肇庆各行业高质量发展添砖加瓦！接下来，有请各位跟随我的步伐，一步步深入了解行业信息化改革的历程、现状与未来。"
-//
-//        val textEqually: List<String> =
-//            splitString(textN, 135)
-//        Log.d("TAG", "onViewCreated: ${textEqually[0]}")
-//        binding.songTv.text = textEqually[0]
-//
-//        val segments = splitTextByPunctuation(textN)
-//        for (i in segments.indices) {
-//            println("分割内容：${segments[i]},内容长度：${segments[i].length}")
-//        }
-
-
 //
 //        binding.ready.setOnClickListener {
 //            thread {
@@ -217,11 +202,6 @@ class HomeFragment : Fragment(), IMainView {
 //                BillManager.currentBill()?.executeNextTask()
 //            }
 //        }
-//        val array1 = arrayOf("sdcard/1.jpg", "sdcard/2.jpg")
-//        val array2 = arrayOf("/33/1.jpg", "/33/3.jpg","/33/5.jpg")
-//        compareArrays(array1,array2)
-//        LogUtil.d("打印数据ing： ${
-//            com.alibaba.fastjson.JSONObject.toJSONString(compareArrays(array1,array2))}")
 
 
         if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4)) {
@@ -236,10 +216,10 @@ class HomeFragment : Fragment(), IMainView {
         }
         //改变人脸识别工具类，人脸识别数量的最大值
         if (QuerySql.QueryBasic().tempMode == 0) {
-            Log.d("TAG", "当前为单人测温")
+           LogUtil.d( "当前为单人测温")
             Utils.mNmsLimit = 1
         } else {
-            Log.d("TAG", "当前为多人测温")
+            LogUtil.d( "当前为多人测温")
             Utils.mNmsLimit = 10
         }
         if (QuerySql.QueryBasic().defaultValue != null) {
@@ -559,24 +539,6 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
     }
-//    fun splitTextByPunctuation(text: String): List<String> {
-//        val pattern = "[，。；？]".toRegex()
-//        return text.split(pattern)
-//    }
-//    fun splitString(input: String, length: Int): List<String> {
-//        val result: MutableList<String> = ArrayList()
-//        var startIndex = 0
-//        while (startIndex < input.length) {
-//            var endIndex = startIndex + length
-//            if (endIndex > input.length) {
-//                endIndex = input.length
-//            }
-//            val substring = input.substring(startIndex, endIndex)
-//            result.add(substring)
-//            startIndex = endIndex
-//        }
-//        return result
-//    }
     /**
      * @description 判断是否满足条件出发
      */

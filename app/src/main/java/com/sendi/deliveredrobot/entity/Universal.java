@@ -6,6 +6,10 @@ import android.annotation.SuppressLint;
 import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author swn
@@ -29,6 +33,8 @@ public class Universal {
     public static String RobotMode = "男声";
     //测温视频
     public static int TempVideoLayout = 480;
+    //APP更新下载目录
+    public static File AppVersion = new File("/mnt/sdcard/version");
     //默认GIF
     public static String gifDefault = "/storage/emulated/0/ResProvider/default/default_explain.gif";
     //广告默认图
@@ -121,6 +127,7 @@ public class Universal {
     public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
+    public static int ExplainLength = 0;
     public static String lastValue = null;
     public static boolean selectMapPoint = false;
     public static boolean twice = false;
@@ -135,5 +142,6 @@ public class Universal {
 
     public static int AllvideoAudio = 0;
     public static TaskQueues<String> taskQueue;
+    public static List<Integer> ExplainSpeak = new ArrayList<>();
 }
 

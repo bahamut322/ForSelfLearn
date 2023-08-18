@@ -144,7 +144,7 @@ class MqttService : Service() {
         override fun onSuccess(arg0: IMqttToken) {
             UpdateReturn().method()
             Thread { UpdateReturn().assignment() }.start()
-            LogUtil.i("MQTT:连接成功 ")
+            LogUtil.i("MQTT:通用订阅连接成功 ")
             try {
                 mqttAndroidClient?.subscribe(
                     "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
@@ -159,7 +159,7 @@ class MqttService : Service() {
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
             arg1.printStackTrace()
-            LogUtil.i("MQTT:连接失败 ")
+            LogUtil.i("MQTT:通用订阅连接失败 ")
             RobotStatus.mqttConnected = false
             doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }

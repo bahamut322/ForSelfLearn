@@ -29,6 +29,7 @@ import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
@@ -104,7 +105,7 @@ public class DebugBasicSettingFragment extends Fragment {
         //机器人语音
         binding.seekbarMusic.setOnSeekBarChangeListener(current -> {
             robotAudio = (int) binding.seekbarMusic.getCur();
-            Log.d(TAG, "设置机器人语音：" + robotAudio);
+            LogUtil.INSTANCE.d( "设置机器人语音：" + robotAudio);
             values.put("voicevolume",robotAudio);
         });
 
@@ -112,7 +113,7 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.seekbarVoice.setOnSeekBarChangeListener(current -> {
             videoAudio = (int) binding.seekbarVoice.getCur();
             new AudioMngHelper(MyApplication.context).setVoice100((int)binding.seekbarVoice.getCur());
-            Log.d(TAG, "设置音频音量：" + videoAudio);
+            LogUtil.INSTANCE.d( "设置音频音量：" + videoAudio);
             values.put("videovolume",videoAudio);
         });
 

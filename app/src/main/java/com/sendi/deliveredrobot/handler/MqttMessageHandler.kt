@@ -13,7 +13,9 @@ import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.entity.*
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
+import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
 import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.model.log.RobotLog
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -22,8 +24,10 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.withContext
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal
 import org.litepal.LitePal.deleteAll
@@ -45,6 +49,7 @@ object MqttMessageHandler {
         { MainActivity.instance.viewModelStore },
         { MainActivity.instance.defaultViewModelProviderFactory }
     )
+    private val mainScope = MainScope()
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
     private var fileNames: Array<String?>? = null//副屏内容
@@ -90,6 +95,27 @@ object MqttMessageHandler {
 //                    }
 //                }
 
+                "queryLogBag" -> {
+                    mainScope.launch {
+                        withContext(Dispatchers.Default) {
+                            val robotLogBagHelper = RobotLogBagHelper()
+                            robotLogBagHelper.queryLogBag()
+                        }
+                    }
+                }
+                "uploadLogBag" -> {
+                    mainScope.launch {
+                        withContext(Dispatchers.Default) {
+                            val robotLogBagHelper = RobotLogBagHelper()
+                            robotLogBagHelper.uploadLog(
+                                gson.fromJson(
+                                    jsonObject.get("robotBagLog"),
+                                    RobotLog::class.java
+                                )
+                            )
+                        }
+                    }
+                }
                 //讲解配置
                 "replyExplanationConfig" -> {
                     LogUtil.d("obtain: 收到讲解配置信息")
@@ -192,10 +218,11 @@ object MqttMessageHandler {
                     if (QuerySql.queryTime(routeList[0].routeName) != routeList[0].timeStamp && isExist) {
                         //删除对应文件夹
                         if (routeList[0].timeStamp <= 0) {
-                            deleteFolderFile(
-                                (Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName),
-                                true
-                            )
+                            UpdateReturn().deleteDirectory((File(Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName)))
+//                            deleteFolderFile(
+//                                (),
+//                                true
+//                            )
                         }
                         val routeDBID = QuerySql.routeDB_id(routeList[0].routeName)
                         val pointConfigVoDB_id = QuerySql.pointConfigVoDB_id(routeList[0].routeName)
@@ -260,7 +287,7 @@ object MqttMessageHandler {
 
                                 val backPic = compareArrays(sdcardFile, picfile)
                                 for (i in backPic.SameOne!!.indices) {
-                                    deleteFolderFile(backPic.SameOne!![i], true)
+                                    UpdateReturn().deleteFolderFile(backPic.SameOne!![i], true)
                                 }
                                 routeDB.backgroundPic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + route.backgroundPic.substring(
@@ -268,7 +295,7 @@ object MqttMessageHandler {
                                     ) //路线背景图
                                 if (backPic.SameAll?.isNotEmpty() == true) {
                                     for (i in backPic.SameTwo!!.indices)
-                                        deleteFolderFile(
+                                        UpdateReturn().deleteFolderFile(
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (backPic.SameTwo!![i]!!),
                                             true
                                         )
@@ -374,7 +401,7 @@ object MqttMessageHandler {
                                         val bigPic = compareArrays(sdcardFile, picfile)
 
                                         for (i in bigPic.SameOne!!.indices) {
-                                            deleteFolderFile(bigPic.SameOne!![i], true)
+                                            UpdateReturn().deleteFolderFile(bigPic.SameOne!![i], true)
                                         }
                                         //创建对应文件夹。以路线名字命名(存放大屏幕)
                                         bigScreenConfigDB.imageFile =
@@ -430,7 +457,7 @@ object MqttMessageHandler {
                                             UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
                                         val argVideoName = compareArrays(sdcardFile, picfile)
                                         for (i in argVideoName.SameOne!!.indices) {
-                                            deleteFolderFile(argVideoName.SameOne!![i], true)
+                                            UpdateReturn().deleteFolderFile(argVideoName.SameOne!![i], true)
                                         }
                                         bigScreenConfigDB.videoFile =
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
@@ -474,7 +501,7 @@ object MqttMessageHandler {
                                             val touchFileName = compareArrays(sdcardFile, picfile)
 
                                             for (i in touchFileName.SameOne!!.indices) {
-                                                deleteFolderFile(touchFileName.SameOne!![i], true)
+                                                UpdateReturn().deleteFolderFile(touchFileName.SameOne!![i], true)
                                             }
                                             touchScreenConfigDB.touch_imageFile =
                                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/"+point.name+"/"
@@ -1000,36 +1027,7 @@ object MqttMessageHandler {
         UpdateReturn().method()
     }
 
-    /**
-     * 删除目录下所有文件
-     * @param filePath 目录地址
-     * @param deleteThisPath 是否删除目录
-     */
-    fun deleteFolderFile(filePath: String?, deleteThisPath: Boolean) {
-        if (!TextUtils.isEmpty(filePath)) {
-            try {
-                val file = File(filePath)
-                if (file.isDirectory) { //目录
-                    val files = file.listFiles()
-                    for (i in files.indices) {
-                        deleteFolderFile(files[i].absolutePath, true)
-                    }
-                }
-                if (deleteThisPath) {
-                    if (!file.isDirectory) { //如果是文件，删除
-                        file.delete()
-                    } else { //目录
-                        if (file.listFiles().size == 0) { //目录下没有文件或者目录，删除
-                            file.delete()
-                        }
-                    }
-                }
-            } catch (e: java.lang.Exception) {
-                // TODO Auto-generated catch block
-                e.printStackTrace()
-            }
-        }
-    }
+
 
     fun selectImagePath(path: String?): Array<String?> {
         //传入指定文件夹的路径　　　　

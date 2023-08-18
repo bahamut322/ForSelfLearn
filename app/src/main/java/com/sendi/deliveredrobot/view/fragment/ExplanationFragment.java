@@ -164,7 +164,7 @@ public class ExplanationFragment extends Fragment {
                     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                     int fi = linearLayoutManager.findFirstVisibleItemPosition();
                     int la = linearLayoutManager.findLastVisibleItemPosition();
-                    Log.i("ccb", "onScrollStateChanged:首个item: " + fi + "  末尾item:" + la);
+                    LogUtil.INSTANCE.i("onScrollStateChanged:首个item: " + fi + "  末尾item:" + la);
                     if (isTouch) {
                         isTouch = false;
                         //获取最中间的Item View

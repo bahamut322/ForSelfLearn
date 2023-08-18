@@ -27,8 +27,10 @@ public class MainPresenter {
     };
 
     public MainPresenter(IMainView view) {
-        mMainView = view;
-        mMainHandler = new MainHandler();
+        try{
+            mMainView = view;
+            mMainHandler = new MainHandler();
+        }catch (Exception ignored){}
     }
 
     /**
@@ -57,6 +59,7 @@ public class MainPresenter {
         mMainHandler.postDelayed(tipsShowRunable, (long) QuerySql.robotConfig().getSleepTime() *1000*60);
     }
 
+    @SuppressLint("HandlerLeak")
     public class MainHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {

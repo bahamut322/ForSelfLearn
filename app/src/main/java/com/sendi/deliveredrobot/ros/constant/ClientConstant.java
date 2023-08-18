@@ -259,6 +259,9 @@ public class ClientConstant {
     // 判断是否能进出电梯
     public static final String CHECK_LIFT_VAILD = "/laser_location/check_lift_vaild";
 
+    //对接充电桩的时候设置位置
+    public static final String SET_CHARGE_POSE = "/navigation_base/set_charge_pose";
+
     // 通过lora往外发送透传信息
     public static final String LORA_SEND = "/commuication/lora_send";
     // 控制多机调度信息发送开关

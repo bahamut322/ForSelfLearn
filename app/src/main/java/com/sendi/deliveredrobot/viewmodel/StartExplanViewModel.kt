@@ -8,7 +8,6 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
@@ -18,9 +17,11 @@ import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.SecondModel
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakContinue
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
@@ -33,7 +34,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlin.math.log
 import kotlin.math.pow
 
 
@@ -131,6 +131,7 @@ class StartExplanViewModel : ViewModel() {
 //                }
             },
             onFinish = {
+                progress.postValue(0)
                 TaskNext.setToDo("1")
                 // 倒计时结束，执行操作
 //                currentBill()?.executeNextTask()
@@ -349,6 +350,33 @@ class StartExplanViewModel : ViewModel() {
             startIndex = endIndex
         }
         return result
+    }
+    fun splitTextByPunctuation(text: String): List<String> {
+        speakContinue!!.postValue(0)
+        Universal.taskNum = 0
+        Universal.ExplainLength = 0
+        Universal.ExplainSpeak = ArrayList()
+        if (Universal.ExplainSpeak != null) {
+            Universal.ExplainSpeak.clear()
+        }
+        if (Universal.taskQueue != null) {
+            Universal.taskQueue.clear()
+        }
+        Universal.ExplainLength = text.length
+        i( "总内容长度: ${text.length}")
+        val pattern = "(?<=[，；？！。,.;])".toRegex()
+        val splitText = text.split(pattern)
+        for (i in splitText.indices) {
+            //将每个子项的长度添加到一个列表中
+            Universal.ExplainSpeak.add(text.split(pattern)[i].length)
+            // 添加任务到队列中
+            Universal.taskQueue.enqueue(text.split(pattern)[i])
+            // 开始执行队列中的任务
+            Universal.taskQueue.resume()
+            LogUtil.d("文字列表长度内容: ${Universal.ExplainSpeak}")
+            i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
+        }
+        return splitText
     }
 }
 

@@ -88,36 +88,44 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onSpeechProgressChanged(String utteranceId, int progress) {
         Order.setFlage("1");
         new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
-        if (previousProgress == Universal.BaiduSpeakLength && progress == Universal.BaiduSpeakLength) {
-            LogUtil.INSTANCE.i("连续生成两次45");
-        } else {
-            if (Universal.taskNum != 0 && progress == Universal.BaiduSpeakLength) {
-                Universal.progress++;
-                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * Universal.BaiduSpeakLength);
-            } else if (Universal.progress <= Universal.taskNum - 1 && progress != Universal.BaiduSpeakLength) {
-                RobotStatus.INSTANCE.getProgress().postValue(Universal.progress * Universal.BaiduSpeakLength + progress);
+
+        //耗时计算的方法，丢到子线程去做咯，面的卡线程
+        new Thread(() -> {
+            if (utteranceId.equals("explanation")) {
+                //首先规避一下重复数
+                if (progress == previousProgress) {
+                    LogUtil.INSTANCE.i("生成了重复数");
+                } else if (Universal.ExplainSpeak.size() != 0) {
+                    //当TTS的播放进度和列表第一项相等的时候(为了数统一，不然我也不会在播放进度和第一项长度相等的时候做处理，显得没事干)
+                    if (progress == Universal.ExplainSpeak.get(0)) {
+                        //将每次的第一项累加在一起
+                        Universal.taskNum += Universal.ExplainSpeak.get(0);
+                        Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
+                        //为了简单(主要是懒，懒得维护队列)，移除第一项，将后面的子项往前移动变成第一项
+                        //在将数据赋值给观察者
+                        RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum);
+
+                        Universal.ExplainSpeak.remove(0);
+
+                    } else {
+                        //这里是统计零散的数据长度。计算方法就是：每次累加的子项+TTS当前播放长度=总播放长度
+                        if (progress != Universal.ExplainSpeak.get(0)) {
+                            Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
+                            RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum + progress);
+                        }
+                    }
+                }
+                LogUtil.INSTANCE.e( " BaiduTTS播放进度：" + progress
+                        + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
+                        + " 当前朗读完的item的总算：" + Universal.taskNum
+                        + " 播放目标进度：" + Universal.ExplainLength
+                );
+                previousProgress = progress; // 更新前一次的 progress，避重
             }
-        }
-        previousProgress = progress; // 更新前一次的 progress
-        Log.i(TAG, "播放进度1, Universal.progress：" + Universal.progress + ";Universal.taskNum:" + Universal.taskNum);
+        }).start();
+
         Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
 
-        if (utteranceId.equals("explanation")) {
-            if (progressSpeak == progress) {
-                // 重复数字的处理逻辑
-                Log.e(TAG, "重复值: " + progress);
-            } else {
-                // 不重复数字的处理逻辑
-                try {
-                    RobotStatus.INSTANCE.getSpeakNumber().setValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(1));
-                }catch (Exception ignored){
-                    Log.d(TAG, "onSpeechProgressChanged: 字符串截取抛出异常");
-                }
-            }
-            // 保存当前数字作为前一个数字
-            progressSpeak = progress;
-            Log.e(TAG, "onSpeechProgressChanged: " + progressSpeak);
-        }
     }
 
     /**
@@ -132,37 +140,22 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             Order.setFlage("0");
         }
         MediaPlayerHelper.resume();
-//        if (Universal.taskNum != 0 && Universal.progress == Universal.taskNum) {
-//            MediaPlayerHelper.resume();
-//        } else if (Universal.taskNum == 0) {
-//            MediaPlayerHelper.resume();
-//        }
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
-            Log.d(TAG, "onSpeechFinish: 百度语音Finish:"+Universal.taskQueue.getRemainingTasks());
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
-//            if (Universal.taskQueue.getRemainingTasks()!=0) {
-//                List<String> taskContent = Universal.taskQueue.getTaskContent();
-//                Log.d(TAG, "内容有: "+taskContent);
-//                StringBuilder speakContent = new StringBuilder();
-//                speakContent.append(Universal.taskQueue.getCurrentTaskContent().substring(progressSpeak));
-//                for (int i = 0; i < taskContent.size(); i++) {
-//                        speakContent.append(taskContent.get(i));
-//                }
-//                Log.d(TAG, "打断之后剩余内容: "+ speakContent);
-//                RobotStatus.INSTANCE.getSpeakNumber().postValue(speakContent.toString());
-//            }else {
-//                RobotStatus.INSTANCE.getSpeakNumber().postValue(RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(progressSpeak));
-                Log.d(TAG, "打断之后剩余内容: "+ RobotStatus.INSTANCE.getSpeakNumber().getValue());
+//            Log.d(TAG, "打断之后剩余内容: " + RobotStatus.INSTANCE.getSpeakNumber().getValue());
+            if (Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).length() != 0) {
+                RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
+            }
+        }
+//        RobotStatus.INSTANCE.getProgress().observeForever(integer -> {
+//            if (utteranceId.equals("explanation") && integer == Universal.ExplainLength) {
+//                Log.d(TAG, "Tips: 讲解内容完成");
+//                RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
 //            }
-            RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
-        }
-
-        if (utteranceId.equals("explanation") && Universal.progress == Universal.taskNum - 1) {
-            RobotStatus.INSTANCE.getSpeakContinue().postValue(3);
-        }
-
+//        });
     }
+
 
     /**
      * 当合成或者播放过程中出错时回调此接口

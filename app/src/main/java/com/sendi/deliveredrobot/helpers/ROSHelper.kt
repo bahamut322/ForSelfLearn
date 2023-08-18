@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.helpers
 
 import android.annotation.SuppressLint
+import android.util.Log
 import chassis_msgs.*
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
@@ -450,6 +451,34 @@ object ROSHelper {
         return score
     }
 
+    fun setChargePose(location: QueryPointEntity): Int {
+        val clientPara = java.util.HashMap<String, Any>()
+        // target_pose
+        val targetPose = JSONObject()
+        val position = JSONObject()
+        position[Constant.X] = location.x
+        position[Constant.Y] = location.y
+        position[Constant.Z] = location.w
+        val orientation = JSONObject()
+        val quaternion = Quaternion.fromAxisAngle(Vector3.zAxis(), location.w?:0.0)
+        orientation[Constant.X] = quaternion.x
+        orientation[Constant.Y] = quaternion.y
+        orientation[Constant.Z] = quaternion.z
+        orientation[Constant.W] = quaternion.w
+        targetPose[Constant.POSITION] = position
+        targetPose[Constant.ORIENTATION] = orientation
+        // clientPara
+        clientPara[Constant.POSE] = targetPose
+        val clientSetPose = Client(ClientConstant.SET_CHARGE_POSE, clientPara)
+        Log.d("TAG", "对接充电桩发送日志: $clientSetPose")
+        val rosResultSetPose = ClientManager.sendClientMsg(clientSetPose)
+        var score = 0
+        if (rosResultSetPose.isFlag) {
+            val response = rosResultSetPose.response as Multi_axisResponse
+            score = response.result
+        }
+        return score
+    }
 
     //获取默认充电点获取评分
     fun checkPoseClient(location: QueryPointEntity): Int {

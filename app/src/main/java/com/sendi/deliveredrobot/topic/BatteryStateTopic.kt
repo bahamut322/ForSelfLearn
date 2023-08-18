@@ -52,6 +52,7 @@ object BatteryStateTopic {
                             RobotStatus.chargeStatus.value = true
                         }
                         if (RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER) {
+                            LogUtil.i( "开机检测充电桩状态: true")
                             RobotStatus.batteryStateNumber.postValue(true)
                         }
 //                        RobotStatus.currentStatus = TYPE_CHARGING

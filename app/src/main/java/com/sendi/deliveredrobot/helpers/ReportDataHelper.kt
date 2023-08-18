@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.helpers
 
+import android.util.Log
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -68,13 +69,14 @@ object ReportDataHelper {
             }
             updateMap = tempArrayList.toFloatArray()
             taskStage = enum.code
+            time = System.currentTimeMillis()
+            Log.d("TAG", "任务上报发送的时间戳: $time")
+            endTarget = taskModel?.endTarget?:""
             gate = when(taskModel?.location?.binMark){
                 AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
                 AbstractTask.viewModelBin2.value.binMarkBin2 -> 2
                 else -> -1
             }
-            time = System.currentTimeMillis()
-            endTarget = taskModel?.endTarget?:""
         }
         robotPoseStageData.taskList.add(taskDto)
         return robotPoseStageData
@@ -187,6 +189,25 @@ object ReportDataHelper {
                 robotPoseStageData.taskList.add(taskDto)
             }
             TYPE_WELCOME -> {
+                val taskDto = TaskDto()
+                with(taskDto){
+                    taskId = taskModel.taskId
+                    target = taskModel.location?.pointName?:""
+                    robotPose = poseArray
+                    updateMap = tempUpdateMap
+                    taskStage = TaskStageEnum.ALLStartTask.code
+                    status = 1
+                    time = System.currentTimeMillis()
+                    gate = when(taskModel.location?.binMark){
+                        AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
+                        AbstractTask.viewModelBin2.value.binMarkBin2 -> 2
+                        else -> -1
+                    }
+                    endTarget = taskModel.endTarget
+                }
+                robotPoseStageData.taskList.add(taskDto)
+            }
+            TYPE_EXPLAN ->{
                 val taskDto = TaskDto()
                 with(taskDto){
                     taskId = taskModel.taskId

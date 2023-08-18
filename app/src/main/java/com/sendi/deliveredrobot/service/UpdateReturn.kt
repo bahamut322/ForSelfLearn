@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.service
 
+import android.text.TextUtils
 import android.util.Log
 import chassis_msgs.VersionGetResponse
 import com.alibaba.fastjson.JSONObject
@@ -9,17 +10,23 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
-import com.sendi.deliveredrobot.entity.*
+import com.sendi.deliveredrobot.entity.MapRevise
+import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.ReplyGateConfig
+import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
 import com.sendi.deliveredrobot.helpers.UploadMapHelper
-import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.model.Area
+import com.sendi.deliveredrobot.model.Floor
 import com.sendi.deliveredrobot.model.Map
+import com.sendi.deliveredrobot.model.Point
+import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
-import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -27,33 +34,20 @@ import com.sendi.deliveredrobot.room.entity.MapConfig
 import com.sendi.deliveredrobot.room.entity.SendFloor
 import com.sendi.deliveredrobot.room.entity.SendMapPoint
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
-import com.sendi.deliveredrobot.topic.DockStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.where
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.List
+import java.util.Date
+import java.util.Objects
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.dropLastWhile
-import kotlin.collections.forEach
-import kotlin.collections.groupBy
-import kotlin.collections.indices
-import kotlin.collections.iterator
-import kotlin.collections.map
-import kotlin.collections.mapValues
 import kotlin.collections.set
-import kotlin.collections.toTypedArray
 
 
 class UpdateReturn {
@@ -254,7 +248,7 @@ class UpdateReturn {
         if (Universal.mapName != "") {
             val mapId = debugDao.selectMapId(Universal.mapName)
             val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
-            dao.updateMapConfig(MapConfig(1, mapId,null,null))
+            dao.updateMapConfig(MapConfig(1, mapId, null, null))
 //            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
             //查询充电桩
@@ -278,7 +272,7 @@ class UpdateReturn {
             val floorId = pointId?.get(0)?.floorName?.hashCode() ?: -1
             ROSHelper.setDispatchFloorId(floorId)
             RobotStatus.originalLocation = pointId?.get(0)
-            Log.d("TAG", "mapSetting: "+pointId?.get(0))
+            LogUtil.d("mapSetting: " + pointId?.get(0))
             RobotStatus.currentLocation = RobotStatus.originalLocation
             if (pointId != null) {
                 var retryTime = 10  // 设置地图次数
@@ -291,7 +285,13 @@ class UpdateReturn {
                     )
                     retryTime--
                 } while (!switchMapResult && retryTime > 0)
-                ROSHelper.setPoseClient(pointId[0])
+
+                if (batteryState) {
+                    LogUtil.d("对接充电桩设置充电点: $batteryState")
+                    ROSHelper.setChargePose(pointId[0])
+                } else {
+                    ROSHelper.setPoseClient(pointId[0])
+                }
                 //查看切换锚点是否成功
                 var result: Boolean
                 do {
@@ -381,7 +381,57 @@ class UpdateReturn {
             BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
         }
     }
-
+    /**
+     * 删除目录下所有文件
+     * @param filePath 目录地址
+     * @param deleteThisPath 是否删除目录
+     */
+    fun deleteFolderFile(filePath: String?, deleteThisPath: Boolean) {
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                val file = File(filePath)
+                if (file.isDirectory) { //目录
+                    val files = file.listFiles()
+                    for (i in files.indices) {
+                        deleteFolderFile(files[i].absolutePath, true)
+                    }
+                }
+                if (deleteThisPath) {
+                    if (!file.isDirectory) { //如果是文件，删除
+                        file.delete()
+                    } else { //目录
+                        if (file.listFiles().size == 0) { //目录下没有文件或者目录，删除
+                            file.delete()
+                        }
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+                // TODO Auto-generated catch block
+                e.printStackTrace()
+            }
+        }
+    }
+    /**
+     * 删除目录
+     */
+    fun deleteDirectory(directory: File) {
+        if (directory.exists()) {
+            val files = directory.listFiles()
+            if (files != null) {
+                for (file in files) {
+                    if (file.isDirectory) {
+                        deleteDirectory(file)
+                    } else {
+                        file.delete()
+                    }
+                }
+            }
+            LogUtil.d("deleteDirectory: $directory 删除成功")
+            directory.delete()
+        }else{
+            LogUtil.d("deleteDirectory: $directory 不存在")
+        }
+    }
     /**
      * BaiduTTS语速
      */
@@ -405,11 +455,12 @@ class UpdateReturn {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
 
-    fun settingMap(){
+    fun settingMap(batteryState: Boolean = false) {
         mainScope.launch(Dispatchers.Default) {
-            UpdateReturn().mapSetting(true)
+            UpdateReturn().mapSetting(batteryState)
         }
     }
+
     fun taskDto(): TaskDto {
         return TaskDto().apply { status = 1 }
     }

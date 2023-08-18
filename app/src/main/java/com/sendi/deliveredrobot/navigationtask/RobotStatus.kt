@@ -72,7 +72,7 @@ object RobotStatus {
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
     var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    var speakNumber : MutableLiveData<String> = MutableLiveData()//记录智能讲解中断的之前朗读的文字个数
+    var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
     var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领
@@ -80,7 +80,7 @@ object RobotStatus {
     var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
     var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
     var targetName : MutableLiveData<String?>? = MutableLiveData()
-    var progress : MutableLiveData<Int> = MutableLiveData()//文字朗读进度
+    var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
     var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
