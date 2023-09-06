@@ -4,55 +4,51 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
+import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
-import com.sendi.deliveredrobot.service.UpdateReturn;
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 
+import java.util.Objects;
 
-public class ChangingOverDialog extends Dialog {
+/**
+ * @Author Swn
+ * @Data 2023/8/21
+ * @describe
+ */
+public class FinishTaskDialog extends Dialog {
 
     public Context context;
-    public GridView pointGV;
-    public ImageView returnImg;
-    public ConstraintLayout dialog_button;
-    public TextView askTv;
-    public Button Sure, No;
+    public Button YesExit;
+    public Button NoExit;
 
-    public ChangingOverDialog(Context context) {
+    public FinishTaskDialog(Context context) {
         super(context, R.style.Dialog);
         this.context = context;
+//        init(context);
     }
 
     @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_changing_over);
-        pointGV = findViewById(R.id.pointGV);
-        returnImg = findViewById(R.id.returnImg);
-        dialog_button = findViewById(R.id.dialog_button);
-        askTv = findViewById(R.id.askTv);
-        Sure = findViewById(R.id.Yes_Exit);
-        No = findViewById(R.id.No_Exit);
-        dialog_button.setVisibility(View.GONE);
-        Universal.speakIng =true;
+        setContentView(R.layout.dialog_finish_task);
+
+        NoExit = findViewById(R.id.cancelBtn1);
+        YesExit = findViewById(R.id.submitBtn1);
+
     }
 
-    @Override
-    public void dismiss() {
-        Universal.speakIng =false;
-        super.dismiss();
-    }
+
 
     /**
      * 调用弹窗全屏显示方法
@@ -61,19 +57,11 @@ public class ChangingOverDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        dialog_button.setVisibility(View.GONE);
-        new UpdateReturn().pause();
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
     /**
      * 弹窗弹出时全屏显示
      */

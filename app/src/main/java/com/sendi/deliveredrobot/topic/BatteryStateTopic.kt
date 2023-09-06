@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.dto.RosResult
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +53,7 @@ object BatteryStateTopic {
                             RobotStatus.chargeStatus.value = true
                         }
                         if (RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER) {
+                            UpdateReturn().method()
                             LogUtil.i( "开机检测充电桩状态: true")
                             RobotStatus.batteryStateNumber.postValue(true)
                         }

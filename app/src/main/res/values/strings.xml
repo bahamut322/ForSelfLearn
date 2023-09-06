@@ -430,6 +430,7 @@
     <string name="model">型号</string>
     <string name="model_number">迪小萌X8</string>
     <string name="System_version">系统版本</string>
+    <string name="Robot_version">机器人版本</string>
     <string name="version_number">V 1.02</string>
     <string name="System_Update">系统更新</string>
     <string name="Enterprise_information">企业信息</string>
@@ -451,6 +452,7 @@
     <string name="no_update">暂未新版本发布，当前已是最新版本</string>
     <string name="Network_anomaly">网络异常</string>
     <string name="Service_Password">输入服务密码</string>
+    <string name="Finish_task_tips">您确定要结束任务吗？</string>
     <string name="Network_anomaly_tips">当前网络异常，请确保网路畅通情况下 进行版本更新，谢谢！</string>
     <string name="Welcome_used">欢迎使用多功能讲解机器人</string>
     <string name="time_hour">17:58</string>

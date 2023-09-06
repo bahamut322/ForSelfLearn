@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.RobotMileageHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -25,6 +26,7 @@ class FinishGuideTask(var status:Int = 1, taskModel: TaskModel, needReportData: 
     }
 
     override suspend fun execute() {
+        Universal.speakInt = 0
         BillManager.currentBill()?.executeNextTask()
     }
 }

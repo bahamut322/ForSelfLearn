@@ -19,6 +19,7 @@ class MyCountDownTimer(
 
     private var isPaused = false
     private var isFinished = false
+    private var isStarted = false
 
     override fun onTick(millisUntilFinished: Long) {
         if (!isPaused) {
@@ -33,18 +34,27 @@ class MyCountDownTimer(
         }
     }
 
-    fun pause() {
-        cancel()
-        isPaused = true
-    }
-
-    fun resume() {
-        isPaused = false
+    fun startCountDown() {
+        isStarted = true
         start()
     }
 
+    fun pause() {
+        if (isStarted) {
+            cancel()
+            isPaused = true
+        }
+    }
+
+    fun resume() {
+        if (isStarted) {
+            isPaused = false
+            start()
+        }
+    }
+
     fun manuallyFinish() {
-        if (!isFinished) {
+        if (isStarted && !isFinished) {
             cancel()
             onFinish.invoke()
         }

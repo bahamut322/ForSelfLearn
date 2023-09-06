@@ -7,15 +7,17 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.MyApplication;
+import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.warnyul.android.widget.FastVideoView;
 
 import java.io.File;
@@ -46,6 +48,7 @@ public class AdvanceVideoView extends RelativeLayout {
         videoRela = new RelativeLayout(getContext());
         addView(videoRela, new LayoutParams(-1, -1));
         imageView = new ImageView(getContext());
+        videoRela.setBackgroundResource(R.color.white);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         addView(imageView, new LayoutParams(-1, -1));
     }
@@ -60,6 +63,13 @@ public class AdvanceVideoView extends RelativeLayout {
             videoRela.removeView(videoView);
             videoView = null;
         }
+        // 添加加载动画
+        ProgressBar progressBar = new ProgressBar(getContext());
+        progressBar.setIndeterminate(true);
+        LayoutParams progressParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        progressParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        videoRela.addView(progressBar, progressParams);
+
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
         if (Universal.videolayout == 1) {
@@ -91,8 +101,9 @@ public class AdvanceVideoView extends RelativeLayout {
             } else {
                 mediaPlayer.setVolume(0, 0);
             }
-            new Handler().postDelayed(() -> imageView.setVisibility(GONE), 400);//防止videoview播放视频前有个闪烁的黑屏
+            new Handler().postDelayed(() -> imageView.setVisibility(GONE), 400);//防止video view播放视频前有个闪烁的黑屏
             Log.d("TAG", "setVideo: " + getFileCount(Universal.advertisement));
+            progressBar.setVisibility(View.GONE);
             if (getFileCount(Universal.advertisement) <= 1) {
                 mediaPlayer.setLooping(true);
             }

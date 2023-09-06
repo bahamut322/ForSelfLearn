@@ -104,9 +104,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
                         //为了简单(主要是懒，懒得维护队列)，移除第一项，将后面的子项往前移动变成第一项
                         //在将数据赋值给观察者
                         RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum);
-
                         Universal.ExplainSpeak.remove(0);
-
                     } else {
                         //这里是统计零散的数据长度。计算方法就是：每次累加的子项+TTS当前播放长度=总播放长度
                         if (progress != Universal.ExplainSpeak.get(0)) {
@@ -115,7 +113,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
                         }
                     }
                 }
-                LogUtil.INSTANCE.e( " BaiduTTS播放进度：" + progress
+                LogUtil.INSTANCE.e(" BaiduTTS播放进度：" + progress
                         + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
                         + " 当前朗读完的item的总算：" + Universal.taskNum
                         + " 播放目标进度：" + Universal.ExplainLength
@@ -136,14 +134,15 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        if (TaskQueues.isCompleted()) {
-            Order.setFlage("0");
-        }
+//        if (TaskQueues.isCompleted()) {
+//            Order.setFlage("0");
+//        }
         MediaPlayerHelper.resume();
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
+            //恢复视频声音
+            Order.setFlage("0");
             RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
-//            Log.d(TAG, "打断之后剩余内容: " + RobotStatus.INSTANCE.getSpeakNumber().getValue());
             if (Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).length() != 0) {
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
             }

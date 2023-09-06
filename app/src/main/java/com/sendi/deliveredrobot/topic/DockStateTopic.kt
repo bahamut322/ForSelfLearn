@@ -42,6 +42,7 @@ object DockStateTopic {
                         UpdateReturn().mapSetting(true)
                         RobotStatus.batteryStateNumber.postValue(true)
                         DialogHelper.briefingDialog.dismiss()
+                        UpdateReturn().method()
                         "充电中"
                     }
 

@@ -354,7 +354,6 @@ class StartExplanViewModel : ViewModel() {
     fun splitTextByPunctuation(text: String): List<String> {
         speakContinue!!.postValue(0)
         Universal.taskNum = 0
-        Universal.ExplainLength = 0
         Universal.ExplainSpeak = ArrayList()
         if (Universal.ExplainSpeak != null) {
             Universal.ExplainSpeak.clear()

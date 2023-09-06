@@ -142,7 +142,7 @@ class MqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
-            UpdateReturn().method()
+//            UpdateReturn().method()
             Thread { UpdateReturn().assignment() }.start()
             LogUtil.i("MQTT:通用订阅连接成功 ")
             try {

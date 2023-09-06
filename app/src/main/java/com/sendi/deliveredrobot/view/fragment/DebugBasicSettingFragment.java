@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.view.fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,22 +20,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
-import com.sendi.deliveredrobot.entity.BasicSetting;
 import com.sendi.deliveredrobot.entity.QuerySql;
-import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
-import com.sendi.deliveredrobot.view.widget.Order;
-import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
-
-import org.litepal.LitePal;
-
-import java.lang.reflect.Array;
 
 public class DebugBasicSettingFragment extends Fragment {
     String TAG = "TAGDebugBasicSettingFragment";
@@ -88,13 +77,8 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.QA.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
-        binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> {
-            values.put("expression",BooleanToInt(b));
-
-        });
-        binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> {
-            values.put("intelligent",BooleanToInt(b));
-        });
+        binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression",BooleanToInt(b)));
+        binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent",BooleanToInt(b)));
         binding.cbEtiquette.setOnCheckedChangeListener((compoundButton, b) -> {
             values.put("etiquette",BooleanToInt(b));
             if (viewModel.isNumCharOne(4)){

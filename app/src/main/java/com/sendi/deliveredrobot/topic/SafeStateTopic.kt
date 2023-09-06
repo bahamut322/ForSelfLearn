@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.TYPE_CHARGING
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_IDLE
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
@@ -16,6 +17,7 @@ import com.sendi.deliveredrobot.navigationtask.TaskQueue
 import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -41,6 +43,7 @@ object SafeStateTopic {
                 mutex.withLock {
                     if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
                         LogUtil.d("急停按下")
+                        TaskNext.setToDo("3")
                         BaiduTTSHelper.getInstance().pause()
                         IdleGateDataHelper.reportIdleGateCount(0)
                         withContext(Dispatchers.Main) {
@@ -72,7 +75,7 @@ object SafeStateTopic {
                     } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
-                        BaiduTTSHelper.getInstance().resume()
+
                         IdleGateDataHelper.reportIdleGateCount()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED
@@ -98,6 +101,13 @@ object SafeStateTopic {
                                     }
                                 }
                                 RobotCommand.MANAGE_STATUS_PAUSE -> {
+                                    if (Universal.explainUnSpeak){
+                                        TaskNext.setToDo("5")
+                                        if (!Universal.speakIng) {
+                                            BaiduTTSHelper.getInstance().resume()
+                                        }
+                                        return@launch
+                                    }
                                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
                                 }
                                 RobotCommand.MANAGE_STATUS_CONTINUE -> {}

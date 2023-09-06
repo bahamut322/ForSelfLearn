@@ -6,11 +6,12 @@ import chassis_msgs.*
 import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.model.LiftControlLoraModel
 import com.sendi.deliveredrobot.model.LineInfoModel
 import com.sendi.deliveredrobot.model.PointCompat
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecuteFloat
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.ros.ClientManager
@@ -38,7 +39,7 @@ import rosapi.HasParamResponse
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.math.log
 
 object ROSHelper {
     private val mutex = Mutex()
@@ -63,6 +64,12 @@ object ROSHelper {
                 response = rosResult.response as ManageResponse
                 val msg = when (response?.result) {
                     1 -> {
+                        if(status == 2){
+                            BaiduTTSHelper.getInstance().pause()
+                        }
+                        else if (status == 3 && !Universal.speakIng){
+                            BaiduTTSHelper.getInstance().resume()
+                        }
                         "控制导航状态成功"
                     }
                     -2 -> {
@@ -1115,16 +1122,34 @@ object ROSHelper {
      * @description 设置底盘时间
      */
     fun updateTime(): Boolean{
+
         val date = Date()
-        val para = java.util.HashMap<String, Any>()
+        val para = HashMap<String, Any>()
         para["date"] = sdf1.format(date)
         para["time"] = sdf2.format(date)
+
+
         val timeUpdateService =
             Client(ClientConstant.TIME_UPDATE, para)
         val rosResult = ClientManager.sendClientMsg(timeUpdateService)
         return rosResult.isFlag
     }
-
+    /**
+     * @description 设置底盘时间（时间戳）
+     */
+    fun updateCurrent(time : Long ): Boolean{
+        // 创建一个Date对象，将时间戳作为参数传递给构造函数
+        val  dateTime  =  Date(time)
+        val para = HashMap<String, Any>()
+        para["date"] = sdf1.format(dateTime)
+        para["time"] = sdf2.format(dateTime)
+        Log.d("TAG", "设置日期: ${sdf1.format(dateTime)}")
+        Log.d("TAG", "设置时间: ${sdf2.format(dateTime)}")
+        val timeUpdateService =
+            Client(ClientConstant.TIME_UPDATE, para)
+        val rosResult = ClientManager.sendClientMsg(timeUpdateService)
+        return rosResult.isFlag
+    }
     /**
      * @describe 预加载地图
      */

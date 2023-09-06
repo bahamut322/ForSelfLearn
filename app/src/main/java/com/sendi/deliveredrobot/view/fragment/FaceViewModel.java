@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class FaceViewModel extends ViewModel {
 
@@ -39,25 +40,25 @@ public class FaceViewModel extends ViewModel {
     float[][] features;
     String[] stringArray;
     float[] floatArray;
-
+    int speakNum = 0;
     /**
      * 人脸识别方法
      * @param surfaceView 预览的surfaceView控件
      */
     public void suerfaceInit( SurfaceView surfaceView ) {
-        //查询数据
-        List<FaceTips> faceTipsList = LitePal.findAll(FaceTips.class);
-        //二维数组初始化
-        features = new float[faceTipsList.size()][512];
-        //将String转为Float[],并且放入二维数组中
-        for (int i = 0; i < faceTipsList.size(); i++) {
-            stringArray = faceTipsList.get(i).getFaceCharacteristic().replaceAll("\\[|\\]", "").split(", ");
-            floatArray = new float[stringArray.length];
-            for (int i1 = 0; i1 < stringArray.length; i1++) {
-                floatArray[i1] = Float.parseFloat(stringArray[i1]);
-            }
-            features[i] = floatArray;
-        }
+//        //查询录入人脸的数据
+//        List<FaceTips> faceTipsList = LitePal.findAll(FaceTips.class);
+//        //二维数组初始化
+//        features = new float[faceTipsList.size()][512];
+//        //将String转为Float[],并且放入二维数组中
+//        for (int i = 0; i < faceTipsList.size(); i++) {
+//            stringArray = faceTipsList.get(i).getFaceCharacteristic().replaceAll("\\[|\\]", "").split(", ");
+//            floatArray = new float[stringArray.length];
+//            for (int i1 = 0; i1 < stringArray.length; i1++) {
+//                floatArray[i1] = Float.parseFloat(stringArray[i1]);
+//            }
+//            features[i] = floatArray;
+//        }
 
         CameraManager manager = (CameraManager) MyApplication.Companion.getInstance().getSystemService(Context.CAMERA_SERVICE);
         String[] cameraIds = new String[0];
@@ -135,39 +136,56 @@ public class FaceViewModel extends ViewModel {
 //                    System.out.println("Hello MNN!");
 //                    System.out.println("特征1：" + infoArrayList.size());
                     if (infoArrayList.size() != 0) {
-                        for (Info info : infoArrayList) {
-                            if (BuildConfig.IS_SPEAK) {
-                                BaiduTTSHelper.getInstance().speak("你好:欢迎来到申迪");
-                            }
-//                            new Handler().postDelayed(() -> {
-//                            },5000); //5秒
-                            //打印日志
-                            System.out.println("相似度：" + Arrays.toString(info.getConfList()) + "");
-                            // 初始化最大值和位置
-                            float max_value = Float.NEGATIVE_INFINITY;
-                            int max_index = -1;
-                            // 遍历数组并找到最大值
-                            for (int i = 0; i < info.getConfList().length; i++) {
-                                float val = info.getConfList()[i];
-                                if (val > max_value) {
-                                    max_value = val;
-                                    max_index = i;
-                                }
-                            }
-                            // 输出最大值和位置
-                            System.out.println("Max value is: " + max_value);
-                            System.out.println("Max value is in position " + (max_index + 1));
-                            //查询相似度最大的那个的人脸特征
-                            List<FaceTips> tipsList = LitePal.where("faceCharacteristic = ?", faceTipsList.get((max_index)).getFaceCharacteristic()).find(FaceTips.class);
-                            if (max_value > 0.88f && QuerySql.QueryBasic().getIdentifyVip()) {
-                                Toast.makeText(MyApplication.Companion.getInstance(), "你好！" + tipsList.get(0).getName(), Toast.LENGTH_SHORT).show();
-                                if (BuildConfig.IS_SPEAK) {
-                                    BaiduTTSHelper.getInstance().speak("你好:"+tipsList.get(0).getName());
-                                }
-                                Log.e(TAG, "onCreate: " + tipsList.get(0).getName());
-                            }
-
+                        if (BuildConfig.IS_SPEAK && speakNum == 0 ) {
+                            speakNum ++;
+                            BaiduTTSHelper.getInstance().speak("你好:欢迎来到申迪");
                         }
+                        try {
+                            Thread.sleep(5000);  // 延迟五秒钟
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        speakNum = 0;  // 将peakNum设置为0
+                        //TODO 人脸识别&检测。暂时用不到，注释
+//                        for (Info info : infoArrayList) {
+//                            if (BuildConfig.IS_SPEAK && speakNum == 0 ) {
+//                                speakNum ++;
+//                                BaiduTTSHelper.getInstance().speak("你好:欢迎来到申迪");
+//                            }
+//
+//                            try {
+//                                Thread.sleep(5000);  // 延迟五秒钟
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                            speakNum = 0;  // 将peakNum设置为0
+//                            //打印日志 TODO 人脸相似度
+//                            System.out.println("相似度：" + Arrays.toString(info.getConfList()) + "");
+//                            // 初始化最大值和位置
+//                            float max_value = Float.NEGATIVE_INFINITY;
+//                            int max_index = -1;
+//                            // 遍历数组并找到最大值
+//                            for (int i = 0; i < info.getConfList().length; i++) {
+//                                float val = info.getConfList()[i];
+//                                if (val > max_value) {
+//                                    max_value = val;
+//                                    max_index = i;
+//                                }
+//                            }
+//                            // 输出最大值和位置
+//                            System.out.println("Max value is: " + max_value);
+//                            System.out.println("Max value is in position " + (max_index + 1));
+//                            //查询相似度最大的那个的人脸特征
+//                            List<FaceTips> tipsList = LitePal.where("faceCharacteristic = ?", faceTipsList.get((max_index)).getFaceCharacteristic()).find(FaceTips.class);
+//                            if (max_value > 0.88f && QuerySql.QueryBasic().getIdentifyVip()) {
+//                                Toast.makeText(MyApplication.Companion.getInstance(), "你好！" + tipsList.get(0).getName(), Toast.LENGTH_SHORT).show();
+//                                if (BuildConfig.IS_SPEAK) {
+//                                    BaiduTTSHelper.getInstance().speak("你好:"+tipsList.get(0).getName());
+//                                }
+//                                Log.e(TAG, "onCreate: " + tipsList.get(0).getName());
+//                            }
+//
+//                        }
                     }else if (infoArrayList.size() == 0) {
                         if (RobotStatus.INSTANCE.getIdentifyFace().getValue()==1) {
                             BaiduTTSHelper.getInstance().stop();
@@ -177,7 +195,7 @@ public class FaceViewModel extends ViewModel {
                     stream.close();
                 }
             } catch (Exception ex) {
-                Log.e(TAG, "Error:" + ex.getMessage());
+                Log.e(TAG, "人脸识别Error:" + ex.getMessage());
             }
         });
         infoArrayList = null;
@@ -185,6 +203,7 @@ public class FaceViewModel extends ViewModel {
 
     public void onDestroy() {
         if(null != c) {
+            BaiduTTSHelper.getInstance().stop();
             c.setPreviewCallback(null);
             c.stopPreview();
             c.release();

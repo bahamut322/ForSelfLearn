@@ -4,20 +4,20 @@
 
     <item
         android:drawable="@drawable/explan_going1"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/explan_going2"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/explan_going3"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/explan_going4"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/explan_going5"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/explan_going6"
-        android:duration="300" />
+        android:duration="100" />
 </animation-list>

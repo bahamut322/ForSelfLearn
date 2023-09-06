@@ -93,7 +93,7 @@ class SelfCheckFragment : Fragment() {
                         it,
                         object : OnCheckChangeListener {
                             override fun onCheckProgress(progress: Int) {
-                                LogUtil.i("progress:" + progress)
+                                LogUtil.i("progress: $progress")
                                 MainScope().launch(Dispatchers.Main) {
                                     setAnimation(
                                         binding.selfCheckPb,
@@ -109,7 +109,6 @@ class SelfCheckFragment : Fragment() {
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
-                LogUtil.d("wwadwa:"+resCheck)
                 if (resCheck != 0x1FF) {
                     LogUtil.d("打印收到数据——— $resCheck")
                     withContext(Dispatchers.Main) {
@@ -152,7 +151,7 @@ class SelfCheckFragment : Fragment() {
                                     (if ("" == errorCode) "" else "$errorCode,") + "红外(导航)异常"
                             }
                         } else {
-                            errorCode = resCheck.toHexString();
+                            errorCode = resCheck.toHexString()
                         }
                         DialogHelper.selfCheckDialog(
                             "启动异常",
@@ -347,7 +346,7 @@ class SelfCheckFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller = Navigation.findNavController(view)
+        controller = Navigation.findNavController(requireView())
         RobotStatus.ready.postValue(0)
         settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
         //帧动画

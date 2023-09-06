@@ -60,13 +60,13 @@
         app:layout_constraintTop_toBottomOf="@+id/verificationCodeView" />
 
     <Button
-        android:id="@+id/submitBtn"
+        android:id="@+id/cancelBtn"
         android:layout_width="@dimen/dp_204"
         android:layout_height="@dimen/dp_72"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/dialog_btn_true_bg"
+        android:background="@drawable/dialog_btn_false_bg"
         android:padding="@dimen/dp_10"
-        android:text="@string/sure"
+        android:text="@string/cancel1"
         android:layout_marginTop="@dimen/dp_85"
         android:layout_marginStart="@dimen/dp_100"
         android:textColor="@color/white"
@@ -75,11 +75,11 @@
         app:layout_constraintTop_toBottomOf="@+id/verificationCodeView" />
 
     <Button
-        android:id="@+id/cancelBtn"
+        android:id="@+id/submitBtn"
         android:layout_width="@dimen/dp_204"
         android:layout_height="@dimen/dp_72"
-        android:background="@drawable/dialog_btn_false_bg"
-        android:text="@string/cancel1"
+        android:background="@drawable/dialog_btn_true_bg"
+        android:text="@string/sure"
         android:layout_marginTop="@dimen/dp_85"
         android:layout_marginEnd="@dimen/dp_100"
         android:textColor="@color/white"

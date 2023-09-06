@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.media.*
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
@@ -13,6 +14,8 @@ import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.camera.IRUVC
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.model.ResetTimeModel
+import com.sendi.deliveredrobot.model.ResetVerificationCodeAckModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.ClientManager
 import com.sendi.deliveredrobot.ros.DispatchService
@@ -48,6 +51,7 @@ object CheckSelfHelper {
 
     /** 镭射检测 */
     val laserCheckComplete = MutableLiveData(false)
+
     /**红外摄像头(测温)*/
     @SuppressLint("StaticFieldLeak")
     var p2camera: IRUVC? = null
@@ -69,7 +73,11 @@ object CheckSelfHelper {
     }
 
 
-    suspend fun checkHardware(time: Int, owner: LifecycleOwner, mOnCheckChangeListener:OnCheckChangeListener):Int {
+    suspend fun checkHardware(
+        time: Int,
+        owner: LifecycleOwner,
+        mOnCheckChangeListener: OnCheckChangeListener
+    ): Int {
         checkSelfComplete = false
         countdownComplete = false
         // 倒计时观察
@@ -97,20 +105,18 @@ object CheckSelfHelper {
 
         LogUtil.i("初始化Ros")
         DispatchService.initRosBridge("com.sendi.deliveredrobot.ros", MyApplication.instance)
-        if(!ROSHelper.hasParam("/navigation_base/vaild")){
+        if (!ROSHelper.hasParam("/navigation_base/vaild")) {
             delay(10000L)
-        }else{
+        } else {
             var result: Boolean
             do {
                 result = ROSHelper.getParam("/navigation_base/vaild") == "1"
                 delay(100L)
-            }while (!result)
+            } while (!result)
         }
         //初始化机器人序列号
         RobotStatus.SERIAL_NUMBER = ROSHelper.getSerialNumber()
         LogUtil.i("SERIAL_NUMBER:${RobotStatus.SERIAL_NUMBER}")
-        //设置底盘时间
-        ROSHelper.updateTime()
         // ================================初始化云平台MQTT-SERVICE==============================
         CloudMqttService.startService(MainActivity.instance)
         DeliverMqttService.startService(MainActivity.instance)
@@ -119,17 +125,36 @@ object CheckSelfHelper {
 //        if(BuildConfig.IS_REPORT){
 //            ReportRobotStateService.startService(MainActivity.instance)
 //        }
-        withContext(Dispatchers.Main){
+        //设置底盘时间
+        withContext(Dispatchers.Main) {
+            Log.d("TAG", "checkHardware: 获取时间戳")
+            RobotStatus.sysTimeStamp.observe(owner) {
+                if (it?.toInt() == 1) {
+                    DeliverMqttService.publish(ResetTimeModel().toString())
+                }
+                if (it > 1) {
+                    var updated = false
+                    while (!updated) {
+                        updated = ROSHelper.updateCurrent(it)
+                        // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
+                    }
+                    // 在updated为true时执行下面的代码
+                    LogUtil.i("checkHardware: 底盘时间设置成功：$it")
+                }
+            }
+        }
+
+        withContext(Dispatchers.Main) {
             seconds.observe(owner) {
                 if (it < 0) {
                     countdownComplete = true
                 }
                 val state = ROSHelper.checkStopButton()
-                if(state == RobotCommand.STOP_BUTTON_PRESSED) {
+                if (state == RobotCommand.STOP_BUTTON_PRESSED) {
                     RobotStatus.currentStatus = TYPE_EXCEPTION
                     return@observe
-                }else{
-                    if(RobotStatus.chargeStatus.value != true){
+                } else {
+                    if (RobotStatus.chargeStatus.value != true) {
                         RobotStatus.currentStatus = TYPE_IDLE
                     }
                 }
@@ -142,7 +167,7 @@ object CheckSelfHelper {
             /**
              * 代码初始化完成之后，会将所有topic添加到SubManager中
              */
-            if(!initRosTopic){
+            if (!initRosTopic) {
                 LogUtil.i("订阅topic")
 //                delay(10000L)
                 initRosTopic = DispatchService.subInitTopic(preTopicList)
@@ -154,71 +179,73 @@ object CheckSelfHelper {
                     //自检
                     RobotStatus.stopButtonPressed.value = state
                 }
-                if(RobotStatus.stopButtonPressed.value == 1){
+                if (RobotStatus.stopButtonPressed.value == 1) {
                     //急停已被按下
-                    if (!DialogHelper.stopDialog.isShowing){
+                    if (!DialogHelper.stopDialog.isShowing) {
                         DialogHelper.stopDialog.show()
                     }
                     continue
                 }
             }
 
-            if(laserCheckComplete.value!! && powerCheckComplete.value!! &&
-                RobotStatus.stopButtonPressed.value == 0){
-                if (getFileContent((Universal.SelfCheck))[1] != '1'){
-                    if (temp()){
+            if (laserCheckComplete.value!! && powerCheckComplete.value!! &&
+                RobotStatus.stopButtonPressed.value == 0
+            ) {
+                if (getFileContent((Universal.SelfCheck))[1] != '1') {
+                    if (temp()) {
                         checkSelfComplete = true
                     }
-                }else{
+                } else {
                     checkSelfComplete = true
                 }
             }
             LogUtil.i("=========LASER_SCAN=========${laserCheckComplete.value}")
-            LogUtil.d("读取自检文件内容（二进制）："+getFileContent((Universal.SelfCheck)))
-            LogUtil.d("转化自检文件内容（十进制）："+ getFileContent((Universal.SelfCheck)).toInt(2))
-            if(laserCheckComplete.value!! && tempFlag and 0x01 == 0){
+            LogUtil.d("读取自检文件内容（二进制）：" + getFileContent((Universal.SelfCheck)))
+            LogUtil.d("自检内容依次为：1、红外(机器人导航)；2、红外(测温)；3、扬声器；4、麦克风；5、摄像头；6、副屏；7、急停按钮；8、电量；9、镭射")
+            LogUtil.d("转化自检文件内容（十进制）：" + getFileContent((Universal.SelfCheck)).toInt(2))
+            if (laserCheckComplete.value!! && tempFlag and 0x01 == 0) {
                 tempFlag = tempFlag or 0x01
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("镭射检测通过")
             }
-            if(powerCheckComplete.value!! && tempFlag and 0x02 == 0){
+            if (powerCheckComplete.value!! && tempFlag and 0x02 == 0) {
                 tempFlag = tempFlag or 0x02
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("电量检测通过")
             }
-            if(RobotStatus.stopButtonPressed.value == 0 && tempFlag and 0x04 == 0){
+            if (RobotStatus.stopButtonPressed.value == 0 && tempFlag and 0x04 == 0) {
                 tempFlag = tempFlag or 0x04
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("急停按钮检测通过")
             }
-            if(RobotStatus.mPresentation.value == 1 && tempFlag and 0x08 == 0){
+            if (RobotStatus.mPresentation.value == 1 && tempFlag and 0x08 == 0) {
                 tempFlag = tempFlag or 0x08
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("副屏检测通过")
             }
-            if (checkCameraHardware(MyApplication.context) && tempFlag and 0x10 == 0){
+            if (checkCameraHardware(MyApplication.context) && tempFlag and 0x10 == 0) {
                 tempFlag = tempFlag or 0x10
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("摄像头检测通过")
             }
-            if (isMicrophoneAvailable() && tempFlag and 0x20 == 0){
+            if (isMicrophoneAvailable() && tempFlag and 0x20 == 0) {
                 tempFlag = tempFlag or 0x20
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("麦克风检测通过")
             }
-            if (isSpeakerAvailable() && tempFlag and 0x40 == 0){
+            if (isSpeakerAvailable() && tempFlag and 0x40 == 0) {
                 tempFlag = tempFlag or 0x40
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("扬声器检测通过")
             }
-            if (temp() && tempFlag and 0x80 == 0){
+            if (temp() && tempFlag and 0x80 == 0) {
                 tempFlag = tempFlag or 0x80
                 progress++
                 //关闭红外
@@ -230,7 +257,7 @@ object CheckSelfHelper {
                 }
                 syncimage.valid = false
             }
-            if (checkInfrared() && tempFlag and 0x100 == 0){
+            if (checkInfrared() && tempFlag and 0x100 == 0) {
                 tempFlag = tempFlag or 0x100
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
@@ -257,8 +284,8 @@ object CheckSelfHelper {
      * @describe 红外自检
      */
     private fun checkInfrared(): Boolean {
-        val response:InfraredManageResponse
-        val result:Int
+        val response: InfraredManageResponse
+        val result: Int
         // ------------------------------------------------------------------------
         // 1.检查激光雷达数据 -> RobotStatus.scanAvaliable.get()
         // 2.检查红外摄像头 -> InfraredManageClient
@@ -269,12 +296,12 @@ object CheckSelfHelper {
         val client = Client(ClientConstant.INFRARED_MANAGE, clientPara)
         // 2.调用ClientManager方法，接收返回值
         val rosResult = ClientManager.sendClientMsg(client)
-        if(rosResult.response == null) return false
+        if (rosResult.response == null) return false
         try {
             response = rosResult.response as InfraredManageResponse
             result = response.result
 
-        }catch (e:java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             return false
         }
         return result == 1
@@ -286,21 +313,22 @@ object CheckSelfHelper {
      */
     private fun checkDoor() {
         // 检测仓门是否关闭
-        var state =  ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_ONE)
+        var state = ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_ONE)
         RobotStatus.doorState.add(state)
-        if(state != 2){
+        if (state != 2) {
             LogUtil.i("仓门1未关闭,开机执行关闭")
             //仓门未关闭
             ROSHelper.controlBin(cmd = RobotCommand.CMD_CLOSE, door = DoorState.DOOR_ONE)
         }
-        state =  ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_TWO)
+        state = ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_TWO)
         RobotStatus.doorState.add(state)
-        if(state != 2){
+        if (state != 2) {
             LogUtil.i("仓门2未关闭,开机执行关闭")
             //仓门未关闭,执行关闭仓门
             ROSHelper.controlBin(cmd = RobotCommand.CMD_CLOSE, door = DoorState.DOOR_TWO)
         }
     }
+
     /**
      * 检测摄像头
      */
@@ -323,14 +351,21 @@ object CheckSelfHelper {
         }
         return false
     }
+
     fun temp(): Boolean {
         if (p2camera == null) {
-            p2camera = IRUVC(Universal.cameraHeight, Universal.cameraWidth, MyApplication.context, syncimage)
+            p2camera = IRUVC(
+                Universal.cameraHeight,
+                Universal.cameraWidth,
+                MyApplication.context,
+                syncimage
+            )
             p2camera?.registerUSB()
         }
         return !(p2camera!!.uvcCamera == null || !p2camera!!.uvcCamera.openStatus)
 
     }
+
     /**
      * 麦克风检测
      */
@@ -358,6 +393,7 @@ object CheckSelfHelper {
             audioRecord?.release()
         }
     }
+
     /**
      * 扬声器检测
      */

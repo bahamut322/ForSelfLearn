@@ -162,12 +162,14 @@ class UpdateReturn {
 
     fun resume() {
         MainScope().launch {
+            Universal.explainUnSpeak = false
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
         }
     }
 
     fun pause() {
         MainScope().launch {
+            Universal.explainUnSpeak = true
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
         }
     }
@@ -272,7 +274,7 @@ class UpdateReturn {
             val floorId = pointId?.get(0)?.floorName?.hashCode() ?: -1
             ROSHelper.setDispatchFloorId(floorId)
             RobotStatus.originalLocation = pointId?.get(0)
-            LogUtil.d("mapSetting: " + pointId?.get(0))
+            LogUtil.d("地图设置: " + JSONObject.toJSONString(pointId?.get(0)))
             RobotStatus.currentLocation = RobotStatus.originalLocation
             if (pointId != null) {
                 var retryTime = 10  // 设置地图次数

@@ -72,9 +72,11 @@ object DeliveMqttMessageHandler {
                             0 -> {
                                 RobotStatus.liftState = false
                             }
+
                             1 -> {
                                 RobotStatus.liftState = true
                             }
+
                             else -> {
 
                             }
@@ -83,6 +85,7 @@ object DeliveMqttMessageHandler {
 
                     }
                 }
+
                 "sendVersionInfo" -> {
                     //版本更新信息
                     var flag = false
@@ -103,6 +106,20 @@ object DeliveMqttMessageHandler {
                                     path = path,
                                     version = version
                                 )
+                            }
+                        }
+                    }
+                }
+
+                "replyTimeStamp" -> {
+                    //获取时间戳
+                    var time: Long = 0
+                    try {
+                        time = jsonObject.get("sysTimeStamp").asLong
+                    } finally {
+                        mainScope.launch {
+                            withContext(Dispatchers.Main) {
+                                RobotStatus.sysTimeStamp.value = time
                             }
                         }
                     }
@@ -184,6 +201,7 @@ object DeliveMqttMessageHandler {
                     LogUtil.i("收到远程任务..")
                     RemoteOrderHelper.receiveRemoteOrder(jsonObject)
                 }
+
                 "resetVerificationCode" -> {
                     // 重置密码
                     ToastUtil.show("远程重置密码")
@@ -194,6 +212,7 @@ object DeliveMqttMessageHandler {
                     }
                     DeliverMqttService.publish(ResetVerificationCodeAckModel().toString())
                 }
+
                 "replyFloorList" -> {
                     val replyFloorListModel =
                         gson.fromJson(message, ReplyFloorListModel::class.java)
@@ -204,12 +223,14 @@ object DeliveMqttMessageHandler {
                     ElevatorObject.floorNameArray = floorNameSet.toTypedArray()
                     ElevatorObject.elevatorNameArray = replyFloorListModel.elevatorList
                 }
+
                 "replyElevatorList" -> {
                     val replyElevatorListModel =
                         gson.fromJson(message, ReplyElevatorListModel::class.java)
                     handleReplyElevatorListModel(replyElevatorListModel)
                     ElevatorObject.originElevatorModel = replyElevatorListModel
                 }
+
                 "replyElevatorArrive" -> {
                     try {
                         val currentFloorName = jsonObject.get("currentFloorName").asString
@@ -219,6 +240,7 @@ object DeliveMqttMessageHandler {
 
                     }
                 }
+
                 else -> {}
             }
         }

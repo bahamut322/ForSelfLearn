@@ -10,6 +10,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.LogUtil.d
 import com.sendi.deliveredrobot.view.fragment.FaceModule
 import com.sendi.deliveredrobot.view.fragment.Utils

@@ -41,6 +41,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
@@ -109,6 +110,7 @@ public class ExplanationFragment extends Fragment {
     }
 
     private void init() {
+//        new UpdateReturn().method();
         //回到主页面的时候初始化一下选择讲解点的值
         RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(-1);
         RobotStatus.INSTANCE.getPointItem().postValue(-1);

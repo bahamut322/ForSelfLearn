@@ -10,9 +10,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import chassis_msgs.VersionGetResponse
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAboutMeSettingBinding
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.RequestVersionStatusModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.DeliverMqttService
@@ -91,6 +93,20 @@ class AboutMeSettingFragment : Fragment() {
                 } else if (count == OPERATE_MAX) {
                     count = 0
                     controller!!.navigate(R.id.action_settingHomeFragment_to_verifyToDebugFragment)
+
+                }
+            }
+        }
+
+        //获取底盘版本
+        mainScope.launch {
+            var versionGetResponse: VersionGetResponse? = null
+            withContext(Dispatchers.Default) {
+                versionGetResponse = ROSHelper.getVersion(1) ?: return@withContext
+            }
+            if (versionGetResponse?.success == true) {
+                withContext(Dispatchers.Main) {
+                    binding.RobotVersion.text = versionGetResponse?.version ?: ""
 
                 }
             }

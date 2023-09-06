@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -18,7 +19,6 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     private ViewPager viewPager;
     private List<Advance> datas;
     private List<View> list = new ArrayList<>();
-
     private int current = 0;
     public static int time = 0;
     private boolean pause;

@@ -47,13 +47,13 @@ public class AdvanceView extends RelativeLayout {
     }
 
     public void setData(List<Advance> advances) {
-//        try {
-//            clearData();
-//        }catch (Exception e){}
+        clearData();
         adapter.setData(advances);
     }
     public void clearData() {
-        views.clear();
+        if (views != null) {
+            views.clear();
+        }
     }
     public void mediaStop(){
         adapter.mediaStop();

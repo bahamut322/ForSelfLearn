@@ -59,7 +59,7 @@ public class MP3Player {
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
-            mMediaPlayer.prepare();
+            mMediaPlayer.prepareAsync();
             mMediaPlayer.start();
             mHandler.post(mRunnable);
         } catch (IOException e) {

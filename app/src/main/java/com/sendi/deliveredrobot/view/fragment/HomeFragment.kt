@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -178,6 +179,7 @@ class HomeFragment : Fragment(), IMainView {
 //        thread {
 //            UpdateReturn().mapSetting()
 //        }
+//        UpdateReturn().method()
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(requireView())

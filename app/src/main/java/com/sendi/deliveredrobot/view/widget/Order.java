@@ -17,7 +17,7 @@ public class Order {
         return flage;
     }
 
-    public static void setFlage(String flage) {
+    public static void setFlage(String flage) {//1是停视频声音 0是播放视频声音
         Order.flage = flage;
         if (onChangeListener!=null) {
             onChangeListener.onChange();

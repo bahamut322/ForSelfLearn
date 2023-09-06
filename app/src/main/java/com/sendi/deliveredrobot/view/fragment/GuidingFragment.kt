@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,13 @@ import chassis_msgs.SafeState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGuidingBinding
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.topic.SafeStateTopic
@@ -42,7 +46,6 @@ class GuidingFragment : Fragment() {
         gifGuiding = Glide.with(this).asGif().load(R.drawable.img_goback)
         gifStopGuide = Glide.with(this).asGif().load(R.drawable.img_goback)
     }
-
     override fun onStop() {
         super.onStop()
         SafeStateTopic.resetSafeStateListener()
@@ -65,25 +68,26 @@ class GuidingFragment : Fragment() {
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
         mainScope.launch {
-            if (CommonHelper.atChargePointFloor()) {
-                //如果是在充电桩的楼层
-//                AudioMngHelper(requireContext()).setVoice100(viewModelBasicSetting.basicConfig.guideVolumeLobby / 2)
-            }else{
-//                AudioMngHelper(requireContext()).setVoice100((viewModelBasicSetting.basicConfig.guideVolume?: 40) / 2)
-            }
             val bill = BillManager.currentBill()
-
             if (bill is GuideTaskBill) {
-                var pointName = bill.endTarget()
-                pointName = pointName.toList().joinToString(" ")
+                // 设置标志位为true，表示已经进入过该方法
+                Universal.speakInt++
+                var pointName = bill?.endTarget()
+                pointName = pointName?.toList()?.joinToString(" ")
                 binding.RoomName.text = pointName
-                SpeakHelper.speakWithoutStop(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+                if (Universal.speakInt %2 != 0){
+                    BaiduTTSHelper.getInstance().speak(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+                }
             }
             if (bill is GoToReadyPointBill) {
-                var pointName = bill.endTarget()
-                pointName = pointName.toList().joinToString(" ")
+                Universal.speakInt++
+                // 设置标志位为true，表示已经进入过该方法
+                var pointName = bill?.endTarget()
+                pointName = pointName?.toList()?.joinToString(" ")
                 binding.RoomName.text = pointName
-                SpeakHelper.speakWithoutStop(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+                if (Universal.speakInt %2 != 0){
+                    BaiduTTSHelper.getInstance().speak(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+                }
             }
         }
 

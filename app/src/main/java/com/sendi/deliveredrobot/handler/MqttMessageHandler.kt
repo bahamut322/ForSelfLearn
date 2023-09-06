@@ -34,6 +34,7 @@ import org.litepal.LitePal.deleteAll
 import java.io.File
 import java.util.*
 import kotlin.concurrent.thread
+import kotlin.math.log
 
 
 /**
@@ -65,7 +66,7 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-            if (!jsonObject.has("type")) return
+            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
             when (jsonObject.get("type").asString) {
                 "callElevatorState" -> {
                     try {
@@ -875,7 +876,7 @@ object MqttMessageHandler {
                 }
             } else {
                 file.delete()
-                LogUtil.e("删除文件夹>>>>>> " + file.toString())
+                LogUtil.e("删除文件夹>>>>>> $file")
             }
             System.gc() //系统回收垃圾
             true
@@ -892,7 +893,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(1000)
+                Thread.sleep(2000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -906,7 +907,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(1000)
+                Thread.sleep(2000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -942,7 +943,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(1000)
+                Thread.sleep(2000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -969,7 +970,7 @@ object MqttMessageHandler {
             val threadName = Thread.currentThread().name
             println(threadName + "线程开始执行")
             try {
-                Thread.sleep(10000)
+                Thread.sleep(2000)
                 //15000
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -1024,7 +1025,8 @@ object MqttMessageHandler {
         Universal.videoFile = ""
         Universal.advVideoFile == ""
         Universal.advPics == ""
-        UpdateReturn().method()
+//        LogUtil.d("1114")
+//        UpdateReturn().method()
     }
 
 

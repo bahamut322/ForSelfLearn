@@ -29,12 +29,13 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.pointItem
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Timer
 
 
 /**
@@ -75,7 +76,7 @@ class GuideFragment : Fragment() {
         //回到主页面的时候初始化一下选择讲解点的值
         selectRoutMapItem!!.postValue(-1)
         pointItem!!.postValue(-1)
-
+//        UpdateReturn().method()
         controller = Navigation.findNavController(requireView())
         timer = Timer()
 //        Universal.Model="引领"

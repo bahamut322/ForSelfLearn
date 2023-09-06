@@ -44,7 +44,7 @@
                     android:id="@+id/view3"
                     android:layout_marginTop="@dimen/sp_24"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="528dp"
+                    android:layout_height="638dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -127,6 +127,31 @@
                     app:layout_constraintTop_toTopOf="@+id/textView44" />
 
                 <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_63"
+                    android:alpha="0.6"
+                    android:text="@string/Robot_version"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_28"
+                    app:layout_constraintStart_toStartOf="@+id/textView44"
+                    app:layout_constraintTop_toBottomOf="@+id/textView44" />
+
+                <TextView
+                    android:id="@+id/RobotVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:alpha="0.6"
+                    android:text="@{version}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_28"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintTop_toTopOf="@+id/tv" />
+
+                <TextView
                     android:id="@+id/textView46"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -135,8 +160,8 @@
                     android:text="@string/System_version"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_28"
-                    app:layout_constraintStart_toStartOf="@+id/textView44"
-                    app:layout_constraintTop_toBottomOf="@+id/textView44" />
+                    app:layout_constraintStart_toStartOf="@+id/tv"
+                    app:layout_constraintTop_toBottomOf="@+id/tv" />
 
                 <TextView
                     android:id="@+id/textViewRobotVersion"

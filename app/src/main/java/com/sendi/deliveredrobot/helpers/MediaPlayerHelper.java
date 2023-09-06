@@ -46,7 +46,7 @@ public class MediaPlayerHelper {
                 if (fileName != null) {
                     new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                     mMediaPlayer.setDataSource(fileName);
-                    mMediaPlayer.prepare();
+                    mMediaPlayer.prepareAsync();
                     mMediaPlayer.start();
                     startTimer();
                 }

@@ -25,7 +25,7 @@ object RobotStatus {
     var retryDockTimes = 0      //重试自主充电次数
     var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
     val statusSuccess: MutableLiveData<Boolean> = MutableLiveData(false)
-
+    val sysTimeStamp : MutableLiveData<Long> = MutableLiveData(0)
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点
     var currentLocation: QueryPointEntity? = null //记录当前所在楼层
