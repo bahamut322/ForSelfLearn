@@ -28,9 +28,12 @@ public class AdvanceVideoView extends RelativeLayout {
     private RelativeLayout videoRela;
     private String path1;
     private MediaPlayer mediaPlayer1;
+    public int viewType;
 
-    public AdvanceVideoView(Context context) {
+
+    public AdvanceVideoView(Context context,int viewType) {
         super(context);
+        this.viewType = viewType;
         initView();
     }
 
@@ -72,7 +75,7 @@ public class AdvanceVideoView extends RelativeLayout {
 
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
-        if (Universal.videolayout == 1) {
+        if (viewType == 1) {
             try {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(path1);

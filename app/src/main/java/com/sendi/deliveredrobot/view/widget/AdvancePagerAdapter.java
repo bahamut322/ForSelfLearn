@@ -66,11 +66,11 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
 
     private void addView(Advance advance) {
         if (advance.type.equals("1")) {
-            AdvanceVideoView videoView = new AdvanceVideoView(context);
+            AdvanceVideoView videoView = new AdvanceVideoView(context,advance.viewType);
             videoView.setImage(advance.path);
             list.add(videoView);
         } else {
-            AdvanceImageView imageView = new AdvanceImageView(context);
+            AdvanceImageView imageView = new AdvanceImageView(context,advance.viewType);
             imageView.setImage(advance.path);
             list.add(imageView);
         }

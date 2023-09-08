@@ -27,10 +27,6 @@ public class Universal {
     public static int RGBWidth = 640;
     //RGB摄像头的分辨率Height
     public static int RGBHeight = 480;
-    //存储选择首页显示功能♨信息
-    public static String selectItem = null;
-    //机器人音色选择
-    public static String RobotMode = "男声";
     //测温视频
     public static int TempVideoLayout = 480;
     //APP更新下载目录
@@ -102,19 +98,8 @@ public class Universal {
     public static int picTypeNum = 0;
     //文字位置
     public static int textPosition = 0;
-
-    //机器人声音类型
-    public static int audioType = 1;
-    //机器人唤醒词
-    public static String wakeUpWord = "";
     //是否启用待机
     public static int sleep = 0;
-    //多少分钟没操作进入待机
-    public static int sleepTime;
-    //唤醒方式
-    public static String wakeUpType = "";
-    //待机内容
-    public static int sleepType = 1;
     //图片布局
     public static int picType = 1;
     //机器人默认配置时间戳
@@ -134,11 +119,7 @@ public class Universal {
     //轮播时间:
     public static int time;
     public static int nextPointGo = 0;
-    //图片布局
-    public static int pic = 1;
     public static int speakInt = 0;
-
-    public static int videolayout = 0;
 
     public static int AllvideoAudio = 0;
     public static TaskQueues<String> taskQueue;

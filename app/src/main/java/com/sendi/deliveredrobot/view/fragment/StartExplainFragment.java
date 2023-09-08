@@ -497,7 +497,7 @@ public class StartExplainFragment extends Fragment {
                                     } else {
                                         binding.argPic.setVisibility(View.GONE);
                                         try {
-                                            getFilesAllName(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0));//轮播
+                                            getFilesAllName(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0),2);//轮播
                                         } catch (Exception ignored) {
                                         }
                                         try {
@@ -535,7 +535,7 @@ public class StartExplainFragment extends Fragment {
                                             } else {
                                                 binding.argPic.setVisibility(View.GONE);
                                                 try {
-                                                    getFilesAllName(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0));//轮播
+                                                    getFilesAllName(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0),2);//轮播
                                                 } catch (Exception ignored) {
                                                 }
                                                 try {
@@ -717,7 +717,7 @@ public class StartExplainFragment extends Fragment {
                     binding.nextTaskBtn.setEnabled(true);
                     binding.argPic.setVisibility(View.GONE);
                     try {
-                        getFilesAllName(mData.get(position).getTouch_imagefile());//轮播
+                        getFilesAllName(mData.get(position).getTouch_imagefile(),mData.get(position).getTouch_pictype());//轮播
                     } catch (Exception ignored) {
                     }
                     try {
@@ -907,16 +907,16 @@ public class StartExplainFragment extends Fragment {
     }
 
     //TODO 轮播
-    public void getFilesAllName(String path) {
+    public void getFilesAllName(String path,int PicType) {
         try {
             File file = new File(path);
             if (file.isFile()) {
                 // This is a file
                 List<Advance> fileList = new ArrayList<>();
                 if (BaseViewModel.checkIsImageFile(file.getPath())) {
-                    fileList.add(new Advance(file.getPath(), "2")); // image
+                    fileList.add(new Advance(file.getPath(), "2",PicType)); // image
                 } else {
-                    fileList.add(new Advance(file.getPath(), "1")); // video
+                    fileList.add(new Advance(file.getPath(), "1",1)); // video
                 }
                 binding.pointImage.setData(fileList);
             } else if (file.isDirectory()) {
@@ -926,9 +926,9 @@ public class StartExplainFragment extends Fragment {
                     List<Advance> fileList = new ArrayList<>();
                     for (File value : files) {
                         if (BaseViewModel.checkIsImageFile(value.getPath())) {
-                            fileList.add(new Advance(value.getPath(), "2")); // image
+                            fileList.add(new Advance(value.getPath(), "2",PicType)); // image
                         } else {
-                            fileList.add(new Advance(value.getPath(), "1")); // video
+                            fileList.add(new Advance(value.getPath(), "1",1)); // video
                         }
                     }
                     binding.pointImage.setData(fileList);
@@ -956,7 +956,7 @@ public class StartExplainFragment extends Fragment {
             case 1:
             case 2:
                 //读取文件
-                getFilesAllName(file);
+                getFilesAllName(file,PicType);
                 binding.verticalTV.setVisibility(View.GONE);
                 binding.horizontalTV.setVisibility(View.GONE);
                 binding.pointImage.setVisibility(View.VISIBLE);
@@ -981,7 +981,7 @@ public class StartExplainFragment extends Fragment {
                 break;
             case 7:
                 //读取文件
-                getFilesAllName(file);
+                getFilesAllName(file,PicType);
                 layoutParams = (ConstraintLayout.LayoutParams) binding.verticalTV.getLayoutParams();
                 if (textPosition == 0) {
                     binding.horizontalTV.setGravity(Gravity.CENTER);//居中

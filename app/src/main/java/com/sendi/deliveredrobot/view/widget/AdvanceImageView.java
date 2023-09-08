@@ -24,9 +24,11 @@ import com.sendi.deliveredrobot.entity.Universal;
 public class AdvanceImageView extends RelativeLayout {
     public ImageView imageView;
     public ProgressBar progressBar;
+    public int viewType;
 
-    public AdvanceImageView(Context context) {
+    public AdvanceImageView(Context context,int viewType) {
         super(context);
+        this.viewType = viewType;
         initView();
     }
 
@@ -51,7 +53,7 @@ public class AdvanceImageView extends RelativeLayout {
         } else {
             imageView.setBackgroundColor(Color.parseColor(QuerySql.ADV().getFontBackGround()));
         }
-        if (Universal.pic == 2) {
+        if (viewType == 2) {
             //按比例缩放图片，使图片完整地显示在ImageView中心，如果图片比ImageView小，则不会放大
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         } else {
