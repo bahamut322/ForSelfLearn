@@ -36,7 +36,7 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
         if (advances.size() == 0) return;
         this.datas = advances;
         list.clear();
-        time = Universal.time * 1000;
+        time = advances.get(0).viewTime * 1000;
         if (time == 0) {
             time = 3000;
         }

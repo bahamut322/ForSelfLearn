@@ -66,10 +66,10 @@ class StandbyFragment : Fragment() {
         for (value in files) {
             if (checkIsImageFile(value.path)) {
                 //图片
-                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "2",1))
+                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "2",1,3))
             }else {
                 //视频
-                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "1",0))
+                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "1",0,3))
             }
             binding.Standby.setData(imagePaths) //将数据传入到控件中显示
         }

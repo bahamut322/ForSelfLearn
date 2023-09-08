@@ -332,7 +332,7 @@ public class BaseActivity extends AppCompatActivity {
             };
 
     private void getFilesAllName(String path, int picPlayTime, int PicType, int videolayout, int AllvideoAudio) throws IOException{
-        Universal.time = picPlayTime;
+//        Universal.time = picPlayTime;
         Universal.AllvideoAudio = AllvideoAudio;
         try {
             File file = new File(path);
@@ -344,9 +344,9 @@ public class BaseActivity extends AppCompatActivity {
                 // This is a file
                 List<Advance> fileList = new ArrayList<>();
                 if (baseViewModel.checkIsImageFile(file.getPath())) {
-                    fileList.add(new Advance(file.getPath(), "2",PicType)); // image
+                    fileList.add(new Advance(file.getPath(), "2",PicType,picPlayTime)); // image
                 } else {
-                    fileList.add(new Advance(file.getPath(), "1",videolayout)); // video
+                    fileList.add(new Advance(file.getPath(), "1",videolayout,picPlayTime)); // video
                 }
                 advanceView.setData(fileList);
             } else if (file.isDirectory()) {
@@ -356,9 +356,9 @@ public class BaseActivity extends AppCompatActivity {
                     List<Advance> fileList = new ArrayList<>();
                     for (File value : files) {
                         if (baseViewModel.checkIsImageFile(value.getPath())) {
-                            fileList.add(new Advance(value.getPath(), "2",PicType)); // image
+                            fileList.add(new Advance(value.getPath(), "2",PicType,picPlayTime)); // image
                         } else {
-                            fileList.add(new Advance(value.getPath(), "1",videolayout)); // video
+                            fileList.add(new Advance(value.getPath(), "1",videolayout,picPlayTime)); // video
                         }
                     }
                     advanceView.setData(fileList);
