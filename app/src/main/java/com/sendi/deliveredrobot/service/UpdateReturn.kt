@@ -83,7 +83,7 @@ class UpdateReturn {
             debugDao = DataBaseDeliveredRobotMap.getDatabase(
                 Objects.requireNonNull(
                     MyApplication.instance
-                )!!
+                )
             ).getDebug()
             withContext(Dispatchers.Default) {
 //                listData = debugDao.queryTargetPointMap()!!
@@ -180,7 +180,7 @@ class UpdateReturn {
         }
     }
 
-    fun sendMapData() {
+    private fun sendMapData() {
         MainScope().launch(Dispatchers.Default) {
             val rootMapList = queryAllMapPointsDao.queryRootMap()
             val maps = ArrayList<Map>()
@@ -234,22 +234,22 @@ class UpdateReturn {
         }
     }
 
-    fun fileSize(fileName: String): Int {
-        val file = File(fileName)
-        val files = file.listFiles()
-        return files!!.size
-    }
+//    fun fileSize(fileName: String): Int {
+//        val file = File(fileName)
+//        val files = file.listFiles()
+//        return files!!.size
+//    }
 
     suspend fun mapSetting(batteryState: Boolean = false) {
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
         debugDao = DataBaseDeliveredRobotMap.getDatabase(
             Objects.requireNonNull(
                 MyApplication.instance
-            )!!
+            )
         ).getDebug()
         if (Universal.mapName != "") {
             val mapId = debugDao.selectMapId(Universal.mapName)
-            val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
+//            val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
             dao.updateMapConfig(MapConfig(1, mapId, null, null))
 //            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
@@ -346,7 +346,7 @@ class UpdateReturn {
 
     /**
      * 云平台返回的声音设置数字转为中文
-     * @param Num 收到云平台音色配置的数据
+     * @param Nume 收到云平台音色配置的数据
      */
     fun audioName(Num: Int): String {
         var audioModel = ""
@@ -402,7 +402,7 @@ class UpdateReturn {
                     if (!file.isDirectory) { //如果是文件，删除
                         file.delete()
                     } else { //目录
-                        if (file.listFiles().size == 0) { //目录下没有文件或者目录，删除
+                        if (file.listFiles()?.size == 0) { //目录下没有文件或者目录，删除
                             file.delete()
                         }
                     }
@@ -432,18 +432,6 @@ class UpdateReturn {
             directory.delete()
         }else{
             LogUtil.d("deleteDirectory: $directory 不存在")
-        }
-    }
-    /**
-     * BaiduTTS语速
-     */
-    fun timbres(speed: String) {
-        if ("男声" == QuerySql.QueryBasic().robotMode) {
-            randomVoice(2, speed)
-        } else if ("女声" == QuerySql.QueryBasic().robotMode) {
-            randomVoice(1, speed)
-        } else if ("童声" == QuerySql.QueryBasic().robotMode) {
-            randomVoice(3, speed)
         }
     }
 

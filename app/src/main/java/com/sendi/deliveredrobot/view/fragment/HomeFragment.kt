@@ -263,7 +263,7 @@ class HomeFragment : Fragment(), IMainView {
                     fromeSettingDialog!!.dismiss()
                     try {
                         controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
-                    }catch (e:Exception){
+                    }catch (_:Exception){
 
                     }
                     PassWordToSetting.postValue(false)
@@ -434,12 +434,10 @@ class HomeFragment : Fragment(), IMainView {
             "轻应用" -> {
                 //跳转到测温模式
                 Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
-//                controller!!.navigate(R.id.action_homeFragment_to_cameraPreviewFragment)
                 Log.d("TAG", "点击轻应用")
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
-//            "功能模块" -> Toast.makeText(context, "功能模块", Toast.LENGTH_SHORT).show()
         }
     }
 

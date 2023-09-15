@@ -137,7 +137,7 @@ abstract class DataBaseDeliveredRobotMap : RoomDatabase() {
         @Volatile
         private var INSTANCE: DataBaseDeliveredRobotMap? = null
 
-        fun getDatabase(context: Context): DataBaseDeliveredRobotMap {
+        fun getDatabase(context: Context?): DataBaseDeliveredRobotMap {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
@@ -146,12 +146,12 @@ abstract class DataBaseDeliveredRobotMap : RoomDatabase() {
                 if (!file.exists()) {
                     file.parentFile?.mkdirs()
                     file.createNewFile()
-                    val inputStream = context.resources.assets.open("database/delivered_robot_map.db")
+                    val inputStream = context?.resources?.assets?.open("database/delivered_robot_map.db")
                     val outputStream = file.outputStream()
                     val byteArray = ByteArray(1024)
                     var result: Int
                     do{
-                        result = inputStream.read(byteArray,0,byteArray.size)
+                        result = inputStream!!.read(byteArray,0,byteArray.size)
                         if(result > 0){
                             outputStream.write(byteArray,0,result)
                         }
@@ -162,7 +162,7 @@ abstract class DataBaseDeliveredRobotMap : RoomDatabase() {
 //                    ) { _, _ -> }
                 }
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
+                    context!!.applicationContext,
                     DataBaseDeliveredRobotMap::class.java,
 //                    "delivered_robot_map.db"
                     path

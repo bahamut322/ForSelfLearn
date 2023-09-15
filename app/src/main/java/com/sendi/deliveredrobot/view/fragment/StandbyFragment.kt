@@ -60,8 +60,8 @@ class StandbyFragment : Fragment() {
 
     private fun getFilesAllNames(path: String?) {
         //传入指定文件夹的路径
-        val file = File(path)
-        val files = file.listFiles()!!
+        val file = path?.let { File(it) }
+        val files = file?.listFiles()!!
         imagePaths = ArrayList()
         for (value in files) {
             if (checkIsImageFile(value.path)) {
@@ -74,14 +74,5 @@ class StandbyFragment : Fragment() {
             binding.Standby.setData(imagePaths) //将数据传入到控件中显示
         }
     }
-
-//    private fun checkIsImageFiles(fName: String): Boolean {
-//        val isImageFile: Boolean
-//        //获取拓展名
-//        val fileEnd = fName.substring(fName.lastIndexOf(".") + 1).lowercase(Locale.getDefault())
-//        isImageFile =
-//            fileEnd == "jpg" || fileEnd == "png" || fileEnd == "jpeg" || fileEnd == "bmp"|| fileEnd == "gif"
-//        return isImageFile
-//    }
 
 }

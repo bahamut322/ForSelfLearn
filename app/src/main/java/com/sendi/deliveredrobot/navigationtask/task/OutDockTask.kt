@@ -55,7 +55,6 @@ class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstra
                     )
                     ROSHelper.controlDock(RobotCommand.CMD_OUT_DOCK)
                 }else{
-//                    TaskQueues.executeNextTask()
                     taskModel?.bill?.executeNextTask()
                 }
                 DialogHelper.loadingDialog.dismiss()
