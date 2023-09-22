@@ -6,6 +6,7 @@ import android.os.Environment
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.NAVIGATE_ID
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -31,6 +32,7 @@ class BeginDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abst
 
     override suspend fun execute() {
         RobotStatus.docking = true
+        Universal.ExplainLength = -1
         MyApplication.instance!!.sendBroadcast(
             Intent().apply {
                 action = ACTION_NAVIGATE

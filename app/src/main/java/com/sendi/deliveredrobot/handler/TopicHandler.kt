@@ -2,7 +2,9 @@ package com.sendi.deliveredrobot.handler
 
 import android.annotation.SuppressLint
 import androidx.navigation.NavController
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.SubManager
 import com.sendi.deliveredrobot.ros.constant.ClientConstant
 import com.sendi.deliveredrobot.ros.dto.RosResult
@@ -39,7 +41,7 @@ object TopicHandler {
                         handleSafeStateTopic(rosResult)
                     }
                     ClientConstant.VOICE_PROMPT_TOPIC -> {
-                        handleVoicePromptTopic(rosResult, navController)
+                            handleVoicePromptTopic(rosResult, navController)
                     }
                     ClientConstant.BATTERY_STATE -> {
                         // =============== 电池信息上报 =================
@@ -153,7 +155,9 @@ object TopicHandler {
         rosResult: RosResult<*>?,
         navController: NavController
     ) {
-        VoicePromptTopic.handle(rosResult,navController)
+        if(RobotStatus.progress.value == Universal.ExplainLength || Universal.ExplainLength==-1) {
+            VoicePromptTopic.handle(rosResult, navController)
+        }
     }
 
     /**

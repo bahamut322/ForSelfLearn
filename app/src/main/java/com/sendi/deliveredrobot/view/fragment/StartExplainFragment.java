@@ -83,7 +83,7 @@ public class StartExplainFragment extends Fragment {
     private BaseViewModel baseViewModel;
     private ProcessClickDialog processClickDialog;
     private ChangingOverDialog changingOverDialog;
-    private int beforePage = 0;
+    private int beforePage = -1;
     boolean nextTaskToDo = true;
     Handler handler;
     String targetName = "";
@@ -174,16 +174,16 @@ public class StartExplainFragment extends Fragment {
             }
         });
 
-        handler.postDelayed(() -> {
-            // 延迟一秒后执行的代码
-            Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakContinue()).observe(getViewLifecycleOwner(), integer -> {
-                if (integer == 1 && RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(RobotStatus.INSTANCE.getProgress().getValue()).length()>0) {
-                    BaiduTTSHelper.getInstance().stop();
-                    viewModel.splitTextByPunctuation(Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).substring(RobotStatus.INSTANCE.getProgress().getValue()));
-                    RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
-                }
-            });
-        }, 500);
+//        handler.postDelayed(() -> {
+//            // 延迟一秒后执行的代码（这段是围堵语言播报完，继续播报打断之后的文字）
+//            Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakContinue()).observe(getViewLifecycleOwner(), integer -> {
+//                if (integer == 1 && RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(RobotStatus.INSTANCE.getProgress().getValue()).length()>0) {
+//                    BaiduTTSHelper.getInstance().stop();
+//                    viewModel.splitTextByPunctuation(Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).substring(RobotStatus.INSTANCE.getProgress().getValue()));
+//                    RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
+//                }
+//            });
+//        }, 500);
 
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
@@ -192,7 +192,8 @@ public class StartExplainFragment extends Fragment {
                 MediaPlayerHelper.pause();
                 finishTaskDialog.show();
                 finishTaskDialog.YesExit.setOnClickListener(v1 -> {
-                    beforePage = 0;
+                    Universal.ExplainLength = -1;
+                    beforePage = -1;
                     //返回
                     Universal.taskNum = 0;
                     Universal.progress = 0;
@@ -339,7 +340,7 @@ public class StartExplainFragment extends Fragment {
                         LogUtil.INSTANCE.i("init: 执行途经播报任务");
                         viewModel.secondScreenModel(i, Objects.requireNonNull(viewModel.inForListData()));
                         explainGoingSpeak(viewModel.inForListData(), i, true);
-                        beforePage = 0;
+                        beforePage = -1;
                         Universal.lastValue = s; // 更新上一个值为新值
                     }
                 }
@@ -565,10 +566,10 @@ public class StartExplainFragment extends Fragment {
                             }
                         });
                     }
-                    if (viewModel.inForListData().get(position).getWalkvoice() == null && Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext() == null) {
+                    Log.d("TAG", "onebyOne: "+(viewModel.inForListData().get(position).getWalkvoice() == null) +","+(viewModel.inForListData().get(position).getWalktext().length() == 0));
+                    if (viewModel.inForListData().get(position).getWalkvoice() == null && viewModel.inForListData().get(position).getWalktext().length() == 0) {
                         RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
                             if (integer1 == 1) {
-                                LogUtil.INSTANCE.i("到点播报结束（MP3）");
                                 arrayToDo(viewModel.inForListData(), position);
                             }
                         });
@@ -682,6 +683,8 @@ public class StartExplainFragment extends Fragment {
     private void arrayToDo(ArrayList<MyResultModel> mData, int position) {
         try {
             Universal.explainArray = true;
+            Universal.ExplainLength = -1;
+            RobotStatus.INSTANCE.getProgress().setValue(0);
             array = true;
             LogUtil.INSTANCE.d("到点讲解：" + Universal.selectMapPoint);
             if (Universal.selectMapPoint) {
@@ -727,7 +730,8 @@ public class StartExplainFragment extends Fragment {
 
                 }
                 //这段你别问我哈，公司没钱。用短语音识别去读长语音，还要过渡显示，更过分的还要翻页诶。我也没办法，只能这样做，我也看不懂了。
-                if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty()) {
+                if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty() && Universal.explainArray) {
+                    beforePage = 0;
                     binding.PauseBtn.setVisibility(View.VISIBLE);
                     try {
                         ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.StartArrayBroadcast, new UpdateReturn().taskDto());
@@ -750,10 +754,12 @@ public class StartExplainFragment extends Fragment {
                     RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                         if (nextTaskToDo) {
                             LogUtil.INSTANCE.i("当前进度: " + (integer - ((beforePage) * 135)));
-                            binding.acceptstationTv.startPlayLine(
-                                    (integer - ((beforePage) * 135)),
-                                    textEqually.get(beforePage).length(),
-                                    ((long) QuerySql.QueryBasic().getSpeechSpeed() * textEqually.get(beforePage).length()) * 1000);
+                            try {
+                                binding.acceptstationTv.startPlayLine(
+                                        (integer - ((beforePage) * 135)),
+                                        textEqually.get(beforePage).length(),
+                                        ((long) QuerySql.QueryBasic().getSpeechSpeed() * textEqually.get(beforePage).length()) * 1000);
+                            }catch (Exception ignored){}
                         }
                         if (integer >= ((beforePage + 1) * 135) && integer != 0) {
                             Log.i("TAG", "页数, progress：" + beforePage + ";进度:" + integer + "当前进度：" + Universal.progress);
@@ -775,7 +781,7 @@ public class StartExplainFragment extends Fragment {
                             }
                             //恢复视频声音
                             Order.setFlage("0");
-                            beforePage = 0;
+                            beforePage = -1;
                             page.set(0);
                             Universal.progress = 0;
                             RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
@@ -802,7 +808,7 @@ public class StartExplainFragment extends Fragment {
                             Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
                         }
                     });
-                } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().isEmpty()) {
+                } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().length() == 0) {
                     binding.PauseBtn.setVisibility(View.GONE);
                     Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
                 }
@@ -819,6 +825,7 @@ public class StartExplainFragment extends Fragment {
                 //返回
                 Universal.taskNum = 0;
                 Universal.progress = 0;
+                Universal.ExplainLength = -1;
                 //删除讲解队列
                 if (Universal.taskQueue != null) {
                     Universal.taskQueue.clear();
@@ -839,7 +846,7 @@ public class StartExplainFragment extends Fragment {
             if (Universal.taskQueue != null) {
                 Universal.taskQueue.clear();
             }
-            beforePage = 0;
+            beforePage = -1;
             RobotStatus.INSTANCE.getSpeakNumber().postValue("");
             MediaPlayerHelper.stop();
             binding.acceptstationTv.stopPlay();
@@ -877,7 +884,7 @@ public class StartExplainFragment extends Fragment {
                 }
                 BaiduTTSHelper.getInstance().stop();
                 Universal.taskNum = 0;
-                beforePage = 0;
+                beforePage = -1;
                 Universal.progress = 0;
                 MediaPlayerHelper.stop();
                 binding.acceptstationTv.stopPlay();
