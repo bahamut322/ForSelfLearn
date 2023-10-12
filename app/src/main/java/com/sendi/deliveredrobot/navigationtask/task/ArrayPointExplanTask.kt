@@ -1,18 +1,15 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.RobotMileageHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.TaskNext
-import kotlinx.coroutines.launch
 
 /**
  * @Author Swn

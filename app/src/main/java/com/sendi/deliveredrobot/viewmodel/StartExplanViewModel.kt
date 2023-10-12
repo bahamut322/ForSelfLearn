@@ -27,7 +27,6 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.utils.LogUtil.i
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,7 +82,7 @@ class StartExplanViewModel : ViewModel() {
             BaiduTTSHelper.getInstance().stop()
 //            Universal.Model = "结束讲解"
 
-            i("选择地点的索引：$position")
+            LogUtil.i("选择地点的索引：$position")
             for (index in position until inForListData()!!.size) {
                 val taskModel = TaskModel(
                     location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
@@ -125,7 +124,7 @@ class StartExplanViewModel : ViewModel() {
             onTick = { millisUntilFinished ->
                 // 更新 UI，显示剩余时间
                 val seconds = millisUntilFinished / 1000
-                i("倒计时器：${seconds}s")
+                LogUtil.i("倒计时器：${seconds}s")
 //                if (seconds <= 1){
 //                    RobotStatus.downTime.postValue(true)
 //                }
@@ -334,7 +333,7 @@ class StartExplanViewModel : ViewModel() {
             )
         )
         sdScreenStatus!!.postValue(2)
-        i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
+        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
 
     fun splitString(input: String, length: Int): List<String> {
@@ -362,18 +361,24 @@ class StartExplanViewModel : ViewModel() {
             Universal.taskQueue.clear()
         }
         Universal.ExplainLength = text.length
-        i( "总内容长度: ${text.length}")
+        LogUtil.i("总内容长度: ${text.length}")
         val pattern = "(?<=[，；？！。,.;])".toRegex()
         val splitText = text.split(pattern)
         for (i in splitText.indices) {
-            //将每个子项的长度添加到一个列表中
-            Universal.ExplainSpeak.add(text.split(pattern)[i].length)
-            // 添加任务到队列中
-            Universal.taskQueue.enqueue(text.split(pattern)[i])
-            // 开始执行队列中的任务
+            val subText = text.split(pattern)[i]
+            if (subText.length > 45) {
+                val subTextList = subText.chunked(45)
+                for (sub in subTextList) {
+                    Universal.ExplainSpeak.add(sub.length)
+                    Universal.taskQueue.enqueue(sub)
+                }
+            } else {
+                Universal.ExplainSpeak.add(subText.length)
+                Universal.taskQueue.enqueue(subText)
+            }
             Universal.taskQueue.resume()
-            LogUtil.d("文字列表长度内容: ${Universal.ExplainSpeak}")
-            i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
+            LogUtil.d("列表长度内容: ${Universal.ExplainSpeak}")
+            LogUtil.i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
         }
         return splitText
     }

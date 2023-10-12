@@ -10,11 +10,13 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.TaskQueue
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.math.log
 
 /**
  * @describe 上报机器人状态服务(每5秒）
@@ -24,6 +26,7 @@ import java.util.*
 class ReportRobotStateService : Service() {
     //1、创建任务每隔5s执行一次
     val timer = Timer()
+    private var previousPose: FloatArray? = null
     val mainScope = MainScope()
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -34,6 +37,7 @@ class ReportRobotStateService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    //发送数据
     private fun init() {
         timer.schedule(object : TimerTask() {
             override fun run() {
@@ -46,7 +50,7 @@ class ReportRobotStateService : Service() {
                     }
                 }
             }
-        },Date(), 5000)
+        },Date(), 1000)
     }
 
     /**
@@ -60,10 +64,10 @@ class ReportRobotStateService : Service() {
                 false -> RobotStatus.currentLocation
             }
             with(robotPoseLiveData){
-                type = "livePoseData"
-                val pose = ROSHelper.getPose()
-                val poseArray = floatArrayOf(pose?.x?.toFloat()?:-1f,pose?.y?.toFloat()?:-1f,pose?.theta?.toFloat()?:-1f)
-                robotPose = poseArray
+//                type = "livePoseData"
+//                val pose = ROSHelper.getPose()
+//                val poseArray = floatArrayOf(pose?.x?.toFloat()?:-1f,pose?.y?.toFloat()?:-1f,pose?.theta?.toFloat()?:-1f)
+//                robotPose = poseArray
                 val tempArrayList = ArrayList<Float>()
                 if (ROSHelper.getNowLaser()) {
                     for (floats in RosPointArrUtil.updateMap) {
@@ -94,6 +98,7 @@ class ReportRobotStateService : Service() {
         }
         return robotPoseLiveData
     }
+
 
     companion object{
         /**

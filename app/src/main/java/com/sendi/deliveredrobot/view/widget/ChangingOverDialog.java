@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -50,6 +51,7 @@ public class ChangingOverDialog extends Dialog {
 
     @Override
     public void dismiss() {
+        Log.d("TAG", "dismiss: dialog");
         Universal.speakIng =false;
         super.dismiss();
     }

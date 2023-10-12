@@ -152,6 +152,12 @@
         <action
             android:id="@+id/action_planSettingFragment_to_cameraPreviewFragment"
             app:destination="@id/cameraPreviewFragment" />
+        <action
+            android:id="@+id/action_planSettingFragment_to_explanationFragment"
+            app:destination="@+id/ExplanationFragment"/>
+        <action
+            android:id="@+id/action_planSettingFragment_to_GuideFragment"
+            app:destination="@+id/GuideFragment"/>
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"

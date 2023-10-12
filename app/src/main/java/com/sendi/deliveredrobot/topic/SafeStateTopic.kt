@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.topic
 
+import android.util.Log
 import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_CHARGING
@@ -10,14 +11,14 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueue
 import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.widget.TaskNext
+import com.sendi.deliveredrobot.view.widget.TaskArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -43,7 +44,9 @@ object SafeStateTopic {
                 mutex.withLock {
                     if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
                         LogUtil.d("急停按下")
-                        TaskNext.setToDo("3")
+                        TaskArray.setToDo("3")
+                        //播报语音音量
+                        MediaPlayerHelper.getInstance().pause()
                         BaiduTTSHelper.getInstance().pause()
                         IdleGateDataHelper.reportIdleGateCount(0)
                         withContext(Dispatchers.Main) {
@@ -102,8 +105,9 @@ object SafeStateTopic {
                                 }
                                 RobotCommand.MANAGE_STATUS_PAUSE -> {
                                     if (Universal.explainUnSpeak){
-                                        TaskNext.setToDo("5")
+                                        TaskArray.setToDo("5")
                                         if (!Universal.speakIng) {
+                                            MediaPlayerHelper.getInstance().resume()
                                             BaiduTTSHelper.getInstance().resume()
                                         }
                                         return@launch

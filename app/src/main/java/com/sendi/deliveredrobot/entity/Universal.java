@@ -124,8 +124,6 @@ public class Universal {
     public static int AllvideoAudio = 0;
     public static TaskQueues<String> taskQueue;
     public static List<Integer> ExplainSpeak = new ArrayList<>();
-    //判断是否到点，用来区分途径播报和到点播报内容
-    public static Boolean explainArray = false;
     //用来判断按下急停之后暂停讲解的状态
     public static Boolean speakIng = false;
     //用来处理按下点击暂停。并且急停之后，再松开，会顶着暂停页面走

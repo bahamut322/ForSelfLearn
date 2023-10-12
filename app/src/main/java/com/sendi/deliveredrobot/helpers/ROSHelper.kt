@@ -39,7 +39,6 @@ import rosapi.HasParamResponse
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.log
 
 object ROSHelper {
     private val mutex = Mutex()
@@ -64,10 +63,8 @@ object ROSHelper {
                 response = rosResult.response as ManageResponse
                 val msg = when (response?.result) {
                     1 -> {
-                        if(status == 2){
-                            BaiduTTSHelper.getInstance().pause()
-                        }
-                        else if (status == 3 && !Universal.speakIng){
+                        if (status == 3 && !Universal.speakIng){
+                            MediaPlayerHelper.getInstance().resume()
                             BaiduTTSHelper.getInstance().resume()
                         }
                         "控制导航状态成功"

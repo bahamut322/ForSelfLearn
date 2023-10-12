@@ -137,7 +137,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 //        if (TaskQueues.isCompleted()) {
 //            Order.setFlage("0");
 //        }
-        MediaPlayerHelper.resume();
+        MediaPlayerHelper.getInstance().resume();
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
             //恢复视频声音

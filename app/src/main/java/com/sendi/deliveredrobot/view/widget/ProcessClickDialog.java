@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.entity.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.UpdateReturn;
@@ -51,12 +52,11 @@ public class ProcessClickDialog extends Dialog {
         continueBtn = findViewById(R.id.continueBtn);
         finishBtn = findViewById(R.id.finishBtn);
         nextBtn = findViewById(R.id.nextBtn);
-        Universal.speakIng =true;
-        TaskNext.setOnChangeListener(() -> {
-            if (Objects.equals(TaskNext.getToDo(), "3")) {
+        TaskArray.setOnChangeListener(() -> {
+            if (Objects.equals(TaskArray.getToDo(), "3")) {
                mTimer.pause();
             }
-            if (Objects.equals(TaskNext.getToDo(), "5")){
+            if (Objects.equals(TaskArray.getToDo(), "5")){
                 mTimer.resume();
             }
         });
@@ -168,6 +168,9 @@ public class ProcessClickDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
+        Universal.speakIng = true;
+        MediaPlayerHelper.getInstance().pause();
+        BaiduTTSHelper.getInstance().pause();
         startCountdown();
         mTimer.start();
         new UpdateReturn().pause();

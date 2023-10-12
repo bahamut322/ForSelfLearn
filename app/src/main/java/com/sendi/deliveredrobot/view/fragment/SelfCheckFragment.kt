@@ -30,6 +30,7 @@ import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.DeliverMqttService
+import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
