@@ -41,15 +41,15 @@ public class ModeSettingFragment extends Fragment {
     public int inaccessiblePoint = 0;
     public float leadingSpeedNum = 0.3f;//引领速度默认值
     public float ExplanationSpeedNum = 0.3f;//去往讲解点速度默认值
-    public float explainNum = 1;//讲解语速默认值
+//    public float explainNum = 1;//讲解语速默认值
     public float stayNum = 1;//逗留时间默认值
     public float BreakTaskNum = 1;//打断任务触控点暂停时间默认值
-    public int endOfExplanation = 0;//0为再讲一遍，1为选择其他路线
-    int abnormalWarning;//异常警告方式
+//    public int endOfExplanation = 0;//0为再讲一遍，1为选择其他路线
+//    int abnormalWarning;//异常警告方式
     StringBuffer stringBuffer = new StringBuffer();
     float patrolSpeedNum;
     float suspensionNum;
-    int tempMode;
+//    int tempMode;
     ContentValues values;
 
     @Override
@@ -62,7 +62,7 @@ public class ModeSettingFragment extends Fragment {
         //去往讲解点速度
         binding.ExplanationSpeed.setRange(0.3f, 1.2f, 1);
         //讲解语速
-        binding.explain.setRange(1, 15, 0);
+//        binding.explain.setRange(1, 15, 0);
         //逗留时间
         binding.stay.setRange(1, 180, 0);
         //打断任务触控点暂停时间
@@ -112,7 +112,7 @@ public class ModeSettingFragment extends Fragment {
         binding.VoiceAnnouncements.setChecked(viewModel.settingData().getVoiceAnnouncements());
         binding.LeadingSpeed.setCur(viewModel.settingData().getLeadingSpeed());
         binding.ExplanationSpeed.setCur(viewModel.settingData().getGoExplanationPoint());
-        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
+//        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
         binding.stay.setCur(viewModel.settingData().getStayTime());
         binding.BreakTask.setCur(viewModel.settingData().getWhetherTime());
 
@@ -152,13 +152,13 @@ public class ModeSettingFragment extends Fragment {
             Log.d(TAG, "设置去往讲解点速度: " + ExplanationSpeedNum);
             values.put("goexplanationpoint",ExplanationSpeedNum);
         });
-        //讲解语速
-        binding.explain.setOnSeekBarChangeListener(current -> {
-            explainNum = binding.explain.getCurInt();
-            Log.d(TAG, "设置讲解语速: " + explainNum);
-            values.put("speechspeed",explainNum);
-            viewModel.timbres(explainNum+"");
-        });
+//        //讲解语速
+//        binding.explain.setOnSeekBarChangeListener(current -> {
+//            explainNum = binding.explain.getCurInt();
+//            Log.d(TAG, "设置讲解语速: " + explainNum);
+//            values.put("speechspeed",explainNum);
+//            viewModel.timbres(explainNum+"");
+//        });
         //逗留时间
         binding.stay.setOnSeekBarChangeListener(current -> {
             stayNum = binding.stay.getCurInt();

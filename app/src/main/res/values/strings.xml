@@ -405,7 +405,7 @@
     <string name="max">1.2m/s</string>
     <string name="Questions">（讲解过程不允许问答）</string>
     <string name="Speed_explanation">去往讲解点速度</string>
-    <string name="Speed_of_speech">讲解语速</string>
+    <string name="Speed_of_speech">语音语速</string>
     <string name="Speed_of_speech_min">1</string>
     <string name="Speed_of_speech_max">6</string>
     <string name="Duration">逗留时间</string>
@@ -490,7 +490,7 @@
     <string name="Visitor_Route">参观路线</string>
     <string name="Task_time">任务时间</string>
     <string name="Task_Status">任务状态</string>
-    <string name="settingAndfunction">设置及其他功能</string>
+    <string name="settingAndFunction">设置及其他功能</string>
     <string name="setting">设置</string>
     <string name="explanation_Special">专场讲解</string>
     <string name="door_temp">门岗测温</string>

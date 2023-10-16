@@ -38,6 +38,7 @@ public class DebugBasicSettingFragment extends Fragment {
     View view;
     int robotAudio;
     int videoAudio;
+    public float explainNum = 1;//讲解语速默认值
     ContentValues values;
 
     @Override
@@ -48,11 +49,15 @@ public class DebugBasicSettingFragment extends Fragment {
         values = new ContentValues();
         binding.seekbarMusic.setRange(0, 100, 0);//设置机器人语音调节范围
         binding.seekbarVoice.setRange(0, 100, 0);//设置视频音量调节范围
+        //讲解语速
+        binding.explain.setRange(1, 15, 0);
+
         assert binding != null;
 
         binding.seekbarMusic.setCur(viewModel.settingData().getVoiceVolume());
         binding.seekbarVoice.setCur(viewModel.settingData().getVideoVolume());
         timbres(viewModel.settingData().getRobotMode());//选中音色方法
+        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
         binding.expressionCB.setChecked(viewModel.settingData().getExpression());//是否开启表情
         binding.cbEtiquette.setChecked(viewModel.settingData().getEtiquette());//是否开启礼仪迎宾
         binding.cbIntelligent.setChecked(viewModel.settingData().getIntelligent());//是否开启智能语音
@@ -84,6 +89,14 @@ public class DebugBasicSettingFragment extends Fragment {
             if (viewModel.isNumCharOne(4)){
                 Toast.makeText(getContext(),"未检测到RGB摄像头，人脸识别开启无效",Toast.LENGTH_LONG).show();
             }
+        });
+
+        //讲解语速
+        binding.explain.setOnSeekBarChangeListener(current -> {
+            explainNum = binding.explain.getCurInt();
+            Log.d(TAG, "设置讲解语速: " + explainNum);
+            values.put("speechspeed",explainNum);
+            viewModel.timbres(explainNum+"");
         });
 
         //机器人语音

@@ -106,7 +106,7 @@
             android:layout_marginStart="582dp"
             android:layout_marginTop="@dimen/dp_112"
             android:alpha="0.9"
-            android:text="@string/settingAndfunction"
+            android:text="@string/settingAndFunction"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_32"
             app:layout_constraintStart_toStartOf="parent"
