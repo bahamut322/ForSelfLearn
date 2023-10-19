@@ -152,7 +152,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view2" />
 
         <ImageView
-            android:id="@+id/imageView8"
+            android:id="@+id/microphone"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:layout_marginStart="@dimen/dp_48"
@@ -162,7 +162,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/textView61"
+            android:id="@+id/bubbleTv"
             android:layout_width="@dimen/dp_320"
             android:layout_height="@dimen/dp_40"
             android:layout_marginStart="@dimen/dp_14"
@@ -172,15 +172,15 @@
             android:text="@string/ask"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_24"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-            app:layout_constraintStart_toEndOf="@+id/imageView8" />
+            app:layout_constraintBottom_toBottomOf="@+id/microphone"
+            app:layout_constraintStart_toEndOf="@+id/microphone" />
 
         <Button
             android:id="@+id/toCatalog"
             android:layout_width="204dp"
             android:layout_height="@dimen/dp_72"
             android:background="@drawable/dialog_btn_true_bg"
-            android:text="开始参观"
+            android:text="@string/start_explain"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_32"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -191,8 +191,8 @@
             android:layout_width="@dimen/dp_6"
             android:layout_height="@dimen/dp_7"
             android:src="@drawable/rt_horn"
-            app:layout_constraintBottom_toBottomOf="@+id/textView61"
-            app:layout_constraintEnd_toStartOf="@+id/textView61" />
+            app:layout_constraintBottom_toBottomOf="@+id/bubbleTv"
+            app:layout_constraintEnd_toStartOf="@+id/bubbleTv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -376,11 +376,13 @@
     <string name="home_Setting">首页设置</string>
     <string name="Home_function_display">首页功能显示</string>
     <string name="allSelect">全选</string>
+    <string name="start_explain">开始参观</string>
     <string name="Etiquette_welcome">礼仪迎宾</string>
     <string name="Intelligent_leadership">智能引领</string>
     <string name="Intelligent_explanation">智能讲解</string>
     <string name="Intelligent_QA">智能问答</string>
     <string name="Light_application">轻应用</string>
+    <string name="business">业务办理</string>
     <string name="Special_explanation">功能模块</string>
     <string name="audio_setup">音频设置</string>
     <string name="Robot_voice">语音音量</string>

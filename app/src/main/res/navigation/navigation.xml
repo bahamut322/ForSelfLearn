@@ -642,4 +642,9 @@
             app:destination="@id/ExplanationFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/businessFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.BusinessFragment"
+        android:label="businessFragment"/>
+
 </navigation>

@@ -36,7 +36,7 @@
                 <View
                     android:id="@+id/view"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="408dp"
+                    android:layout_height="458dp"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -258,6 +258,53 @@
                     app:layout_constraintBottom_toBottomOf="@+id/application"
                     app:layout_constraintStart_toEndOf="@+id/application"
                     app:layout_constraintTop_toTopOf="@+id/application" />
+
+                <CheckBox
+                    android:id="@+id/business"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_marginStart="88dp"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView15"
+                    app:layout_constraintStart_toEndOf="@+id/textView15"
+                    app:layout_constraintTop_toTopOf="@+id/textView15" />
+
+                <TextView
+                    android:id="@+id/businessTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.7"
+                    android:text="@string/business"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/business"
+                    app:layout_constraintStart_toEndOf="@+id/business"
+                    app:layout_constraintTop_toTopOf="@+id/business" />
+
+                <CheckBox
+                    android:id="@+id/Etiquette_welcome"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:background="@drawable/checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/view"
+                    app:layout_constraintStart_toStartOf="@+id/leaderShip"
+                    app:layout_constraintTop_toBottomOf="@+id/leaderShip" />
+
+                <TextView
+                    android:id="@+id/Etiquette_welcomeTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:alpha="0.7"
+                    android:text="@string/Etiquette_welcome"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/Etiquette_welcome"
+                    app:layout_constraintStart_toEndOf="@+id/Etiquette_welcome"
+                    app:layout_constraintTop_toTopOf="@+id/Etiquette_welcome" />
 
 <!--                <CheckBox-->
 <!--                    android:id="@+id/black"-->

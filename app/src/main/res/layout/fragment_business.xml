@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/businessCon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg"
-        tools:context=".view.fragment.ExplanationFragment">
+        android:background="@drawable/bg">
 
         <TextView
-            android:id="@+id/tv_explanation_name"
+            android:id="@+id/businessName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment"
+            android:text="@string/business"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_40"
-            android:layout_marginTop="@dimen/dp_64"
+            android:layout_marginTop="@dimen/dp_68"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.sendi.deliveredrobot.view.widget.MyGridView
+            android:id="@+id/businessGv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_140"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:horizontalSpacing="@dimen/dp_22"
+            android:numColumns="4"
+            android:verticalSpacing="@dimen/dp_33"
+            android:layout_marginBottom="@dimen/dp_120"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/ll_return"
@@ -32,10 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_68"
-            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -52,6 +68,7 @@
                 android:alpha="0.6"
                 android:text="@string/home" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/firstFragment"
             android:layout_width="wrap_content"
@@ -62,35 +79,24 @@
             android:layout_marginStart="@dimen/dp_32"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" >
-        <ImageView
-            android:id="@+id/imageViewSetting"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:src="@drawable/setting_svg"
-           />
+            <ImageView
+                android:id="@+id/imageViewSetting"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:src="@drawable/setting_svg"
+                />
 
-        <ImageView
-            android:id="@+id/regularImg"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginStart="@dimen/dp_32"
-            android:src="@drawable/timeoclick_svg"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
-            app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
-            app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
+            <ImageView
+                android:id="@+id/regularImg"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginStart="@dimen/dp_32"
+                android:src="@drawable/timeoclick_svg"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
+                app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
+                app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
         </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/explainRv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/dp_32"
-            android:layout_marginEnd="@dimen/dp_32"
-            android:layout_marginBottom="@dimen/dp_100"
-            android:layout_marginTop="@dimen/dp_48"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_explanation_name" />
+
 
         <ImageView
             android:id="@+id/microphone"

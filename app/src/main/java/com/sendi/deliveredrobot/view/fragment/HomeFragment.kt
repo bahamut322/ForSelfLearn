@@ -230,7 +230,6 @@ class HomeFragment : Fragment(), IMainView {
                 0 -> {
                     allInvisible()
                 }
-
                 1 -> allInvisible()
                 2 -> {
                     allInvisible()
@@ -250,6 +249,17 @@ class HomeFragment : Fragment(), IMainView {
                     initView3()
                 }
 
+                5 -> {
+                    allInvisible()
+                    binding.include.view4.visibility = View.VISIBLE
+                    initView4()
+                }
+
+                6 -> {
+                    allInvisible()
+                    binding.include.view5.visibility = View.VISIBLE
+                    initView5()
+                }
                 else -> {}
             }
         }
@@ -405,6 +415,123 @@ class HomeFragment : Fragment(), IMainView {
         }
         binding.include.view343.text = calculateEnglish(rescolors!![3])
     }
+    //当有五个Item的时候
+    private fun initView4() {
+        //item1
+        binding.include.view410.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view411.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view412.text = rescolors!![0]
+        binding.include.view410.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![0]
+            )
+        }
+        binding.include.view413.text = calculateEnglish(rescolors!![0])
+        //item2
+        binding.include.view420.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view421.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view422.text = rescolors!![1]
+        binding.include.view420.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![1]
+            )
+        }
+        binding.include.view423.text = calculateEnglish(rescolors!![1])
+        //item3
+        binding.include.view430.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view431.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view432.text = rescolors!![2]
+        binding.include.view430.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![2]
+            )
+        }
+        binding.include.view433.text = calculateEnglish(rescolors!![2])
+        //item4
+        binding.include.view440.setBackgroundResource(calculateColor(rescolors!![3]))
+        binding.include.view441.setImageResource(calculateImage(rescolors!![3]))
+        binding.include.view442.text = rescolors!![3]
+        binding.include.view440.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![3]
+            )
+        }
+        binding.include.view443.text = calculateEnglish(rescolors!![3])
+        //item5
+        binding.include.view450.setBackgroundResource(calculateColor(rescolors!![4]))
+        binding.include.view451.setImageResource(calculateImage(rescolors!![4]))
+        binding.include.view452.text = rescolors!![4]
+        binding.include.view450.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![4]
+            )
+        }
+        binding.include.view453.text = calculateEnglish(rescolors!![4])
+    }
+
+    //当选中所有Item的时候
+    private fun initView5() {
+        //item1
+        binding.include.view510.setBackgroundResource(calculateColor(rescolors!![0]))
+        binding.include.view511.setImageResource(calculateImage(rescolors!![0]))
+        binding.include.view512.text = rescolors!![0]
+        binding.include.view510.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![0]
+            )
+        }
+        binding.include.view513.text = calculateEnglish(rescolors!![0])
+        //item2
+        binding.include.view520.setBackgroundResource(calculateColor(rescolors!![1]))
+        binding.include.view521.setImageResource(calculateImage(rescolors!![1]))
+        binding.include.view522.text = rescolors!![1]
+        binding.include.view520.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![1]
+            )
+        }
+        binding.include.view523.text = calculateEnglish(rescolors!![1])
+        //item3
+        binding.include.view530.setBackgroundResource(calculateColor(rescolors!![2]))
+        binding.include.view531.setImageResource(calculateImage(rescolors!![2]))
+        binding.include.view532.text = rescolors!![2]
+        binding.include.view530.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![2]
+            )
+        }
+        binding.include.view533.text = calculateEnglish(rescolors!![2])
+        //item4
+        binding.include.view540.setBackgroundResource(calculateColor(rescolors!![3]))
+        binding.include.view541.setImageResource(calculateImage(rescolors!![3]))
+        binding.include.view542.text = rescolors!![3]
+        binding.include.view540.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![3]
+            )
+        }
+        binding.include.view543.text = calculateEnglish(rescolors!![3])
+        //item5
+        binding.include.view550.setBackgroundResource(calculateColor(rescolors!![4]))
+        binding.include.view551.setImageResource(calculateImage(rescolors!![4]))
+        binding.include.view552.text = rescolors!![4]
+        binding.include.view550.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![4]
+            )
+        }
+        binding.include.view553.text = calculateEnglish(rescolors!![4])
+        //item6
+        binding.include.view560.setBackgroundResource(calculateColor(rescolors!![5]))
+        binding.include.view561.setImageResource(calculateImage(rescolors!![5]))
+        binding.include.view562.text = rescolors!![5]
+        binding.include.view560.setOnClickListener {
+            itemOnclickListen(
+                rescolors!![5]
+            )
+        }
+        binding.include.view563.text = calculateEnglish(rescolors!![5])
+    }
 
 
     /**
@@ -438,6 +565,10 @@ class HomeFragment : Fragment(), IMainView {
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+
+            "业务办理" -> Toast.makeText(context, "业务办理", Toast.LENGTH_SHORT).show()
+
+            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -462,6 +593,10 @@ class HomeFragment : Fragment(), IMainView {
             str = "Q & A"
         } else if ("轻应用" == String) {
             str = "APPLICATION"
+        } else if ("礼仪迎宾" == String){
+            str = "GRRRT GURSTS"
+        } else if ("业务办理" == String){
+            str = "BUSINESS"
         }
         return str
     }
@@ -479,6 +614,10 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item4
         } else if ("轻应用" == colorstr) {
             color = R.drawable.item3
+        } else if ("礼仪迎宾" == colorstr){
+            color = R.drawable.item3
+        } else if ("业务办理" == colorstr){
+            color = R.drawable.item1
         }
         return color
     }
@@ -496,6 +635,10 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.qa_svg
         } else if ("轻应用" == Imagestr) {
             image = R.drawable.application_svg
+        } else if ("礼仪迎宾" == Imagestr){
+            image = R.drawable.welcome_svg
+        } else if ("业务办理" == Imagestr){
+            image = R.drawable.business_svg
         }
         return image
     }

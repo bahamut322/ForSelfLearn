@@ -80,6 +80,8 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.leaderShip.setOnCheckedChangeListener(boxCheckListener);
         binding.explanation.setOnCheckedChangeListener(boxCheckListener);
         binding.QA.setOnCheckedChangeListener(boxCheckListener);
+        binding.business.setOnCheckedChangeListener(boxCheckListener);
+        binding.EtiquetteWelcome.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
         binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression",BooleanToInt(b)));
@@ -138,6 +140,8 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.leaderShip.setChecked(all.isChecked());
             binding.explanation.setChecked(all.isChecked());
             binding.QA.setChecked(all.isChecked());
+            binding.business.setChecked(all.isChecked());
+            binding.EtiquetteWelcome.setChecked(all.isChecked());
             binding.application.setChecked(all.isChecked());
 
         }
@@ -150,7 +154,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 binding.all.setChecked(false);
             }
             if ( binding.leaderShip.isChecked() && binding.explanation.isChecked() &&
-                    binding.QA.isChecked()  && binding.application.isChecked()) {
+                    binding.QA.isChecked()  && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
                 binding.all.setChecked(true);
             }
 
@@ -178,6 +182,10 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.QA.setChecked(true);
         }  else if ("轻应用".equals(checkName)) {
             binding.application.setChecked(true);
+        } else if ("业务办理".equals(checkName)){
+            binding.business.setChecked(true);
+        }else if ("礼仪迎宾".equals(checkName)){
+            binding.EtiquetteWelcome.setChecked(true);
         }
 
     }
@@ -201,6 +209,12 @@ public class DebugBasicSettingFragment extends Fragment {
             }
             if (binding.application.isChecked()) {
                 stringBuffer.append("轻应用 ");
+            }
+            if (binding.business.isChecked()){
+                stringBuffer.append("业务办理 ");
+            }
+            if (binding.EtiquetteWelcome.isChecked()){
+                stringBuffer.append("礼仪迎宾 ");
             }
 
             if (binding.BoyVoice.isChecked()) {
