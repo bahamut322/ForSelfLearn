@@ -3,15 +3,14 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
-
+apply plugin: 'com.android.application'
 android {
-
+    compileSdk 30
     externalNativeBuild {
         cmake {
             version "3.10.2"
         }
     }
-    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.sendi.fooddeliveryrobot"
@@ -104,11 +103,6 @@ android {
 //
 //    }
 }
-repositories {
-    flatDir {
-        dirs 'libs'   // aar目录
-    }
-}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -120,7 +114,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation(name: 'libusbcamera', ext: 'aar')
+    implementation files('libs/libusbcamera.aar')
     // =============== java 后台添加 ================
     implementation files('lib/RobotSDK-0.0.1.jar')
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
@@ -164,7 +158,4 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
     //ssh包
     implementation 'ch.ethz.ganymed:ganymed-ssh2:build210'
-
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.7'
-
 }

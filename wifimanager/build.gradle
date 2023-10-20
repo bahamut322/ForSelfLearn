@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 android {
     ext.buildConfig = [
             'compileSdkVersion': 30,
@@ -17,19 +16,4 @@ android {
     }
 }
 dependencies {
-}
-publish {
-    ext.bintray = [
-            'userOrg'       : 'hacknife',
-            'groupId'       : 'com.hacknife',
-            'publishVersion': '1.0.2',
-            'desc'          : '',
-            'website'       : 'https://github.com/hacknife/wifimanager',
-    ]
-    userOrg = bintray.userOrg
-    groupId = bintray.groupId
-    artifactId = 'wifimanager'
-    publishVersion = bintray.publishVersion
-    desc = bintray.desc
-    website = bintray.website
 }
