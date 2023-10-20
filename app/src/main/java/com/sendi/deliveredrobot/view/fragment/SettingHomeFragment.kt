@@ -14,6 +14,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import chassis_msgs.DoorState
 import chassis_msgs.VersionGetResponse
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.adapter.SettingHomeListAdapter
@@ -156,6 +157,11 @@ class SettingHomeFragment : Fragment() {
                 3->{
                     Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
                     LogUtil.i("轻应用")
+                }
+                5 ->{
+                    controller!!.navigate(R.id.action_settingHomeFragment_to_businessFragment)
+                    Toast.makeText(context, "业务办理", Toast.LENGTH_SHORT).show()
+                    LogUtil.i("业务办理")
                 }
                 //不只有一个选项
                 4->{

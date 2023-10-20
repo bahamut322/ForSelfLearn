@@ -68,7 +68,9 @@ class HomeFragment : Fragment(), IMainView {
 
     override fun onResume() {
         //启动默认开始计时
-        mPresenter?.startTipsTimer()
+        if (QuerySql.QueryBasic().etiquette == false ||  viewModelSetting.isNumCharOne(4)) {
+            mPresenter?.startTipsTimer()
+        }
         super.onResume()
     }
 
@@ -566,7 +568,14 @@ class HomeFragment : Fragment(), IMainView {
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 
-            "业务办理" -> Toast.makeText(context, "业务办理", Toast.LENGTH_SHORT).show()
+            "业务办理" ->{
+                if(RobotStatus.batteryStateNumber.value == false){
+                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                }else {
+                    controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
+                    Log.d("TAG", "点击智能讲解 ") }
+            }
 
             "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
         }

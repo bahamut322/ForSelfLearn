@@ -17,6 +17,7 @@ import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
 import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
 import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
+import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -25,6 +26,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -65,6 +67,34 @@ class BusinessFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(requireView())
+        val toSettingDialog = FromeSettingDialog(context)
+
+        if (FunctionSkip.selectFunction() == 4) {
+            binding.firstFragment.visibility = View.GONE
+            binding.llReturn.visibility = View.VISIBLE
+        } else {
+            binding.firstFragment.visibility = View.VISIBLE
+            binding.llReturn.visibility = View.GONE
+        }
+        //返回按钮
+        binding.llReturn.setOnClickListener {
+            controller!!.navigate(R.id.action_businessFragment_to_homeFragment)
+        }
+        //设置按钮
+        binding.imageViewSetting.setOnClickListener {
+            toSettingDialog.show()
+            RobotStatus.PassWordToSetting.observe(viewLifecycleOwner) {
+                if (RobotStatus.PassWordToSetting.value == true) {
+                    try {
+                        controller!!.navigate(R.id.action_businessFragment_to_planSettingFragment)
+                    }catch (_: Exception){}
+                    toSettingDialog.dismiss()
+                    RobotStatus.PassWordToSetting.postValue(false)
+                }
+            }
+            Toast.makeText(context,"点击了：设置",Toast.LENGTH_SHORT).show()
+        }
+
         //初始化适配器
         binding.businessGv.adapter = context?.let { BusinessAdapter(it, queryFloorPoints) }
         //item点击

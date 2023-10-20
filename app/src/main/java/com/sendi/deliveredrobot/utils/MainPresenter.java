@@ -40,7 +40,11 @@ public class MainPresenter {
      * @see [类、类#方法、类#成员]
      */
     public void startTipsTimer() {
-        mMainHandler.postDelayed(tipsShowRunable, (long) QuerySql.robotConfig().getSleepTime() *1000*60);
+        if (QuerySql.robotConfig().getSleepTime() != 0) {
+            mMainHandler.postDelayed(tipsShowRunable, (long) QuerySql.robotConfig().getSleepTime() * 1000 * 60);
+        }else {
+            mMainHandler.postDelayed(tipsShowRunable, (long) 5 * 1000 * 60);
+        }
     }
 
     /**

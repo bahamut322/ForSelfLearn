@@ -407,6 +407,10 @@ class SelfCheckFragment : Fragment() {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_homeFragment)
                 LogUtil.i("自检->主页面")
             }
+            5 ->{
+                controller!!.navigate(R.id.action_selfCheckFragment_to_businessFragment)
+                LogUtil.i("自检->业务办理")
+            }
             -1 ->{
                 controller!!.navigate(R.id.action_selfCheckFragment_to_settingFragment)
                 LogUtil.i("自检->设置")

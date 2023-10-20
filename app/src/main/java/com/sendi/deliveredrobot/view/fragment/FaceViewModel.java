@@ -12,25 +12,24 @@ import android.hardware.camera2.CameraManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
-import com.sendi.deliveredrobot.entity.FaceTips;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 
-import org.litepal.LitePal;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Handler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FaceViewModel extends ViewModel {
 
@@ -41,11 +40,17 @@ public class FaceViewModel extends ViewModel {
     String[] stringArray;
     float[] floatArray;
     int speakNum = 0;
+    CameraManager manager = (CameraManager) MyApplication.Companion.getInstance().getSystemService(Context.CAMERA_SERVICE);
+    ByteArrayOutputStream stream;
+    YuvImage image;
+
     /**
      * 人脸识别方法
+     *
      * @param surfaceView 预览的surfaceView控件
      */
-    public void suerfaceInit( SurfaceView surfaceView ) {
+    public void suerfaceInit(SurfaceView surfaceView) {
+
 //        //查询录入人脸的数据
 //        List<FaceTips> faceTipsList = LitePal.findAll(FaceTips.class);
 //        //二维数组初始化
@@ -59,8 +64,6 @@ public class FaceViewModel extends ViewModel {
 //            }
 //            features[i] = floatArray;
 //        }
-
-        CameraManager manager = (CameraManager) MyApplication.Companion.getInstance().getSystemService(Context.CAMERA_SERVICE);
         String[] cameraIds = new String[0];
         try {
             cameraIds = manager.getCameraIdList();
@@ -112,97 +115,65 @@ public class FaceViewModel extends ViewModel {
         });
         //获取摄像实时数据
         c.setPreviewCallback((data, camera) -> {
-//            Camera.Size size = camera.getParameters().getPreviewSize();
+            if (data == null) return;
             try {
-                YuvImage image = new YuvImage(data, ImageFormat.NV21, 640, 480, null);
+                image = new YuvImage(data, ImageFormat.NV21, 640, 480, null);
                 if (image != null) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    image.compressToJpeg(new Rect(0, 0, 600, 480), 75, stream);//jpg图片数据size.width, size.height
-                    //此时stream中是一张jpg图片字节数组，可直接使用
-                    Bitmap bm;
-                    bm = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());//转位图
+                    stream = new ByteArrayOutputStream();
+                    Log.d(TAG, "stream size: " + stream.size());
+                    image.compressToJpeg(new Rect(0, 0, 640, 480), 75, stream);//jpg图片数据size.width, size.height
+                    byte[] jpegData = stream.toByteArray();
+                    // 使用BitmapFactory.decodeByteArray()方法将字节数组解码为Bitmap对象
+                    Bitmap bm = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+                    if (bm == null) {
+                        return;
+                    }
                     float xScal = (float) bm.getWidth() / Utils.inputWidth;
                     float yScal = (float) bm.getHeight() / Utils.inputHeight;
                     //将原bitmap用4:3的比例截取
-//                    System.out.println("************************************");
-                    long T0 = System.currentTimeMillis();
+                    System.out.println("************************************");
                     try {
-                           infoArrayList = MyApplication.faceModule.preidct(bm, xScal, yScal, false, true, features);
+                        infoArrayList = new ArrayList<>();
+                        infoArrayList = MyApplication.faceModule.preidct(bm, xScal, yScal, false, false, features);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    long T1 = System.currentTimeMillis();
-//                    System.out.println(T1 - T0);
-//                    System.out.println("Hello MNN!");
-//                    System.out.println("特征1：" + infoArrayList.size());
                     if (infoArrayList.size() != 0) {
-                        if (BuildConfig.IS_SPEAK && speakNum == 0 ) {
-                            speakNum ++;
-                            BaiduTTSHelper.getInstance().speak("你好:欢迎来到申迪");
-                        }
-                        try {
-                            Thread.sleep(5000);  // 延迟五秒钟
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        speakNum = 0;  // 将peakNum设置为0
-                        //TODO 人脸识别&检测。暂时用不到，注释
-//                        for (Info info : infoArrayList) {
-//                            if (BuildConfig.IS_SPEAK && speakNum == 0 ) {
-//                                speakNum ++;
-//                                BaiduTTSHelper.getInstance().speak("你好:欢迎来到申迪");
-//                            }
+//                        new Thread(() -> {
+//                            if (BuildConfig.IS_SPEAK && speakNum == 0) {
+//                                speakNum++;
 //
-//                            try {
-//                                Thread.sleep(5000);  // 延迟五秒钟
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            speakNum = 0;  // 将peakNum设置为0
-//                            //打印日志 TODO 人脸相似度
-//                            System.out.println("相似度：" + Arrays.toString(info.getConfList()) + "");
-//                            // 初始化最大值和位置
-//                            float max_value = Float.NEGATIVE_INFINITY;
-//                            int max_index = -1;
-//                            // 遍历数组并找到最大值
-//                            for (int i = 0; i < info.getConfList().length; i++) {
-//                                float val = info.getConfList()[i];
-//                                if (val > max_value) {
-//                                    max_value = val;
-//                                    max_index = i;
+//                                try {
+//                                    Thread.sleep(5000);  // 延迟五秒钟
+//                                } catch (InterruptedException e) {
+//                                    throw new RuntimeException(e);
 //                                }
+//                                speakNum = 0;  // 将peakNum设置为0
 //                            }
-//                            // 输出最大值和位置
-//                            System.out.println("Max value is: " + max_value);
-//                            System.out.println("Max value is in position " + (max_index + 1));
-//                            //查询相似度最大的那个的人脸特征
-//                            List<FaceTips> tipsList = LitePal.where("faceCharacteristic = ?", faceTipsList.get((max_index)).getFaceCharacteristic()).find(FaceTips.class);
-//                            if (max_value > 0.88f && QuerySql.QueryBasic().getIdentifyVip()) {
-//                                Toast.makeText(MyApplication.Companion.getInstance(), "你好！" + tipsList.get(0).getName(), Toast.LENGTH_SHORT).show();
-//                                if (BuildConfig.IS_SPEAK) {
-//                                    BaiduTTSHelper.getInstance().speak("你好:"+tipsList.get(0).getName());
-//                                }
-//                                Log.e(TAG, "onCreate: " + tipsList.get(0).getName());
-//                            }
-//
+//                        }).start();
+                        SpeakHelper.INSTANCE.speak("嗨，我是小迪，欢迎前来了解智能服务机器人");
+                    } else if (infoArrayList.size() == 0) {
+                        bm.recycle();
+                        image = null;
+                        stream.close();
+//                        if (!BuildConfig.IS_SPEAK ) {
+//                            BaiduTTSHelper.getInstance().stop();
 //                        }
-                    }else if (infoArrayList.size() == 0) {
-                        if (RobotStatus.INSTANCE.getIdentifyFace().getValue()==1) {
-                            BaiduTTSHelper.getInstance().stop();
-                        }
                     }
-                    image = null;
-                    stream.close();
+                    bm.recycle();
                 }
+                infoArrayList.clear();
+                image = null;
+                stream.close();
             } catch (Exception ex) {
-                Log.e(TAG, "人脸识别Error:" + ex.getMessage());
+                Log.d(TAG, "surfaceInit: " + ex);
             }
         });
         infoArrayList = null;
     }
 
     public void onDestroy() {
-        if(null != c) {
+        if (null != c) {
             BaiduTTSHelper.getInstance().stop();
             c.setPreviewCallback(null);
             c.stopPreview();

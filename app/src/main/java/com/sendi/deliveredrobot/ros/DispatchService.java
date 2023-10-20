@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -43,6 +45,7 @@ public class DispatchService {
     public static AtomicBoolean isDispatchInit = new AtomicBoolean(false);
     public static AtomicBoolean isSubPreTopicList = new AtomicBoolean(false);
     public static List<String> preTopicList;
+    private ExecutorService threadPool = Executors.newFixedThreadPool(5); // 这里限制线程池大小为5个线程
 
     /**
      * rosBridge 初始化方法
@@ -309,69 +312,75 @@ public class DispatchService {
      * @param text rosResult
      */
     public void messageHandler(String text) {
-        new Thread(() -> {
-            String serviceOpStr = "\"op\": \"service_response\"";
-            String serviceStr = "\"service\": \"";
-            String topicOpStr = "\"op\": \"publish\"";
-            String topicStr = "\"topic\": \"";
-            // JSONObject jsonObject = JSONObject.parseObject(text);
-            // String op = jsonObject.getString(JRosbridgeConstant.FIELD_OP);
-            if (text.lastIndexOf(serviceOpStr) > 0) {
-                if (text.length() > 1000) {
-                    LogUtil.INSTANCE.i("【RESPONSE】 " + text.substring(0, 999));
-                } else {
-                    LogUtil.INSTANCE.i("【RESPONSE】 " + text);
-                }
-                //service 回复
-                int serviceStart = text.lastIndexOf(serviceStr) + serviceStr.length();
-                int serviceEnd = text.indexOf("\"", serviceStart);
-                if (serviceStart < serviceStr.length() || serviceEnd < 0) {
-                    LogUtil.INSTANCE.e("【RESPONSE ERROR】 json格式不正确");
-                    return;
-                }
-                String service = text.substring(serviceStart, serviceEnd);
+        threadPool.execute(() -> {
+            try {
+                new Thread(() -> {
+                    String serviceOpStr = "\"op\": \"service_response\"";
+                    String serviceStr = "\"service\": \"";
+                    String topicOpStr = "\"op\": \"publish\"";
+                    String topicStr = "\"topic\": \"";
+                    // JSONObject jsonObject = JSONObject.parseObject(text);
+                    // String op = jsonObject.getString(JRosbridgeConstant.FIELD_OP);
+                    if (text.lastIndexOf(serviceOpStr) > 0) {
+                        if (text.length() > 1000) {
+                            LogUtil.INSTANCE.i("【RESPONSE】 " + text.substring(0, 999));
+                        } else {
+                            LogUtil.INSTANCE.i("【RESPONSE】 " + text);
+                        }
+                        //service 回复
+                        int serviceStart = text.lastIndexOf(serviceStr) + serviceStr.length();
+                        int serviceEnd = text.indexOf("\"", serviceStart);
+                        if (serviceStart < serviceStr.length() || serviceEnd < 0) {
+                            LogUtil.INSTANCE.e("【RESPONSE ERROR】 json格式不正确");
+                            return;
+                        }
+                        String service = text.substring(serviceStart, serviceEnd);
 //                jsonObject.getString(JRosbridgeConstant.FIELD_SERVICE);
-                IAbstractClient serviceBean = INSTANCE.getBeanByUrl(service);
-                if (serviceBean == null) {
-                    LogUtil.INSTANCE.e("【RESPONSE ERROR】 service处理类不存在！service: " + service);
-                    return;
-                }
-                try {
-                    serviceBean.callbackMessageHandle(text);
-                } catch (Exception e) {
-                    LogUtil.INSTANCE.e("【RESPONSE ERROR】 service:" + service + "\n" + e);
-                }
-            } else if (text.lastIndexOf(topicOpStr) > 0) {
-                // ==============================================================
-                if (!checkNeedLogOut(text)) {
-                    LogUtil.INSTANCE.i("【TOPIC】 " + text);
-                }
-                // ==============================================================
-                //topic 上送的数据
-                //service 回复
-                int topicStart = text.lastIndexOf(topicStr) + topicStr.length();
-                int topicEnd = text.indexOf("\"", topicStart);
-                if (topicStart < topicStr.length() || topicEnd < 0) {
-                    LogUtil.INSTANCE.e("【TOPIC ERROR】 json格式不正确");
-                    return;
-                }
-                String topic = text.substring(topicStart, topicEnd);
+                        IAbstractClient serviceBean = INSTANCE.getBeanByUrl(service);
+                        if (serviceBean == null) {
+                            LogUtil.INSTANCE.e("【RESPONSE ERROR】 service处理类不存在！service: " + service);
+                            return;
+                        }
+                        try {
+                            serviceBean.callbackMessageHandle(text);
+                        } catch (Exception e) {
+                            LogUtil.INSTANCE.e("【RESPONSE ERROR】 service:" + service + "\n" + e);
+                        }
+                    } else if (text.lastIndexOf(topicOpStr) > 0) {
+                        // ==============================================================
+                        if (!checkNeedLogOut(text)) {
+                            LogUtil.INSTANCE.i("【TOPIC】 " + text);
+                        }
+                        // ==============================================================
+                        //topic 上送的数据
+                        //service 回复
+                        int topicStart = text.lastIndexOf(topicStr) + topicStr.length();
+                        int topicEnd = text.indexOf("\"", topicStart);
+                        if (topicStart < topicStr.length() || topicEnd < 0) {
+                            LogUtil.INSTANCE.e("【TOPIC ERROR】 json格式不正确");
+                            return;
+                        }
+                        String topic = text.substring(topicStart, topicEnd);
 //                String topic = jsonObject.getString(JRosbridgeConstant.FIELD_TOPIC);
-                IAbstractClient topicBean = INSTANCE.getBeanByUrl(topic);
-                if (topicBean == null) {
-                    LogUtil.INSTANCE.e("【TOPIC ERROR】 topic处理类不存在！topic: " + topic);
-                    return;
-                }
-                try {
-                    topicBean.callbackMessageHandle(text);
-                } catch (Exception e) {
-                    LogUtil.INSTANCE.e("【TOPIC ERROR】 topic:" + topic + "\n" + e);
-                }
-            } else {
-                LogUtil.INSTANCE.e("【ROS ERROR】 Ros上报处理消息没有对应的类型\ntext: " + text);
+                        IAbstractClient topicBean = INSTANCE.getBeanByUrl(topic);
+                        if (topicBean == null) {
+                            LogUtil.INSTANCE.e("【TOPIC ERROR】 topic处理类不存在！topic: " + topic);
+                            return;
+                        }
+                        try {
+                            topicBean.callbackMessageHandle(text);
+                        } catch (Exception e) {
+                            LogUtil.INSTANCE.e("【TOPIC ERROR】 topic:" + topic + "\n" + e);
+                        }
+                    } else {
+                        LogUtil.INSTANCE.e("【ROS ERROR】 Ros上报处理消息没有对应的类型\ntext: " + text);
+                    }
+                }).start();
+            } catch (Exception ignored) {
             }
-        }).start();
+        });
     }
+
 
     private boolean checkNeedLogOut(String text) {
         return text.contains(ClientConstant.BATTERY_STATE) ||

@@ -67,7 +67,7 @@ class MyApplication : Application() {
         //添加腾讯bugly
         CrashReport.initCrashReport(applicationContext, "3f38b69ec1", false)
         //初始化人脸识别&检测
-        Thread {
+//        Thread {
             if (Usbcontorl.isload) {
                 Usbcontorl.usb3803_mode_setting(1) //打开5V
             }
@@ -98,7 +98,7 @@ class MyApplication : Application() {
             faceModule =
                 FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath)
             d("人脸识别库初始化完成")
-        }.start()
+//        }.start()
 
     }
 }

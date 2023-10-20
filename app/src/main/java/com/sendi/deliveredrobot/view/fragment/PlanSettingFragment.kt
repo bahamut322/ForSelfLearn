@@ -112,6 +112,12 @@ class PlanSettingFragment : Fragment() {
                         Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
                         LogUtil.i("轻应用")
                     }
+                    5 ->{
+                        controller!!.navigate(R.id.action_planSettingFragment_to_businessFragment)
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(context, "业务办理", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     //不只有一个选项
                     4 -> {
                         controller!!.navigate(R.id.action_planSettingFragment_to_homeFragment)

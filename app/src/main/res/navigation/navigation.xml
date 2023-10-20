@@ -138,6 +138,9 @@
         <action
             android:id="@+id/action_homeFragment_to_explanationFragment"
             app:destination="@+id/ExplanationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_businessFragment"
+            app:destination="@+id/businessFragment" />
     </fragment>
     <fragment
         android:id="@+id/planSettingFragment"
@@ -158,6 +161,9 @@
         <action
             android:id="@+id/action_planSettingFragment_to_GuideFragment"
             app:destination="@+id/GuideFragment"/>
+        <action
+            android:id="@+id/action_planSettingFragment_to_businessFragment"
+            app:destination="@+id/businessFragment"/>
     </fragment>
     <fragment
         android:id="@+id/callLiftFragment"
@@ -380,6 +386,9 @@
         <action
             android:id="@+id/action_settingHomeFragment_to_GuideFragment"
             app:destination="@+id/GuideFragment" />
+        <action
+            android:id="@+id/action_settingHomeFragment_to_businessFragment"
+            app:destination="@id/businessFragment" />
     </fragment>
     <fragment
         android:id="@+id/wifiSettingFragment"
@@ -414,6 +423,9 @@
         <action
             android:id="@+id/action_selfCheckFragment_to_settingFragment"
             app:destination="@+id/planSettingFragment" />
+        <action
+            android:id="@+id/action_selfCheckFragment_to_businessFragment"
+            app:destination="@+id/businessFragment" />
 
     </fragment>
     <fragment
@@ -434,6 +446,9 @@
         <action
             android:id="@+id/action_finishDockFragment_to_explanationFragment"
             app:destination="@+id/ExplanationFragment" />
+        <action
+            android:id="@+id/action_finishDockFragment_to_businessFragment"
+            app:destination="@+id/businessFragment" />
     </fragment>
     <fragment
         android:id="@+id/FinishReadyFragment"
@@ -448,6 +463,9 @@
         <action
             android:id="@+id/action_FinishReadyFragment_to_explanationFragment"
             app:destination="@+id/ExplanationFragment" />
+        <action
+            android:id="@+id/action_FinishReadyFragment_to_businessFragment"
+            app:destination="@+id/businessFragment" />
     </fragment>
     <fragment
         android:id="@+id/readyForTaskFragment"
@@ -645,6 +663,14 @@
     <fragment
         android:id="@+id/businessFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.BusinessFragment"
-        android:label="businessFragment"/>
+        android:label="businessFragment">
+        <action
+            android:id="@+id/action_businessFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <!--业务办理->设置-->
+        <action
+            android:id="@+id/action_businessFragment_to_planSettingFragment"
+            app:destination="@id/planSettingFragment" />
+    </fragment>
 
 </navigation>
