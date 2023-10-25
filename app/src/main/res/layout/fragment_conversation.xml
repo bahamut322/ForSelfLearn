@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.ConversationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.sendi.deliveredrobot.view.widget.MyFlowLayout
+        android:id="@+id/my_flow_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="人机对话fragment" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>
