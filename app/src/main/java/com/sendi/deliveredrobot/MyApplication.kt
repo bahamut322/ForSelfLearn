@@ -95,9 +95,9 @@ class MyApplication : Application() {
                 "resnet18_110.mnn",
                 faceRecognizermodelPath
             )
-            faceModule =
-                FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath)
-            d("人脸识别库初始化完成")
+//            faceModule =
+//                FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath)
+//            d("人脸识别库初始化完成")
 //        }.start()
 
     }
