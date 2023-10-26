@@ -501,5 +501,6 @@
     <string name="other_point">切换其他点</string>
     <string name="next_point">下一个点</string>
     <string name="mark_point_fail">标记失败,同一楼层的同一个电梯里只能创建一个锚点</string>
+    <string name="you_can_ask_this_questions">您可以问我以下问题</string>
 
 </resources>

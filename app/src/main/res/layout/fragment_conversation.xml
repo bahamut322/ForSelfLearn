@@ -13,6 +13,56 @@
         android:layout_marginBottom="@dimen/dp_40"
         app:lineSpacing="@dimen/dp_72"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_64"
+        android:layout_marginStart="@dimen/dp_436">
+        <View
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:background="@drawable/ic_mic"
+            android:layout_gravity="center_vertical"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_40"
+            android:layout_gravity="center_vertical"
+            android:text="@string/you_can_ask_this_questions"
+            android:layout_marginStart="@dimen/dp_48"
+            />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_32"
+        android:layout_marginTop="@dimen/dp_68"
+        >
+        <View
+            android:layout_width="@dimen/dp_32"
+            android:layout_height="@dimen/dp_32"
+            android:background="@drawable/ic_home_2"
+            android:layout_gravity="center_vertical"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_32"
+            android:textColor="#3CFFFFFF"
+            android:text="@string/home"
+            android:layout_marginStart="@dimen/dp_41"
+            />
+
+    </FrameLayout>
+
+
+
 
 </FrameLayout>
