@@ -1,68 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bg_conversation_1"
-    tools:context=".view.fragment.ConversationFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.sendi.deliveredrobot.view.widget.MyFlowLayout
-        android:id="@+id/my_flow_layout"
-        android:layout_marginTop="@dimen/dp_200"
-        android:layout_marginBottom="@dimen/dp_40"
-        app:lineSpacing="@dimen/dp_72"
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_conversation_1"
+        tools:context=".view.fragment.ConversationFragment">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_64"
-        android:layout_marginStart="@dimen/dp_436">
-        <View
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:background="@drawable/ic_mic"
-            android:layout_gravity="center_vertical"
-            />
+        <com.sendi.deliveredrobot.view.widget.MyFlowLayout
+            android:id="@+id/my_flow_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="200dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:lineSpacing="@dimen/dp_72" />
 
-        <TextView
+        <FrameLayout
+            android:id="@+id/fl_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_40"
-            android:layout_gravity="center_vertical"
-            android:text="@string/you_can_ask_this_questions"
-            android:layout_marginStart="@dimen/dp_48"
-            />
-    </FrameLayout>
+            android:layout_marginTop="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_32"
-        android:layout_marginTop="@dimen/dp_68"
-        >
-        <View
-            android:layout_width="@dimen/dp_32"
-            android:layout_height="@dimen/dp_32"
-            android:background="@drawable/ic_home_2"
-            android:layout_gravity="center_vertical"
-            />
+            <View
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_mic" />
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_48"
+                android:text="@string/you_can_ask_this_questions"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_40" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/sp_32"
-            android:textColor="#3CFFFFFF"
-            android:text="@string/home"
-            android:layout_marginStart="@dimen/dp_41"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/fl_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/fl_title"
+            app:layout_constraintVertical_bias="0.5">
 
-    </FrameLayout>
+            <View
+                android:layout_width="@dimen/dp_32"
+                android:layout_height="@dimen/dp_32"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_home_2" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_41"
+                android:text="@string/home"
+                android:textColor="#3CFFFFFF"
+                android:textSize="@dimen/sp_32" />
 
+        </FrameLayout>
 
+        <ScrollView
+            android:id="@+id/scroll_view_conversation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear_layout_conversation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="my_flow_layout,fl_title,fl_home"
+            android:visibility="visible"
+            tools:visibility="gone"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="scroll_view_conversation"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

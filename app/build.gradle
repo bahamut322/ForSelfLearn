@@ -172,4 +172,10 @@ dependencies {
     implementation 'ch.ethz.ganymed:ganymed-ssh2:build210'
 
     implementation project(path: ':conversation')
+//    implementation("") {
+//        exclude(group="com.alibaba" ,module = "fastjson")
+//    }
+    implementation("com.github.plexpt:chatgpt:4.1.2") {
+        exclude group: 'com.alibaba', module: 'fastjson'
+    }
 }
