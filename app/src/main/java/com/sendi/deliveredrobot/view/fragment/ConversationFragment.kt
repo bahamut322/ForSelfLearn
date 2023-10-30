@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.plexpt.chatgpt.ChatGPT
@@ -20,7 +21,6 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
-import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -78,24 +78,33 @@ class ConversationFragment : Fragment() {
                         }
                     }
                     binding?.linearLayoutConversation?.apply {
-                        val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view,null) as TextView
+                        val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_right,null) as TextView
                         view.text = conversation
                         addView(view)
                         view.post {
-                            totalHeight += view.measuredHeight
+                            view.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                                gravity = Gravity.END
+                                setMargins(0,0,0,96)
+                            }
+                            totalHeight += (view.measuredHeight + 96 * 3)
                             binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                         }
+
                         mainScope.launch(Dispatchers.Default) {
                             val res: String = chatGPT.chat(conversation)
-                            val view2 = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view,null) as TextView
+                            val view2 = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_left,null) as TextView
                             view2.text = res
                             withContext(Dispatchers.Main){
                                 addView(view2)
-                                LogUtil.i("totalHeight: $totalHeight")
                                 view2.post {
-                                    totalHeight += view2.measuredHeight
+                                    view2.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                                        gravity = Gravity.START
+                                        setMargins(0,0,0,96)
+                                    }
+                                    totalHeight += (view2.measuredHeight +  96 * 3)
                                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                                 }
+
                             }
                         }
                     }
@@ -110,7 +119,7 @@ class ConversationFragment : Fragment() {
         binding = DataBindingUtil.bind(view)
         val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
         repeat(20){
-            val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view,null) as TextView
+            val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_left,null) as TextView
             view.text = "测".repeat(random.nextInt(2,20))
             myFlowLayout.addView(view)
         }

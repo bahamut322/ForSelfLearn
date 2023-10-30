@@ -83,12 +83,13 @@
 
         <ScrollView
             android:id="@+id/scroll_view_conversation"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linear_layout_conversation"
