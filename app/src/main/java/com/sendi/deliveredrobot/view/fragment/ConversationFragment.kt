@@ -81,11 +81,21 @@ class ConversationFragment : Fragment() {
                         val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_right,null) as TextView
                         view.text = conversation
                         addView(view)
+                        val emptyView = View(requireContext()).apply {
+                            layoutParams =  LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                                setMargins(0,0,0,96)
+                            }
+                        }
+                        addView(emptyView)
                         view.post {
                             view.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                                 gravity = Gravity.END
-                                setMargins(0,0,0,96)
+//                                setMargins(0,0,0,96)
                             }
+                            totalHeight += (view.measuredHeight + 96 * 3)
+                            binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                        }
+                        emptyView.post{
                             totalHeight += (view.measuredHeight + 96 * 3)
                             binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                         }
@@ -94,17 +104,26 @@ class ConversationFragment : Fragment() {
                             val res: String = chatGPT.chat(conversation)
                             val view2 = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_left,null) as TextView
                             view2.text = res
+                            val emptyView2 = View(requireContext()).apply {
+                                layoutParams =  LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                                    setMargins(0,0,0,96)
+                                }
+                            }
                             withContext(Dispatchers.Main){
                                 addView(view2)
+                                addView(emptyView2)
                                 view2.post {
                                     view2.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                                         gravity = Gravity.START
-                                        setMargins(0,0,0,96)
+//                                        setMargins(0,0,0,96)
                                     }
                                     totalHeight += (view2.measuredHeight +  96 * 3)
                                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                                 }
-
+                                emptyView2.post{
+                                    totalHeight += (view.measuredHeight + 96 * 3)
+                                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                                }
                             }
                         }
                     }
