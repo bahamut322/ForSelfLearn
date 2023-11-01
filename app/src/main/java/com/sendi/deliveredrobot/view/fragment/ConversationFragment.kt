@@ -21,6 +21,8 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +40,15 @@ import kotlin.random.Random
 class ConversationFragment : Fragment() {
     var binding: FragmentConversationBinding? = null
     val mainScope = MainScope()
-    var totalHeight:Int = 0
+    private var totalHeight: Int = 0
+    private val proxy: Proxy? = Proxys.http("192.168.62.20", 1080)
+    private val chatGPT: ChatGPT = ChatGPT.builder()
+        .apiKey("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")
+        .proxy(proxy)
+        .apiHost("https://api.openai.com/") //反向代理地址
+        .build()
+        .init()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,81 +60,25 @@ class ConversationFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val proxy: Proxy? = Proxys.http("192.168.62.20", 1080)
-        val chatGPT: ChatGPT = ChatGPT.builder()
-            .apiKey("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")
-            .proxy(proxy)
-            .apiHost("https://api.openai.com/") //反向代理地址
-            .build()
-            .init()
         val voiceRecorder = VoiceRecorder.getInstance()
-        voiceRecorder.callback = {
-                conversation, pinyinString ->
+        voiceRecorder.callback = { conversation, pinyinString ->
             if (pinyinString.contains("TUICHU")) {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
                     action = ACTION_NAVIGATE
                     putExtra(NAVIGATE_ID, POP_BACK_STACK)
                 })
-            }else{
-                if (conversation.isNotEmpty()){
-                    binding?.group1?.apply {
-                        if (visibility == View.VISIBLE) {
-                            visibility = View.GONE
+            } else {
+                if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying) {
+                    mainScope.launch(Dispatchers.Main) {
+                        if (RobotStatus.ttsIsPlaying) {
+                            return@launch
                         }
-                    }
-                    binding?.group2?.apply {
-                        if(visibility == View.GONE){
-                            visibility = View.VISIBLE
+                        val result = addConversationView(conversation)
+                        if (result.isNullOrEmpty()) {
+                            return@launch
                         }
-                    }
-                    binding?.linearLayoutConversation?.apply {
-                        val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_right,null) as TextView
-                        view.text = conversation
-                        addView(view)
-                        val emptyView = View(requireContext()).apply {
-                            layoutParams =  LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                                setMargins(0,0,0,96)
-                            }
-                        }
-                        addView(emptyView)
-                        view.post {
-                            view.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                                gravity = Gravity.END
-//                                setMargins(0,0,0,96)
-                            }
-                            totalHeight += (view.measuredHeight + 96 * 3)
-                            binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-                        }
-                        emptyView.post{
-                            totalHeight += (view.measuredHeight + 96 * 3)
-                            binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-                        }
-
-                        mainScope.launch(Dispatchers.Default) {
-                            val res: String = chatGPT.chat(conversation)
-                            val view2 = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_left,null) as TextView
-                            view2.text = res
-                            val emptyView2 = View(requireContext()).apply {
-                                layoutParams =  LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                                    setMargins(0,0,0,96)
-                                }
-                            }
-                            withContext(Dispatchers.Main){
-                                addView(view2)
-                                addView(emptyView2)
-                                view2.post {
-                                    view2.layoutParams = LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                                        gravity = Gravity.START
-//                                        setMargins(0,0,0,96)
-                                    }
-                                    totalHeight += (view2.measuredHeight +  96 * 3)
-                                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-                                }
-                                emptyView2.post{
-                                    totalHeight += (view.measuredHeight + 96 * 3)
-                                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-                                }
-                            }
+                        withContext(Dispatchers.Default){
+                            SpeakHelper.speakWithoutStop(result)
                         }
                     }
                 }
@@ -137,17 +91,108 @@ class ConversationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)
         val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
-        repeat(20){
-            val view = LayoutInflater.from(requireContext()).inflate(R.layout.layout_conversation_text_view_left,null) as TextView
-            view.text = "测".repeat(random.nextInt(2,20))
-            myFlowLayout.addView(view)
+        repeat(20) {
+            val textView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
+            textView.text = "测".repeat(random.nextInt(2, 20))
+            textView.setOnClickListener {
+                mainScope.launch(Dispatchers.Main) {
+                    val result = addConversationView((it as TextView).text.toString())
+                    if (result.isNullOrEmpty()) {
+                        return@launch
+                    }
+                    withContext(Dispatchers.Default){
+                        SpeakHelper.speakWithoutStop(result)
+                    }
+                }
+            }
+            myFlowLayout.addView(textView)
         }
 //        binding?.scrollViewConversation?.apply {
 //            fullScroll(ScrollView.FOCUS_DOWN)
 //        }
     }
 
-    companion object{
+    private suspend fun addConversationView(conversation: String): String? {
+        binding?.group1?.apply {
+            if (visibility == View.VISIBLE) {
+                visibility = View.GONE
+            }
+        }
+        binding?.group2?.apply {
+            if (visibility == View.GONE) {
+                visibility = View.VISIBLE
+            }
+        }
+        binding?.linearLayoutConversation?.apply {
+            val view = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_right, null) as TextView
+            view.text = conversation
+            addView(view)
+            val emptyView = View(requireContext()).apply {
+                layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 96)
+                }
+            }
+            addView(emptyView)
+            view.post {
+                view.layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.END
+//                                setMargins(0,0,0,96)
+                }
+                totalHeight += (view.measuredHeight + 96 * 3)
+                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+            }
+            emptyView.post {
+                totalHeight += (view.measuredHeight + 96 * 3)
+                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+            }
+
+            return withContext(Dispatchers.Default) {
+                val res: String = chatGPT.chat(conversation)
+                val view2 = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
+                view2.text = res
+                val emptyView2 = View(requireContext()).apply {
+                    layoutParams = LinearLayoutCompat.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(0, 0, 0, 96)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    addView(view2)
+                    addView(emptyView2)
+                    view2.post {
+                        view2.layoutParams = LinearLayoutCompat.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            gravity = Gravity.START
+//                                        setMargins(0,0,0,96)
+                        }
+                        totalHeight += (view2.measuredHeight + 96 * 3)
+                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                    }
+                    emptyView2.post {
+                        totalHeight += (view.measuredHeight + 96 * 3)
+                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                    }
+                }
+                return@withContext res
+            }
+        }
+        return null
+    }
+
+    companion object {
         val random = Random(1012312512515L)
     }
 }
