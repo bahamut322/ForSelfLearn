@@ -96,7 +96,6 @@ public class BaseActivity extends AppCompatActivity {
     private BaseViewModel baseViewModel;
     AdvertisingConfigDB advertisingConfigDB;
     ConstraintLayout.LayoutParams layoutParams;
-    LoadingView loadingView;
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
     public void onResume() {
@@ -184,7 +183,6 @@ public class BaseActivity extends AppCompatActivity {
             constraintLayout2 = findViewById(R.id.constraintLayout2);
             advanceView = findViewById(R.id.Spread_out);
             horizontalTV = findViewById(R.id.horizontalTV);//横向文字
-            loadingView = findViewById(R.id.loadingView);
             verLin = findViewById(R.id.baseline);
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
@@ -382,10 +380,6 @@ public class BaseActivity extends AppCompatActivity {
      * @param AllvideoAudio  是否播放声音
      */
     public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio) {
-//        verticalTV.setVisibility(View.GONE);
-//        horizontalTV.setVisibility(View.GONE);
-//        advanceView.setVisibility(View.GONE);
-        loadingView.setVisibility(View.VISIBLE);
         switch (type) {
             case 1:
             case 2:
@@ -446,7 +440,6 @@ public class BaseActivity extends AppCompatActivity {
                 advanceView.setVisibility(View.VISIBLE);
                 break;
         }
-        loadingView.setVisibility(View.GONE);
     }
 
     /**

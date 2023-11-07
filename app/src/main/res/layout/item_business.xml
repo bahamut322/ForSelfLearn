@@ -6,17 +6,17 @@
     android:id="@+id/bg_con"
     android:layout_width="@dimen/dp_256"
     android:layout_height="@dimen/dp_198"
-    android:background="@drawable/bg_explanation_item"
     android:gravity="center">
 
     <TextView
         android:id="@+id/business_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="@dimen/dp_256"
+        android:layout_height="@dimen/dp_198"
+        android:gravity="center"
+        android:background="@drawable/bg_business_item"
         android:alpha="0.9"
         android:text="@string/business"
-        android:textColor="@color/white"
+        android:textColor="@drawable/text_select_bg"
         android:textSize="@dimen/sp_36"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

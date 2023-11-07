@@ -23,9 +23,11 @@ import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
+import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
+import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
@@ -39,6 +41,7 @@ import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -60,7 +63,8 @@ class HomeFragment : Fragment(), IMainView {
 
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
-    private val dayOfWeekChinese = arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
+    private val dayOfWeekChinese =
+        arrayOf("星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
@@ -68,7 +72,7 @@ class HomeFragment : Fragment(), IMainView {
 
     override fun onResume() {
         //启动默认开始计时
-        if (QuerySql.QueryBasic().etiquette == false ||  viewModelSetting.isNumCharOne(4)) {
+        if (QuerySql.QueryBasic().etiquette == false || viewModelSetting.isNumCharOne(4)) {
             mPresenter?.startTipsTimer()
         }
         super.onResume()
@@ -95,7 +99,8 @@ class HomeFragment : Fragment(), IMainView {
         if (QuerySql.robotConfig().sleep == 1) {
             try {
                 controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
-            }catch (_:Exception){}
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -135,12 +140,15 @@ class HomeFragment : Fragment(), IMainView {
             (!viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished)) && (!viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished)) -> resources.getString(
                 R.string.bin_1_bin_2_not_take
             )
+
             !viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished) -> resources.getString(
                 R.string.bin_1_not_take
             )
+
             !viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished) -> resources.getString(
                 R.string.bin_2_not_take
             )
+
             else -> ""
         }
         if (!TextUtils.isEmpty(message)) {
@@ -194,19 +202,6 @@ class HomeFragment : Fragment(), IMainView {
                 mPresenter?.startTipsTimer()
             }
         }
-//
-//        binding.ready.setOnClickListener {
-//            thread {
-//                val bill = GoToReadyPointBillFactory.createBill(
-//                    TaskModel(
-//                        location = dao.queryReadyPoint()
-//                    )
-//                )
-//                BillManager.addAllAtIndex(bill)
-//                BillManager.currentBill()?.executeNextTask()
-//            }
-//        }
-
 
         if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4)) {
             faceViewModel?.suerfaceInit(binding.SurfaceView)
@@ -220,10 +215,10 @@ class HomeFragment : Fragment(), IMainView {
         }
         //改变人脸识别工具类，人脸识别数量的最大值
         if (QuerySql.QueryBasic().tempMode == 0) {
-           LogUtil.d( "当前为单人测温")
+            LogUtil.d("当前为单人测温")
             Utils.mNmsLimit = 1
         } else {
-            LogUtil.d( "当前为多人测温")
+            LogUtil.d("当前为多人测温")
             Utils.mNmsLimit = 10
         }
         if (QuerySql.QueryBasic().defaultValue != null) {
@@ -232,6 +227,7 @@ class HomeFragment : Fragment(), IMainView {
                 0 -> {
                     allInvisible()
                 }
+
                 1 -> allInvisible()
                 2 -> {
                     allInvisible()
@@ -262,6 +258,7 @@ class HomeFragment : Fragment(), IMainView {
                     binding.include.view5.visibility = View.VISIBLE
                     initView5()
                 }
+
                 else -> {}
             }
         }
@@ -275,7 +272,7 @@ class HomeFragment : Fragment(), IMainView {
                     fromeSettingDialog!!.dismiss()
                     try {
                         controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
-                    }catch (_:Exception){
+                    } catch (_: Exception) {
 
                     }
                     PassWordToSetting.postValue(false)
@@ -417,6 +414,7 @@ class HomeFragment : Fragment(), IMainView {
         }
         binding.include.view343.text = calculateEnglish(rescolors!![3])
     }
+
     //当有五个Item的时候
     private fun initView4() {
         //item1
@@ -543,23 +541,25 @@ class HomeFragment : Fragment(), IMainView {
         when (Onclick) {
 //            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
-                if(RobotStatus.batteryStateNumber.value == false){
-                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
-                }else {
+                } else {
                     controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
                 }
             }
+
             "智能讲解" -> {
-                if(RobotStatus.batteryStateNumber.value == false){
-                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
-                }else {
+                } else {
                     controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                     Log.d("TAG", "点击智能讲解 ")
                     SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
                 }
             }
+
             "轻应用" -> {
                 //跳转到测温模式
                 Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
@@ -568,16 +568,32 @@ class HomeFragment : Fragment(), IMainView {
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 
-            "业务办理" ->{
-                if(RobotStatus.batteryStateNumber.value == false){
-                    Toast.makeText(context,"请先对接充电桩",Toast.LENGTH_SHORT).show()
+            "业务办理" -> {
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
-                }else {
+                } else {
                     controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
-                    Log.d("TAG", "点击智能讲解 ") }
+                    Log.d("TAG", "点击智能讲解 ")
+                }
             }
 
-            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
+            "礼仪迎宾" -> {
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                } else {
+                    thread {
+                        val bill = GoToReadyPointBillFactory.createBill(
+                            TaskModel(
+                                location = dao.queryReadyPoint()
+                            )
+                        )
+                        BillManager.addAllAtIndex(bill)
+                        BillManager.currentBill()?.executeNextTask()
+                    }
+                }
+            }
         }
     }
 
@@ -602,9 +618,9 @@ class HomeFragment : Fragment(), IMainView {
             str = "Q & A"
         } else if ("轻应用" == String) {
             str = "APPLICATION"
-        } else if ("礼仪迎宾" == String){
+        } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
-        } else if ("业务办理" == String){
+        } else if ("业务办理" == String) {
             str = "BUSINESS"
         }
         return str
@@ -623,9 +639,9 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item4
         } else if ("轻应用" == colorstr) {
             color = R.drawable.item3
-        } else if ("礼仪迎宾" == colorstr){
+        } else if ("礼仪迎宾" == colorstr) {
             color = R.drawable.item3
-        } else if ("业务办理" == colorstr){
+        } else if ("业务办理" == colorstr) {
             color = R.drawable.item1
         }
         return color
@@ -644,9 +660,9 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.qa_svg
         } else if ("轻应用" == Imagestr) {
             image = R.drawable.application_svg
-        } else if ("礼仪迎宾" == Imagestr){
+        } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg
-        } else if ("业务办理" == Imagestr){
+        } else if ("业务办理" == Imagestr) {
             image = R.drawable.business_svg
         }
         return image
@@ -691,6 +707,7 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
     }
+
     /**
      * @description 判断是否满足条件出发
      */

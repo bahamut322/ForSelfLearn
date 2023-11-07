@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
+import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -61,7 +62,7 @@ class UpdateReturn {
     private val queryAllMapPointsDao =
         DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
 
-    fun method() {
+    fun method(boolean: Boolean = true) {
         val replyGateConfigData: List<ReplyGateConfig> =
             LitePal.findAll(ReplyGateConfig::class.java)
         for (replyGateConfigDatum in replyGateConfigData) {
@@ -130,8 +131,9 @@ class UpdateReturn {
                         }
                     }
                 }
-
-                sendMapData()
+                if (boolean) {
+                    sendMapData()
+                }
                 Universal.MapName = queryAllMapPointsDao.queryCurrentMapName()
                 val jsonObject = JSONObject()//时间戳
                 jsonObject["type"] = "queryConfigTime"
@@ -180,7 +182,7 @@ class UpdateReturn {
         }
     }
 
-    private fun sendMapData() {
+    fun sendMapData() {
         MainScope().launch(Dispatchers.Default) {
             val rootMapList = queryAllMapPointsDao.queryRootMap()
             val maps = ArrayList<Map>()
@@ -228,6 +230,8 @@ class UpdateReturn {
             val uploadMapDataModel = UploadMapDataModel(
                 areas = areas,
                 curMapName = currentMapName ?: "",
+                waitingPointName = AbstractTaskBill.dao.queryReadyPoint()?.pointName ?:"",
+                chargePointName = AbstractTaskBill.dao.queryChargePoint()?.pointName ?:"",
                 maps = maps
             )
             MqttService.publish(uploadMapDataModel.toString(), true)
@@ -247,10 +251,10 @@ class UpdateReturn {
                 MyApplication.instance
             )
         ).getDebug()
-        if (Universal.mapName != "") {
-            val mapId = debugDao.selectMapId(Universal.mapName)
-//            val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
-            dao.updateMapConfig(MapConfig(1, mapId, null, null))
+        if (QuerySql.robotConfig().mapName != "") {
+            val mapId = debugDao.selectMapId(QuerySql.robotConfig().mapName)
+            //查询待命点
+            dao.updateMapConfig(MapConfig(1, mapId,null,null))
 //            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
             //查询充电桩
@@ -262,14 +266,12 @@ class UpdateReturn {
             //设置充电桩；默认查询到的第一个数据
 
             if (pointIdList?.size!! > 0) {
-                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), pointIdList?.get(0)))
+                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), null))
             }
-//            if (readyPoint != null) {
-//                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), readyPoint[0].pointId))
-//            }else{
+//            else{
 //                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), pointIdList?.get(0)))
 //            }
-//
+
 //            if (batteryState) {
             val floorId = pointId?.get(0)?.floorName?.hashCode() ?: -1
             ROSHelper.setDispatchFloorId(floorId)
@@ -287,7 +289,6 @@ class UpdateReturn {
                     )
                     retryTime--
                 } while (!switchMapResult && retryTime > 0)
-
                 if (batteryState) {
                     LogUtil.d("对接充电桩设置充电点: $batteryState")
                     ROSHelper.setChargePose(pointId[0])
@@ -307,20 +308,20 @@ class UpdateReturn {
                 } else {
                     LogUtil.i("finish_update_pose成功")
                 }
-                UploadMapHelper.uploadMap()
+                //查询待命点
+                val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
+                //设置待命点
+                if (readyPoint?.size!! > 0) {
+                    dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), readyPoint[0].pointId))
+                }
+                sendMapData()
                 DialogHelper.loadingDialog.dismiss()
-
+                Universal.mapType = true
             }
         }
     }
 
     fun assignment() {
-        //机器人基础配置
-        val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
-        for (robotConfigDatas in robotConfigData) {
-            Universal.timeStampRobotConfigSql = robotConfigDatas.timeStamp
-            Universal.mapName = robotConfigDatas.mapName
-        }
         //门岗配置
         val replyGateConfigData: List<ReplyGateConfig> =
             LitePal.findAll(ReplyGateConfig::class.java)

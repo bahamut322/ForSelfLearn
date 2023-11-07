@@ -13,7 +13,9 @@ import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentFinishDockBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -41,7 +43,8 @@ class FinishReadyFragment : Fragment() {
         controller = Navigation.findNavController(requireView())
         binding.successTv.text = "已到达待命点"
         MainScope().launch {
-            virtualTaskExecute(2, "结束自主充电")
+            virtualTaskExecute(2, "到达待命点")
+            RobotStatus.batteryStateNumber.value = true
             when (FunctionSkip.selectFunction()) {
                 //智能引领
                 0 -> {
@@ -80,6 +83,7 @@ class FinishReadyFragment : Fragment() {
                     Toast.makeText(context, "请勾选主页面功能模块", Toast.LENGTH_SHORT).show()
                 }
             }
+            UpdateReturn().method()
 //            MyApplication.instance!!.sendBroadcast(
 //                Intent().apply {
 //                    action = ACTION_NAVIGATE

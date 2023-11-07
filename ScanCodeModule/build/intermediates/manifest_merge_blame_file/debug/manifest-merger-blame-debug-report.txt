@@ -18,8 +18,8 @@
 18    <!-- </application> -->
 19    <uses-sdk
 20        android:minSdkVersion="8"
-20-->/Users/swn/Desktop/multifunctionalrobot/ScanCodeModule/src/main/AndroidManifest.xml
+20-->/Users/swn/Desktop/robot test/multifunctionalrobot/ScanCodeModule/src/main/AndroidManifest.xml
 21        android:targetSdkVersion="21" />
-21-->/Users/swn/Desktop/multifunctionalrobot/ScanCodeModule/src/main/AndroidManifest.xml
+21-->/Users/swn/Desktop/robot test/multifunctionalrobot/ScanCodeModule/src/main/AndroidManifest.xml
 22
 23</manifest>

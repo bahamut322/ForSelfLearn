@@ -35,6 +35,38 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
     </fragment>
+
+    <fragment
+        android:id="@+id/businessIngFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.BusinessIngFragment"
+        android:label="fragment_guiding"
+        tools:layout="@layout/fragment_businessing">
+        <action
+            android:id="@+id/action_businessIngFragment_to_guideArriveFragment"
+            app:destination="@id/guideArriveFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_businessIngFragment_to_chooseGuidePlaceFragment"
+            app:destination="@id/chooseGuidePlaceFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_businessIngFragment_to_callLiftFragment"
+            app:destination="@id/callLiftFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
     <fragment
         android:id="@+id/inputRoomNumberFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.InputRoomNumberFragment"
@@ -102,6 +134,14 @@
         <action
             android:id="@+id/action_choosePlaceFragment_to_guidingFragment"
             app:destination="@id/guidingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_choosePlaceFragment_to_businessIngFragment"
+            app:destination="@id/businessIngFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"

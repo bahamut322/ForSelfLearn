@@ -87,6 +87,7 @@ public class QuerySql {
 
     /**
      * 机器人当前总图下配置路线列表(用于发送MQTT)
+     *
      * @param rootMapName 当前总图名字
      * @return
      */
@@ -338,16 +339,14 @@ public class QuerySql {
             do {
                 robotConfigModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 robotConfigModel.setSleep(cursor.getInt(cursor.getColumnIndex("sleep")));
-                if (cursor.getString(cursor.getColumnIndex("password")) == null) {
-                    robotConfigModel.setPassword("8888");
-                } else {
-                    robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
-                }
+                robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
                 robotConfigModel.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
                 robotConfigModel.setWakeUpList(cursor.getString(cursor.getColumnIndex("wakeuplist")));
                 robotConfigModel.setSleepTime(cursor.getInt(cursor.getColumnIndex("sleeptime")));
             } while (cursor.moveToNext());
             cursor.close();
+        } else if (!cursor.moveToFirst() || cursor.getString(cursor.getColumnIndex("password")) == null) {
+            robotConfigModel.setPassword("8888");
         }
         return robotConfigModel;
     }

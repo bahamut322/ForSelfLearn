@@ -70,6 +70,20 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int, needReportData
                             )
                         )
                     }
+                    TYPE_BUSINESS -> {
+                        add(
+                            AdvanceGuidingTask(
+                                3,
+                                TaskModel(
+                                    location = liftOutSide,
+                                    endTarget = taskModel?.endTarget?:"",
+                                    taskId = tempTaskId,
+                                    bill= taskModel?.bill
+                                ),
+                                R.id.guidingFragment
+                            )
+                        )
+                    }
                     TYPE_SEND -> {
                         add(
                             AdvanceSendingTask(

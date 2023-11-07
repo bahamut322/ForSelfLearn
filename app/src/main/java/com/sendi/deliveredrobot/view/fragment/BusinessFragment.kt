@@ -14,14 +14,12 @@ import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
-import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
-import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
+import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
@@ -100,7 +98,18 @@ class BusinessFragment : Fragment() {
         //item点击
         binding.businessGv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-               Toast.makeText(context,"点击了：$position",Toast.LENGTH_SHORT).show()
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                } else {
+                    LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
+                    val endPoint = queryFloorPoints[position]
+                    Log.d("TAG", "onViewCreated: "+endPoint.pointDirection)
+                    val taskModel = TaskModel(location = endPoint)
+                    val bill = BusinessTaskBillFactory.createBill(taskModel = taskModel)
+                    BillManager.addAllAtIndex(bill, 0)
+                    BillManager.currentBill()?.executeNextTask()
+                }
             }
 
     }

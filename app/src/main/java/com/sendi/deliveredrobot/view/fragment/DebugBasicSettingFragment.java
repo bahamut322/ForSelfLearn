@@ -67,7 +67,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 check(viewModel.settingData().getDefaultValue().split(" ")[i]);
             }
             //判断数据长度来，判断全选是否勾选
-            if (viewModel.settingData().getDefaultValue().split(" ").length == 4) {
+            if (viewModel.settingData().getDefaultValue().split(" ").length == 5) {
                 binding.all.setChecked(true);
             }
         }
@@ -79,7 +79,7 @@ public class DebugBasicSettingFragment extends Fragment {
         BoxCheckListener boxCheckListener = new BoxCheckListener();
         binding.leaderShip.setOnCheckedChangeListener(boxCheckListener);
         binding.explanation.setOnCheckedChangeListener(boxCheckListener);
-        binding.QA.setOnCheckedChangeListener(boxCheckListener);
+//        binding.QA.setOnCheckedChangeListener(boxCheckListener);
         binding.business.setOnCheckedChangeListener(boxCheckListener);
         binding.EtiquetteWelcome.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
@@ -139,7 +139,7 @@ public class DebugBasicSettingFragment extends Fragment {
             CheckBox all = (CheckBox) v;
             binding.leaderShip.setChecked(all.isChecked());
             binding.explanation.setChecked(all.isChecked());
-            binding.QA.setChecked(all.isChecked());
+//            binding.QA.setChecked(all.isChecked());
             binding.business.setChecked(all.isChecked());
             binding.EtiquetteWelcome.setChecked(all.isChecked());
             binding.application.setChecked(all.isChecked());
@@ -153,8 +153,7 @@ public class DebugBasicSettingFragment extends Fragment {
             if (!isChecked) {
                 binding.all.setChecked(false);
             }
-            if ( binding.leaderShip.isChecked() && binding.explanation.isChecked() &&
-                    binding.QA.isChecked()  && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
+            if ( binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
                 binding.all.setChecked(true);
             }
 
@@ -178,9 +177,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.leaderShip.setChecked(true);
         } else if ("智能讲解".equals(checkName)) {
             binding.explanation.setChecked(true);
-        } else if ("智能问答".equals(checkName)) {
-            binding.QA.setChecked(true);
-        }  else if ("轻应用".equals(checkName)) {
+        } else if ("轻应用".equals(checkName)) {
             binding.application.setChecked(true);
         } else if ("业务办理".equals(checkName)){
             binding.business.setChecked(true);
@@ -203,9 +200,6 @@ public class DebugBasicSettingFragment extends Fragment {
             }
             if (binding.explanation.isChecked()) {
                 stringBuffer.append("智能讲解 ");
-            }
-            if (binding.QA.isChecked()) {
-                stringBuffer.append("智能问答 ");
             }
             if (binding.application.isChecked()) {
                 stringBuffer.append("轻应用 ");

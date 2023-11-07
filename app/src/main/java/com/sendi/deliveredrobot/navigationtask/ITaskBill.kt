@@ -63,7 +63,9 @@ interface ITaskBill {
     /**
      * @description 执行下一个任务
      */
-    fun executeNextTask()
+    fun executeNextTask(){
+        RobotStatus.batteryStateNumber.value = false
+    }
 
     /**
      * @description 创建任务

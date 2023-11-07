@@ -10,7 +10,8 @@ public enum TaskTypeEnum {
     DELIVERY("送物模式", 1, "D"),
     GUIDING("引领模式", 2, "G"),
     USHER("迎宾模式", 3, "U"),
-    EXPLAIN("讲解模式",4,"E");
+    EXPLAIN("讲解模式",4,"E"),
+    BUSINESS("业务办理",5,"B");
 
 
     private String name;

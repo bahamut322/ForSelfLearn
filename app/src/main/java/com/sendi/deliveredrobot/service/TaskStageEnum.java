@@ -68,7 +68,13 @@ public enum TaskStageEnum {
     UsherStart("迎宾开始", 50),
     UsherEnd("迎宾结束", 59),
     FinishUsherTask("迎宾结束",1),
-    Idle("空闲",-2);
+    Idle("空闲",-2),
+
+    //业务办理
+    BusinessIngTask("导购中",78),
+    BusinessArriveTask("导购到达",79),
+    EarlyFinishBusinessTask("中断导购", 80),
+    FinishBusinessTask("导购结束",81);
 
     private final String name;
 
