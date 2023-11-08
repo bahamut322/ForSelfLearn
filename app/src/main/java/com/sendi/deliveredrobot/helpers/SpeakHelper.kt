@@ -5,7 +5,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import kotlinx.coroutines.MainScope
 

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 
 import androidx.annotation.NonNull;
@@ -20,14 +19,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.sendi.deliveredrobot.R;
 
 import com.sendi.deliveredrobot.databinding.FragmentModeSettingBinding;
-import com.sendi.deliveredrobot.entity.QuerySql;
-import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class ModeSettingFragment extends Fragment {

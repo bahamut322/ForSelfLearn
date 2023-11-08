@@ -2,8 +2,6 @@ package com.sendi.deliveredrobot.handler
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.os.Looper
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
@@ -11,6 +9,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.entity.*
+import com.sendi.deliveredrobot.entity.Interaction.InteractionMqtt
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
 import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
@@ -29,12 +29,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.litepal.LitePal
 import org.litepal.LitePal.deleteAll
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
-import kotlin.math.log
 
 
 /**
@@ -66,7 +65,9 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
+//            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
+            if (!jsonObject.has("type")) return
+
             when (jsonObject.get("type").asString) {
                 "callElevatorState" -> {
                     try {
@@ -204,443 +205,7 @@ object MqttMessageHandler {
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
-                    val gson = Gson()
-                    val routeConfig = gson.fromJson(message, RouteConfig::class.java)
-                    RobotStatus.routeConfig?.value = routeConfig
-                    //所有图片存储的总路径
-                    LogUtil.d("收到讲解路线配置")
-                    val routeDB = RouteDB()
-                    //存储图片的数据库
-                    val routeList = routeConfig.routeList// 路线列表对象
-                    val isExist =
-                        LitePal.where("routename = ?", routeList!![0].routeName)
-                            .count(RouteDB::class.java) > 0
-//                    if (isExist) {
-//                        for (route in 0 until routeList.size) {
-                    if (QuerySql.queryTime(routeList[0].routeName) != routeList[0].timeStamp && isExist) {
-                        //删除对应文件夹
-                        if (routeList[0].timeStamp <= 0) {
-                            UpdateReturn().deleteDirectory((File(Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName)))
-//                            deleteFolderFile(
-//                                (),
-//                                true
-//                            )
-                        }
-                        val routeDBID = QuerySql.routeDB_id(routeList[0].routeName)
-                        val pointConfigVoDB_id = QuerySql.pointConfigVoDB_id(routeList[0].routeName)
-
-                        val deleteTouchScreen = deleteAll(
-                            TouchScreenConfigDB::class.java,
-                            "pointconfigvodb_id = ?",
-                            pointConfigVoDB_id.toString()
-                        )
-                        val deleteBigScreen = deleteAll(
-                            BigScreenConfigDB::class.java,
-                            "pointconfigvodb_id = ?",
-                            pointConfigVoDB_id.toString()
-                        )
-                        val deletePointConfig = deleteAll(
-                            PointConfigVODB::class.java,
-                            "routedb_id = ?",
-                            routeDBID.toString()
-                        )
-                        val deleteRouteDB =
-                            deleteAll(RouteDB::class.java, "routename = ?", routeList[0].routeName)
-                        if (deleteTouchScreen > 0) {
-                            Log.e("TAG", "TouchScreenConfigDB数据删除成功")
-                        }
-                        if (deleteBigScreen > 0) {
-                            Log.e("TAG", "BigScreenConfigDB数据删除成功")
-                        }
-                        if (deletePointConfig > 0) {
-                            Log.e("TAG", "PointConfigVODB数据删除成功")
-                        }
-                        if (deleteRouteDB > 0) {
-                            Log.e("TAG", "RouteDB数据删除成功")
-                        }
-                    }
-//                        }
-//                    }
-                    val iterator = routeList.iterator()
-                    while (iterator.hasNext()) {
-                        val route = iterator.next()
-                        if (route.timeStamp > 0) {
-                            //创建对应文件夹。以路线名字命名(存放主屏幕)
-                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
-//                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + "group/")
-                            openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/")
-                            val pointIterator = route.pointConfigVOList.iterator()
-                            //路线名字
-                            routeDB.routeName = route.routeName
-                            //总图名字
-                            routeDB.rootMapName = route.rootMapName
-                            //简介
-                            routeDB.introduction = route.introduction
-                            //配置时间戳
-                            routeDB.timeStamp = route.timeStamp
-                            //路线背景图
-                            if (route.backgroundPic?.isNotEmpty() == true) {
-                                openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
-                                selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
-                                val sdcardFile =
-                                    selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
-                                val picfile =
-                                    UpdateReturn().splitStr(route.backgroundPic)
-
-                                val backPic = compareArrays(sdcardFile, picfile)
-                                for (i in backPic.SameOne!!.indices) {
-                                    UpdateReturn().deleteFolderFile(backPic.SameOne!![i], true)
-                                }
-                                routeDB.backgroundPic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + route.backgroundPic.substring(
-                                        route.backgroundPic.lastIndexOf("/") + 1
-                                    ) //路线背景图
-                                if (backPic.SameAll?.isNotEmpty() == true) {
-                                    for (i in backPic.SameTwo!!.indices)
-                                        UpdateReturn().deleteFolderFile(
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (backPic.SameTwo!![i]!!),
-                                            true
-                                        )
-                                }
-                                if (backPic.SameTwo?.isNotEmpty() == true) {
-                                    Thread {
-                                        for (i in backPic.SameTwo!!.indices) {
-                                            DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + backPic.SameTwo!![i],
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch",
-                                                FileName(backPic.SameTwo!![i]!!),
-                                                MyApplication.listener
-                                            )
-                                        }
-                                    }.start()
-                                }
-
-                            }
-                            var pointItem: List<PointConfigVODB>
-                            while (pointIterator.hasNext()) {
-                                val point = pointIterator.next()
-                                pointItem = ArrayList()
-                                val pointConfigVODB = PointConfigVODB()
-                                //点名
-                                pointConfigVODB.name = point.name
-                                //途径播报内容-播报语(200)
-                                pointConfigVODB.walkText = point.walkText
-                                //讲解播报内容-播报语(200)
-                                pointConfigVODB.explanationText = point.explanation
-                                //排序
-                                pointConfigVODB.scope = point.scope!!
-                                //途径音频.mp3
-                                if (point.walkVoice?.isNotEmpty() == true) {
-                                    pointConfigVODB.walkVoice =
-                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice).substring(
-                                            (point.walkVoice).lastIndexOf("/") + 1
-                                        )
-                                    val sdcardFile =
-                                        selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
-                                    val picfile =
-                                        UpdateReturn().splitStr(point.walkVoice)
-
-                                    val walkMp3 = compareArrays(sdcardFile, picfile)
-
-                                    if (walkMp3.SameTwo?.isNotEmpty() == true) {
-                                        Thread {
-                                            for (i in walkMp3.SameTwo!!.indices) {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + walkMp3.SameTwo!![i],
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                                    FileName(walkMp3.SameTwo!![i]!!),
-                                                    MyApplication.listener
-                                                )
-                                            }
-                                        }.start()
-                                    }
-                                }
-                                //到达讲解.mp3
-                                if (point.explanationVoice?.isNotEmpty() == true) {
-                                    pointConfigVODB.explanationVoice =
-                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.explanationVoice).substring(
-                                            (point.explanationVoice).lastIndexOf("/") + 1
-                                        )
-
-                                    val sdcardFile =
-                                        selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
-                                    val picfile =
-                                        UpdateReturn().splitStr(point.explanationVoice)
-
-                                    val explanationMp3 = compareArrays(sdcardFile, picfile)
-                                    if (explanationMp3.SameTwo?.isNotEmpty() == true) {
-                                        Thread {
-                                            for (i in explanationMp3.SameTwo!!.indices) {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + explanationMp3.SameTwo!![i],
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                                    FileName(explanationMp3.SameTwo!![i]!!),
-                                                    MyApplication.listener
-                                                )
-                                            }
-                                        }.start()
-                                    }
-                                }
-                                //大屏配置
-                                if (point.bigScreenConfig!!.screen == 1) {
-                                    val bigScreenConfigDB = BigScreenConfigDB()
-                                    //配置类型
-                                    bigScreenConfigDB.type =
-                                        point.bigScreenConfig.type!!
-                                    if (point.bigScreenConfig.argPic != null) {
-                                        //图片布局
-                                        bigScreenConfigDB.picType =
-                                            point.bigScreenConfig.argPic.picType
-                                        //轮播时间
-                                        bigScreenConfigDB.picPlayTime =
-                                            point.bigScreenConfig.argPic.picPlayTime
-                                        //图片
-                                        openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                                        val sdcardFile =
-                                            selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                                        val picfile =
-                                            UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
-                                        val bigPic = compareArrays(sdcardFile, picfile)
-
-                                        for (i in bigPic.SameOne!!.indices) {
-                                            UpdateReturn().deleteFolderFile(
-                                                bigPic.SameOne!![i],
-                                                true
-                                            )
-                                        }
-                                        //创建对应文件夹。以路线名字命名(存放大屏幕)
-                                        bigScreenConfigDB.imageFile =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
-//                                            val bigPicFile =
-//                                                UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
-                                        if (bigPic.SameTwo?.isNotEmpty() == true) {
-                                            Thread {
-                                                for (i in bigPic.SameTwo!!.indices) {
-                                                    DownloadBill.getInstance().addTask(
-                                                        Universal.pathDownload + bigPic.SameTwo!![i],
-                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                                        FileName(bigPic.SameTwo!![i]!!),
-                                                        MyApplication.listener
-                                                    )
-                                                }
-                                            }.start()
-                                        }
-                                    }
-                                    if (point.bigScreenConfig.argFont != null) {
-                                        //文字
-                                        bigScreenConfigDB.fontContent =
-                                            point.bigScreenConfig.argFont.fontContent
-                                        //文字颜色
-                                        bigScreenConfigDB.fontColor =
-                                            point.bigScreenConfig.argFont.fontColor
-                                        //文字大小 1-大，2-中，3-小,
-                                        bigScreenConfigDB.fontSize =
-                                            point.bigScreenConfig.argFont.fontSize
-                                        //文字方向 1-横向，2-纵向
-                                        bigScreenConfigDB.fontLayout =
-                                            point.bigScreenConfig.argFont.fontLayout
-                                        //背景颜色
-                                        bigScreenConfigDB.fontBackGround =
-                                            point.bigScreenConfig.argFont.fontBackGround
-                                        //文字显示位置  0-居中 1-居上 2-居下
-                                        bigScreenConfigDB.textPosition =
-                                            point.bigScreenConfig.argFont.textPosition
-                                    }
-                                    if (point.bigScreenConfig.argVideo != null) {
-                                        //视频是否播放声音
-                                        bigScreenConfigDB.videoAudio =
-                                            point.bigScreenConfig.argVideo.videoAudio!!
-                                        bigScreenConfigDB.videolayout =
-                                            point.bigScreenConfig.argVideo.videoLayOut!!
-                                        //视频储存位置
-                                        //创建对应文件夹。以路线名字命名(存放大屏幕)
-                                        openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-
-                                        val sdcardFile =
-                                            selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                                        val picfile =
-                                            UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
-                                        val argVideoName = compareArrays(sdcardFile, picfile)
-                                        for (i in argVideoName.SameOne!!.indices) {
-                                            UpdateReturn().deleteFolderFile(
-                                                argVideoName.SameOne!![i],
-                                                true
-                                            )
-                                        }
-                                        bigScreenConfigDB.videoFile =
-                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
-                                        if (argVideoName.SameTwo?.isNotEmpty() == true) {
-                                            Thread {
-                                                for (i in argVideoName.SameTwo!!.indices) {
-                                                    DownloadBill.getInstance().addTask(
-                                                        Universal.pathDownload + argVideoName.SameTwo!![i],
-                                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                                        FileName(argVideoName.SameTwo!![i]!!),
-                                                        MyApplication.listener
-                                                    )
-                                                }
-                                            }.start()
-                                        }
-                                    }
-                                    bigScreenConfigDB.save()
-                                    pointConfigVODB.bigScreenConfigDB = bigScreenConfigDB
-                                }
-                                //小屏
-                                if (point.touchScreenConfig!!.screen == 0) {
-                                    //创建对应文件夹。以路线名字命名(存放主屏幕)
-                                    openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name + "/")
-                                    val touchScreenConfigDB = TouchScreenConfigDB()
-                                    //配置类型
-                                    touchScreenConfigDB.touch_type =
-                                        point.touchScreenConfig.type!!
-                                    if (point.touchScreenConfig.argPic != null) {
-                                        //图片布局
-                                        touchScreenConfigDB.touch_picType =
-                                            point.touchScreenConfig.argPic.picType
-                                        //轮播时间
-                                        touchScreenConfigDB.touch_picPlayTime =
-                                            point.touchScreenConfig.argPic.picPlayTime
-                                        //图片路径
-                                        if (point.touchScreenConfig.argPic.pics.isNotEmpty()) {
-                                            val sdcardFile =
-                                                selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name)
-                                            val picfile =
-                                                UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
-                                            val touchFileName = compareArrays(sdcardFile, picfile)
-
-                                            for (i in touchFileName.SameOne!!.indices) {
-                                                UpdateReturn().deleteFolderFile(
-                                                    touchFileName.SameOne!![i],
-                                                    true
-                                                )
-                                            }
-                                            touchScreenConfigDB.touch_imageFile =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name + "/"
-
-                                            if (touchFileName.SameTwo!!.isNotEmpty()) {
-                                                Thread {
-                                                    for (i in touchFileName.SameTwo!!.indices) {
-                                                        DownloadBill.getInstance().addTask(
-                                                            Universal.pathDownload + touchFileName.SameTwo!![i],
-                                                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name,
-                                                            FileName(touchFileName.SameTwo!![i]!!),
-                                                            MyApplication.listener
-                                                        )
-                                                    }
-                                                }.start()
-                                            }
-                                        }
-                                    }
-                                    if (point.touchScreenConfig.argFont != null) {
-                                        //文字
-                                        touchScreenConfigDB.touch_fontContent =
-                                            point.touchScreenConfig.argFont.fontContent
-                                        //文字颜色
-                                        touchScreenConfigDB.touch_fontColor =
-                                            point.touchScreenConfig.argFont.fontColor
-                                        //文字大小 1-大，2-中，3-小,
-                                        touchScreenConfigDB.touch_fontSize =
-                                            point.touchScreenConfig.argFont.fontSize
-                                        //文字方向 1-横向，2-纵向
-                                        touchScreenConfigDB.touch_fontLayout =
-                                            point.touchScreenConfig.argFont.fontLayout
-                                        //背景颜色
-                                        touchScreenConfigDB.touch_fontBackGround =
-                                            point.touchScreenConfig.argFont.fontBackGround
-                                        //文字显示位置  0-居中 1-居上 2-居下
-                                        touchScreenConfigDB.touch_textPosition =
-                                            point.touchScreenConfig.argFont.textPosition
-                                    }
-                                    if (point.touchScreenConfig.argPicGroup != null) {
-                                        //行走中
-                                        if (point.touchScreenConfig.argPicGroup.walkPic != "") {
-                                            touchScreenConfigDB.touch_walkPic =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
-                                                    point.touchScreenConfig.argPicGroup.walkPic!!
-                                                )
-                                            Thread {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.walkPic,
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                    FileName(point.touchScreenConfig.argPicGroup.walkPic),
-                                                    MyApplication.listener
-                                                )
-                                            }.start()
-                                        } else {
-                                            touchScreenConfigDB.touch_walkPic = Universal.gifDefault
-                                        }
-                                        //被阻挡
-                                        if (point.touchScreenConfig.argPicGroup.blockPic != "") {
-                                            touchScreenConfigDB.touch_blockPic =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
-                                                    point.touchScreenConfig.argPicGroup.blockPic!!
-                                                )
-                                            Thread {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.blockPic,
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                    FileName(point.touchScreenConfig.argPicGroup.blockPic),
-                                                    MyApplication.listener
-                                                )
-                                            }.start()
-                                        } else {
-                                            touchScreenConfigDB.touch_blockPic =
-                                                Universal.gifDefault
-                                        }
-                                        //到点
-                                        if (point.touchScreenConfig.argPicGroup.arrivePic != "") {
-                                            touchScreenConfigDB.touch_arrivePic =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
-                                                    point.touchScreenConfig.argPicGroup.arrivePic!!
-                                                )
-                                            Thread {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.arrivePic,
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                    FileName(point.touchScreenConfig.argPicGroup.arrivePic),
-                                                    MyApplication.listener
-                                                )
-                                            }.start()
-                                        } else {
-                                            touchScreenConfigDB.touch_arrivePic =
-                                                Universal.gifDefault
-                                        }
-                                        //返回
-                                        if (point.touchScreenConfig.argPicGroup.overTaskPic != "") {
-                                            touchScreenConfigDB.touch_overTaskPic =
-                                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + FileName(
-                                                    point.touchScreenConfig.argPicGroup.overTaskPic!!
-                                                )
-                                            Thread {
-                                                DownloadBill.getInstance().addTask(
-                                                    Universal.pathDownload + point.touchScreenConfig.argPicGroup.overTaskPic,
-                                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                                    FileName(point.touchScreenConfig.argPicGroup.overTaskPic),
-                                                    MyApplication.listener
-                                                )
-                                            }.start()
-                                        } else {
-                                            touchScreenConfigDB.touch_overTaskPic =
-                                                Universal.gifDefault
-                                        }
-                                    }
-                                    touchScreenConfigDB.save()
-                                    pointConfigVODB.touchScreenConfigDB = touchScreenConfigDB
-                                }
-                                pointConfigVODB.save()
-                                pointItem.add(pointConfigVODB)
-                                routeDB.mapPointName = pointItem
-                                if (routeDB.save()) {
-                                    // 数据保存成功
-                                    Log.d("TAG", "receive: 讲解点数据保存成功")
-                                } else {
-                                    // 数据保存失败
-                                    Log.d("TAG", "receive: 讲解点数据保存失败")
-                                }
-                            }
-                        }
-                    }
-
+                    InteractionMqtt().ExplainType(message)
                 }
 
                 //机器人门岗配置
@@ -774,7 +339,10 @@ object MqttMessageHandler {
                         Log.d("TAG", "receive: 配置数据保存失败")
                     }
                 }
-
+                //云平台下发导购配置
+                "replyShoppingGuideConfig"->{
+                     InteractionMqtt().ActionShoppingType(message)
+                }
                 "sendAppletTask" -> {
                     // 小程序下发任务
                     ToastUtil.show("收到远程任务..")
@@ -867,7 +435,7 @@ object MqttMessageHandler {
         }
     }
 
-    private fun openFile(file: String) {
+    fun openFile(file: String) {
         //文件夹目录(存放待机图片/视频...)
         val fileStandby = File(file)
         //判断文件夹是否存在，如果不存在就创建，否则不创建
@@ -880,7 +448,7 @@ object MqttMessageHandler {
     /**
      * 删除文件
      */
-    private fun deleteFiles(file: File): Boolean {
+    fun deleteFiles(file: File): Boolean {
         return try {
             if (file.isDirectory) { //判断是否是文件夹
                 val files = file.listFiles() //遍历文件夹里面的所有的

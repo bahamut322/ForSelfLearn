@@ -8,28 +8,21 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
-import com.sendi.deliveredrobot.entity.QuerySql
-import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
-import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -60,7 +53,6 @@ class HomeFragment : Fragment(), IMainView {
     private var mPresenter: MainPresenter? = null
     private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
     private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
-
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese =
@@ -568,13 +560,13 @@ class HomeFragment : Fragment(), IMainView {
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 
-            "业务办理" -> {
+            QuerySql.ShoppingConfig().name -> {
                 if (RobotStatus.batteryStateNumber.value == false) {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
                     controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
-                    Log.d("TAG", "点击智能讲解 ")
+                    Log.d("TAG", "业务办理 ")
                 }
             }
 
@@ -620,7 +612,7 @@ class HomeFragment : Fragment(), IMainView {
             str = "APPLICATION"
         } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
-        } else if ("业务办理" == String) {
+        } else if (QuerySql.ShoppingConfig().name == String) {
             str = "BUSINESS"
         }
         return str
@@ -641,7 +633,7 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item3
         } else if ("礼仪迎宾" == colorstr) {
             color = R.drawable.item3
-        } else if ("业务办理" == colorstr) {
+        } else if (QuerySql.ShoppingConfig().name == colorstr) {
             color = R.drawable.item1
         }
         return color
@@ -662,7 +654,7 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.application_svg
         } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg
-        } else if ("业务办理" == Imagestr) {
+        } else if (QuerySql.ShoppingConfig().name== Imagestr) {
             image = R.drawable.business_svg
         }
         return image

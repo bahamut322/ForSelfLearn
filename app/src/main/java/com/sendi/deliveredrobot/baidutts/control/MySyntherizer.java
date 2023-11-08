@@ -8,7 +8,7 @@ import com.baidu.tts.client.SpeechSynthesizeBag;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.utils.LogUtil;
 

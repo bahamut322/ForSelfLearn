@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
-import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute

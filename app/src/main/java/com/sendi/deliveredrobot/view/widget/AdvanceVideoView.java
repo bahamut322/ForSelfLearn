@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.view.widget;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -15,7 +14,7 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.warnyul.android.widget.FastVideoView;

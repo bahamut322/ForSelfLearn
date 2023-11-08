@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="businessName"
+            type="com.sendi.deliveredrobot.entity.entitySql.QuerySql"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -278,9 +280,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
                     android:alpha="0.7"
-                    android:text="@string/business"
+                    android:text="@{businessName.ShoppingConfig().name}"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
+                    tools:text="业务办理"
                     app:layout_constraintBottom_toBottomOf="@+id/business"
                     app:layout_constraintStart_toEndOf="@+id/business"
                     app:layout_constraintTop_toTopOf="@+id/business" />

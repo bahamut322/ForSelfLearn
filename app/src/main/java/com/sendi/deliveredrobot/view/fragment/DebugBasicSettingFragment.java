@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.utils.LogUtil;
@@ -179,7 +179,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.explanation.setChecked(true);
         } else if ("轻应用".equals(checkName)) {
             binding.application.setChecked(true);
-        } else if ("业务办理".equals(checkName)){
+        } else if (QuerySql.ShoppingConfig().getName().equals(checkName)){
             binding.business.setChecked(true);
         }else if ("礼仪迎宾".equals(checkName)){
             binding.EtiquetteWelcome.setChecked(true);
@@ -205,7 +205,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 stringBuffer.append("轻应用 ");
             }
             if (binding.business.isChecked()){
-                stringBuffer.append("业务办理 ");
+                stringBuffer.append(QuerySql.ShoppingConfig().getName()).append(" ");
             }
             if (binding.EtiquetteWelcome.isChecked()){
                 stringBuffer.append("礼仪迎宾 ");

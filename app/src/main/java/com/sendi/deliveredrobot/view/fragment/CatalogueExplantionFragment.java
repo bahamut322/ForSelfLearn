@@ -2,8 +2,6 @@ package com.sendi.deliveredrobot.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,9 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 
 import com.sendi.deliveredrobot.helpers.ROSHelper;

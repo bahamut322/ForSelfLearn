@@ -5,8 +5,7 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
-import com.sendi.deliveredrobot.entity.QuerySql;
-import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.view.inputfilter.IMainView;
 
 public class MainPresenter {

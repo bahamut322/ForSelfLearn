@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.service
 
 import android.text.TextUtils
-import android.util.Log
 import chassis_msgs.VersionGetResponse
 import com.alibaba.fastjson.JSONObject
 import com.baidu.tts.client.SpeechSynthesizer
@@ -11,14 +10,13 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.MapRevise
-import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.ReplyGateConfig
 import com.sendi.deliveredrobot.entity.RobotConfigSql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
-import com.sendi.deliveredrobot.helpers.UploadMapHelper
 import com.sendi.deliveredrobot.model.Area
 import com.sendi.deliveredrobot.model.Floor
 import com.sendi.deliveredrobot.model.Map
@@ -27,7 +25,6 @@ import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
-import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap

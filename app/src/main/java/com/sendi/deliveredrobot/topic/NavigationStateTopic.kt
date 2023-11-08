@@ -1,12 +1,9 @@
 package com.sendi.deliveredrobot.topic
 
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.MyApplication.Companion.instance
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
-import com.sendi.deliveredrobot.entity.QuerySql
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.model.PhoneCallModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -18,7 +15,6 @@ import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.Stat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
