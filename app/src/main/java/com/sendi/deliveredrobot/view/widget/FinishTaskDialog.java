@@ -4,21 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.sendi.deliveredrobot.R;
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
-import com.sendi.deliveredrobot.entity.QuerySql;
-import com.sendi.deliveredrobot.entity.Universal;
-import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
-import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-
-import java.util.Objects;
 
 /**
  * @Author Swn

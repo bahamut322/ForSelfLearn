@@ -426,9 +426,9 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         sdScreenStatus!!.observe(this) {
             renovate()
             advertisingConfigDB = findFirst(AdvertisingConfigDB::class.java) //查询副屏第一条数据
-            if (sdScreenStatus!!.value == 0 && mPresentation != null && advertisingConfigDB != null) {
+            if (sdScreenStatus!!.value == 0 && mPresentation != null ) {
                 doubleScreen = sdScreenStatus!!.value!!
-                if(advertisingConfigDB.type !=0) {
+                if( advertisingConfigDB != null && advertisingConfigDB.type !=0) {
                     layoutThis(
                         advertisingConfigDB.picPlayTime,
                         Universal.advertisement,

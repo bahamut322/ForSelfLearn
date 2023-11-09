@@ -1,25 +1,19 @@
 package com.sendi.deliveredrobot.baidutts.listener;
 
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
-import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.MyApplication;
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.baidutts.MainHandlerConstant;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 
-import java.util.List;
 import java.util.Objects;
 
 /**

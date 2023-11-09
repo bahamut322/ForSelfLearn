@@ -1,5 +1,7 @@
 package com.sendi.deliveredrobot.entity;
 
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
+
 import java.util.Objects;
 
 public class FunctionSkip {

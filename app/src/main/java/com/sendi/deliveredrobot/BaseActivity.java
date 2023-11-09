@@ -7,69 +7,44 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.hardware.display.DisplayManager;
-import android.media.AudioDeviceInfo;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.MediaRouter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.alibaba.fastjson.JSON;
-import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
-import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 
-import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
-import com.sendi.deliveredrobot.view.widget.AdvancePagerAdapter;
-import com.sendi.deliveredrobot.view.widget.AdvanceVideoView;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
-import com.sendi.deliveredrobot.view.widget.LoadingView;
 import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.view.widget.VerticalTextView;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
-
-import net.sf.json.JSONString;
-
-import org.litepal.LitePal;
-import org.litepal.crud.LitePalSupport;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,7 +71,6 @@ public class BaseActivity extends AppCompatActivity {
     private BaseViewModel baseViewModel;
     AdvertisingConfigDB advertisingConfigDB;
     ConstraintLayout.LayoutParams layoutParams;
-    LoadingView loadingView;
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
     public void onResume() {
@@ -184,7 +158,6 @@ public class BaseActivity extends AppCompatActivity {
             constraintLayout2 = findViewById(R.id.constraintLayout2);
             advanceView = findViewById(R.id.Spread_out);
             horizontalTV = findViewById(R.id.horizontalTV);//横向文字
-            loadingView = findViewById(R.id.loadingView);
             verLin = findViewById(R.id.baseline);
             verticalTV = findViewById(R.id.verticalTV);//纵向文字
 //          AdvancePagerAdapter.time = Universal.picPlayTime;
@@ -382,10 +355,6 @@ public class BaseActivity extends AppCompatActivity {
      * @param AllvideoAudio  是否播放声音
      */
     public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio) {
-//        verticalTV.setVisibility(View.GONE);
-//        horizontalTV.setVisibility(View.GONE);
-//        advanceView.setVisibility(View.GONE);
-        loadingView.setVisibility(View.VISIBLE);
         switch (type) {
             case 1:
             case 2:
@@ -446,7 +415,6 @@ public class BaseActivity extends AppCompatActivity {
                 advanceView.setVisibility(View.VISIBLE);
                 break;
         }
-        loadingView.setVisibility(View.GONE);
     }
 
     /**

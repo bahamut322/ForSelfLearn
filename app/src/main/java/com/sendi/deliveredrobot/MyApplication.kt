@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
@@ -53,7 +54,7 @@ class MyApplication : Application() {
                 if (DownloadBill.getInstance().taskCount == 0) {
                     Log.e("TAG", "onProgress: FinishAll")
                     DialogHelper.loadingDialog.dismiss()
-                    UpdateReturn().method()
+                    UpdateReturn().method(Universal.mapType)
                     RobotStatus.newUpdata.postValue(1)
                 }
             }

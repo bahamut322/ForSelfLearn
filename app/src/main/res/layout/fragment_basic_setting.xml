@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="businessName"
+            type="com.sendi.deliveredrobot.entity.entitySql.QuerySql"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +38,7 @@
                 <View
                     android:id="@+id/view"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="458dp"
+                    android:layout_height="408dp"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -218,6 +220,7 @@
                     android:layout_marginStart="@dimen/dp_88"
                     android:background="@drawable/checkbox"
                     android:button="@null"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/textView8"
                     app:layout_constraintStart_toEndOf="@+id/textView8"
                     app:layout_constraintTop_toTopOf="@+id/textView8" />
@@ -229,6 +232,7 @@
                     android:layout_marginStart="@dimen/dp_6"
                     android:alpha="0.7"
                     android:text="@string/Intelligent_QA"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/dp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/QA"
@@ -276,9 +280,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_6"
                     android:alpha="0.7"
-                    android:text="@string/business"
+                    android:text="@{businessName.ShoppingConfig().name}"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
+                    tools:text="业务办理"
                     app:layout_constraintBottom_toBottomOf="@+id/business"
                     app:layout_constraintStart_toEndOf="@+id/business"
                     app:layout_constraintTop_toTopOf="@+id/business" />
@@ -289,9 +294,10 @@
                     android:layout_height="@dimen/dp_24"
                     android:background="@drawable/checkbox"
                     android:button="@null"
-                    app:layout_constraintBottom_toBottomOf="@+id/view"
-                    app:layout_constraintStart_toStartOf="@+id/leaderShip"
-                    app:layout_constraintTop_toBottomOf="@+id/leaderShip" />
+                    android:layout_marginStart="88dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/businessTv"
+                    app:layout_constraintStart_toEndOf="@+id/businessTv"
+                    app:layout_constraintTop_toTopOf="@+id/businessTv" />
 
                 <TextView
                     android:id="@+id/Etiquette_welcomeTv"

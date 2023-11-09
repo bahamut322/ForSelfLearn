@@ -104,28 +104,28 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
                 val taskId = BillManager.currentBill()?.taskId()?:""
                 BillManager.removeBill()
                 //TODO 充电桩
-                // 如果后续没有任务，则返回充电桩
-                val bill = GoBackTaskBillFactory.createBill(TaskModel(
-                    taskId = taskId
-                ))
-                BillManager.addAllAtIndex(bill)
+//                // 如果后续没有任务，则返回充电桩
+//                val bill = GoBackTaskBillFactory.createBill(TaskModel(
+//                    taskId = taskId
+//                ))
+//                BillManager.addAllAtIndex(bill)
                 //TODO 充电桩
-//TODO 待命点
-//                val readyPoint = dao.queryReadyPoint()
-//                when (readyPoint?.type) {
-//                    PointType.CHARGE_POINT -> {
-//                        // 如果后续没有任务，则返回充电桩
-//                        val bill = GoBackTaskBillFactory.createBill(TaskModel(
-//                            taskId = taskId
-//                        ))
-//                        BillManager.addAllAtIndex(bill)
-//                    }
-//                    PointType.READY_POINT -> {
-//                        val bill = GoBackReadyPointBillFactory.createBill(TaskModel(location = readyPoint, taskId = taskId))
-//                        BillManager.addAllAtIndex(bill)
-//                    }
-//                }
-//TODO 待命点
+                //TODO 待命点
+                val readyPoint = dao.queryReadyPoint()
+                when (readyPoint?.type) {
+                    PointType.CHARGE_POINT -> {
+                        // 如果后续没有任务，则返回充电桩
+                        val bill = GoBackTaskBillFactory.createBill(TaskModel(
+                            taskId = taskId
+                        ))
+                        BillManager.addAllAtIndex(bill)
+                    }
+                    PointType.READY_POINT -> {
+                        val bill = GoBackReadyPointBillFactory.createBill(TaskModel(location = readyPoint, taskId = taskId))
+                        BillManager.addAllAtIndex(bill)
+                    }
+                }
+                //TODO 待命点
             }
             BillManager.currentBill()?.executeNextTask()
         }

@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.helpers;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import com.sendi.deliveredrobot.MyApplication;
-import com.sendi.deliveredrobot.entity.QuerySql;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.view.widget.Order;
 import java.io.IOException;
 

@@ -17,8 +17,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.sendi.deliveredrobot.entity.QuerySql;
-import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 
 
 public class AdvanceImageView extends RelativeLayout {

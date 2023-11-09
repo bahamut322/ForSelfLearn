@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.navigationtask
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
+import com.sendi.deliveredrobot.entity.ShoppingConfigDB
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
@@ -24,7 +25,6 @@ object RobotStatus {
     var mqttConnected = false //mqtt连接状态
     var retryDockTimes = 0      //重试自主充电次数
     var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
-    val statusSuccess: MutableLiveData<Boolean> = MutableLiveData(false)
     val sysTimeStamp : MutableLiveData<Long> = MutableLiveData(0)
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点
@@ -67,6 +67,7 @@ object RobotStatus {
     val PassWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
+    var shoppingConfigList : MutableLiveData<ShoppingGuideConfing>? = MutableLiveData<ShoppingGuideConfing>()//导购配置
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()

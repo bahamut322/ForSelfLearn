@@ -27,6 +27,7 @@ class AdvanceGuidingTask(
         return when (navigateId) {
             R.id.guidingFragment -> TaskStageEnum.GuidingTask
             R.id.goBackFragment -> TaskStageEnum.GoBackTask
+            R.id.businessIngFragment ->TaskStageEnum.BusinessIngTask
             else -> TaskStageEnum.Error
         }
     }

@@ -16,6 +16,7 @@ const val CHOOSE_BIN1 = 0x1
 const val CHOOSE_BIN2 = 0x2
 const val POP_BACK_STACK = -1
 const val NAVIGATE_TO_HOME = -2
+const val TYPE_BUSINESS = 0x09//业务办理
 const val TYPE_EXPLAN = 0x10 //讲解
 const val TYPE_GUIDE = 0x11 //引领
 const val TYPE_SEND = 0x12  //送物

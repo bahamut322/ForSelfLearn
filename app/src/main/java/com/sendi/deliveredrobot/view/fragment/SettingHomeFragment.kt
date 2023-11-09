@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +13,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import chassis_msgs.DoorState
 import chassis_msgs.VersionGetResponse
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.adapter.SettingHomeListAdapter
 import com.sendi.deliveredrobot.databinding.FragmentSettingHomeBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil

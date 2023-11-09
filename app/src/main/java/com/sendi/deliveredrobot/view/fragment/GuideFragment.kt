@@ -17,7 +17,7 @@ import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentGuideBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
@@ -29,7 +29,6 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.pointItem
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import kotlinx.coroutines.Dispatchers

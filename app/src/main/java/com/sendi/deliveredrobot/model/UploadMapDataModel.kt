@@ -5,6 +5,10 @@ import com.google.gson.Gson
 data class UploadMapDataModel(
     val areas: List<Area>,
     val curMapName: String,
+    //待命点名称
+    val waitingPointName : String,
+    //充电桩点名称
+    val chargePointName : String,
     val maps: List<Map>,
     val type: String = "uploadMapData"
 ){

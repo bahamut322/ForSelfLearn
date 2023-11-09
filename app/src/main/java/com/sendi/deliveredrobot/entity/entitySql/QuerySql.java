@@ -1,7 +1,12 @@
-package com.sendi.deliveredrobot.entity;
+package com.sendi.deliveredrobot.entity.entitySql;
 
 import android.database.Cursor;
+import android.util.Log;
 
+import com.sendi.deliveredrobot.entity.BigScreenConfigDB;
+import com.sendi.deliveredrobot.entity.ShoppingActionDB;
+import com.sendi.deliveredrobot.entity.ShoppingConfigDB;
+import com.sendi.deliveredrobot.entity.TouchScreenConfigDB;
 import com.sendi.deliveredrobot.model.ADVModel;
 import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
@@ -87,6 +92,7 @@ public class QuerySql {
 
     /**
      * 机器人当前总图下配置路线列表(用于发送MQTT)
+     *
      * @param rootMapName 当前总图名字
      * @return
      */
@@ -338,18 +344,120 @@ public class QuerySql {
             do {
                 robotConfigModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 robotConfigModel.setSleep(cursor.getInt(cursor.getColumnIndex("sleep")));
-                if (cursor.getString(cursor.getColumnIndex("password")) == null) {
-                    robotConfigModel.setPassword("8888");
-                } else {
-                    robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
-                }
+                robotConfigModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
                 robotConfigModel.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
                 robotConfigModel.setWakeUpList(cursor.getString(cursor.getColumnIndex("wakeuplist")));
                 robotConfigModel.setSleepTime(cursor.getInt(cursor.getColumnIndex("sleeptime")));
             } while (cursor.moveToNext());
             cursor.close();
+        } else if (!cursor.moveToFirst() || cursor.getString(cursor.getColumnIndex("password")) == null) {
+            robotConfigModel.setPassword("8888");
         }
         return robotConfigModel;
+    }
+
+    /**
+     * 查询导购配置的基本信息
+     * （功能名称、完成任务的提示、中断结束任务之后的提示、首次进入提示）
+     * 其他内容get出来为空
+     */
+    public static ShoppingConfigDB ShoppingConfig() {
+        ShoppingConfigDB configDB = new ShoppingConfigDB();
+        String sql = "SELECT * FROM shoppingconfigdb";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                //功能名称
+                configDB.setName(cursor.getString(cursor.getColumnIndex("name")));
+                //完成任务的提示
+                configDB.setCompletePrompt(cursor.getString(cursor.getColumnIndex("completeprompt")));
+                //中断结束任务之后的提示
+                configDB.setInterruptPrompt(cursor.getString(cursor.getColumnIndex("interruptprompt")));
+                //首次进入提示
+                configDB.setFirstPrompt(cursor.getString(cursor.getColumnIndex("firstprompt")));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return configDB;
+    }
+
+    public static int selectShoppingId() {
+        int id = 0;
+        String sql = "SELECT id FROM shoppingconfigdb ";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                //ID
+                id = cursor.getInt(cursor.getColumnIndex("id"));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return id;
+    }
+
+    /**
+     * 更具总图名字查询导购点
+     *
+     * @param rootMapName 导购名字（传null的话查询所有）
+     */
+    public static ArrayList<ShoppingActionDB> SelectShoppingAction(String rootMapName) {
+        Log.d("TAG", "SelectShoppingAction: 2");
+        ArrayList<ShoppingActionDB> listAction = new ArrayList<>();
+        String sql = "SELECT * FROM shoppingactiondb actionpoint " +
+                "LEFT JOIN bigscreenconfigdb bigscreen ON actionpoint.id = bigscreen.shoppingactiondb_id " +
+                "LEFT JOIN touchscreenconfigdb touch ON actionpoint.id = touch.shoppingactiondb_id " +
+                "WHERE actionpoint.id = ? AND actionpoint.rootmapname = ?";
+        Cursor cursor = LitePal.findBySQL(sql, selectShoppingId()+"", rootMapName);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                ShoppingActionDB actionDB = new ShoppingActionDB();
+                actionDB.setActionType(cursor.getInt(cursor.getColumnIndex("actiontype")));
+                actionDB.setPointName(cursor.getString(cursor.getColumnIndex("pointname")));
+                actionDB.setWaitingTime(cursor.getInt(cursor.getColumnIndex("waitingtime")));
+                actionDB.setName(cursor.getString(cursor.getColumnIndex("name")));
+                actionDB.setStandText(cursor.getString(cursor.getColumnIndex("standtext")));
+                actionDB.setArriveText(cursor.getString(cursor.getColumnIndex("arrivetext")));
+                actionDB.setMoveTest(cursor.getString(cursor.getColumnIndex("movetest")));
+                actionDB.setTimestamp(cursor.getLong(cursor.getColumnIndex("timestamp")));
+                actionDB.setRootMapName(cursor.getString(cursor.getColumnIndex("rootmapname")));
+
+                BigScreenConfigDB bigScreenConfig = new BigScreenConfigDB();
+                bigScreenConfig.setType(cursor.getInt(cursor.getColumnIndex("type")));
+                bigScreenConfig.setPicType(cursor.getInt(cursor.getColumnIndex("pictype")));
+                bigScreenConfig.setPicPlayTime(cursor.getInt(cursor.getColumnIndex("picplaytime")));
+                bigScreenConfig.setFontContent(cursor.getString(cursor.getColumnIndex("fontcontent")));
+                bigScreenConfig.setFontColor(cursor.getString(cursor.getColumnIndex("fontcolor")));
+                bigScreenConfig.setFontSize(cursor.getInt(cursor.getColumnIndex("fontsize")));
+                bigScreenConfig.setFontLayout(cursor.getInt(cursor.getColumnIndex("fontlayout")));
+                bigScreenConfig.setFontBackGround(cursor.getString(cursor.getColumnIndex("fontbackground")));
+                bigScreenConfig.setTextPosition(cursor.getInt(cursor.getColumnIndex("textposition")));
+                bigScreenConfig.setVideoAudio(cursor.getInt(cursor.getColumnIndex("videoaudio")));
+                bigScreenConfig.setVideoFile(cursor.getString(cursor.getColumnIndex("videofile")));
+                bigScreenConfig.setImageFile(cursor.getString(cursor.getColumnIndex("imagefile")));
+                actionDB.setBigScreenConfig(bigScreenConfig);
+
+                TouchScreenConfigDB touchScreenConfig = new TouchScreenConfigDB();
+                touchScreenConfig.setTouch_type(cursor.getInt(cursor.getColumnIndex("touch_type")));
+                touchScreenConfig.setTouch_picType(cursor.getInt(cursor.getColumnIndex("touch_pictype")));
+                touchScreenConfig.setTouch_picPlayTime(cursor.getInt(cursor.getColumnIndex("touch_picplaytime")));
+                touchScreenConfig.setTouch_fontContent(cursor.getString(cursor.getColumnIndex("touch_fontcontent")));
+                touchScreenConfig.setTouch_fontColor(cursor.getString(cursor.getColumnIndex("touch_fontcolor")));
+                touchScreenConfig.setTouch_fontSize(cursor.getInt(cursor.getColumnIndex("touch_fontsize")));
+                touchScreenConfig.setTouch_fontLayout(cursor.getInt(cursor.getColumnIndex("touch_fontlayout")));
+                touchScreenConfig.setTouch_fontBackGround(cursor.getString(cursor.getColumnIndex("touch_fontbackground")));
+                touchScreenConfig.setTouch_textPosition(cursor.getInt(cursor.getColumnIndex("touch_textposition")));
+                touchScreenConfig.setTouch_imageFile(cursor.getString(cursor.getColumnIndex("touch_imagefile")));
+                touchScreenConfig.setTouch_walkPic(cursor.getString(cursor.getColumnIndex("touch_walkpic")));
+                touchScreenConfig.setTouch_blockPic(cursor.getString(cursor.getColumnIndex("touch_blockpic")));
+                touchScreenConfig.setTouch_arrivePic(cursor.getString(cursor.getColumnIndex("touch_arrivepic")));
+                touchScreenConfig.setTouch_overTaskPic(cursor.getString(cursor.getColumnIndex("touch_overtaskpic")));
+                actionDB.setTouchScreenConfig(touchScreenConfig);
+
+                listAction.add(actionDB);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return listAction;
     }
 
     /**

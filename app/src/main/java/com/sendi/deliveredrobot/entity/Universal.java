@@ -102,10 +102,8 @@ public class Universal {
     public static int sleep = 0;
     //图片布局
     public static int picType = 1;
-    //机器人默认配置时间戳
-    public static long timeStampRobotConfigSql;
-    //下发总图名字
-    public static String mapName;
+    //是否下发机器人配置
+    public static boolean mapType = true;
     //密码
     public static String password;
     //播放进度

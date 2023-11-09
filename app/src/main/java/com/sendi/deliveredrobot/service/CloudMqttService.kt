@@ -8,13 +8,9 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.sendi.deliveredrobot.BuildConfig
-import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.entity.QuerySql
 import com.sendi.deliveredrobot.handler.MqttMessageHandler
-import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil

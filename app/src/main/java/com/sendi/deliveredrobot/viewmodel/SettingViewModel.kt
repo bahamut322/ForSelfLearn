@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.baidu.tts.client.SpeechSynthesizer
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
-import com.sendi.deliveredrobot.entity.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.BasicModel
 import java.io.BufferedReader
@@ -39,7 +39,6 @@ class SettingViewModel : ViewModel() {
     /**
      * 语速
      */
-
     fun timbres(speed: String) {
         if ("男声" == QuerySql.QueryBasic().robotMode) {
             randomVoice(2, speed)

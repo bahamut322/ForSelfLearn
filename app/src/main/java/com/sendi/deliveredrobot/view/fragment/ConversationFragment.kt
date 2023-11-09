@@ -91,10 +91,52 @@ class ConversationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)
         val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
-        repeat(20) {
+        val questions = arrayOf(
+            "广州天气如何?",
+            "如果美国星链进行干扰通信会怎样?",
+            "在吗?",
+            "中国电信什么时候成立，成立的意义又是什么？",
+            "联通和电信哪个更适苹果？",
+            "广州天气如何?",
+            "如果美国星链进行干扰通信会怎样?",
+            "在吗?",
+            "中国电信什么时候成立，成立的意义又是什么？",
+            "联通和电信哪个更适苹果？",
+            "广州天气如何?",
+            "如果美国星链进行干扰通信会怎样?",
+            "在吗?",
+            "中国电信什么时候成立，成立的意义又是什么？",
+            "联通和电信哪个更适苹果？",
+            "广州天气如何?",
+            "如果美国星链进行干扰通信会怎样?",
+            "在吗?",
+            "中国电信什么时候成立，成立的意义又是什么？",
+            "联通和电信哪个更适苹果？",
+            )
+
+
+
+//        repeat(20) {
+//            val textView = LayoutInflater.from(requireContext())
+//                .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
+//            textView.text = "测".repeat(random.nextInt(2, 20))
+//            textView.setOnClickListener {
+//                mainScope.launch(Dispatchers.Main) {
+//                    val result = addConversationView((it as TextView).text.toString())
+//                    if (result.isNullOrEmpty()) {
+//                        return@launch
+//                    }
+//                    withContext(Dispatchers.Default){
+//                        SpeakHelper.speakWithoutStop(result)
+//                    }
+//                }
+//            }
+//            myFlowLayout.addView(textView)
+//        }
+        questions.forEach {
             val textView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
-            textView.text = "测".repeat(random.nextInt(2, 20))
+            textView.text = it
             textView.setOnClickListener {
                 mainScope.launch(Dispatchers.Main) {
                     val result = addConversationView((it as TextView).text.toString())
@@ -108,9 +150,6 @@ class ConversationFragment : Fragment() {
             }
             myFlowLayout.addView(textView)
         }
-//        binding?.scrollViewConversation?.apply {
-//            fullScroll(ScrollView.FOCUS_DOWN)
-//        }
     }
 
     private suspend fun addConversationView(conversation: String): String? {
