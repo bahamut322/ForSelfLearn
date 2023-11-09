@@ -7,14 +7,13 @@
 
     <TextView
         android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_solid_5a5582_border_878cf8_bottom_right"
         android:padding="@dimen/dp_20"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_28"
-        android:gravity="start"
-        android:layout_gravity="end"
+        android:layout_weight="1"
         tools:text="测试text"/>
     
     <View
@@ -24,6 +23,8 @@
         android:layout_width="@dimen/dp_88"
         android:layout_height="@dimen/dp_88"
         android:background="@drawable/shape_bg_circle_blue"
+        android:gravity="start"
+        android:layout_gravity="end"
         tools:visibility="visible"
         />
 </androidx.appcompat.widget.LinearLayoutCompat>

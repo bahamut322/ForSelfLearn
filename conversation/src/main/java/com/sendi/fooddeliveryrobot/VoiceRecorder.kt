@@ -69,7 +69,7 @@ class VoiceRecorder {
 //                        Log.e("VoiceRecorder", "人声 no")
                         if (AudioChannel.isRecoding) {
                             booleanStack.push(false)
-                            if (booleanStack.size > 100) {
+                            if (booleanStack.size > 110) {
                                 var falseCount = 0f
                                 var trueCount = 0f
                                 booleanStack.map {
@@ -89,7 +89,9 @@ class VoiceRecorder {
                     1 -> {
 //                        Log.i("VoiceRecorder", "人声 yes")
                         booleanStack.push(true)
-                        audioChannel?.startRecord(audioBuffer2)
+                        if (!ttsIsPlaying) {
+                            audioChannel?.startRecord(audioBuffer2)
+                        }
                     }
                     else -> {
 //                        Log.e("VoiceRecorder", "人声 unknown")
@@ -108,7 +110,7 @@ class VoiceRecorder {
 
     companion object{
         private var _instance: VoiceRecorder? = null
-
+        var ttsIsPlaying = false
         fun getInstance():VoiceRecorder{
             if(_instance == null){
                 _instance = VoiceRecorder()

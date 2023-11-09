@@ -27,11 +27,10 @@ import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 import java.net.Proxy
-import kotlin.random.Random
 
 /**
  * @author heky
@@ -93,7 +92,7 @@ class ConversationFragment : Fragment() {
         binding = DataBindingUtil.bind(view)
         val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
         val questions = arrayOf(
-            "广州天气如何?",
+            "广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?",
             "如果美国星链进行干扰通信会怎样?",
             "在吗?",
             "中国电信什么时候成立，成立的意义又是什么？",
@@ -234,9 +233,5 @@ class ConversationFragment : Fragment() {
             }
         }
         return null
-    }
-
-    companion object {
-        val random = Random(1012312512515L)
     }
 }
