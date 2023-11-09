@@ -1,5 +1,0 @@
-com/vguang/vbarlib/BuildConfig.java
- com.vguang.vbarlib.BuildConfig
-com/vguang/Vbar.java
- com.vguang.Vbar
- com.vguang.Vbar$Vdll

@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.sendi.fooddeliveryrobot"
-        minSdk 22
+        minSdk 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0.1"
@@ -97,6 +97,18 @@ android {
     }
     packagingOptions {
         exclude "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version"
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/license.txt")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/ASL2.0")
+        exclude("META-INF/*.kotlin_module")
+        resources {
+            resources.excludes.add("META-INF/*")
+        }
     }
     ndkVersion '20.0.5594570'
 //    buildFeatures {
@@ -158,4 +170,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
     //ssh包
     implementation 'ch.ethz.ganymed:ganymed-ssh2:build210'
+
+    implementation project(path: ':conversation')
+//    implementation("") {
+//        exclude(group="com.alibaba" ,module = "fastjson")
+//    }
+    implementation("com.github.plexpt:chatgpt:4.1.2") {
+        exclude group: 'com.alibaba', module: 'fastjson'
+    }
 }

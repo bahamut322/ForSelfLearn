@@ -31,6 +31,7 @@ import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.*
+import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -53,6 +54,8 @@ class HomeFragment : Fragment(), IMainView {
     private var mPresenter: MainPresenter? = null
     private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
     private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
+    private var voiceRecorder: VoiceRecorder? = null
+
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese =
@@ -60,6 +63,8 @@ class HomeFragment : Fragment(), IMainView {
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
+
+
 
 
     override fun onResume() {
@@ -79,6 +84,10 @@ class HomeFragment : Fragment(), IMainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
+        thread {
+            voiceRecorder = VoiceRecorder.getInstance()
+            voiceRecorder?.startRecording()
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -120,6 +129,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun onDestroyView() {
         (this.activity as MainActivity?)!!.unRegisterMyTouchListener(myTouchListener)
         mPresenter?.endTipsTimer()
+//        voiceRecorder?.stopRecording()
         super.onDestroyView()
     }
 
@@ -163,6 +173,14 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
         IdleGateDataHelper.reportIdleGateCount()
+        voiceRecorder?.callback =  { _, pinyinString ->
+            if (pinyinString.contains("XIAODI")) {
+//                voiceRecorder?.stopRecording()
+//                Toast.makeText(MyApplication.instance, "包含小迪", Toast.LENGTH_SHORT).show()
+                Log.i("AudioChannel", "包含小迪")
+                controller?.navigate(R.id.conversationFragment)
+            }
+        }
     }
 
     override fun onStop() {
@@ -298,6 +316,11 @@ class HomeFragment : Fragment(), IMainView {
             binding.textViewDayOfWeek.apply {
                 text = dayOfWeekChinese[Calendar.getInstance()
                     .get(Calendar.DAY_OF_WEEK) - 1]
+            }
+        }
+        binding.textView61.apply {
+            setOnClickListener {
+                controller?.navigate(R.id.conversationFragment)
             }
         }
         //启动定位

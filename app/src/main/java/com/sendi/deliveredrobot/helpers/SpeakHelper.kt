@@ -34,7 +34,23 @@ object SpeakHelper {
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
 //            mainScope.launch(Dispatchers.IO) {
-                BaiduTTSHelper.getInstance().speak(msg)
+            var result = msg
+            val list = ArrayList<String>()
+            if(result.length > 60){
+                while(result.length > 60){
+                    val result1 = result.substring(0,60)
+                    result = result.substring(60)
+                    list.add(result1)
+                }
+                if(result.isNotEmpty()){
+                   list.add(result)
+                }
+            }else{
+                list.add(result)
+            }
+            list.map {
+                BaiduTTSHelper.getInstance().speak(it)
+            }
 //            }
         }
     }

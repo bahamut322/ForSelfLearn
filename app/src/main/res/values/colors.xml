@@ -131,5 +131,7 @@
     <color name="black_home">#484848</color>
     <color name="blue">#2BC7E5</color>
     <color name="text_border_normal">#E5E5E5</color>
+    <color name="color_5A55B2">#5A55B2</color>
+    <color name="color_878CF8">#878CF8</color>
 
 </resources>

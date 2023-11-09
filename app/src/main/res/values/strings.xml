@@ -486,8 +486,6 @@
     <string name="Intelligent_voice">智能语音</string>
     <string name="home">首页</string>
     <string name="get_into">进入</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="speaking">下面开始讲解：%s</string>
     <string name="plan">今日计划与任务</string>
     <string name="Visitor_Route">参观路线</string>
@@ -504,5 +502,6 @@
     <string name="other_point">切换其他点</string>
     <string name="next_point">下一个点</string>
     <string name="mark_point_fail">标记失败,同一楼层的同一个电梯里只能创建一个锚点</string>
+    <string name="you_can_ask_this_questions">您可以问我以下问题</string>
 
 </resources>

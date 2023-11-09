@@ -712,5 +712,10 @@
             android:id="@+id/action_businessFragment_to_planSettingFragment"
             app:destination="@id/planSettingFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/conversationFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ConversationFragment"
+        android:label="fragment_conversation"
+        tools:layout="@layout/fragment_conversation" />
 
 </navigation>

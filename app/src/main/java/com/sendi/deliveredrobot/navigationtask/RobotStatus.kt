@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
 import com.sendi.deliveredrobot.entity.ShoppingConfigDB
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
+import com.sendi.fooddeliveryrobot.VoiceRecorder
 import geometry_msgs.Pose2D
 
 /**
@@ -85,6 +86,11 @@ object RobotStatus {
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
     var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
+    var ttsIsPlaying = false //百度语音播放状态
+        set(value) {
+            VoiceRecorder.ttsIsPlaying = value
+            field = value
+        }
 
     fun setStatus(status: Int){
         previousStatus = currentStatus
