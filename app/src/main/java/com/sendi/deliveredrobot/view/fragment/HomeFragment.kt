@@ -319,6 +319,11 @@ class HomeFragment : Fragment(), IMainView {
                     .get(Calendar.DAY_OF_WEEK) - 1]
             }
         }
+        binding.textView61.apply {
+            setOnClickListener {
+                controller?.navigate(R.id.conversationFragment)
+            }
+        }
         //启动定位
 //        mLocationClient?.startLocation()
     }

@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/shape_solid_5a5582_border_878cf8_bottom_right"
-    android:padding="@dimen/dp_24"
-    android:textColor="@color/white"
-    android:textSize="@dimen/sp_28"
-    android:gravity="start"
-    android:layout_gravity="end"
-    tools:text="测试text"/>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_solid_5a5582_border_878cf8_bottom_right"
+        android:padding="@dimen/dp_20"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_28"
+        android:gravity="start"
+        android:layout_gravity="end"
+        tools:text="测试text"/>
+    
+    <View
+        android:id="@+id/view_head"
+        android:layout_marginStart="@dimen/dp_24"
+        android:visibility="visible"
+        android:layout_width="@dimen/dp_88"
+        android:layout_height="@dimen/dp_88"
+        android:background="@drawable/shape_bg_circle_blue"
+        tools:visibility="visible"
+        />
+</androidx.appcompat.widget.LinearLayoutCompat>

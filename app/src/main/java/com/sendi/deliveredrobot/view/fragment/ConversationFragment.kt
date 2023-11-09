@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 import java.net.Proxy
 import kotlin.random.Random
 
@@ -97,21 +98,12 @@ class ConversationFragment : Fragment() {
             "在吗?",
             "中国电信什么时候成立，成立的意义又是什么？",
             "联通和电信哪个更适苹果？",
-            "广州天气如何?",
-            "如果美国星链进行干扰通信会怎样?",
+            "如果英国国星链进行干扰通信会怎样?",
+            "上海天气如何?",
+            "如果中国星链进行干扰通信会怎样?",
             "在吗?",
-            "中国电信什么时候成立，成立的意义又是什么？",
-            "联通和电信哪个更适苹果？",
-            "广州天气如何?",
-            "如果美国星链进行干扰通信会怎样?",
-            "在吗?",
-            "中国电信什么时候成立，成立的意义又是什么？",
-            "联通和电信哪个更适苹果？",
-            "广州天气如何?",
-            "如果美国星链进行干扰通信会怎样?",
-            "在吗?",
-            "中国电信什么时候成立，成立的意义又是什么？",
-            "联通和电信哪个更适苹果？",
+            "美国电信什么时候成立，成立的意义又是什么？",
+            "联通和移动哪个更适苹果？",
             )
 
 
@@ -133,13 +125,16 @@ class ConversationFragment : Fragment() {
 //            }
 //            myFlowLayout.addView(textView)
 //        }
-        questions.forEach {
-            val textView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
-            textView.text = it
-            textView.setOnClickListener {
+        questions.forEach { text ->
+            val linearLayoutCompat = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
+            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
+            val viewHead = linearLayoutCompat.findViewById<View>(R.id.view_head)
+            viewHead.visibility = View.GONE
+            textView.text = text
+            linearLayoutCompat.setOnClickListener {
                 mainScope.launch(Dispatchers.Main) {
-                    val result = addConversationView((it as TextView).text.toString())
+                    val result = addConversationView(text)
                     if (result.isNullOrEmpty()) {
                         return@launch
                     }
@@ -148,11 +143,19 @@ class ConversationFragment : Fragment() {
                     }
                 }
             }
-            myFlowLayout.addView(textView)
+            myFlowLayout.addView(linearLayoutCompat)
         }
     }
 
     private suspend fun addConversationView(conversation: String): String? {
+        binding?.flHome?.apply {
+            setOnClickListener {
+                MyApplication.instance!!.sendBroadcast(Intent().apply {
+                    action = ACTION_NAVIGATE
+                    putExtra(NAVIGATE_ID, POP_BACK_STACK)
+                })
+            }
+        }
         binding?.group1?.apply {
             if (visibility == View.VISIBLE) {
                 visibility = View.GONE
@@ -164,10 +167,11 @@ class ConversationFragment : Fragment() {
             }
         }
         binding?.linearLayoutConversation?.apply {
-            val view = LayoutInflater.from(requireContext())
-                .inflate(R.layout.layout_conversation_text_view_right, null) as TextView
-            view.text = conversation
-            addView(view)
+            val linearLayoutCompat = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
+            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
+            textView.text = conversation
+            addView(linearLayoutCompat)
             val emptyView = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -177,27 +181,28 @@ class ConversationFragment : Fragment() {
                 }
             }
             addView(emptyView)
-            view.post {
-                view.layoutParams = LinearLayoutCompat.LayoutParams(
+            linearLayoutCompat.post {
+                linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply {
                     gravity = Gravity.END
 //                                setMargins(0,0,0,96)
                 }
-                totalHeight += (view.measuredHeight + 96 * 3)
+                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
             emptyView.post {
-                totalHeight += (view.measuredHeight + 96 * 3)
+                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
 
             return withContext(Dispatchers.Default) {
                 val res: String = chatGPT.chat(conversation)
-                val view2 = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.layout_conversation_text_view_left, null) as TextView
-                view2.text = res
+                val linearLayoutCompat2 = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
+                val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
+                textView2.text = res
                 val emptyView2 = View(requireContext()).apply {
                     layoutParams = LinearLayoutCompat.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -207,21 +212,21 @@ class ConversationFragment : Fragment() {
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    addView(view2)
+                    addView(linearLayoutCompat2)
                     addView(emptyView2)
-                    view2.post {
-                        view2.layoutParams = LinearLayoutCompat.LayoutParams(
+                    linearLayoutCompat2.post {
+                        linearLayoutCompat2.layoutParams = LinearLayoutCompat.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         ).apply {
                             gravity = Gravity.START
 //                                        setMargins(0,0,0,96)
                         }
-                        totalHeight += (view2.measuredHeight + 96 * 3)
+                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
                         binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                     }
                     emptyView2.post {
-                        totalHeight += (view.measuredHeight + 96 * 3)
+                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
                         binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                     }
                 }
