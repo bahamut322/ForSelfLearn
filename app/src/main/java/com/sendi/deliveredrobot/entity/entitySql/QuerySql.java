@@ -666,6 +666,22 @@ public class QuerySql {
         return ConfigList;
     }
 
+    /**
+     * 查询问答配置
+     * @return
+     */
+    public static String selectQaConfig(){
+        String qaJson = "";
+        String sql = "SELECT qajson FROM qaconfigdb";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                qaJson = cursor.getString(cursor.getColumnIndex("qajson"));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return qaJson;
+    }
 
     /**
      * 将查询到的int转为Boolean
