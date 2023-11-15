@@ -1,28 +1,34 @@
-package com.sendi.deliveredrobot.entity.Interaction
+package com.sendi.deliveredrobot.entity.interaction
 
 import android.content.ContentValues
 import android.util.Log
 import com.google.gson.Gson
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
 import com.sendi.deliveredrobot.entity.BigScreenConfigDB
+import com.sendi.deliveredrobot.entity.GuideConfig
+import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB
+import com.sendi.deliveredrobot.entity.GuidePointPicDB
 import com.sendi.deliveredrobot.entity.PointConfigVODB
 import com.sendi.deliveredrobot.entity.RouteDB
 import com.sendi.deliveredrobot.entity.ShoppingActionDB
-import com.sendi.deliveredrobot.entity.ShoppingConfigDB
 import com.sendi.deliveredrobot.entity.TouchScreenConfigDB
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.entity.UpDataSQL
 import com.sendi.deliveredrobot.entity.entitySql.DeleteSql
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.MqttMessageHandler
+import com.sendi.deliveredrobot.model.ActionsList
+import com.sendi.deliveredrobot.model.GuidePointList
 import com.sendi.deliveredrobot.model.RouteConfig
-import com.sendi.deliveredrobot.model.ShoppingGuideConfing
+import com.sendi.deliveredrobot.model.guideFoundationModel
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import org.litepal.LitePal
+import org.litepal.LitePal.updateAll
 import java.io.File
+import kotlin.concurrent.thread
 
 
 /**
@@ -32,33 +38,22 @@ import java.io.File
  */
 class InteractionMqtt {
 
-    var values: ContentValues? = null
 
     fun ActionShoppingType(message: String) {
         val gson = Gson()
-        values = ContentValues()
-        val map = LinkedHashMap<String, Long>()
-        val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
-        RobotStatus.shoppingConfigList?.value = shoppingConfig
+        var shoppingActionDB: ShoppingActionDB
+        var map: LinkedHashMap<String, Long>
+        val shoppingConfig = gson.fromJson(message, ActionsList::class.java)
+        RobotStatus.shoppingActionList?.value = shoppingConfig
         Log.d("TAG", "收到导购配置")
-        //导购配置更新
-        LitePal.deleteAll(ShoppingConfigDB::class.java)
-        val shoppingConfigDB = ShoppingConfigDB()
-        shoppingConfigDB.name = shoppingConfig.name
-        shoppingConfigDB.firstPrompt = shoppingConfig.firstPrompt
-        shoppingConfigDB.completePrompt = shoppingConfig.completePrompt
-        shoppingConfigDB.interruptPrompt = shoppingConfig.interruptPrompt
-        shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
         val actionList = shoppingConfig.actions// 路线列表对象
         val iterator = actionList?.iterator()
-        var actionDBItem: List<ShoppingActionDB>
         //开始通过迭代器遍历导购点
         while (iterator!!.hasNext()) {
+            shoppingActionDB = ShoppingActionDB()
             val action = iterator.next()
-            actionDBItem = ArrayList()
-            val shoppingActionDB = ShoppingActionDB()
             //删除某个点
-            if (action?.timestamp!! <= 0) {
+            if (action.timeStamp!! <= 0) {
                 //删除文件夹
                 MqttMessageHandler.deleteFiles(File(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name))
                 //删除数据库中的大屏
@@ -73,23 +68,32 @@ class InteractionMqtt {
                 }
                 continue
             }
-            //将数据添加到LinkHashMap
-            for (actionHash in QuerySql.SelectShoppingAction(action.rootMapName)) {
-                map[actionHash.name!!] = actionHash.timestamp!!
-            }
-            //HashMap查询数据
-            val timestamp = map[action.name]
-            if (timestamp != null && action.timestamp != timestamp) {
-                Log.e("TAG", "ActionShoppingType: 查询到时间戳更改" )
-                // 删除map中的数据
-                map.remove(action.name)
-                //删除对应的图片文件夹
-                MqttMessageHandler.deleteFiles(File(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name))
-                //删除数据库中的数据
-                DeleteSql.deleteShoppingAction(action.name, action.rootMapName)
-                println("Name: $action.name, Timestamp: $timestamp")
-            }else if (action.timestamp == timestamp){
-                continue
+            map = LinkedHashMap()
+            if (QuerySql.SelectShoppingAction(action.rootMapName) !=null) {
+                //将数据添加到LinkHashMap
+                for (actionHash in QuerySql.SelectShoppingAction(action.rootMapName)) {
+                    Log.d("", "ActionShoppingType: HashMap添加数据")
+                    map[actionHash.name!!] = actionHash.timestamp!!
+                }
+
+                //HashMap查询数据
+                val timestamp = map[action.name]
+                if (timestamp != null && action.timeStamp != timestamp) {
+                    Log.e("TAG", "ActionShoppingType: 查询到时间戳更改")
+                    // 删除map中的数据
+                    map.remove(action.name)
+                    //删除对应的图片文件夹
+                    MqttMessageHandler.deleteFiles(File(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name))
+                    //删除数据库中的大屏
+                    DeleteSql.deleteBigPic((Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/"))
+                    //删除数据库中的小屏
+                    DeleteSql.deleteTouchPic((Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/"))
+                    //删除数据库中的数据
+                    DeleteSql.deleteShoppingAction(action.name, action.rootMapName)
+                    println("Name: $action.name, Timestamp: $timestamp")
+                } else if (action.timeStamp == timestamp) {
+                    continue
+                }
             }
 
             shoppingActionDB.name = action.name
@@ -98,8 +102,8 @@ class InteractionMqtt {
             shoppingActionDB.waitingTime = action.waitingTime
             shoppingActionDB.standText = action.standText
             shoppingActionDB.arriveText = action.arriveText
-            shoppingActionDB.moveTest = action.moveTest
-            shoppingActionDB.timestamp = action.timestamp
+            shoppingActionDB.moveText = action.moveText
+            shoppingActionDB.timestamp = action.timeStamp
             shoppingActionDB.rootMapName = action.rootMapName
             //大屏幕配置
             if (action.bigScreenConfig!!.screen == 1) {
@@ -311,17 +315,10 @@ class InteractionMqtt {
                 shoppingActionDB.touchScreenConfig = touchScreenConfigDB
             }
             shoppingActionDB.save()
-            actionDBItem.add(shoppingActionDB)
-            shoppingConfigDB.actions = actionDBItem
         }
-        if (shoppingConfigDB.save()) {
-            // 数据保存成功
-            Log.d("TAG", "云平台下发导购配置保存成功")
-        } else {
-            // 数据保存失败
-            Log.d("TAG", "云平台下发导购配置数据保存失败")
-        }
+
     }
+
 
     fun ExplainType(message: String) {
         val gson = Gson()
@@ -763,7 +760,306 @@ class InteractionMqtt {
                 }
             }
         }
+    }
+    fun guidePointConfig(message: String ){
+        val gson = Gson()
+        var guidPointTime: LinkedHashMap<String, Long>
+        var guideConfigDB : GuideConfig
+        val guideConfig = gson.fromJson(message, GuidePointList::class.java)
+        RobotStatus.guidePointList?.value = guideConfig
+        Log.d("TAG", "收到引领配置")
+        val mapsList = guideConfig.maps
+        val mapIterator = mapsList?.iterator()
+
+        while (mapIterator!!.hasNext()){
+            guideConfigDB = GuideConfig()
+            val maps = mapIterator.next()
 
 
+            var pointList : List<GuidePointPicDB>
+            val pointIterator = maps?.pointList!!.iterator()
+            while (pointIterator.hasNext()){
+                val points = pointIterator.next()
+                pointList = ArrayList()
+                val guidePointPicDB = GuidePointPicDB()
+
+                //查询时间戳是否相同
+                guidPointTime = LinkedHashMap()
+                val guideList = QuerySql.selectGuideList(maps.mapName)
+                if (guideList.isEmpty()) {
+                    // 处理空结果集的情况，例如记录日志、显示错误消息或者返回
+                    Log.e("TAG", "查询结果为空")
+
+                }else {
+                    for (timeHash in guideList) {
+                        Log.d("", "ActionShoppingType: HashMap添加数据")
+                        guidPointTime[timeHash.pointName!!] = timeHash.pointTimeStamp!!
+                    }
+                    val timestamp = guidPointTime[points!!.pointName]
+                    if (timestamp != null && points.pointTimeStamp != timestamp) {
+                        Log.e("TAG", "ActionShoppingType: 查询到时间戳更改")
+                        // 删除map中的数据
+                        guidPointTime.remove(points.pointName)
+                        //删除对应的图片文件夹
+                        MqttMessageHandler.deleteFiles(File(Universal.robotFile + "GuidePic/" + points.pointName + "/"))
+                        //删除数据库中的数据
+                        DeleteSql.deleteGuidePointConfig(
+                            points.pointName,
+                            maps.mapName
+                        )
+                    } else if (points.pointTimeStamp == timestamp) {
+                        val values = ContentValues()
+                        values.put("maptimestamp",maps.mapTimeStamp )
+                        updateAll(GuidePointPicDB::class.java, values, "pointname = ? and mapname = ?",points.pointName,maps.mapName)
+                        continue
+                    }
+                }
+
+                //创建文件夹
+                MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/"+points!!.pointName+"/")
+                guidePointPicDB.pointName = points.pointName
+                guidePointPicDB.guidePicUrl = Universal.robotFile+"GuidePic/"+points.pointName+"/"+MqttMessageHandler.FileName(points.guidePicUrl!!)
+                guidePointPicDB.pointTimeStamp = points.pointTimeStamp
+                guidePointPicDB.mapTimeStamp = maps.mapTimeStamp
+                guidePointPicDB.mapName = maps.mapName
+                pointList.add(guidePointPicDB)
+                thread {
+                    DownloadBill.getInstance().addTask(
+                        Universal.pathDownload +points.guidePicUrl ,
+                        Universal.robotFile+"GuidePic/"+points.pointName+"/",
+                        MqttMessageHandler.FileName(points.guidePicUrl!!),
+                        MyApplication.listener
+                    )
+                }
+                guideConfigDB.pointList = pointList
+
+                guidePointPicDB.save()
+            }
+        }
+    }
+    fun guideFoundation(message: String){
+        val gson = Gson()
+        val guideFoundation = gson.fromJson(message, guideFoundationModel::class.java)
+        RobotStatus.guideFoundationConfig?.value = guideFoundation
+
+        LitePal.deleteAll(GuideFoundationConfigDB::class.java)
+        MqttMessageHandler.deleteFiles(File(Universal.robotFile + "GuidePic/foundation"))
+
+        val guideFoundationConfigDB = GuideFoundationConfigDB()
+        guideFoundationConfigDB.arrivePrompt = guideFoundation.arrivePrompt
+        guideFoundationConfigDB.movePrompt = guideFoundation.movePrompt
+        guideFoundationConfigDB.firstPrompt = guideFoundation.firstPrompt
+        guideFoundationConfigDB.interruptPrompt = guideFoundation.interruptPrompt
+        guideFoundationConfigDB.timeStamp = guideFoundation.timeStamp
+
+        //大屏幕
+        if (guideFoundation.bigScreenConfig!!.screen == 1) {
+            val bigScreenConfigDB = BigScreenConfigDB()
+            //配置类型
+            bigScreenConfigDB.type =
+                guideFoundation.bigScreenConfig!!.type!!
+            if (guideFoundation.bigScreenConfig!!.argPic != null) {
+                //图片布局
+                bigScreenConfigDB.picType =
+                    guideFoundation.bigScreenConfig!!.argPic?.picType!!
+                //轮播时间
+                bigScreenConfigDB.picPlayTime =
+                    guideFoundation.bigScreenConfig!!.argPic!!.picPlayTime
+                //图片
+                MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/big/")
+                val picfile =
+                    UpdateReturn().splitStr(guideFoundation.bigScreenConfig!!.argPic!!.pics)
+                //创建对应文件夹。以路线名字命名(存放大屏幕)
+                bigScreenConfigDB.imageFile =
+                    Universal.robotFile + "GuidePic/foundation/big/"
+                Thread {
+                    for (i in picfile.indices) {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + picfile[i],
+                            Universal.robotFile + "GuidePic/foundation/big/",
+                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MyApplication.listener
+                        )
+                    }
+                }.start()
+            }
+            if (guideFoundation.bigScreenConfig!!.argFont != null) {
+                //文字
+                bigScreenConfigDB.fontContent =
+                    guideFoundation.bigScreenConfig!!.argFont?.fontContent
+                //文字颜色
+                bigScreenConfigDB.fontColor =
+                    guideFoundation.bigScreenConfig!!.argFont?.fontColor
+                //文字大小 1-大，2-中，3-小,
+                bigScreenConfigDB.fontSize =
+                    guideFoundation.bigScreenConfig!!.argFont?.fontSize!!
+                //文字方向 1-横向，2-纵向
+                bigScreenConfigDB.fontLayout =
+                    guideFoundation.bigScreenConfig!!.argFont?.fontLayout!!
+                //背景颜色
+                bigScreenConfigDB.fontBackGround =
+                    guideFoundation.bigScreenConfig!!.argFont?.fontBackGround
+                //文字显示位置  0-居中 1-居上 2-居下
+                bigScreenConfigDB.textPosition =
+                    guideFoundation.bigScreenConfig!!.argFont?.textPosition!!
+            }
+            if (guideFoundation.bigScreenConfig!!.argVideo != null) {
+                //视频是否播放声音
+                bigScreenConfigDB.videoAudio =
+                    guideFoundation.bigScreenConfig!!.argVideo?.videoAudio!!
+                bigScreenConfigDB.videolayout =
+                    guideFoundation.bigScreenConfig!!.argVideo?.videoLayOut!!
+                //视频储存位置
+                //创建对应文件夹。以路线名字命名(存放大屏幕)
+                MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/foundation/big/")
+
+                val picfile =
+                    UpdateReturn().splitStr(guideFoundation.bigScreenConfig!!.argVideo?.videos!!)
+                bigScreenConfigDB.videoFile =
+                    Universal.robotFile +"GuidePic/foundation/big/"
+                Thread {
+                    for (i in picfile.indices) {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + picfile[i],
+                            Universal.robotFile + "GuidePic/foundation/big/",
+                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MyApplication.listener
+                        )
+                    }
+                }.start()
+            }
+            bigScreenConfigDB.save()
+            guideFoundationConfigDB.bigScreenConfig = bigScreenConfigDB
+        }
+        if (guideFoundation.touchScreenConfig!!.screen == 0) {
+            //创建对应文件夹。以路线名字命名(存放主屏幕)
+            MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/touch/")
+            val touchScreenConfigDB = TouchScreenConfigDB()
+            //配置类型
+            touchScreenConfigDB.touch_type =
+                guideFoundation.touchScreenConfig!!.type!!
+            if (guideFoundation.touchScreenConfig!!.argPic != null) {
+                //图片布局
+                touchScreenConfigDB.touch_picType =
+                    guideFoundation.touchScreenConfig!!.argPic?.picType!!
+                //轮播时间
+                touchScreenConfigDB.touch_picPlayTime =
+                    guideFoundation.touchScreenConfig!!.argPic?.picPlayTime!!
+                //图片路径
+                if (guideFoundation.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
+                    val picfile =
+                        UpdateReturn().splitStr(guideFoundation.touchScreenConfig!!.argPic?.pics!!)
+
+                    touchScreenConfigDB.touch_imageFile =
+                        Universal.robotFile + "GuidePic/foundation/touch/"
+                    Thread {
+                        for (i in picfile.indices) {
+                            DownloadBill.getInstance().addTask(
+                                Universal.pathDownload + picfile[i],
+                                Universal.robotFile + "GuidePic/foundation/touch/",
+                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MyApplication.listener
+                            )
+                        }
+                    }.start()
+                }
+            }
+            if (guideFoundation.touchScreenConfig!!.argFont != null) {
+                //文字
+                touchScreenConfigDB.touch_fontContent =
+                    guideFoundation.touchScreenConfig!!.argFont!!.fontContent
+                //文字颜色
+                touchScreenConfigDB.touch_fontColor =
+                    guideFoundation.touchScreenConfig!!.argFont!!.fontColor
+                //文字大小 1-大，2-中，3-小,
+                touchScreenConfigDB.touch_fontSize =
+                    guideFoundation.touchScreenConfig!!.argFont!!.fontSize
+                //文字方向 1-横向，2-纵向
+                touchScreenConfigDB.touch_fontLayout =
+                    guideFoundation.touchScreenConfig!!.argFont!!.fontLayout
+                //背景颜色
+                touchScreenConfigDB.touch_fontBackGround =
+                    guideFoundation.touchScreenConfig!!.argFont!!.fontBackGround
+                //文字显示位置  0-居中 1-居上 2-居下
+                touchScreenConfigDB.touch_textPosition =
+                    guideFoundation.touchScreenConfig!!.argFont!!.textPosition
+            }
+            if (guideFoundation.touchScreenConfig!!.argPicGroup != null) {
+                //行走中
+                if (guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
+                    touchScreenConfigDB.touch_walkPic =
+                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                            guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic,
+                            Universal.robotFile + "GuidePic/foundation/group/",
+                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    touchScreenConfigDB.touch_walkPic = Universal.gifDefault
+                }
+                //被阻挡
+                if (guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
+                    touchScreenConfigDB.touch_blockPic =
+                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                            guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!,
+                            Universal.robotFile + "GuidePic/foundation/group/",
+                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    touchScreenConfigDB.touch_blockPic =
+                        Universal.gifDefault
+                }
+                //到点
+                if (guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
+                    touchScreenConfigDB.touch_arrivePic =
+                        Universal.robotFile + "GuidePic/foundation/group/"+ MqttMessageHandler.FileName(
+                            guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
+                            Universal.robotFile +"GuidePic/foundation/group/",
+                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    touchScreenConfigDB.touch_arrivePic =
+                        Universal.gifDefault
+                }
+                //返回
+                if (guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
+                    touchScreenConfigDB.touch_overTaskPic =
+                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                            guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!,
+                            Universal.robotFile + "GuidePic/foundation/group/",
+                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    touchScreenConfigDB.touch_overTaskPic =
+                        Universal.gifDefault
+                }
+            }
+            touchScreenConfigDB.save()
+            guideFoundationConfigDB.touchScreenConfig = touchScreenConfigDB
+        }
+        guideFoundationConfigDB.save()
     }
 }

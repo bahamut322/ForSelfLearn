@@ -15,6 +15,24 @@ public class RobotConfigSql extends LitePalSupport {
     private long timeStamp;//时间戳
     private String mapName;//地图名字
     private String password;//密码
+    private String chargePointName;//充电桩点名称
+    private String waitingPointName;//待命点名称
+
+    public String getChargePointName() {
+        return chargePointName;
+    }
+
+    public void setChargePointName(String chargePointName) {
+        this.chargePointName = chargePointName;
+    }
+
+    public String getWaitingPointName() {
+        return waitingPointName;
+    }
+
+    public void setWaitingPointName(String waitingPointName) {
+        this.waitingPointName = waitingPointName;
+    }
 
     public String getPassword() {
         return password;

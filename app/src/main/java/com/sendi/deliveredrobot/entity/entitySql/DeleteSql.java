@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.entity.entitySql;
 import android.util.Log;
 
 import com.sendi.deliveredrobot.entity.BigScreenConfigDB;
+import com.sendi.deliveredrobot.entity.GuidePointPicDB;
 import com.sendi.deliveredrobot.entity.ShoppingActionDB;
 import com.sendi.deliveredrobot.entity.TouchScreenConfigDB;
 
@@ -30,6 +31,9 @@ public class DeleteSql {
     }
     public static void deleteTouchPic(String fileName) {
         LitePal.deleteAll(TouchScreenConfigDB.class, "touch_imagefile = ? ",fileName);
+    }
+    public static void deleteGuidePointConfig (String name,String mapName){
+        LitePal.deleteAll(GuidePointPicDB.class, "pointname = ? and mapName = ?",name,mapName);
     }
 
 }

@@ -17,18 +17,22 @@ import java.util.*
  * password：机器人密码
  * argConfig：配置类实体
  */
-data class RobotConfig  (
+data class RobotConfig(
 //val robotId : String? = RobotStatus.SERIAL_NUMBER,
-val audioType : Int? = 1,
-val wakeUpWord :String? = " ",
-val sleep : Int? = 1,
-val sleepTime : Int? = 10,
-val wakeUpList : String? = "1",
+    val audioType: Int? = 1,
+    val wakeUpWord: String? = " ",
+    val sleep: Int? = 1,
+    val sleepTime: Int? = 10,
+    val wakeUpList: String? = "1",
 //val sleepType : Int? = 1,
 //val sleepContentName : String? = "",
 //val picType : Int? = 1,
-val timeStamp : Long? = Date().time,
-val mapName : String? = "",
-val password : String? = "",
-val argConfig : TopLevelConfig?
+    val timeStamp: Long? = Date().time,
+    val mapName: String? = "",
+    val password: String? = "",
+//充电点
+    val chargePointName: String? = "",
+//待命点
+    val waitingPointName: String? = "",
+    val argConfig: TopLevelConfig?
 )

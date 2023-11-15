@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.service.TaskStageEnum
 
@@ -27,14 +28,16 @@ class GuideArriveTask(taskModel: TaskModel, needReportData: Boolean = true) : Ab
 //        if (TaskQueues.previousTask != null && TaskQueues.previousTask !is NavToFarPointTask) {
             var pointName = taskModel?.location?.pointName ?: ""
             pointName = pointName.toList().joinToString(" ")
-            SpeakHelper.speak(String.format(MyApplication.instance!!.getString(R.string.point_arrived),pointName))
+        RobotStatus.ArrayPointExplan.postValue(1)
+
+//        SpeakHelper.speak(String.format(MyApplication.instance!!.getString(R.string.point_arrived),pointName))
 //        }
-        MyApplication.instance?.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.guideArriveFragment)
-        })
+//        MyApplication.instance?.sendBroadcast(Intent().apply {
+//            action = ACTION_NAVIGATE
+//            putExtra(NAVIGATE_ID, R.id.guideArriveFragment)
+//        })
         virtualTaskExecute(1, "引领到达")
 //        TaskQueues.executeNextTask()
-        taskModel?.bill?.executeNextTask()
+//        taskModel?.bill?.executeNextTask()
     }
 }

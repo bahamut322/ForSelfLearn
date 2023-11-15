@@ -1,33 +1,47 @@
 package com.sendi.deliveredrobot.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MediatorLiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.sendi.deliveredrobot.ACTION_NAVIGATE
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.entity.ShoppingActionDB
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
+import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 /**
  * @Author Swn
@@ -38,18 +52,28 @@ class BusinessFragment : Fragment() {
 
     private lateinit var binding: FragmentBusinessBinding
     private var controller: NavController? = null
-    private var queryFloorPoints: List<QueryPointEntity> = ArrayList()
+    private var shoppingActionList: List<ShoppingActionDB> = ArrayList()
     val mainScope = MainScope()
     val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
-
+    private val viewModel: BusinessViewModel by viewModels({ requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //获取所有目标点
-        queryFloorPoints = ArrayList()
+        shoppingActionList = ArrayList()
         mainScope.launch(Dispatchers.Default) {
-            queryFloorPoints = dao.queryAllPoints()
+            shoppingActionList = QuerySql.SelectShoppingAction(QuerySql.robotConfig().mapName)
         }
+        val taskConsumer =
+            Consumer { task: String ->
+                // 执行任务的代码
+                if (BuildConfig.IS_SPEAK) {
+                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
+                }
+                LogUtil.i("Task: $task")
+            }
+        // 创建TaskQueue实例
+        Universal.taskQueue = TaskQueues(taskConsumer)
     }
 
     override fun onCreateView(
@@ -66,7 +90,10 @@ class BusinessFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(requireView())
         val toSettingDialog = FromeSettingDialog(context)
-
+        //设置速度
+        ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
+        //进入页面播报
+        viewModel.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE
             binding.llReturn.visibility = View.VISIBLE
@@ -74,6 +101,9 @@ class BusinessFragment : Fragment() {
             binding.firstFragment.visibility = View.VISIBLE
             binding.llReturn.visibility = View.GONE
         }
+
+        binding.businessName.text = QuerySql.ShoppingConfig().name
+
         //返回按钮
         binding.llReturn.setOnClickListener {
             controller!!.navigate(R.id.action_businessFragment_to_homeFragment)
@@ -85,33 +115,50 @@ class BusinessFragment : Fragment() {
                 if (RobotStatus.PassWordToSetting.value == true) {
                     try {
                         controller!!.navigate(R.id.action_businessFragment_to_planSettingFragment)
-                    }catch (_: Exception){}
+                    } catch (_: Exception) {
+                    }
                     toSettingDialog.dismiss()
                     RobotStatus.PassWordToSetting.postValue(false)
                 }
             }
-            Toast.makeText(context,"点击了：设置",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "点击了：设置", Toast.LENGTH_SHORT).show()
         }
 
+
         //初始化适配器
-        binding.businessGv.adapter = context?.let { BusinessAdapter(it, queryFloorPoints) }
+        binding.businessGv.adapter = context?.let { BusinessAdapter(it, shoppingActionList) }
         //item点击
         binding.businessGv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                if (RobotStatus.batteryStateNumber.value == false) {
-                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
-                    DialogHelper.briefingDialog.show()
-                } else {
-                    LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
-                    val endPoint = queryFloorPoints[position]
-                    Log.d("TAG", "onViewCreated: "+endPoint.pointDirection)
-                    val taskModel = TaskModel(location = endPoint)
-                    val bill = BusinessTaskBillFactory.createBill(taskModel = taskModel)
-                    BillManager.addAllAtIndex(bill, 0)
-                    BillManager.currentBill()?.executeNextTask()
+//                if (RobotStatus.batteryStateNumber.value == false) {
+//                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+//                    DialogHelper.briefingDialog.show()
+//                } else {
+                    LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")
+
+                    RobotStatus.shoppingName = shoppingActionList[position].pointName!!
+                    BaiduTTSHelper.getInstance().stop()
+                    if (shoppingActionList[position].actionType == 1){
+                        RobotStatus.shoppingType = 1
+                        LogUtil.d("定点")
+                        MyApplication.instance?.sendBroadcast(Intent().apply {
+                            action = ACTION_NAVIGATE
+                            putExtra(NAVIGATE_ID, R.id.businessIngFragment)
+                        })
+                    }else {
+                        LogUtil.d("去某点${RobotStatus.shoppingName}")
+                        RobotStatus.shoppingType = 2
+                        thread {
+                            val endPoint =
+                                dao.queryPoint(RobotStatus.shoppingName)
+                            Log.d("TAG", "onViewCreated: " + endPoint!!.pointDirection)
+                            val taskModel = TaskModel(location = endPoint)
+                            val bill = BusinessTaskBillFactory.createBill(taskModel = taskModel)
+                            BillManager.addAllAtIndex(bill, 0)
+                            BillManager.currentBill()?.executeNextTask()
+                        }
+//                    }
                 }
             }
-
     }
-
 }

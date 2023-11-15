@@ -20,6 +20,6 @@ data class ShoppingGuideConfing (
     var interruptPrompt: String? = "",
     //时间戳
     var baseTimeStamp: Long? = 0,
-    //目标点列表
-    var actions: List<ShoppingActions?>? = null
+//    //目标点列表
+//    var actions: List<ShoppingActions?>? = null
 )

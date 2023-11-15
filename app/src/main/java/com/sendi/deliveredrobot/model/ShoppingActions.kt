@@ -23,9 +23,9 @@ data class ShoppingActions( //导购子功能名称
     //到达时的文本:当导购功能默认值为2的时候
     var arriveText: String? = "",
     //去某点时的文本:当导购功能默认值为2的时候
-    var moveTest: String? = "",
+    var moveText: String? = "",
     //子功能时间戳
-    var timestamp: Long? = 0,
+    var timeStamp: Long? = 0,
     //对应总图名字
     var rootMapName : String = ""
 

@@ -21,11 +21,11 @@ data class ShoppingActionDB(
     //小屏配置
     var touchScreenConfig: TouchScreenConfigDB? = null,
     //定点时的文本：当导购功能默认值为1的时候
-    var standText: String? = "",
+    var standText: String? = "请跟随指示前往目标点",
     //到达时的文本:当导购功能默认值为2的时候
-    var arriveText: String? = "",
+    var arriveText: String? = "您已成功到达${name}，感谢使用我的服务。",
     //去某点时的文本:当导购功能默认值为2的时候
-    var moveTest: String? = "",
+    var moveText: String? = "您好，我们将引导前往目的地。",
     //子功能时间戳
     var timestamp: Long? = 0,
     //对应总图名字

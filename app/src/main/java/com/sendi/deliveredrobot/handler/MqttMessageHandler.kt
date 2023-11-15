@@ -2,15 +2,15 @@ package com.sendi.deliveredrobot.handler
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.os.Looper
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.entity.*
-import com.sendi.deliveredrobot.entity.Interaction.InteractionMqtt
+import com.sendi.deliveredrobot.entity.interaction.InteractionMqtt
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
@@ -28,14 +28,13 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal.deleteAll
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
 
@@ -206,6 +205,26 @@ object MqttMessageHandler {
                         Log.d("TAG", "receive: 广告配置数据保存失败")
                     }
                 }
+
+                "replyShoppingGuideConfig" -> {
+                    val gson = Gson()
+                    val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
+                    RobotStatus.shoppingConfigList?.value = shoppingConfig
+                    deleteAll(ShoppingConfigDB::class.java)
+                    val shoppingConfigDB = ShoppingConfigDB()
+                    shoppingConfigDB.name = shoppingConfig.name
+                    shoppingConfigDB.firstPrompt = shoppingConfig.firstPrompt
+                    shoppingConfigDB.completePrompt = shoppingConfig.completePrompt
+                    shoppingConfigDB.interruptPrompt = shoppingConfig.interruptPrompt
+                    shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
+                    if (shoppingConfigDB.save()) {
+                        // 数据保存成功
+                        Log.d("TAG", "云平台下发导购配置保存成功")
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "云平台下发导购配置数据保存失败")
+                    }
+                }
                 //讲解路线配置
                 "replyRouteList" -> {
                     InteractionMqtt().ExplainType(message)
@@ -313,6 +332,8 @@ object MqttMessageHandler {
                     robotConfigSql.mapName = robotConfig.mapName
                     robotConfigSql.timeStamp = robotConfig.timeStamp!!
                     robotConfigSql.password = robotConfig.password
+                    robotConfigSql.waitingPointName = robotConfig.waitingPointName
+                    robotConfigSql.chargePointName = robotConfig.chargePointName
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
@@ -343,14 +364,24 @@ object MqttMessageHandler {
                     }
                 }
                 //云平台下发导购配置
-                "replyShoppingGuideConfig"->{
-                     InteractionMqtt().ActionShoppingType(message)
+                "replyShoppingGuideActionConfig" -> {
+                    InteractionMqtt().ActionShoppingType(message)
                 }
+                //引领子功能配置
+                "replyGuidePointConfig" -> {
+                    InteractionMqtt().guidePointConfig(message)
+                }
+
                 "sendAppletTask" -> {
                     // 小程序下发任务
                     ToastUtil.show("收到远程任务..")
                     LogUtil.i("收到远程任务..")
                     RemoteOrderHelper.receiveRemoteOrder(jsonObject)
+                }
+
+                "replyGuideConfig" -> {
+                    InteractionMqtt().guideFoundation(message)
+
                 }
 
                 "resetVerificationCode" -> {
@@ -603,6 +634,19 @@ object MqttMessageHandler {
         return url.substring(url.lastIndexOf("/") + 1)
     }
 
+    private fun nullData() {
+        if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "" && Universal.advVideoFile == "" && Universal.advPics == "") {
+            Looper.prepare()
+            Universal.pics = ""
+            Universal.sleepContentName = ""
+            Universal.videoFile = ""
+            Universal.advVideoFile == ""
+            Universal.advPics == ""
+            RobotStatus.newUpdata.postValue(1)
+            UpdateReturn().method()
+            Looper.loop()
+        }
+    }
 
     fun downLoadFinish() {
         Universal.pics = ""
@@ -613,6 +657,7 @@ object MqttMessageHandler {
 //        LogUtil.d("1114")
 //        UpdateReturn().method()
     }
+
 
 
     fun selectImagePath(path: String?): Array<String?> {

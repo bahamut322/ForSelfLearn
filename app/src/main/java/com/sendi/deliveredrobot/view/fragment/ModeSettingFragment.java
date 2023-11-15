@@ -36,9 +36,11 @@ public class ModeSettingFragment extends Fragment {
     public int inaccessiblePoint = 0;
     public float leadingSpeedNum = 0.3f;//引领速度默认值
     public float ExplanationSpeedNum = 0.3f;//去往讲解点速度默认值
+    public float businessSpeedNum = 0.3f;//去往导购点默认值
 //    public float explainNum = 1;//讲解语速默认值
     public float stayNum = 1;//逗留时间默认值
     public float BreakTaskNum = 1;//打断任务触控点暂停时间默认值
+    public float businessTimeNum = 1;//打断导购任务时间
 //    public int endOfExplanation = 0;//0为再讲一遍，1为选择其他路线
 //    int abnormalWarning;//异常警告方式
     StringBuffer stringBuffer = new StringBuffer();
@@ -56,12 +58,15 @@ public class ModeSettingFragment extends Fragment {
         binding.LeadingSpeed.setRange(0.3f, 1.2f, 1);
         //去往讲解点速度
         binding.ExplanationSpeed.setRange(0.3f, 1.2f, 1);
+        //去往导购点速度
+        binding.businessSpeed.setRange(0.3f,1.2f,1);
         //讲解语速
 //        binding.explain.setRange(1, 15, 0);
         //逗留时间
         binding.stay.setRange(1, 180, 0);
         //打断任务触控点暂停时间
         binding.BreakTask.setRange(1, 180, 0);
+        binding.timeBusiness.setRange(1,180,0);
         //巡逻速度
         binding.patrolSpeed.setRange(0.3f, 1.2f, 1);
         //巡逻过程中暂停时间
@@ -103,13 +108,16 @@ public class ModeSettingFragment extends Fragment {
         binding.suspension.setCur(viewModel.settingData().getPatrolStayTime());
         binding.patrolSpeed.setCur(viewModel.settingData().getPatrolSpeed());
         binding.etiquette.setChecked(viewModel.settingData().getIdentifyVip());
-        binding.InterruptionExplanation.setChecked(viewModel.settingData().getWhetherInterrupt());
+        binding.InterruptionExplanation.setChecked(viewModel.settingData().getExplainInterrupt());
+        binding.interruptionBusiness.setChecked(viewModel.settingData().getBusinessInterrupt());
         binding.VoiceAnnouncements.setChecked(viewModel.settingData().getVoiceAnnouncements());
         binding.LeadingSpeed.setCur(viewModel.settingData().getLeadingSpeed());
         binding.ExplanationSpeed.setCur(viewModel.settingData().getGoExplanationPoint());
+        binding.businessSpeed.setCur(viewModel.settingData().getGoBusinessPoint());
 //        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
         binding.stay.setCur(viewModel.settingData().getStayTime());
-        binding.BreakTask.setCur(viewModel.settingData().getWhetherTime());
+        binding.BreakTask.setCur(viewModel.settingData().getExplainWhetherTime());
+        binding.timeBusiness.setCur(viewModel.settingData().getBusinessWhetherTime());
 
 
         //VIP人脸识别
@@ -147,6 +155,11 @@ public class ModeSettingFragment extends Fragment {
             Log.d(TAG, "设置去往讲解点速度: " + ExplanationSpeedNum);
             values.put("goexplanationpoint",ExplanationSpeedNum);
         });
+        binding.businessSpeed.setOnSeekBarChangeListener(current -> {
+            businessSpeedNum = binding.businessSpeed.getCur();
+            Log.d(TAG, "设置去往导购点速度: " + ExplanationSpeedNum);
+            values.put("gobusinesspoint",businessSpeedNum);
+        });
 //        //讲解语速
 //        binding.explain.setOnSeekBarChangeListener(current -> {
 //            explainNum = binding.explain.getCurInt();
@@ -163,8 +176,13 @@ public class ModeSettingFragment extends Fragment {
         //打断任务触控点暂停时间
         binding.BreakTask.setOnSeekBarChangeListener(current -> {
             BreakTaskNum = binding.BreakTask.getCurInt();
-            Log.d(TAG, "设置打断任务触控点暂停时间: " + BreakTaskNum);
-            values.put("whethertime",BreakTaskNum);
+            Log.d(TAG, "设置打断讲解任务触控点暂停时间: " + BreakTaskNum);
+            values.put("explainwhethertime",BreakTaskNum);
+        });
+        binding.timeBusiness.setOnSeekBarChangeListener(current -> {
+            businessTimeNum = binding.timeBusiness.getCurInt();
+            Log.d(TAG, "设置打断导购任务触控点暂停时间: " + businessTimeNum);
+            values.put("businesswhethertime",businessTimeNum);
         });
         //巡逻速度
         binding.patrolSpeed.setOnSeekBarChangeListener(current -> {
@@ -177,11 +195,14 @@ public class ModeSettingFragment extends Fragment {
             suspensionNum = binding.suspension.getCurInt();
             values.put("patrolstaytime",suspensionNum);
         });
-
+        //导购过程中是否允许被打断
+        binding.interruptionBusiness.setOnCheckedChangeListener((compoundButton, b) -> {
+            values.put("businessinterrupt",BooleanToInt(b));
+        });
 
         //讲解过程中是否允许被打断
         binding.InterruptionExplanation.setOnCheckedChangeListener((compoundButton, b) -> {
-            values.put("whetherinterrupt",BooleanToInt(b));
+            values.put("explaininterrupt",BooleanToInt(b));
         });
         binding.VoiceAnnouncements.setOnCheckedChangeListener((buttonView, isChecked) -> {
             values.put("voiceannouncements",BooleanToInt(isChecked));

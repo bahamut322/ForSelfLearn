@@ -19,14 +19,18 @@ public class BasicModel {
     private int stayTime;//逗留时间
     private int unArrive;//不能到达点 0：直接下一个;1：重复第二次到达
     private int explanationFinish;//讲解结束允许 0、再讲一遍 1、选择其他路线
-    private Boolean whetherInterrupt;//讲解过程中允许打断
-    private int whetherTime;//打断任务暂停时间
+    private Boolean explainInterrupt;//讲解过程中允许打断
+    private int explainWhetherTime;//打断任务暂停时间
     private String patrolContent;//巡逻内容 0：口罩检测;1：体温检测;2：人脸识别;
     private String Error;//异常警告方式 0、语音播报 1、就近跟随
     private float patrolSpeed;//巡逻速度
     private int patrolStayTime;//巡逻过程中暂停时间
     private int tempMode;//测温模式：0、单人测温 1、多人测温
     private Boolean voiceAnnouncements;//智能测温语音播报
+    private float goBusinessPoint;//去往导购速度
+    private boolean businessInterrupt;//导购过程中允许打断
+    private int businessWhetherTime;//打断任务暂停时间
+
 
     public String getDefaultValue() {
         return defaultValue;
@@ -148,20 +152,44 @@ public class BasicModel {
         this.explanationFinish = explanationFinish;
     }
 
-    public Boolean getWhetherInterrupt() {
-        return whetherInterrupt;
+    public Boolean getExplainInterrupt() {
+        return explainInterrupt;
     }
 
-    public void setWhetherInterrupt(Boolean whetherInterrupt) {
-        this.whetherInterrupt = whetherInterrupt;
+    public void setExplainInterrupt(Boolean explainInterrupt) {
+        this.explainInterrupt = explainInterrupt;
     }
 
-    public int getWhetherTime() {
-        return whetherTime;
+    public int getExplainWhetherTime() {
+        return explainWhetherTime;
     }
 
-    public void setWhetherTime(int whetherTime) {
-        this.whetherTime = whetherTime;
+    public void setExplainWhetherTime(int explainWhetherTime) {
+        this.explainWhetherTime = explainWhetherTime;
+    }
+
+    public float getGoBusinessPoint() {
+        return goBusinessPoint;
+    }
+
+    public void setGoBusinessPoint(float goBusinessPoint) {
+        this.goBusinessPoint = goBusinessPoint;
+    }
+
+    public boolean getBusinessInterrupt() {
+        return businessInterrupt;
+    }
+
+    public void setBusinessInterrupt(boolean businessInterrupt) {
+        this.businessInterrupt = businessInterrupt;
+    }
+
+    public int getBusinessWhetherTime() {
+        return businessWhetherTime;
+    }
+
+    public void setBusinessWhetherTime(int businessWhetherTime) {
+        this.businessWhetherTime = businessWhetherTime;
     }
 
     public String getPatrolContent() {

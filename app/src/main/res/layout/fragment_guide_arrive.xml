@@ -41,7 +41,7 @@
                 android:id="@+id/array_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="引领结束"
+                android:text="任务结束"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_48"
                 android:gravity="center"

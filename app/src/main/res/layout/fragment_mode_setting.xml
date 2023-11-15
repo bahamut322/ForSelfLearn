@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-
+        <variable
+            name="businessName"
+            type="com.sendi.deliveredrobot.entity.entitySql.QuerySql"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -543,6 +544,159 @@
                     app:layout_constraintTop_toTopOf="@+id/Break_Task" />
 
                 <TextView
+                    android:id="@+id/businessTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="业务办理"
+                    android:text="@{businessName.ShoppingConfig().name}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_32"
+                    android:layout_marginStart="@dimen/dp_32"
+                    android:layout_marginTop="@dimen/dp_41"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view11"/>
+
+                <TextView
+                    android:id="@+id/textViewTips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.7"
+                    android:text="@{@string/Questions1(businessName.ShoppingConfig().name)}"
+                    tools:text = "@string/Questions1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/businessTv"
+                    app:layout_constraintStart_toEndOf="@+id/businessTv"
+                    app:layout_constraintTop_toTopOf="@+id/businessTv" />
+
+                <View
+                    android:id="@+id/businessView"
+                    android:layout_width="@dimen/dp_1010"
+                    android:layout_height="@dimen/dp_370"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/setting_item_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/businessTv" />
+
+                <TextView
+                    android:id="@+id/speed_business_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="@dimen/dp_44"
+                    android:alpha="0.7"
+                    android:text="@{@string/speed_business(businessName.ShoppingConfig().name)}"
+                    tools:text="@string/speed_business"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/businessView"
+                    app:layout_constraintTop_toTopOf="@+id/businessView" />
+
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:text="@string/min"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/speed_business_tv"
+                    app:layout_constraintStart_toEndOf="@+id/speed_business_tv"
+                    app:layout_constraintTop_toTopOf="@+id/speed_business_tv" />
+
+                <com.sendi.deliveredrobot.view.widget.MySeekBar
+                    android:id="@+id/business_speed"
+                    android:layout_width="560dp"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginStart="@dimen/dp_26"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView11"
+                    app:layout_constraintStart_toEndOf="@+id/textView11"
+                    app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_24"
+                    android:text="@string/max"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/business_speed"
+                    app:layout_constraintStart_toEndOf="@+id/business_speed"
+                    app:layout_constraintTop_toTopOf="@+id/business_speed" />
+
+                <TextView
+                    android:id="@+id/businessInterrupt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_94"
+                    android:alpha="0.7"
+                    android:text="@{@string/interruptBusiness(businessName.ShoppingConfig().name)}"
+                    tools:text="@string/interruptBusiness"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/speed_business_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/speed_business_tv" />
+
+                <CheckBox
+                    android:id="@+id/interruption_Business"
+                    android:layout_width="@dimen/dp_56"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:button="@drawable/selector_switch_track"
+                    app:layout_constraintBottom_toBottomOf="@+id/businessInterrupt"
+                    app:layout_constraintEnd_toEndOf="@+id/businessView"
+                    app:layout_constraintTop_toTopOf="@+id/businessInterrupt" />
+
+
+                <TextView
+                    android:id="@+id/textViewBu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_92"
+                    android:alpha="0.7"
+                    android:text="@string/Task_Touch"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/businessInterrupt"
+                    app:layout_constraintTop_toBottomOf="@+id/businessInterrupt" />
+
+                <TextView
+                    android:id="@+id/textViewBu1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_50"
+                    android:alpha="0.7"
+                    android:text="@string/Task_Touch_min"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewBu"
+                    app:layout_constraintStart_toEndOf="@+id/textViewBu"
+                    app:layout_constraintTop_toTopOf="@+id/textViewBu" />
+
+                <com.sendi.deliveredrobot.view.widget.MySeekBar
+                    android:id="@+id/time_business"
+                    android:layout_width="480dp"
+                    android:layout_height="@dimen/dp_48"
+                    android:layout_marginStart="@dimen/dp_31"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewBu1"
+                    app:layout_constraintStart_toEndOf="@+id/textViewBu1"
+                    app:layout_constraintTop_toTopOf="@+id/textViewBu1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_24"
+                    android:alpha="0.7"
+                    android:text="@string/Task_Touch_max"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/time_business"
+                    app:layout_constraintStart_toEndOf="@+id/time_business"
+                    app:layout_constraintTop_toTopOf="@+id/time_business" />
+
+
+                <TextView
                     android:id="@+id/textView45"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -552,7 +706,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_32"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view11" />
+                    app:layout_constraintTop_toBottomOf="@+id/businessView" />
 
                 <View
                     android:id="@+id/view15"

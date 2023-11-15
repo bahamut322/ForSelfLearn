@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.service.DeliverMqttService
 import com.sendi.deliveredrobot.service.MqttService
 import com.sendi.deliveredrobot.service.ReportRobotStateService
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import jni.Usbcontorl
 import kotlinx.coroutines.*
@@ -271,6 +272,9 @@ object CheckSelfHelper {
         }
 
         if (checkSelfComplete) {
+            if(RobotStatus.batteryStateNumber.value == true) {
+                UpdateReturn().mapSetting(true)
+            }
             LogUtil.i("自检完成")
         }
         if (countdownComplete) {

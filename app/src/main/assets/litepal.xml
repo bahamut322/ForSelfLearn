@@ -3,7 +3,7 @@
     <!--数据库名称-->
     <dbname value="multifunction" />
     <!--数据库版本-->
-    <version value="6" />
+    <version value="5" />
     <!--指定路径-->
     <storage value="/database" />
     <!--映射模型-->
@@ -22,5 +22,8 @@
         <mapping class="com.sendi.deliveredrobot.entity.RouteDB" />
         <mapping class="com.sendi.deliveredrobot.entity.ShoppingConfigDB"/>
         <mapping class="com.sendi.deliveredrobot.entity.ShoppingActionDB"/>
+<!--        <mapping class="com.sendi.deliveredrobot.entity.GuideConfigDB"/>-->
+        <mapping class="com.sendi.deliveredrobot.entity.GuidePointPicDB"/>
+        <mapping class="com.sendi.deliveredrobot.entity.GuideFoundationConfigDB"/>
     </list>
 </litepal>

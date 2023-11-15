@@ -4,6 +4,7 @@ package com.sendi.deliveredrobot.entity;
 import android.annotation.SuppressLint;
 
 import com.sendi.deliveredrobot.BuildConfig;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public class Universal {
     //广告视频名字
     public static String advVideoFile = "";
     //当前使用的总图
-    public static String MapName = "";
+    public static String MapName = QuerySql.robotConfig().getMapName();
 
 
     //TODO 门岗管理

@@ -29,17 +29,19 @@ import in.xiandan.countdowntimer.OnCountDownTimerListener;
 public class ProcessClickDialog extends Dialog {
 
     public Context context;
-    //    private CountDownTimer countDownTimer;
+
     private CountDownTimerSupport mTimer;
     public TextView returnTv;
     public Button continueBtn, finishBtn, nextBtn, otherBtn;
+    private int countdownTime; // 成员变量来存储时间值
 
-    //    private boolean isCountdownRunning = false;
     public ProcessClickDialog(Context context) {
         super(context, R.style.Dialog);
         this.context = context;
     }
-
+    public void setCountdownTime(int time) {
+        this.countdownTime = time;
+    }
     @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class ProcessClickDialog extends Dialog {
         continueBtn = findViewById(R.id.continueBtn);
         finishBtn = findViewById(R.id.finishBtn);
         nextBtn = findViewById(R.id.nextBtn);
+        startCountdown(countdownTime); // 使用成员变量中的时间值
         TaskArray.setOnChangeListener(() -> {
             if (Objects.equals(TaskArray.getToDo(), "3")) {
                mTimer.pause();
@@ -81,8 +84,8 @@ public class ProcessClickDialog extends Dialog {
         return super.onTouchEvent(event);
     }
 
-    private void startCountdown() {
-        mTimer = new CountDownTimerSupport(QuerySql.QueryBasic().getWhetherTime() * 1000L, 1000);
+    private void startCountdown( int time ) {
+        mTimer = new CountDownTimerSupport(time * 1000L, 1000);
         // SimpleOnCountDownTimerListener
         mTimer.setOnCountDownTimerListener(new OnCountDownTimerListener() {
             @SuppressLint("SetTextI18n")
@@ -108,30 +111,11 @@ public class ProcessClickDialog extends Dialog {
         });
     }
 
-//    private void startCountdown() {
-//        if (!isCountdownRunning) {
-//            countDownTimer = new CountDownTimer(QuerySql.QueryBasic().getWhetherTime()* 1000L, 1000) {
-//                @SuppressLint("SetTextI18n")
-//                @Override
-//                public void onTick(long millisUntilFinished) {
-//                    returnTv.setText((int) (millisUntilFinished / 1000)+"");
-//                }
-//                @Override
-//                public void onFinish() {
-//                    LogUtil.INSTANCE.i(this+"倒计时结束");
-//                    dismiss();
-//                    new UpdateReturn().resume();
-//                }
-//            }.start();
-//            isCountdownRunning = true;
-//        }
-//    }
 
 
     @Override
     protected void onStop() {
-//        stopCountdown();
-//        isCountdownRunning = false;
+
         Universal.speakIng =false;
         if (mTimer!=null) {
             mTimer.stop();
@@ -141,8 +125,6 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     public void dismiss() {
-//        stopCountdown();
-//        isCountdownRunning = false;
         Universal.speakIng =false;
         if (mTimer!=null) {
             mTimer.stop();
@@ -150,25 +132,18 @@ public class ProcessClickDialog extends Dialog {
         super.dismiss();
     }
 
-//    private void stopCountdown() {
-//        if (isCountdownRunning) {
-//            countDownTimer.cancel();
-//            LogUtil.INSTANCE.i(this+"倒计时停止");
-//            isCountdownRunning = false;
-//        }
-//    }
 
     /**
      * 调用弹窗全屏显示方法
      */
     @Override
-    public void show() {
+    public void show( ) {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
         Universal.speakIng = true;
         MediaPlayerHelper.getInstance().pause();
         BaiduTTSHelper.getInstance().pause();
-        startCountdown();
+        startCountdown(countdownTime); // 使用成员变量中的时间值
         mTimer.start();
         new UpdateReturn().pause();
         fullScreenImmersive(getWindow().getDecorView());
