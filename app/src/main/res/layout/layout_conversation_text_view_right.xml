@@ -22,7 +22,7 @@
         android:visibility="visible"
         android:layout_width="@dimen/dp_88"
         android:layout_height="@dimen/dp_88"
-        android:background="@drawable/shape_bg_circle_blue"
+        android:background="@drawable/ic_head_humen"
         android:gravity="start"
         android:layout_gravity="end"
         tools:visibility="visible"

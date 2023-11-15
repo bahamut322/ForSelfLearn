@@ -9,7 +9,7 @@
         android:id="@+id/view_head"
         android:layout_width="@dimen/dp_88"
         android:layout_height="@dimen/dp_88"
-        android:background="@drawable/shape_bg_circle_white"
+        android:background="@drawable/ic_head_robot"
         android:visibility="visible"
         tools:visibility="visible" />
 

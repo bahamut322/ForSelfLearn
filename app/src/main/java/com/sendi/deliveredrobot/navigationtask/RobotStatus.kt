@@ -18,7 +18,7 @@ object RobotStatus {
     var SERIAL_NUMBER = "" //序列号
     const val CALL_LIFT_AND_MOVE_TIMES = 10 //重试电梯次数阈值
     const val RETRY_DOCK_MAX_TIMES = 3
-    const val LOW_POWER_VALUE = 10 // 低电量阈值
+    const val LOW_POWER_VALUE = 0 // 低电量阈值
     const val SHUT_DOWN_VALUE = 5 // 低电量阈值
     var callLiftAndMoveTimes = 0       //重试电梯次数
     var callingLift = false //正在呼叫电梯

@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.handler
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -13,6 +14,8 @@ import com.sendi.deliveredrobot.entity.Interaction.InteractionMqtt
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
+import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
+import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.model.log.RobotLog
@@ -387,6 +390,16 @@ object MqttMessageHandler {
                     } catch (_: java.lang.Exception) {
 
                     }
+                }
+
+                "replyQaConfig" -> {
+                    //云平台下发问答配置
+                    ReplyQaConfigHelper.replyQaConfig(message)
+                }
+
+                "replyIntent" -> {
+                    //平台回复机器人问题结果
+                    ReplyIntentHelper.replyIntent(message)
                 }
 
                 else -> {}
