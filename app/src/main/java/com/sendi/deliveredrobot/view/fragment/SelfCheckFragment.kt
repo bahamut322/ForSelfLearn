@@ -192,7 +192,6 @@ class SelfCheckFragment : Fragment() {
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
                     UpdateReturn().assignment()
-                    UpdateReturn().sendMapData()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id
                         val floorId = RobotStatus.bootLocation?.floorName?.hashCode() ?: -1
