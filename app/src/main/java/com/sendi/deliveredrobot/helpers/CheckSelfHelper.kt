@@ -274,6 +274,7 @@ object CheckSelfHelper {
         if (checkSelfComplete) {
             if(RobotStatus.batteryStateNumber.value == true) {
                 UpdateReturn().mapSetting(true)
+                UpdateReturn().method(false)
             }
             LogUtil.i("自检完成")
         }
