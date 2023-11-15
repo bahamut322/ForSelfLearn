@@ -208,7 +208,7 @@
                     android:alpha="0.7"
                     android:text="@string/Intelligent_explanation"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/dp_24"
+                    android:textSize="@dimen/sp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/explanation"
                     app:layout_constraintStart_toEndOf="@+id/explanation"
                     app:layout_constraintTop_toTopOf="@+id/explanation" />
@@ -234,7 +234,7 @@
                     android:text="@string/Intelligent_QA"
                     android:visibility="gone"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/dp_24"
+                    android:textSize="@dimen/sp_24"
                     app:layout_constraintBottom_toBottomOf="@+id/QA"
                     app:layout_constraintStart_toEndOf="@+id/QA"
                     app:layout_constraintTop_toTopOf="@+id/QA" />
@@ -274,19 +274,47 @@
                     app:layout_constraintStart_toEndOf="@+id/textView15"
                     app:layout_constraintTop_toTopOf="@+id/textView15" />
 
+
                 <TextView
                     android:id="@+id/businessTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dp_6"
-                    android:alpha="0.7"
                     android:text="@{businessName.ShoppingConfig().name}"
                     android:textColor="@color/white"
+                    android:textStyle="normal"
+                    android:alpha="0.7"
                     android:textSize="@dimen/sp_24"
+                    android:gravity="center"
+                    android:shadowColor="@color/red"
+                    android:shadowRadius="10.0"
+                    android:shadowDx="50.0"
+                    android:shadowDy="30.0"
+                    android:singleLine="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:ellipsize="marquee"
+                    android:clickable="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:layout_width="@dimen/dp_100"
+                    android:layout_height="wrap_content"
                     tools:text="业务办理"
                     app:layout_constraintBottom_toBottomOf="@+id/business"
                     app:layout_constraintStart_toEndOf="@+id/business"
-                    app:layout_constraintTop_toTopOf="@+id/business" />
+                    app:layout_constraintTop_toTopOf="@+id/business" >
+                    <requestFocus />
+                </TextView>
+
+<!--                <TextView-->
+<!--                    android:id="@+id/businessTv"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="@dimen/dp_6"-->
+<!--                    android:alpha="0.7"-->
+<!--                    android:text="@{businessName.ShoppingConfig().name}"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="@dimen/sp_24"-->
+<!--                    tools:text="业务办理"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/business"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/business"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/business" />-->
 
                 <CheckBox
                     android:id="@+id/Etiquette_welcome"

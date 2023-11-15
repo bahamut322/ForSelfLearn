@@ -9,6 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.entity.ShoppingActionDB
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 
 
@@ -17,7 +18,7 @@ import com.sendi.deliveredrobot.room.entity.QueryPointEntity
  * @Data 2023/10/18
  * @describe 业务办理适配器
  */
-class BusinessAdapter(var context: Context, var datas: List<QueryPointEntity>) : BaseAdapter() {
+class BusinessAdapter(var context: Context, var datas: List<ShoppingActionDB>) : BaseAdapter() {
 
     inner class MyHolder {
         lateinit var bgCon: ConstraintLayout
@@ -41,7 +42,7 @@ class BusinessAdapter(var context: Context, var datas: List<QueryPointEntity>) :
             myHolder = view.tag as MyHolder
         }
 
-        myHolder.nameTv.text = datas[position].pointName
+        myHolder.nameTv.text = datas[position].name
         return view!!
     }
 

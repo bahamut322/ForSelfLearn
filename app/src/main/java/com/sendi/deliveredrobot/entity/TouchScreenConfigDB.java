@@ -5,33 +5,33 @@ import org.litepal.crud.LitePalSupport;
 //讲解主屏配置
 public class TouchScreenConfigDB extends LitePalSupport {
     //配置类型
-    private int touch_type;
+    private int touch_type = 0;
     //图片布局
-    private int touch_picType;
+    private int touch_picType = 1;
     //轮播时间
-    private int touch_picPlayTime;
+    private int touch_picPlayTime = 0;
     //文字
-    private String touch_fontContent;
+    private String touch_fontContent = "";
     //文字颜色
-    private String touch_fontColor;
+    private String touch_fontColor = "#000000";
     //文字大小 1-大，2-中，3-小,
-    private int touch_fontSize;
+    private int touch_fontSize = 2;
     //文字方向 1-横向，2-纵向
-    private int touch_fontLayout;
+    private int touch_fontLayout = 1;
     //背景颜色
-    private String touch_fontBackGround;
+    private String touch_fontBackGround = "#000000";
     //文字显示位置  0-居中 1-居上 2-居下
-    private int touch_textPosition;
+    private int touch_textPosition = 0;
     //图片存储位置
-    private String touch_imageFile;
+    private String touch_imageFile = "";
     //行走中图片
-    private String touch_walkPic;
+    private String touch_walkPic = "";
     //被阻挡
-    private String touch_blockPic;
+    private String touch_blockPic= "";
     //到点
-    private String touch_arrivePic;
+    private String touch_arrivePic= "";
     //任务结束时返回
-    private String touch_overTaskPic;
+    private String touch_overTaskPic= "";
 
     public String getTouch_walkPic() {
         return touch_walkPic;

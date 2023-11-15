@@ -99,7 +99,7 @@ class GuideTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         taskId = taskId(),
                         bill = this@GuideTaskBill
                     ),
-                    R.id.guidingFragment
+                    R.id.guiding1Fragment
                 )
             )
             // step 11：到达目的地

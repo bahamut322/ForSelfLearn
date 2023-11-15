@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -178,10 +179,6 @@ class HomeFragment : Fragment(), IMainView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
-//        thread {
-//            UpdateReturn().mapSetting()
-//        }
-//        UpdateReturn().method()
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(requireView())
@@ -310,7 +307,7 @@ class HomeFragment : Fragment(), IMainView {
         //item1
         binding.include.view110.setBackgroundResource(calculateColor(rescolors!![0]))
         binding.include.view111.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view112.text = rescolors!![0]
+        binding.include.view112.text = itemName(rescolors!![0])
         binding.include.view110.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
@@ -320,7 +317,7 @@ class HomeFragment : Fragment(), IMainView {
         //item2
         binding.include.view120.setBackgroundResource(calculateColor(rescolors!![1]))
         binding.include.view121.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view122.text = rescolors!![1]
+        binding.include.view122.text = itemName(rescolors!![1])
         binding.include.view120.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
@@ -334,7 +331,7 @@ class HomeFragment : Fragment(), IMainView {
         //item1
         binding.include.view210.setBackgroundResource(calculateColor(rescolors!![0]))
         binding.include.view211.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view212.text = rescolors!![0]
+        binding.include.view212.text = itemName(rescolors!![0])
         binding.include.view210.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
@@ -344,7 +341,7 @@ class HomeFragment : Fragment(), IMainView {
         //item2
         binding.include.view220.setBackgroundResource(calculateColor(rescolors!![1]))
         binding.include.view221.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view222.text = rescolors!![1]
+        binding.include.view222.text = itemName(rescolors!![1])
         binding.include.view220.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
@@ -354,7 +351,7 @@ class HomeFragment : Fragment(), IMainView {
         //item3
         binding.include.view230.setBackgroundResource(calculateColor(rescolors!![2]))
         binding.include.view231.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view232.text = rescolors!![2]
+        binding.include.view232.text = itemName(rescolors!![2])
         binding.include.view230.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
@@ -368,7 +365,7 @@ class HomeFragment : Fragment(), IMainView {
         //item1
         binding.include.view310.setBackgroundResource(calculateColor(rescolors!![0]))
         binding.include.view311.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view312.text = rescolors!![0]
+        binding.include.view312.text = itemName(rescolors!![0])
         binding.include.view310.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
@@ -378,7 +375,7 @@ class HomeFragment : Fragment(), IMainView {
         //item2
         binding.include.view320.setBackgroundResource(calculateColor(rescolors!![1]))
         binding.include.view321.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view322.text = rescolors!![1]
+        binding.include.view322.text = itemName(rescolors!![1])
         binding.include.view320.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
@@ -388,7 +385,7 @@ class HomeFragment : Fragment(), IMainView {
         //item3
         binding.include.view330.setBackgroundResource(calculateColor(rescolors!![2]))
         binding.include.view331.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view332.text = rescolors!![2]
+        binding.include.view332.text = itemName(rescolors!![2])
         binding.include.view330.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
@@ -398,7 +395,7 @@ class HomeFragment : Fragment(), IMainView {
         //item4
         binding.include.view340.setBackgroundResource(calculateColor(rescolors!![3]))
         binding.include.view341.setImageResource(calculateImage(rescolors!![3]))
-        binding.include.view342.text = rescolors!![3]
+        binding.include.view342.text = itemName(rescolors!![3])
         binding.include.view340.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
@@ -412,7 +409,7 @@ class HomeFragment : Fragment(), IMainView {
         //item1
         binding.include.view410.setBackgroundResource(calculateColor(rescolors!![0]))
         binding.include.view411.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view412.text = rescolors!![0]
+        binding.include.view412.text = itemName(rescolors!![0])
         binding.include.view410.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
@@ -422,7 +419,7 @@ class HomeFragment : Fragment(), IMainView {
         //item2
         binding.include.view420.setBackgroundResource(calculateColor(rescolors!![1]))
         binding.include.view421.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view422.text = rescolors!![1]
+        binding.include.view422.text = itemName(rescolors!![1])
         binding.include.view420.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
@@ -432,7 +429,7 @@ class HomeFragment : Fragment(), IMainView {
         //item3
         binding.include.view430.setBackgroundResource(calculateColor(rescolors!![2]))
         binding.include.view431.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view432.text = rescolors!![2]
+        binding.include.view432.text = itemName(rescolors!![2])
         binding.include.view430.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
@@ -442,7 +439,7 @@ class HomeFragment : Fragment(), IMainView {
         //item4
         binding.include.view440.setBackgroundResource(calculateColor(rescolors!![3]))
         binding.include.view441.setImageResource(calculateImage(rescolors!![3]))
-        binding.include.view442.text = rescolors!![3]
+        binding.include.view442.text = itemName(rescolors!![3])
         binding.include.view440.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
@@ -452,7 +449,7 @@ class HomeFragment : Fragment(), IMainView {
         //item5
         binding.include.view450.setBackgroundResource(calculateColor(rescolors!![4]))
         binding.include.view451.setImageResource(calculateImage(rescolors!![4]))
-        binding.include.view452.text = rescolors!![4]
+        binding.include.view452.text = itemName(rescolors!![4])
         binding.include.view450.setOnClickListener {
             itemOnclickListen(
                 rescolors!![4]
@@ -466,7 +463,7 @@ class HomeFragment : Fragment(), IMainView {
         //item1
         binding.include.view510.setBackgroundResource(calculateColor(rescolors!![0]))
         binding.include.view511.setImageResource(calculateImage(rescolors!![0]))
-        binding.include.view512.text = rescolors!![0]
+        binding.include.view512.text = itemName(rescolors!![0])
         binding.include.view510.setOnClickListener {
             itemOnclickListen(
                 rescolors!![0]
@@ -476,7 +473,7 @@ class HomeFragment : Fragment(), IMainView {
         //item2
         binding.include.view520.setBackgroundResource(calculateColor(rescolors!![1]))
         binding.include.view521.setImageResource(calculateImage(rescolors!![1]))
-        binding.include.view522.text = rescolors!![1]
+        binding.include.view522.text = itemName(rescolors!![1])
         binding.include.view520.setOnClickListener {
             itemOnclickListen(
                 rescolors!![1]
@@ -486,7 +483,7 @@ class HomeFragment : Fragment(), IMainView {
         //item3
         binding.include.view530.setBackgroundResource(calculateColor(rescolors!![2]))
         binding.include.view531.setImageResource(calculateImage(rescolors!![2]))
-        binding.include.view532.text = rescolors!![2]
+        binding.include.view532.text = itemName(rescolors!![2])
         binding.include.view530.setOnClickListener {
             itemOnclickListen(
                 rescolors!![2]
@@ -496,7 +493,7 @@ class HomeFragment : Fragment(), IMainView {
         //item4
         binding.include.view540.setBackgroundResource(calculateColor(rescolors!![3]))
         binding.include.view541.setImageResource(calculateImage(rescolors!![3]))
-        binding.include.view542.text = rescolors!![3]
+        binding.include.view542.text = itemName(rescolors!![3])
         binding.include.view540.setOnClickListener {
             itemOnclickListen(
                 rescolors!![3]
@@ -506,7 +503,7 @@ class HomeFragment : Fragment(), IMainView {
         //item5
         binding.include.view550.setBackgroundResource(calculateColor(rescolors!![4]))
         binding.include.view551.setImageResource(calculateImage(rescolors!![4]))
-        binding.include.view552.text = rescolors!![4]
+        binding.include.view552.text = itemName(rescolors!![4])
         binding.include.view550.setOnClickListener {
             itemOnclickListen(
                 rescolors!![4]
@@ -516,7 +513,7 @@ class HomeFragment : Fragment(), IMainView {
         //item6
         binding.include.view560.setBackgroundResource(calculateColor(rescolors!![5]))
         binding.include.view561.setImageResource(calculateImage(rescolors!![5]))
-        binding.include.view562.text = rescolors!![5]
+        binding.include.view562.text = itemName(rescolors!![5])
         binding.include.view560.setOnClickListener {
             itemOnclickListen(
                 rescolors!![5]
@@ -560,14 +557,14 @@ class HomeFragment : Fragment(), IMainView {
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 
-            QuerySql.ShoppingConfig().name -> {
-                if (RobotStatus.batteryStateNumber.value == false) {
-                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
-                    DialogHelper.briefingDialog.show()
-                } else {
+            "业务办理" -> {
+//                if (RobotStatus.batteryStateNumber.value == false) {
+//                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+//                    DialogHelper.briefingDialog.show()
+//                } else {
                     controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
                     Log.d("TAG", "业务办理 ")
-                }
+//                }
             }
 
             "礼仪迎宾" -> {
@@ -612,17 +609,23 @@ class HomeFragment : Fragment(), IMainView {
             str = "APPLICATION"
         } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
-        } else if (QuerySql.ShoppingConfig().name == String) {
+        } else if ("业务办理" == String) {
             str = "BUSINESS"
         }
         return str
     }
-
+    private fun itemName(ItemName:  String): String?{
+        return if (ItemName == "业务办理"){
+            QuerySql.ShoppingConfig().name
+        }else{
+            ItemName
+        }
+    }
     /**
      * 不同标签背景
      */
     private fun calculateColor(colorstr: String): Int {
-        var color = R.color.colorAccent
+        var color = R.drawable.item2
         if ("智能引领" == colorstr) {
             color = R.drawable.item2
         } else if ("智能讲解" == colorstr) {
@@ -633,7 +636,7 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item3
         } else if ("礼仪迎宾" == colorstr) {
             color = R.drawable.item3
-        } else if (QuerySql.ShoppingConfig().name == colorstr) {
+        } else if ("业务办理" == colorstr) {
             color = R.drawable.item1
         }
         return color
@@ -654,7 +657,7 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.application_svg
         } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg
-        } else if (QuerySql.ShoppingConfig().name== Imagestr) {
+        } else if ("业务办理"== Imagestr) {
             image = R.drawable.business_svg
         }
         return image

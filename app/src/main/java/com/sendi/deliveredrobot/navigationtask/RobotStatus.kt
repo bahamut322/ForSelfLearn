@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.navigationtask
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
-import com.sendi.deliveredrobot.entity.ShoppingConfigDB
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import geometry_msgs.Pose2D
@@ -31,6 +30,8 @@ object RobotStatus {
     var currentLocation: QueryPointEntity? = null //记录当前所在楼层
     var liftCurrentLocation: QueryPointEntity? = null //记录电梯所在楼层
     var expectLocation: QueryPointEntity? = null //想去的楼层
+    var shoppingName : String = ""
+    var shoppingType : Int = 0
 
     // 适配器状态 1-接入电源线 0-电源线拔出
     val adapterState: MutableLiveData<Byte> = MutableLiveData(-1)
@@ -38,6 +39,7 @@ object RobotStatus {
     val doorState = arrayListOf<Int>()
     //广告屏
     val mPresentation : MutableLiveData<Int?> = MutableLiveData()
+    var repeatedReading : Int = 0
 
     //电量
     val batteryPower: MutableLiveData<Float> = MutableLiveData(-1f)
@@ -68,6 +70,10 @@ object RobotStatus {
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
     var shoppingConfigList : MutableLiveData<ShoppingGuideConfing>? = MutableLiveData<ShoppingGuideConfing>()//导购配置
+    var shoppingActionList : MutableLiveData<ActionsList>? = MutableLiveData<ActionsList>()//导购配置
+    var guidePointList : MutableLiveData<GuidePointList>? = MutableLiveData<GuidePointList>()//引领配置
+    var guideFoundationConfig : MutableLiveData<guideFoundationModel>? = MutableLiveData<guideFoundationModel>()
+
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
@@ -76,10 +82,11 @@ object RobotStatus {
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
-    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领
+    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领 4:导购
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择的item
     var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
     var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
+    var businessBigModel : MutableLiveData<SecondModel?>? = MutableLiveData()//导购副屏幕
     var targetName : MutableLiveData<String?>? = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点

@@ -1,16 +1,24 @@
 package com.sendi.deliveredrobot.adapter.base.i
 
 import android.annotation.SuppressLint
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.sendi.deliveredrobot.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
+
 
 /**
  * 智能引领列表适配器
@@ -43,9 +51,12 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
         }
 
         myHolder.text.text = datas[position].pointName
-//        myHolder.imageId.setImageResource(datas.get(position).imageId)
-        myHolder.imageId.setImageResource(R.drawable.img_strat_explation)
-
+        val imageUrl: String = QuerySql.selectGuideConfig(Universal.MapName, datas[position].pointName).guidePicUrl!!
+        Glide.with(context)
+            .load(imageUrl)
+            .apply(RequestOptions().placeholder(R.drawable.img_strat_explation)) // 设置占位图
+            .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
+            .into(myHolder.imageId)
         return view!!
     }
 

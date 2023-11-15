@@ -40,9 +40,9 @@ public class BasicSetting extends LitePalSupport {
     @Column(defaultValue = "1")
     private int explanationFinish  = 1;//讲解结束允许 0、再讲一遍 1、选择其他路线
     @Column(defaultValue = "true")
-    private Boolean whetherInterrupt = true;//讲解过程中允许打断
+    private Boolean explainInterrupt = true;//讲解过程中允许打断
     @Column(defaultValue = "1")
-    private int whetherTime = 1;//打断任务暂停时间
+    private int explainWhetherTime = 1;//打断任务暂停时间
     @Column(defaultValue = "1")
     private String patrolContent = "1";//巡逻内容 0：口罩检测;1：体温检测;2：人脸识别;
     @Column(defaultValue = "1")
@@ -55,6 +55,13 @@ public class BasicSetting extends LitePalSupport {
     private int tempMode = 1;//测温模式：0、单人测温 1、多人测温
     @Column(defaultValue = "false")
     private Boolean voiceAnnouncements = false;//智能测温语音播报
+    @Column(defaultValue = "0.3")
+    private float goBusinessPoint = (float) 0.3;//去往导购速度
+    @Column(defaultValue = "true")
+    private boolean businessInterrupt = true;//导购过程中允许打断
+    @Column(defaultValue = "1")
+    private int businessWhetherTime = 1;//打断任务暂停时间
+
 
     public int getId() {
         return id;
@@ -160,20 +167,44 @@ public class BasicSetting extends LitePalSupport {
         Etiquette = etiquette;
     }
 
-    public Boolean getWhetherInterrupt() {
-        return whetherInterrupt;
+    public Boolean getExplainInterrupt() {
+        return explainInterrupt;
     }
 
-    public void setWhetherInterrupt(Boolean whetherInterrupt) {
-        this.whetherInterrupt = whetherInterrupt;
+    public void setExplainInterrupt(Boolean explainInterrupt) {
+        this.explainInterrupt = explainInterrupt;
     }
 
-    public int getWhetherTime() {
-        return whetherTime;
+    public int getExplainWhetherTime() {
+        return explainWhetherTime;
     }
 
-    public void setWhetherTime(int whetherTime) {
-        this.whetherTime = whetherTime;
+    public void setExplainWhetherTime(int explainWhetherTime) {
+        this.explainWhetherTime = explainWhetherTime;
+    }
+
+    public float getGoBusinessPoint() {
+        return goBusinessPoint;
+    }
+
+    public void setGoBusinessPoint(float goBusinessPoint) {
+        this.goBusinessPoint = goBusinessPoint;
+    }
+
+    public boolean getBusinessInterrupt() {
+        return businessInterrupt;
+    }
+
+    public void setBusinessInterrupt(boolean businessInterrupt) {
+        this.businessInterrupt = businessInterrupt;
+    }
+
+    public int getBusinessWhetherTime() {
+        return businessWhetherTime;
+    }
+
+    public void setBusinessWhetherTime(int businessWhetherTime) {
+        this.businessWhetherTime = businessWhetherTime;
     }
 
     public String getPatrolContent() {

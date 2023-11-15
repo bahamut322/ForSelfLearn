@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.litepal.LitePal
 import org.litepal.LitePal.deleteAll
 import java.io.File
 import java.util.*
@@ -203,6 +204,26 @@ object MqttMessageHandler {
                         Log.d("TAG", "receive: 广告配置数据保存失败")
                     }
                 }
+
+                "replyShoppingGuideConfig" -> {
+                    val gson = Gson()
+                    val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
+                    RobotStatus.shoppingConfigList?.value = shoppingConfig
+                    deleteAll(ShoppingConfigDB::class.java)
+                    val shoppingConfigDB = ShoppingConfigDB()
+                    shoppingConfigDB.name = shoppingConfig.name
+                    shoppingConfigDB.firstPrompt = shoppingConfig.firstPrompt
+                    shoppingConfigDB.completePrompt = shoppingConfig.completePrompt
+                    shoppingConfigDB.interruptPrompt = shoppingConfig.interruptPrompt
+                    shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
+                    if (shoppingConfigDB.save()) {
+                        // 数据保存成功
+                        Log.d("TAG", "云平台下发导购配置保存成功")
+                    } else {
+                        // 数据保存失败
+                        Log.d("TAG", "云平台下发导购配置数据保存失败")
+                    }
+                }
                 //讲解路线配置
                 "replyRouteList" -> {
                     InteractionMqtt().ExplainType(message)
@@ -310,6 +331,8 @@ object MqttMessageHandler {
                     robotConfigSql.mapName = robotConfig.mapName
                     robotConfigSql.timeStamp = robotConfig.timeStamp!!
                     robotConfigSql.password = robotConfig.password
+                    robotConfigSql.waitingPointName = robotConfig.waitingPointName
+                    robotConfigSql.chargePointName = robotConfig.chargePointName
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
@@ -340,14 +363,24 @@ object MqttMessageHandler {
                     }
                 }
                 //云平台下发导购配置
-                "replyShoppingGuideConfig"->{
-                     InteractionMqtt().ActionShoppingType(message)
+                "replyShoppingGuideActionConfig" -> {
+                    InteractionMqtt().ActionShoppingType(message)
                 }
+                //引领子功能配置
+                "replyGuidePointConfig" -> {
+                    InteractionMqtt().guidePointConfig(message)
+                }
+
                 "sendAppletTask" -> {
                     // 小程序下发任务
                     ToastUtil.show("收到远程任务..")
                     LogUtil.i("收到远程任务..")
                     RemoteOrderHelper.receiveRemoteOrder(jsonObject)
+                }
+
+                "replyGuideConfig" -> {
+                    InteractionMqtt().guideFoundation(message)
+
                 }
 
                 "resetVerificationCode" -> {

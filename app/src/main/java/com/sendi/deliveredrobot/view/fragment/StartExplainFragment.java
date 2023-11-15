@@ -160,6 +160,8 @@ public class StartExplainFragment extends Fragment {
         viewModel.downTimer();
         processClickDialog = new ProcessClickDialog(getContext());
         changingOverDialog = new ChangingOverDialog(getContext());
+        processClickDialog.setCountdownTime(QuerySql.QueryBasic().getExplainWhetherTime());
+
         init();
         viewModel.mainScope();
 
@@ -441,7 +443,7 @@ public class StartExplainFragment extends Fragment {
             }
             holder.itemView.setEnabled(false);
             if (selectPosition == position) {
-                binding.parentCon.setClickable(QuerySql.QueryBasic().getWhetherInterrupt());
+                binding.parentCon.setClickable(QuerySql.QueryBasic().getExplainInterrupt());
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
                 try {

@@ -96,6 +96,7 @@ class GoBackFragment : Fragment() {
         mainScope = MainScope()
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
+        RobotStatus.repeatedReading = 0
         try {
             if (QuerySql.queryPointDate(RobotStatus.selectRoutMapItem?.value!!)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
                 binding.goBackTv.visibility = View.GONE

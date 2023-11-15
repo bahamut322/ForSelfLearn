@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.service
 
 import android.text.TextUtils
+import android.util.Log
 import chassis_msgs.VersionGetResponse
 import com.alibaba.fastjson.JSONObject
 import com.baidu.tts.client.SpeechSynthesizer
@@ -25,6 +26,7 @@ import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
+import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -46,6 +48,7 @@ import java.util.Objects
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
+import kotlin.concurrent.thread
 
 
 class UpdateReturn {
@@ -55,7 +58,6 @@ class UpdateReturn {
     private val mapTargetPointServiceImpl = MapTargetPointServiceImpl.getInstance()
     private lateinit var debugDao: DebugDao
     lateinit var dao: DeliveredRobotDao
-    private var pointIdList: ArrayList<Int>? = ArrayList()
     private val queryAllMapPointsDao =
         DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
 
@@ -131,7 +133,6 @@ class UpdateReturn {
                 if (boolean) {
                     sendMapData()
                 }
-                Universal.MapName = queryAllMapPointsDao.queryCurrentMapName()
                 val jsonObject = JSONObject()//时间戳
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
@@ -140,6 +141,9 @@ class UpdateReturn {
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
                 jsonObject["routes"] =
                     QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
+                jsonObject["baseTimeStamp"] = QuerySql.ShoppingConfig().baseTimeStamp
+                jsonObject["actions"] = QuerySql.SelectAndSendActionTime()
+                jsonObject["guide"] = QuerySql.sendGuideConfig()
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
                 //上报版本
                 mainScope.launch {
@@ -227,8 +231,8 @@ class UpdateReturn {
             val uploadMapDataModel = UploadMapDataModel(
                 areas = areas,
                 curMapName = currentMapName ?: "",
-                waitingPointName = AbstractTaskBill.dao.queryReadyPoint()?.pointName ?:"",
-                chargePointName = AbstractTaskBill.dao.queryChargePoint()?.pointName ?:"",
+                waitingPointName = AbstractTaskBill.dao.queryReadyPoint()?.pointName ?: "",
+                chargePointName = AbstractTaskBill.dao.queryChargePoint()?.pointName ?: "",
                 maps = maps
             )
             MqttService.publish(uploadMapDataModel.toString(), true)
@@ -243,78 +247,83 @@ class UpdateReturn {
 
     suspend fun mapSetting(batteryState: Boolean = false) {
         dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
+        DialogHelper.loadingDialog.show()
         debugDao = DataBaseDeliveredRobotMap.getDatabase(
             Objects.requireNonNull(
                 MyApplication.instance
             )
         ).getDebug()
-        if (QuerySql.robotConfig().mapName != "") {
+        val  config : RobotConfigSql = QuerySql.robotConfig()
+        if (config.mapName != "") {
             val mapId = debugDao.selectMapId(QuerySql.robotConfig().mapName)
             //查询待命点
-            dao.updateMapConfig(MapConfig(1, mapId,null,null))
+            dao.updateMapConfig(MapConfig(1, mapId, null, null))
 //            val mapId = debugDao.selectMapId("map-0209-1")
             LogUtil.d("地图ID： $mapId")
             //查询充电桩
-            val pointId = dao.queryChargePointList()
-            pointId?.map {
-                pointIdList?.add(it.pointId!!)
-            }
-            LogUtil.i("充电桩列表：${JSONObject.toJSONString(pointId)}")
-            //设置充电桩；默认查询到的第一个数据
+                val chargePoint = dao.queryPointName(
+                    PointType.CHARGE_POINT,
+                    config.chargePointName
+                )
 
-            if (pointIdList?.size!! > 0) {
-                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), null))
-            }
-//            else{
-//                dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), pointIdList?.get(0)))
-//            }
+                dao.updateMapConfig(MapConfig(1, mapId, chargePoint!!.pointId, null))
+
 
 //            if (batteryState) {
-            val floorId = pointId?.get(0)?.floorName?.hashCode() ?: -1
-            ROSHelper.setDispatchFloorId(floorId)
-            RobotStatus.originalLocation = pointId?.get(0)
-            LogUtil.d("地图设置: " + JSONObject.toJSONString(pointId?.get(0)))
-            RobotStatus.currentLocation = RobotStatus.originalLocation
-            if (pointId != null) {
-                var retryTime = 10  // 设置地图次数
-                //切换地图
-                var switchMapResult: Boolean
-                do {
-                    switchMapResult = ROSHelper.setNavigationMap(
-                        pointId[0].subPath ?: "",
-                        pointId[0].routePath ?: ""
+                val floorId = chargePoint.floorName?.hashCode() ?: -1
+                ROSHelper.setDispatchFloorId(floorId)
+                RobotStatus.originalLocation = chargePoint
+                RobotStatus.currentLocation = RobotStatus.originalLocation
+                if (chargePoint != null) {
+                    var retryTime = 10  // 设置地图次数
+                    //切换地图
+                    var switchMapResult: Boolean
+                    do {
+                        switchMapResult = ROSHelper.setNavigationMap(
+                            chargePoint.subPath ?: "",
+                            chargePoint.routePath ?: ""
+                        )
+                        retryTime--
+                    } while (!switchMapResult && retryTime > 0)
+                    if (batteryState) {
+                        LogUtil.d("对接充电桩设置充电点: $batteryState")
+                        ROSHelper.setChargePose(chargePoint)
+                    } else {
+                        ROSHelper.setPoseClient(chargePoint)
+                    }
+                    //查看切换锚点是否成功
+                    var result: Boolean
+                    do {
+                        result =
+                            ROSHelper.getParam("/finish_update_pose") == "1"
+                        if (!result) Vire(2, "设置页查看锚点")
+                        retryTime--
+                    } while (!result && retryTime > 0)
+                    if (retryTime <= 0) {
+                        ToastUtil.show("设置地图失败")
+                    } else {
+                        LogUtil.i("finish_update_pose成功")
+                    }
+                    //查询待命点
+                    val readyPoint = dao.queryPointName(
+                        PointType.READY_POINT,
+                        config.waitingPointName
                     )
-                    retryTime--
-                } while (!switchMapResult && retryTime > 0)
-                if (batteryState) {
-                    LogUtil.d("对接充电桩设置充电点: $batteryState")
-                    ROSHelper.setChargePose(pointId[0])
-                } else {
-                    ROSHelper.setPoseClient(pointId[0])
+                    //设置待命点
+                    if (readyPoint != null) {
+                        dao.updateMapConfig(
+                            MapConfig(
+                                1,
+                                mapId,
+                                chargePoint.pointId,
+                                readyPoint.pointId
+                            )
+                        )
+                    }
+                    sendMapData()
+                    DialogHelper.loadingDialog.dismiss()
+                    Universal.mapType = true
                 }
-                //查看切换锚点是否成功
-                var result: Boolean
-                do {
-                    result =
-                        ROSHelper.getParam("/finish_update_pose") == "1"
-                    if (!result) Vire(2, "设置页查看锚点")
-                    retryTime--
-                } while (!result && retryTime > 0)
-                if (retryTime <= 0) {
-                    ToastUtil.show("设置地图失败")
-                } else {
-                    LogUtil.i("finish_update_pose成功")
-                }
-                //查询待命点
-                val readyPoint = AbstractTaskBill.dao.queryReadyPointList()
-                //设置待命点
-                if (readyPoint?.size!! > 0) {
-                    dao.updateMapConfig(MapConfig(1, mapId, pointIdList?.get(0), readyPoint[0].pointId))
-                }
-                sendMapData()
-                DialogHelper.loadingDialog.dismiss()
-                Universal.mapType = true
-            }
         }
     }
 
@@ -381,6 +390,7 @@ class UpdateReturn {
             BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
         }
     }
+
     /**
      * 删除目录下所有文件
      * @param filePath 目录地址
@@ -411,6 +421,7 @@ class UpdateReturn {
             }
         }
     }
+
     /**
      * 删除目录
      */
@@ -428,7 +439,7 @@ class UpdateReturn {
             }
             LogUtil.d("deleteDirectory: $directory 删除成功")
             directory.delete()
-        }else{
+        } else {
             LogUtil.d("deleteDirectory: $directory 不存在")
         }
     }

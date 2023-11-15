@@ -407,7 +407,9 @@
     <string name="min">0.3</string>
     <string name="max">1.2m/s</string>
     <string name="Questions">（讲解过程不允许问答）</string>
+    <string name="Questions1">（%s过程不允许问答）</string>
     <string name="Speed_explanation">去往讲解点速度</string>
+    <string name="speed_business">去往%s速度</string>
     <string name="Speed_of_speech">语音语速</string>
     <string name="Speed_of_speech_min">1</string>
     <string name="Speed_of_speech_max">6</string>
@@ -422,6 +424,7 @@
     <string name="agin_speak">再讲一遍</string>
     <string name="select_other">选择其他路线</string>
     <string name="allowed">讲解过程允许打断</string>
+    <string name="interruptBusiness">%s过程允许打断</string>
     <string name="Task_Touch">打断任务触控暂停时间</string>
     <string name="Task_Touch_min">1</string>
     <string name="Task_Touch_max">180s</string>

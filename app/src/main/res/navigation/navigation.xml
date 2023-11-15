@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/guidingFragment"
-        android:name="com.sendi.deliveredrobot.view.fragment.GuidingFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ReadyingFragment"
         android:label="fragment_guiding"
         tools:layout="@layout/fragment_guiding">
         <action
@@ -39,7 +39,7 @@
     <fragment
         android:id="@+id/businessIngFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.BusinessIngFragment"
-        android:label="fragment_guiding"
+        android:label="fragment_businessIng"
         tools:layout="@layout/fragment_businessing">
         <action
             android:id="@+id/action_businessIngFragment_to_guideArriveFragment"
@@ -66,6 +66,12 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
     </fragment>
+
+    <fragment
+        android:id="@+id/guiding1Fragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GuidingFragment"
+        android:label="fragment_guiding"
+        tools:layout="@layout/fragment_guiding"/>
 
     <fragment
         android:id="@+id/inputRoomNumberFragment"
@@ -121,6 +127,8 @@
             app:popUpToInclusive="false" />
     </fragment>
 
+
+
     <fragment
         android:id="@+id/placeListFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.GuidePlaceListFragment"
@@ -157,7 +165,8 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.HomeFragment"
-        android:label="homeFragment">
+        tools:layout="@layout/fragment_home"
+        android:label="fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_inputRoomNumberFragment"
             app:destination="@id/inputRoomNumberFragment"
@@ -653,7 +662,8 @@
     <fragment
         android:id="@+id/GuideFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.GuideFragment"
-        android:label="GuideFragment">
+        android:label="fragment_guide"
+        tools:layout="@layout/fragment_guide">
         <action
             android:id="@+id/action_guideFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -666,7 +676,8 @@
     <fragment
         android:id="@+id/ExplanationFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.ExplanationFragment"
-        android:label="ExplanationFragment">
+        android:label="fragment_explanation"
+        tools:layout="@layout/fragment_explanation">
         <action
             android:id="@+id/action_explanationFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -703,7 +714,8 @@
     <fragment
         android:id="@+id/businessFragment"
         android:name="com.sendi.deliveredrobot.view.fragment.BusinessFragment"
-        android:label="businessFragment">
+        android:label="fragment_business"
+        tools:layout="@layout/fragment_business">
         <action
             android:id="@+id/action_businessFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

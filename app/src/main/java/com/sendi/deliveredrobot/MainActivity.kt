@@ -420,6 +420,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     sdScreenStatus!!.postValue(1)
                 } else if (doubleScreen == 2) {
                     sdScreenStatus!!.postValue(2)
+                }else if (doubleScreen == 4){
+                    sdScreenStatus!!.postValue(4)
                 }
             }
         }
@@ -534,8 +536,104 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     )
                 }
             }
+
+            if (sdScreenStatus!!.value == 4 && mPresentation != null) {
+                renovate()
+                doubleScreen = sdScreenStatus!!.value!!
+                if (RobotStatus.businessBigModel!!.value?.type!! !=0) {
+                    layoutThis(
+                        RobotStatus.businessBigModel!!.value?.picPlayTime!!,
+                        RobotStatus.businessBigModel!!.value?.file,
+                        RobotStatus.businessBigModel!!.value?.type!!,
+                        RobotStatus.businessBigModel!!.value?.textPosition!!,
+                        RobotStatus.businessBigModel!!.value?.fontLayout!!,
+                        RobotStatus.businessBigModel!!.value?.fontContent,
+                        RobotStatus.businessBigModel!!.value?.fontBackGround,
+                        RobotStatus.businessBigModel!!.value?.fontColor,
+                        RobotStatus.businessBigModel!!.value?.fontSize!!,
+                        RobotStatus.businessBigModel!!.value?.picType!!,
+                        RobotStatus.businessBigModel!!.value?.videolayout!!,
+                        RobotStatus.businessBigModel!!.value?.videoAudio!!
+                    )
+                }else{
+                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
+                    layoutThis(
+                        defaultModel.picPlayTime!!,
+                        defaultModel.file,
+                        defaultModel.type!!,
+                        defaultModel.textPosition!!,
+                        defaultModel.fontLayout!!,
+                        defaultModel.fontContent,
+                        defaultModel.fontBackGround,
+                        defaultModel.fontColor,
+                        defaultModel.fontSize!!,
+                        defaultModel.picType!!,
+                        defaultModel.videolayout!!,
+                        defaultModel.videoAudio!!
+                    )
+                }
+            }
+
+            if (sdScreenStatus!!.value == 3 && mPresentation != null) {
+                renovate()
+                doubleScreen = sdScreenStatus!!.value!!
+                if (RobotStatus.businessBigModel!!.value?.type!! !=0) {
+                    layoutThis(
+                        RobotStatus.businessBigModel!!.value?.picPlayTime!!,
+                        RobotStatus.businessBigModel!!.value?.file,
+                        RobotStatus.businessBigModel!!.value?.type!!,
+                        RobotStatus.businessBigModel!!.value?.textPosition!!,
+                        RobotStatus.businessBigModel!!.value?.fontLayout!!,
+                        RobotStatus.businessBigModel!!.value?.fontContent,
+                        RobotStatus.businessBigModel!!.value?.fontBackGround,
+                        RobotStatus.businessBigModel!!.value?.fontColor,
+                        RobotStatus.businessBigModel!!.value?.fontSize!!,
+                        RobotStatus.businessBigModel!!.value?.picType!!,
+                        RobotStatus.businessBigModel!!.value?.videolayout!!,
+                        RobotStatus.businessBigModel!!.value?.videoAudio!!
+                    )
+                }else{
+                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
+                    layoutThis(
+                        defaultModel.picPlayTime!!,
+                        defaultModel.file,
+                        defaultModel.type!!,
+                        defaultModel.textPosition!!,
+                        defaultModel.fontLayout!!,
+                        defaultModel.fontContent,
+                        defaultModel.fontBackGround,
+                        defaultModel.fontColor,
+                        defaultModel.fontSize!!,
+                        defaultModel.picType!!,
+                        defaultModel.videolayout!!,
+                        defaultModel.videoAudio!!
+                    )
+                }
+            }
+
         }
         RobotStatus.SecondModel!!.observe(this) {
+            renovate()
+            if (mPresentation != null) {
+                layoutThis(
+                    it?.picPlayTime!!,
+                    it.file,
+                    it.type!!,
+                    it.textPosition!!,
+                    it.fontLayout!!,
+                    it.fontContent,
+                    it.fontBackGround,
+                    it.fontColor,
+                    it.fontSize!!,
+                    it.picType!!,
+                    it.videolayout!!,
+                    it.videoAudio!!
+                )
+            }
+        }
+        RobotStatus.businessBigModel!!.observe(this) {
             renovate()
             if (mPresentation != null) {
                 layoutThis(
