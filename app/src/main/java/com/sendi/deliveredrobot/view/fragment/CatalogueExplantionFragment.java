@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
+import com.sendi.fooddeliveryrobot.VoiceRecorder;
 
 import java.util.List;
 
@@ -66,6 +68,9 @@ public class CatalogueExplantionFragment extends Fragment {
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
+        binding.bubbleTv.setOnClickListener(v -> {
+            controller.navigate(R.id.conversationFragment);
+        });
     }
 
 
@@ -121,4 +126,16 @@ public class CatalogueExplantionFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
+        voiceRecorder.setCallback((s, pinyinString) -> {
+            if (pinyinString.contains("XIAODI")) {
+                Log.i("AudioChannel", "包含小迪");
+                controller.navigate(R.id.conversationFragment);
+            }
+            return null;
+        });
+    }
 }

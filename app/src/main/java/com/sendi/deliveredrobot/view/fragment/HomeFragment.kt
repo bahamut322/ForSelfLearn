@@ -54,7 +54,6 @@ class HomeFragment : Fragment(), IMainView {
     private var mPresenter: MainPresenter? = null
     private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
     private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
-    private var voiceRecorder: VoiceRecorder? = null
 
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
@@ -73,6 +72,17 @@ class HomeFragment : Fragment(), IMainView {
             mPresenter?.startTipsTimer()
         }
         super.onResume()
+        LogUtil.i("homefragment onResume")
+//        controller?.addOnDestinationChangedListener { controller, destination, arguments ->
+//            LogUtil.i("homefragment onDestinationChangedListener")
+//            voiceRecorder?.removeCallback()
+//        }
+        VoiceRecorder.getInstance().callback =  { _, pinyinString ->
+            if (pinyinString.contains("XIAODI")) {
+                Log.i("AudioChannel", "包含小迪")
+                controller?.navigate(R.id.conversationFragment)
+            }
+        }
     }
 
     override fun onPause() {
@@ -85,8 +95,7 @@ class HomeFragment : Fragment(), IMainView {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
         thread {
-            voiceRecorder = VoiceRecorder.getInstance()
-            voiceRecorder?.startRecording()
+            VoiceRecorder.getInstance().startRecording()
         }
     }
 
@@ -172,14 +181,6 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
         IdleGateDataHelper.reportIdleGateCount()
-        voiceRecorder?.callback =  { _, pinyinString ->
-            if (pinyinString.contains("XIAODI")) {
-//                voiceRecorder?.stopRecording()
-//                Toast.makeText(MyApplication.instance, "包含小迪", Toast.LENGTH_SHORT).show()
-                Log.i("AudioChannel", "包含小迪")
-                controller?.navigate(R.id.conversationFragment)
-            }
-        }
     }
 
     override fun onStop() {
@@ -188,7 +189,6 @@ class HomeFragment : Fragment(), IMainView {
         remindDialog?.dismiss()
         //释放人脸识别资源
         faceViewModel?.onDestroy()
-
     }
 
     @SuppressLint("SetTextI18n")

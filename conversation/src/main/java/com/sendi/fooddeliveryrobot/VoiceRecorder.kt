@@ -108,6 +108,10 @@ class VoiceRecorder {
         fvad?.destroy()
     }
 
+    fun removeCallback(){
+        callback = null
+    }
+
     companion object{
         private var _instance: VoiceRecorder? = null
         var ttsIsPlaying = false

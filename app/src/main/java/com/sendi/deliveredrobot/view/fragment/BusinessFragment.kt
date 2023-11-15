@@ -38,6 +38,7 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
+import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -160,5 +161,18 @@ class BusinessFragment : Fragment() {
 //                    }
                 }
             }
+        binding.bubbleTv.setOnClickListener {
+            controller?.navigate(R.id.conversationFragment)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        VoiceRecorder.getInstance().callback =  { _, pinyinString ->
+            if (pinyinString.contains("XIAODI")) {
+                Log.i("AudioChannel", "包含小迪")
+                controller?.navigate(R.id.conversationFragment)
+            }
+        }
     }
 }

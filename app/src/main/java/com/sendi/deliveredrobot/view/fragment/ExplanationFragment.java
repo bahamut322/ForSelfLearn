@@ -40,10 +40,14 @@ import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog;
+import com.sendi.fooddeliveryrobot.VoiceRecorder;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 /**
  * @author swn
@@ -56,12 +60,22 @@ public class ExplanationFragment extends Fragment {
     private int centerToLiftDistance; //RecyclerView款度的一半 ,也就是控件中间位置到左部的距离 ，
     private int childViewHalfCount = 0; //当前RecyclerView一半最多可以存在几个Item
     NavController controller;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
+        voiceRecorder.setCallback((s, pinyinString) -> {
+            if (pinyinString.contains("XIAODI")) {
+                Log.i("AudioChannel", "包含小迪");
+                controller.navigate(R.id.conversationFragment);
+            }
+            return null;
+        });
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,6 +104,9 @@ public class ExplanationFragment extends Fragment {
                     RobotStatus.INSTANCE.getPassWordToSetting().postValue(false);
                 }
             });
+        });
+        binding.bubbleTv.setOnClickListener(v -> {
+            controller.navigate(R.id.conversationFragment);
         });
         init();
     }

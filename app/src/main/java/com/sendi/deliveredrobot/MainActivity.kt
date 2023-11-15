@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
+import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -101,6 +102,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         NavigationBarUtil.hideNavigationBar(window)
         //-----------------设置页面跳转receiver-------------------
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            LogUtil.i("mainactivity onDestinationChangedListener")
+            VoiceRecorder.getInstance().removeCallback()
+        }
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController
         registerReceiver(navigationReceiver, IntentFilter(ACTION_NAVIGATE))

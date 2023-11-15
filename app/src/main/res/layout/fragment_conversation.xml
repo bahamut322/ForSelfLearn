@@ -58,6 +58,7 @@
             android:id="@+id/fl_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
             app:layout_constraintBottom_toBottomOf="@+id/fl_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -110,7 +111,7 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="my_flow_layout,fl_title,fl_home"
             android:visibility="visible"
-            tools:visibility="gone"/>
+            tools:visibility="visible"/>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_2"
@@ -118,7 +119,7 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="scroll_view_conversation"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

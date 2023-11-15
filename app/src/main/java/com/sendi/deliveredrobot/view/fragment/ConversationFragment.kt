@@ -45,19 +45,12 @@ class ConversationFragment : Fragment() {
     val timer = Timer()
     private var startTime: Long = 0
     private var totalHeight: Int = 0
-//    private val proxy: Proxy? = Proxys.http("192.168.62.20", 1080)
-//    private val chatGPT: ChatGPT = ChatGPT.builder()
-//        .apiKey("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")
-//        .proxy(proxy)
-//        .apiHost("https://api.openai.com/") //反向代理地址
-//        .build()
-//        .init()
+    private var voiceRecorder: VoiceRecorder? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_conversation, container, false)
     }
 
@@ -75,18 +68,8 @@ class ConversationFragment : Fragment() {
                 }
             }
         }, Date(),1000)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        timer.cancel()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val voiceRecorder = VoiceRecorder.getInstance()
-        voiceRecorder.callback = { conversation, pinyinString ->
+        voiceRecorder = VoiceRecorder.getInstance()
+        voiceRecorder?.callback = { conversation, pinyinString ->
             if (pinyinString.contains("TUICHU")) {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
                     action = ACTION_NAVIGATE
@@ -100,17 +83,19 @@ class ConversationFragment : Fragment() {
                         }
                         addQuestionView(conversation)
                         question(conversation, System.currentTimeMillis())
-//                        val result = addConversationView(conversation)
-//                        if (result.isNullOrEmpty()) {
-//                            return@launch
-//                        }
-//                        withContext(Dispatchers.Default){
-//                            SpeakHelper.speakWithoutStop(result)
-//                        }
                     }
                 }
             }
         }
+    }
+    override fun onStop() {
+        super.onStop()
+        timer.cancel()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     @SuppressLint("InflateParams")
@@ -146,39 +131,6 @@ class ConversationFragment : Fragment() {
             SpeakHelper.speakWithoutStop(answer)
         }
 
-//        val questions = arrayOf(
-//            "广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?广州天气如何?",
-//            "如果美国星链进行干扰通信会怎样?",
-//            "在吗?",
-//            "中国电信什么时候成立，成立的意义又是什么？",
-//            "联通和电信哪个更适苹果？",
-//            "如果英国国星链进行干扰通信会怎样?",
-//            "上海天气如何?",
-//            "如果中国星链进行干扰通信会怎样?",
-//            "在吗?",
-//            "美国电信什么时候成立，成立的意义又是什么？",
-//            "联通和移动哪个更适苹果？",
-//        )
-//        questions.forEach { text ->
-//            val linearLayoutCompat = LayoutInflater.from(requireContext())
-//                .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
-//            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
-//            val viewHead = linearLayoutCompat.findViewById<View>(R.id.view_head)
-//            viewHead.visibility = View.GONE
-//            textView.text = text
-//            linearLayoutCompat.setOnClickListener {
-//                mainScope.launch(Dispatchers.Main) {
-//                    val result = addConversationView(text)
-//                    if (result.isNullOrEmpty()) {
-//                        return@launch
-//                    }
-//                    withContext(Dispatchers.Default){
-//                        SpeakHelper.speakWithoutStop(result)
-//                    }
-//                }
-//            }
-//            myFlowLayout.addView(linearLayoutCompat)
-//        }
         binding?.flHome?.apply {
             setOnClickListener {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
