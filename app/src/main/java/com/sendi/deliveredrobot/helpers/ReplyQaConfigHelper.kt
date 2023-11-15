@@ -20,7 +20,7 @@ import org.litepal.LitePal
  */
 object ReplyQaConfigHelper {
     private val gson = Gson()
-    private const val ITEM_COUNTS = 10
+    private const val ITEM_COUNTS = 1
     fun replyQaConfig(json: String) {
         Log.d("TAG", "replyQaConfig: $json")
         LitePal.deleteAll(QaConfigDB::class.java)

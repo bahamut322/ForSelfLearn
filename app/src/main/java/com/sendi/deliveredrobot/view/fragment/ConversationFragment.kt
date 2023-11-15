@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -160,7 +161,6 @@ class ConversationFragment : Fragment() {
                 .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
             val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
             textView.text = conversation
-            addView(linearLayoutCompat)
             val emptyView = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -169,7 +169,6 @@ class ConversationFragment : Fragment() {
                     setMargins(0, 0, 0, 96)
                 }
             }
-            addView(emptyView)
             linearLayoutCompat.post {
                 linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -177,6 +176,7 @@ class ConversationFragment : Fragment() {
                 ).apply {
                     gravity = Gravity.END
                 }
+                linearLayoutCompat.visibility = View.VISIBLE
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
@@ -184,6 +184,8 @@ class ConversationFragment : Fragment() {
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
+            addView(linearLayoutCompat)
+            addView(emptyView)
         }
     }
 
@@ -201,8 +203,6 @@ class ConversationFragment : Fragment() {
             }
         }
         binding?.linearLayoutConversation?.apply {
-            addView(linearLayoutCompat)
-            addView(emptyView)
             linearLayoutCompat.post {
                 linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -210,6 +210,7 @@ class ConversationFragment : Fragment() {
                 ).apply {
                     gravity = Gravity.START
                 }
+                linearLayoutCompat.visibility = View.VISIBLE
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
@@ -217,6 +218,8 @@ class ConversationFragment : Fragment() {
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
+            addView(linearLayoutCompat)
+            addView(emptyView)
         }
     }
 
