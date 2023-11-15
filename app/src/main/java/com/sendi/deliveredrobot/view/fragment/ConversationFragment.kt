@@ -19,6 +19,7 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -103,8 +104,9 @@ class ConversationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)
         val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
-        ReplyQaConfigHelper.replyQaConfigLiveData.observe(viewLifecycleOwner) {
-            it.forEach { text ->
+        mainScope.launch {
+            val list = ReplyQaConfigHelper.queryReplyConfig()
+            list.forEach{ text ->
                 val linearLayoutCompat = LayoutInflater.from(requireContext())
                     .inflate(
                         R.layout.layout_conversation_text_view_left,
