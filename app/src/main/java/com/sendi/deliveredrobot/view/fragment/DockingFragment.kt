@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentDockingBinding
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -31,6 +32,7 @@ class DockingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        BaiduTTSHelper.getInstance().stop()
         SpeakHelper.speak(resources.getString(R.string.start_docking))
     }
 

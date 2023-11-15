@@ -38,8 +38,8 @@
         <!--80大 60中 40小 -->
         <com.sendi.deliveredrobot.view.widget.VerticalTextView
             android:id="@+id/verticalTV"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginEnd="@dimen/dp_32"
             app:columnLength="8"
@@ -56,7 +56,6 @@
             android:id="@+id/pauseCon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_img_halo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

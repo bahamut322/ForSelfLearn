@@ -14,6 +14,7 @@ import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB
 import com.sendi.deliveredrobot.entity.ShoppingActionDB
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -95,6 +96,7 @@ class BusinessViewModel : ViewModel() {
                     pageJump(controller)
                 }else{
                     TaskNext.setToDo("1")
+                    splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)
 //                    BillManager.currentBill()?.executeNextTask()
                 }
             }
@@ -108,7 +110,7 @@ class BusinessViewModel : ViewModel() {
             }
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
 
-            BaiduTTSHelper.getInstance().stop()
+//            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
         }

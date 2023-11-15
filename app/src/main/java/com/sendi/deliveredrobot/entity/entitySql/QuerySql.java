@@ -592,8 +592,8 @@ public class QuerySql {
         return listAction;
     }
 
-    public static ArrayList<GuideSendModel> sendGuideConfig(){
-        ArrayList<GuideSendModel> sendList = new ArrayList<>();
+    public static GuideSendModel sendGuideConfig(){
+        GuideSendModel sendList = new GuideSendModel();
         String sql = "SELECT distinct guidepointpicdb.mapname,guidepointpicdb.maptimestamp FROM guidepointpicdb";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
@@ -608,9 +608,8 @@ public class QuerySql {
                 MapConfig mapConfig = new MapConfig(mapName, mapTimeStamp);
                 mapConfigs.add(mapConfig);
             } while (cursor.moveToNext());
-            // 创建 GuideSendModel 对象并添加到 sendList 中
-            GuideSendModel send = new GuideSendModel(mapConfigs);
-            sendList.add(send);
+            // 将 MapConfig 列表设置到 GuideSendModel 对象中
+            sendList = new GuideSendModel(mapConfigs);
             cursor.close();
         }
         return sendList;

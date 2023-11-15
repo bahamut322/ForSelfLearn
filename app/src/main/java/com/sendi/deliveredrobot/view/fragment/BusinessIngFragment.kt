@@ -100,6 +100,7 @@ class BusinessIngFragment : Fragment() {
         processClickDialog = ProcessClickDialog(requireActivity())
         finishTaskDialog = FinishTaskDialog(requireActivity())
         processClickDialog?.setCountdownTime(QuerySql.QueryBasic().businessWhetherTime)//打断任务时间
+        LogUtil.i("打断任务时间："+QuerySql.QueryBasic().businessWhetherTime)
 
         status()
         actionData = QuerySql.SelectActionData(Universal.MapName, pointName,RobotStatus.shoppingType)
@@ -140,8 +141,10 @@ class BusinessIngFragment : Fragment() {
             } else {
                 viewModel!!.splitTextByPunctuation(actionData?.standText)
             }
-            binding.businessName.text = String.format(getString(R.string.business_going), actionData!!.name)
         }
+
+        binding.businessName.text = String.format(getString(R.string.business_going), actionData!!.name)
+        binding.bottomAlarmTextViewArrive.text = actionData!!.name
 
         // 添加第一个源（到点）
         mediatorLiveData.addSource(liveData1) { value1 ->
@@ -259,8 +262,11 @@ class BusinessIngFragment : Fragment() {
                 2 -> {
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
+                    //中断提示
+                    viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
                     //返回
                     viewModel!!.finishTask()
+
                 }
 
                 1 -> {
@@ -417,7 +423,7 @@ class BusinessIngFragment : Fragment() {
             //显示内容
             binding.horizontalTV.text = baseViewModel!!.getLength(fontContent)
             //背景颜色&图片
-            binding.horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""))
+            binding.bgCon.setBackgroundColor(Color.parseColor(fontBackGround + ""))
             //文字颜色
             binding.horizontalTV.setTextColor(Color.parseColor(fontColor + ""))
             //字体大小
@@ -442,7 +448,7 @@ class BusinessIngFragment : Fragment() {
             //显示内容
             binding.verticalTV.text = fontContent
             //背景颜色
-            binding.verticalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""))
+            binding.bgCon.setBackgroundColor(Color.parseColor(fontBackGround + ""))
             //文字颜色
             binding.verticalTV.textColor = Color.parseColor(fontColor + "")
             //字体大小

@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.model
 /**
  * @Author Swn
  * @Data 2023/11/13
- * @describe
+ * @describe 用于发送引领配置
  */
 data class GuideSendModel (
     val maps : List<MapConfig?>? = null

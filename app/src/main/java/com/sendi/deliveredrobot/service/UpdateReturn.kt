@@ -133,17 +133,26 @@ class UpdateReturn {
                 if (boolean) {
                     sendMapData()
                 }
+
+                val baseTimeStamp = QuerySql.ShoppingConfig().baseTimeStamp
+                val actions = QuerySql.SelectAndSendActionTime()
+                // 创建一个新的JSONObject
+                val shoppingGuide = JSONObject()
+
                 val jsonObject = JSONObject()//时间戳
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
                 jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
                 jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
-                jsonObject["routes"] =
-                    QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
-                jsonObject["baseTimeStamp"] = QuerySql.ShoppingConfig().baseTimeStamp
-                jsonObject["actions"] = QuerySql.SelectAndSendActionTime()
+                jsonObject["routes"] = QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
+                // 将baseTimeStamp和actions添加到shoppingGuide对象中
+                shoppingGuide["baseTimeStamp"] = baseTimeStamp
+                shoppingGuide["actions"] = actions
+                // 创建一个包含shoppingGuide的更大的JSONObject
+                jsonObject["shoppingGuide"] = shoppingGuide
                 jsonObject["guide"] = QuerySql.sendGuideConfig()
+
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
                 //上报版本
                 mainScope.launch {

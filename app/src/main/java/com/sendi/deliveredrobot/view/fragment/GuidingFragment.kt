@@ -248,6 +248,8 @@ class GuidingFragment : Fragment() {
         finishTaskDialog?.YesExit?.setOnClickListener {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
+            //中断提示
+            viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().interruptPrompt!!)
             //返回
             viewModel!!.finishTask()
         }

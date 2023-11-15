@@ -51,7 +51,6 @@ public class ProcessClickDialog extends Dialog {
         continueBtn = findViewById(R.id.continueBtn);
         finishBtn = findViewById(R.id.finishBtn);
         nextBtn = findViewById(R.id.nextBtn);
-        startCountdown(countdownTime); // 使用成员变量中的时间值
         TaskArray.setOnChangeListener(() -> {
             if (Objects.equals(TaskArray.getToDo(), "3")) {
                mTimer.pause();
