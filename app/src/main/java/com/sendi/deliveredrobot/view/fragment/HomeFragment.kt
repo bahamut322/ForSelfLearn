@@ -62,8 +62,7 @@ class HomeFragment : Fragment(), IMainView {
     private val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
-
-
+    private var shoppingName = ""
 
 
     override fun onResume() {
@@ -198,6 +197,9 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(requireView())
+        RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner){
+            showFunction(true)
+        }
         LogUtil.i("当前待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
@@ -226,47 +228,7 @@ class HomeFragment : Fragment(), IMainView {
             LogUtil.d("当前为多人测温")
             Utils.mNmsLimit = 10
         }
-        if (QuerySql.QueryBasic().defaultValue != null) {
-            rescolors = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
-            when (rescolors!!.size - 1) {
-                0 -> {
-                    allInvisible()
-                }
-
-                1 -> allInvisible()
-                2 -> {
-                    allInvisible()
-                    binding.include.view1.visibility = View.VISIBLE
-                    initView1()
-                }
-
-                3 -> {
-                    allInvisible()
-                    binding.include.view2.visibility = View.VISIBLE
-                    initView2()
-                }
-
-                4 -> {
-                    allInvisible()
-                    binding.include.view3.visibility = View.VISIBLE
-                    initView3()
-                }
-
-                5 -> {
-                    allInvisible()
-                    binding.include.view4.visibility = View.VISIBLE
-                    initView4()
-                }
-
-                6 -> {
-                    allInvisible()
-                    binding.include.view5.visibility = View.VISIBLE
-                    initView5()
-                }
-
-                else -> {}
-            }
-        }
+        showFunction()
 
         binding.imageViewSetting.setOnClickListener {
             //密码弹窗
@@ -544,6 +506,55 @@ class HomeFragment : Fragment(), IMainView {
     }
 
 
+    private fun showFunction(renew : Boolean = false){
+        if (QuerySql.QueryBasic().defaultValue != null) {
+            shoppingName = if (renew) {
+                RobotStatus.shoppingConfigList!!.value!!.name!!
+            }else{
+                QuerySql.ShoppingConfig().name!!
+            }
+            rescolors = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
+            when (rescolors!!.size - 1) {
+                0 -> {
+                    allInvisible()
+                }
+
+                1 -> allInvisible()
+                2 -> {
+                    allInvisible()
+                    binding.include.view1.visibility = View.VISIBLE
+                    initView1()
+                }
+
+                3 -> {
+                    allInvisible()
+                    binding.include.view2.visibility = View.VISIBLE
+                    initView2()
+                }
+
+                4 -> {
+                    allInvisible()
+                    binding.include.view3.visibility = View.VISIBLE
+                    initView3()
+                }
+
+                5 -> {
+                    allInvisible()
+                    binding.include.view4.visibility = View.VISIBLE
+                    initView4()
+                }
+
+                6 -> {
+                    allInvisible()
+                    binding.include.view5.visibility = View.VISIBLE
+                    initView5()
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     /**
      * 不同标签的点击事件
      */
@@ -579,13 +590,13 @@ class HomeFragment : Fragment(), IMainView {
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
 
             "业务办理" -> {
-//                if (RobotStatus.batteryStateNumber.value == false) {
-//                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
-//                    DialogHelper.briefingDialog.show()
-//                } else {
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                } else {
                     controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
                     Log.d("TAG", "业务办理 ")
-//                }
+                }
             }
 
             "礼仪迎宾" -> {
@@ -630,14 +641,14 @@ class HomeFragment : Fragment(), IMainView {
             str = "APPLICATION"
         } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
-        } else if ("业务办理" == String) {
+        } else if ("业务办理"== String) {
             str = "BUSINESS"
         }
         return str
     }
-    private fun itemName(ItemName:  String): String?{
+    private fun itemName(ItemName:  String): String{
         return if (ItemName == "业务办理"){
-            QuerySql.ShoppingConfig().name
+            shoppingName
         }else{
             ItemName
         }
@@ -678,7 +689,7 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.application_svg
         } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg
-        } else if ("业务办理"== Imagestr) {
+        } else if ( "业务办理" == Imagestr) {
             image = R.drawable.business_svg
         }
         return image

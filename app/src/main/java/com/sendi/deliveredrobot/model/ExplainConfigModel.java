@@ -1,15 +1,18 @@
 package com.sendi.deliveredrobot.model;
 
+/**
+ * 智能讲解模式Model
+ */
 public class ExplainConfigModel {
     private int id;
-    private String pointListText;
-    private String interruptionText;
-    private String endText;
-    private int stayTime;
-    private String routeListText;
-    private String startText;
-    private String slogan;
-    private Long timeStamp;
+    private String pointListText = "点击查看路线";
+    private String interruptionText = "我的任务完成了，祝您生活愉快，拜拜咯";
+    private String endText = "我的任务完成了，祝您生活愉快，拜拜咯";
+    private int stayTime = 30;
+    private String routeListText = "欢迎使用讲解模式";
+    private String startText = "我们要了开始讲解";
+    private String slogan = "智能讲解";
+    private Long timeStamp = 0L;
 
     public int getId() {
         return id;

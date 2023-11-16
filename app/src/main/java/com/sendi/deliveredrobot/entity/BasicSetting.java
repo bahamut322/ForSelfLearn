@@ -10,7 +10,7 @@ import org.litepal.crud.LitePalSupport;
  */
 public class BasicSetting extends LitePalSupport {
 
-    private String defaultValue;//首页功能显示
+    private String defaultValue = "智能引领 智能讲解 轻应用 业务办理 礼仪迎宾 ";//首页功能显示
     @Column(defaultValue = "1")
     private int id = 1;
     @Column(defaultValue = "女声")
@@ -20,21 +20,21 @@ public class BasicSetting extends LitePalSupport {
     @Column(defaultValue = "false")
     private Boolean Etiquette = false;//礼仪迎宾
     @Column(defaultValue = "0")
-    private float voiceVolume = 0;//语音音量
+    private float voiceVolume = 10;//语音音量
     @Column(defaultValue = "0")
-    private float videoVolume = 0; //视频音量
+    private float videoVolume = 10; //视频音量
     @Column(defaultValue = "true")
     private Boolean expression = true;//操作屏表情
     @Column(defaultValue = "true")
     private Boolean identifyVip = true;//识别Vip人脸迎宾
     @Column(defaultValue = "0.3")
-    private float leadingSpeed = (float) 0.3;//引领速度
+    private float leadingSpeed = (float) 0.8;//引领速度
     @Column(defaultValue = "0.3")
-    private float goExplanationPoint = (float) 0.3;//去往讲解点速度
+    private float goExplanationPoint = (float) 0.8;//去往讲解点速度
     @Column(defaultValue = "1")
-    private int speechSpeed = 1;//讲解语速
+    private int speechSpeed = 10;//讲解语速
     @Column(defaultValue = "1")
-    private int stayTime = 1;//逗留时间
+    private int stayTime = 20;//逗留时间
     @Column(defaultValue = "1")
     private int unArrive = 1;//不能到达点 0：直接下一个;1：重复第二次到达
     @Column(defaultValue = "1")
@@ -48,19 +48,19 @@ public class BasicSetting extends LitePalSupport {
     @Column(defaultValue = "1")
     private String Error = "1";//异常警告方式 0、语音播报 1、就近跟随
     @Column(defaultValue = "0.3")
-    private float patrolSpeed = (float) 0.3;//巡逻速度
+    private float patrolSpeed = (float) 0.8;//巡逻速度
     @Column(defaultValue = "1")
-    private int patrolStayTime = 1;//巡逻过程中暂停时间
+    private int patrolStayTime = 20;//巡逻过程中暂停时间
     @Column(defaultValue = "1")
     private int tempMode = 1;//测温模式：0、单人测温 1、多人测温
     @Column(defaultValue = "false")
     private Boolean voiceAnnouncements = false;//智能测温语音播报
     @Column(defaultValue = "0.3")
-    private float goBusinessPoint = (float) 0.3;//去往导购速度
+    private float goBusinessPoint = (float) 0.8;//去往导购速度
     @Column(defaultValue = "true")
     private boolean businessInterrupt = true;//导购过程中允许打断
     @Column(defaultValue = "1")
-    private int businessWhetherTime = 1;//打断任务暂停时间
+    private int businessWhetherTime = 20;//打断任务暂停时间
 
 
     public int getId() {

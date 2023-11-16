@@ -173,16 +173,6 @@ public class StartExplainFragment extends Fragment {
             }
         });
 
-//        handler.postDelayed(() -> {
-//            // 延迟一秒后执行的代码（这段是围堵语言播报完，继续播报打断之后的文字）
-//            Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakContinue()).observe(getViewLifecycleOwner(), integer -> {
-//                if (integer == 1 && RobotStatus.INSTANCE.getSpeakNumber().getValue().substring(RobotStatus.INSTANCE.getProgress().getValue()).length()>0) {
-//                    BaiduTTSHelper.getInstance().stop();
-//                    viewModel.splitTextByPunctuation(Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).substring(RobotStatus.INSTANCE.getProgress().getValue()));
-//                    RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
-//                }
-//            });
-//        }, 500);
 
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
@@ -208,6 +198,7 @@ public class StartExplainFragment extends Fragment {
                     binding.acceptstationTv.stopPlay();
                     processClickDialog.dismiss();
                     finishTaskDialog.dismiss();
+                    viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
                     viewModel.finishTask();
                 });
 
@@ -825,6 +816,7 @@ public class StartExplainFragment extends Fragment {
                 binding.acceptstationTv.stopPlay();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
+                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
             });
             finishTaskDialog.NoExit.setOnClickListener(v1 -> finishTaskDialog.dismiss());
 

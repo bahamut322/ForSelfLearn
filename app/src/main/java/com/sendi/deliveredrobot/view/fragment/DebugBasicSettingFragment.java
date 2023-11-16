@@ -179,7 +179,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.explanation.setChecked(true);
         } else if ("轻应用".equals(checkName)) {
             binding.application.setChecked(true);
-        } else if (QuerySql.ShoppingConfig().getName().equals(checkName)){
+        } else if ("业务办理".equals(checkName)){
             binding.business.setChecked(true);
         }else if ("礼仪迎宾".equals(checkName)){
             binding.EtiquetteWelcome.setChecked(true);
@@ -205,7 +205,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 stringBuffer.append("轻应用 ");
             }
             if (binding.business.isChecked()){
-                stringBuffer.append(QuerySql.ShoppingConfig().getName()).append(" ");
+                stringBuffer.append("业务办理 ");
             }
             if (binding.EtiquetteWelcome.isChecked()){
                 stringBuffer.append("礼仪迎宾 ");
