@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
@@ -58,7 +58,7 @@ class StartExplanViewModel : ViewModel() {
 //            Universal.Model = "结束讲解"
 //            ready.postValue(0)
 
-            BaiduTTSHelper.getInstance().stop()
+//            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
         }
@@ -135,6 +135,7 @@ class StartExplanViewModel : ViewModel() {
                 // 倒计时结束，执行操作
 //                currentBill()?.executeNextTask()
                 ready.postValue(0)
+                splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
 //                Universal.Model = "结束一段讲解"
             }
         )
@@ -353,6 +354,7 @@ class StartExplanViewModel : ViewModel() {
     fun splitTextByPunctuation(text: String): List<String> {
         speakContinue!!.postValue(0)
         Universal.taskNum = 0
+        BaiduTTSHelper.getInstance().stop()
         Universal.ExplainSpeak = ArrayList()
         if (Universal.ExplainSpeak != null) {
             Universal.ExplainSpeak.clear()

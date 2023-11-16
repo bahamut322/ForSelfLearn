@@ -359,6 +359,7 @@ public class QuerySql {
                 robotConfigModel.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
                 robotConfigModel.setWakeUpList(cursor.getString(cursor.getColumnIndex("wakeuplist")));
                 robotConfigModel.setSleepTime(cursor.getInt(cursor.getColumnIndex("sleeptime")));
+                robotConfigModel.setWakeUpWord(cursor.getString(cursor.getColumnIndex("wakeupword")));
                 robotConfigModel.setChargePointName(cursor.getString(cursor.getColumnIndex("chargepointname")));
                 robotConfigModel.setWaitingPointName(cursor.getString(cursor.getColumnIndex("waitingpointname")));
             } while (cursor.moveToNext());

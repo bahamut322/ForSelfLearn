@@ -42,7 +42,7 @@
     <string name="bin1_opened_2">1号仓门已打开</string>
     <string name="bin2_opened_2">2号仓门已打开</string>
     <string name="go_back">正在返回中</string>
-    <string name="xiao_di_pausing">小翼暂停中…</string>
+    <string name="xiao_di_pausing">小迪暂停中…</string>
     <string name="brightness_setting">亮度设置</string>
     <string name="version_setting">版本设置</string>
     <string name="current_version">当前版本：v%s</string>
@@ -202,7 +202,7 @@
     <string name="go_to_relocation">前往重定位</string>
     <string name="go_back_charge">返回充电桩</string>
     <string name="clear_all_fix">清除所有修正</string>
-    <string name="start_docking">小翼要开始对接充电桩啦</string>
+    <string name="start_docking">小迪要开始对接充电桩啦</string>
     <string name="i_just_was_born">我刚出生不久，动作有点慢，请您包容</string>
     <string name="i_continue_work">我要继续工作啦，拜拜，下次见</string>
     <string name="door_opening_please_put_things">仓门正在开启，请准备放入物品和选择目的点</string>
@@ -215,16 +215,16 @@
     <string name="please_left_the_center_for_me">我是这里的配送机器人，我要进电梯了，麻烦把中间位置让给我，谢谢您的关照</string>
     <string name="excuse_me">麻烦让一让，谢谢</string>
     <string name="can_i_help_you">您好，有什么需要帮助的呢？</string>
-    <string name="welcome_i_am_xiao_di">欢迎光临，我是这里的多功能服务机器人，小翼。</string>
+    <string name="welcome_i_am_xiao_di">欢迎光临，我是这里的多功能服务机器人，小迪。</string>
     <string name="i_am_going_to_work_if_you_need_my_serve">我现在正要去工作,如果您需要我的服务，欢迎随时致电酒店前台</string>
-    <string name="i_hope_to_serve_you">希望我能有一个荣幸的机会来为您服务，小翼会继续努力哒</string>
+    <string name="i_hope_to_serve_you">希望我能有一个荣幸的机会来为您服务，小迪会继续努力哒</string>
     <string name="current_volume">当前音量</string>
     <string name="hello_we_are_going_to_please_follow_me">您好，我们正要前往%s%s，请跟我来，要跟紧我哟</string>
     <string name="hello_we_are_going_to_please_follow_me_1">您好，欢迎来到"中国电信数字化体验中心"，我们正在前往%s</string>
     <string name="business_going">正在进行 %s</string>
     <string name="what_is_up">怎么了呀？那我就等你一下吧</string>
     <string name="welcome_to_use_delivery_please_input_password">您好，欢迎使用送物功能，请输入验证密码</string>
-    <string name="xiao_di_serve_you_please_input_room_number">小翼为您服务，请输入要前往的房间号</string>
+    <string name="xiao_di_serve_you_please_input_room_number">小迪为您服务，请输入要前往的房间号</string>
     <string name="hello_mr_lift">你好呀，电梯先生，我要去%s楼</string>
     <string name="happy_to_spend_the_time_with_you">很开心能与您共同度过这段乘梯时光，如果您需要我的服务，欢迎随时致电酒店前台</string>
     <string name="i_arrived_please_left_front_way_for_me">我到啦，请把前方道路让给我，不要挽留我，拜拜，下次见</string>
@@ -464,7 +464,7 @@
     <string name="time_hour">17:58</string>
     <string name="month">9月5日</string>
     <string name="week">星期一</string>
-    <string name="ask">喊我“小翼”，问我问题</string>
+    <string name="ask">喊我“小迪”，问我问题</string>
     <string name="patrol">智能巡逻</string>
     <string name="Patrol_content">巡逻内容</string>
     <string name="Single_Temp">单人测温</string>

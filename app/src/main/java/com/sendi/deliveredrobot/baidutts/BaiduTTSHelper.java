@@ -177,7 +177,7 @@ public class BaiduTTSHelper {
     public void speak(String text) {
         // 需要合成的文本text的长度不能超过1024个GBK字节。
         if (TextUtils.isEmpty(text)) {
-            text = "没有指定名称的话，小翼不知道怎么走啦";
+            text = "没有指定名称的话，小迪不知道怎么走啦";
         }
         Order.setFlage("1");
         //播报语音音量

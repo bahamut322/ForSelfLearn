@@ -4,32 +4,32 @@ import org.litepal.annotation.Column;
 
 public class BasicModel {
 
-    private String defaultValue;//首页功能显示
+    private String defaultValue = "智能引领 智能讲解 轻应用 业务办理 礼仪迎宾 ";//首页功能显示
     private int id;
     private String robotMode;//机器人音色
     private Boolean Intelligent;//智能语音
     private Boolean Etiquette;//礼仪迎宾
-    private int voiceVolume;//语音音量
-    private int videoVolume; //视频音量
+    private int voiceVolume = 12;//语音音量
+    private int videoVolume = 0; //视频音量
     private Boolean expression;//操作屏表情
     private Boolean identifyVip;//识别Vip人脸迎宾
-    private float leadingSpeed;//引领速度
-    private float goExplanationPoint;//去往讲解点速度
-    private int speechSpeed;//讲解语速
-    private int stayTime;//逗留时间
+    private float leadingSpeed = 0.8F;//引领速度
+    private float goExplanationPoint = 0.8F;//去往讲解点速度
+    private int speechSpeed = 12;//讲解语速
+    private int stayTime = 30;//逗留时间
     private int unArrive;//不能到达点 0：直接下一个;1：重复第二次到达
     private int explanationFinish;//讲解结束允许 0、再讲一遍 1、选择其他路线
-    private Boolean explainInterrupt;//讲解过程中允许打断
-    private int explainWhetherTime;//打断任务暂停时间
-    private String patrolContent;//巡逻内容 0：口罩检测;1：体温检测;2：人脸识别;
+    private Boolean explainInterrupt = true;//讲解过程中允许打断
+    private int explainWhetherTime = 30;//打断任务暂停时间
+    private String patrolContent ;//巡逻内容 0：口罩检测;1：体温检测;2：人脸识别;
     private String Error;//异常警告方式 0、语音播报 1、就近跟随
     private float patrolSpeed;//巡逻速度
     private int patrolStayTime;//巡逻过程中暂停时间
     private int tempMode;//测温模式：0、单人测温 1、多人测温
     private Boolean voiceAnnouncements;//智能测温语音播报
-    private float goBusinessPoint;//去往导购速度
-    private boolean businessInterrupt;//导购过程中允许打断
-    private int businessWhetherTime;//打断任务暂停时间
+    private float goBusinessPoint = 0.8F;//去往导购速度
+    private boolean businessInterrupt = true;//导购过程中允许打断
+    private int businessWhetherTime = 30;//打断任务暂停时间
 
 
     public String getDefaultValue() {

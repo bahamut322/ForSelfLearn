@@ -6,15 +6,15 @@ import org.litepal.crud.LitePalSupport;
 public class RobotConfigSql extends LitePalSupport {
     //注释原因：在基础设置统一管理
 //    private int audioType;//声音类型
-    private String wakeUpWord = "小迪";//唤醒词
-    private int sleep;//是否启动用待机
-    private  int sleepTime;//多少分钟没操作进入待机
+    private String wakeUpWord = "小迪小迪";//唤醒词
+    private int sleep = 0;//是否启动用待机
+    private  int sleepTime = 30;//多少分钟没操作进入待机
     private String wakeUpList;//唤醒方式
     private int sleepType;//待机内容
     private int picType;//图片布局
     private long timeStamp;//时间戳
     private String mapName;//地图名字
-    private String password;//密码
+    private String password = "8888";//密码
     private String chargePointName;//充电桩点名称
     private String waitingPointName;//待命点名称
 

@@ -132,10 +132,10 @@ class BusinessFragment : Fragment() {
         //item点击
         binding.businessGv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-//                if (RobotStatus.batteryStateNumber.value == false) {
-//                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
-//                    DialogHelper.briefingDialog.show()
-//                } else {
+                if (RobotStatus.batteryStateNumber.value == false) {
+                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                    DialogHelper.briefingDialog.show()
+                } else {
                     LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")
 
                     RobotStatus.shoppingName = shoppingActionList[position].pointName!!
@@ -159,7 +159,7 @@ class BusinessFragment : Fragment() {
                             BillManager.addAllAtIndex(bill, 0)
                             BillManager.currentBill()?.executeNextTask()
                         }
-//                    }
+                    }
                 }
             }
         binding.bubbleTv.setOnClickListener {
