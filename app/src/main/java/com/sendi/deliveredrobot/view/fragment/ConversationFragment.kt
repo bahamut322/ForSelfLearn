@@ -115,6 +115,7 @@ class ConversationFragment : Fragment() {
                     ) as LinearLayoutCompat
                 val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
                 val viewHead = linearLayoutCompat.findViewById<View>(R.id.view_head)
+                linearLayoutCompat.visibility = View.VISIBLE
                 viewHead.visibility = View.GONE
                 textView.text = text
                 linearLayoutCompat.setOnClickListener {

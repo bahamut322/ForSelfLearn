@@ -143,20 +143,23 @@ class CloudMqttService : Service() {
         override fun onSuccess(arg0: IMqttToken) {
             LogUtil.i("MQTT:X8连接成功 ")
             RobotStatus.mqttConnected = true
-            Thread { UpdateReturn().assignment() }.start()
-            try {
-                var mqttToken: IMqttToken?
-                do{
-                    mqttToken = mqttAndroidClient?.subscribe(
-                        "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+            Thread {
+                UpdateReturn().assignment()
+                try {
+                    var mqttToken: IMqttToken?
+                    do{
+                        mqttToken = mqttAndroidClient?.subscribe(
+                            "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
 //                    "$RESPONSE_TOPIC/#",
-                        2
-                    ) //订阅主题，参数：主题、服务质量
-                }while(mqttToken?.isComplete == true)
-                LogUtil.i("MQTT:X8订阅成功 ")
-            } catch (e: MqttException) {
-                e.printStackTrace()
-            }
+                            2
+                        ) //订阅主题，参数：主题、服务质量
+                    }while(mqttToken?.isComplete == true)
+                    LogUtil.i("MQTT:X8订阅成功 ")
+                } catch (e: MqttException) {
+                    e.printStackTrace()
+                }
+            }.start()
+
         }
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
