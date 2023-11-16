@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
+import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
@@ -45,6 +46,7 @@ import com.sendi.fooddeliveryrobot.VoiceRecorder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
@@ -69,8 +71,8 @@ public class ExplanationFragment extends Fragment {
         super.onResume();
         VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
         voiceRecorder.setCallback((s, pinyinString) -> {
-            if (pinyinString.contains("XIAODI")) {
-                Log.i("AudioChannel", "包含小迪");
+            if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
+                Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);
             }
             return null;

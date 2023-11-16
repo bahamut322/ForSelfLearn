@@ -29,11 +29,13 @@ import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 
+import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 import com.sendi.fooddeliveryrobot.VoiceRecorder;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -131,8 +133,8 @@ public class CatalogueExplantionFragment extends Fragment {
         super.onResume();
         VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
         voiceRecorder.setCallback((s, pinyinString) -> {
-            if (pinyinString.contains("XIAODI")) {
-                Log.i("AudioChannel", "包含小迪");
+            if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
+                Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);
             }
             return null;

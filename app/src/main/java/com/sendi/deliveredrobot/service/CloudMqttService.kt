@@ -14,6 +14,7 @@ import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
+import okhttp3.internal.notify
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
@@ -140,15 +141,19 @@ class CloudMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
+            LogUtil.i("MQTT:X8连接成功 ")
+            RobotStatus.mqttConnected = true
             Thread { UpdateReturn().assignment() }.start()
-            LogUtil.i("MQTT:X8订阅连接成功 ")
             try {
-                mqttAndroidClient?.subscribe(
-                    "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+                var mqttToken: IMqttToken?
+                do{
+                    mqttToken = mqttAndroidClient?.subscribe(
+                        "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
 //                    "$RESPONSE_TOPIC/#",
-                    2
-                ) //订阅主题，参数：主题、服务质量
-                RobotStatus.mqttConnected = true
+                        2
+                    ) //订阅主题，参数：主题、服务质量
+                }while(mqttToken?.isComplete == true)
+                LogUtil.i("MQTT:X8订阅成功 ")
             } catch (e: MqttException) {
                 e.printStackTrace()
             }
@@ -156,7 +161,7 @@ class CloudMqttService : Service() {
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
             arg1.printStackTrace()
-            LogUtil.i("MQTT:X8订阅连接失败 ")
+            LogUtil.i("MQTT:X8连接失败 ")
             RobotStatus.mqttConnected = false
             doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }

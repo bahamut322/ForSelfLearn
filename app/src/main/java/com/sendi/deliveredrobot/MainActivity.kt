@@ -23,8 +23,10 @@ import com.sendi.deliveredrobot.databinding.ActivityMainBinding
 import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
 import com.sendi.deliveredrobot.entity.BasicSetting
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.DefaultModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -166,6 +168,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 }
             }
         }
+        RobotStatus.robotConfig?.observe(this){
+            if (it != null) {
+                WakeupWordHelper.wakeupWord = it.wakeUpWord?:""
+            }
+        }
+        WakeupWordHelper.wakeupWord = QuerySql.robotConfig().wakeUpWord
     }
 
     override fun onBackPressed() {

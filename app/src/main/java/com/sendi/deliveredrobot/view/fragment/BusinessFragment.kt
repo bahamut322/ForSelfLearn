@@ -29,6 +29,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
@@ -169,8 +170,8 @@ class BusinessFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         VoiceRecorder.getInstance().callback =  { _, pinyinString ->
-            if (pinyinString.contains("XIAODI")) {
-                Log.i("AudioChannel", "包含小迪")
+            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
+                Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
         }

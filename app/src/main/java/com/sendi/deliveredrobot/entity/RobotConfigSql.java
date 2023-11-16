@@ -6,7 +6,7 @@ import org.litepal.crud.LitePalSupport;
 public class RobotConfigSql extends LitePalSupport {
     //注释原因：在基础设置统一管理
 //    private int audioType;//声音类型
-    private String wakeUpWord;//唤醒词
+    private String wakeUpWord = "小迪";//唤醒词
     private int sleep;//是否启动用待机
     private  int sleepTime;//多少分钟没操作进入待机
     private String wakeUpList;//唤醒方式
