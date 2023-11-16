@@ -3,8 +3,10 @@ package com.sendi.deliveredrobot.service
 import android.text.TextUtils
 import android.util.Log
 import chassis_msgs.VersionGetResponse
+import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.baidu.tts.client.SpeechSynthesizer
+import com.google.gson.Gson
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
@@ -22,6 +24,7 @@ import com.sendi.deliveredrobot.model.Area
 import com.sendi.deliveredrobot.model.Floor
 import com.sendi.deliveredrobot.model.Map
 import com.sendi.deliveredrobot.model.Point
+import com.sendi.deliveredrobot.model.ReplyQaConfigModel
 import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -60,6 +63,7 @@ class UpdateReturn {
     lateinit var dao: DeliveredRobotDao
     private val queryAllMapPointsDao =
         DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
+    private val gson = Gson()
 
     fun method(boolean: Boolean = true) {
         val replyGateConfigData: List<ReplyGateConfig> =
@@ -134,6 +138,8 @@ class UpdateReturn {
                     sendMapData()
                 }
 
+                val replyQaConfigModel = gson.fromJson(QuerySql.selectQaConfig(), ReplyQaConfigModel::class.java)
+
                 val baseTimeStamp = QuerySql.ShoppingConfig().baseTimeStamp
                 val actions = QuerySql.SelectAndSendActionTime()
                 // 创建一个新的JSONObject
@@ -151,6 +157,7 @@ class UpdateReturn {
                 shoppingGuide["actions"] = actions
                 // 创建一个包含shoppingGuide的更大的JSONObject
                 jsonObject["shoppingGuide"] = shoppingGuide
+                jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp
                 jsonObject["guide"] = QuerySql.sendGuideConfig()
 
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
