@@ -146,7 +146,6 @@ class CloudMqttService : Service() {
             Thread {
                 UpdateReturn().assignment()
                 try {
-                    LogUtil.i("currentThread:${Thread.currentThread()}")
                     var mqttToken: IMqttToken?
                     do{
                         mqttToken = mqttAndroidClient?.subscribe(

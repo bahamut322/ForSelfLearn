@@ -49,16 +49,20 @@ object ReplyQaConfigHelper {
             ITEM_COUNTS = if(totalSize > 10){
                 10
             }else{
-                totalSize
+                if(totalSize > 0){
+                    totalSize
+                }else{
+                    0
+                }
             }
             val finalTexts = if ((guideTexts?.size ?: 0) < ITEM_COUNTS) {
                 val size = ITEM_COUNTS - (guideTexts?.size ?: 0)
-                val addList = replyQaConfigModel.standardQuestions?.shuffled()?.slice(0..size)
+                val addList = replyQaConfigModel.standardQuestions?.shuffled()?.slice(0 until size)
                 guideTexts?.plus(addList ?: arrayListOf())
             } else {
                 guideTexts
             }
-            finalTexts?.shuffled()?.slice(0..ITEM_COUNTS) ?: arrayListOf()
+            finalTexts?.shuffled()?: arrayListOf()
         }else{
             arrayListOf()
         }
