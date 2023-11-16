@@ -20,7 +20,7 @@ import org.litepal.LitePal
  */
 object ReplyQaConfigHelper {
     private val gson = Gson()
-    private const val ITEM_COUNTS = 1
+    private var ITEM_COUNTS = 0
     fun replyQaConfig(json: String) {
         Log.d("TAG", "replyQaConfig: $json")
         LitePal.deleteAll(QaConfigDB::class.java)
@@ -44,6 +44,13 @@ object ReplyQaConfigHelper {
         val replyQaConfigModel = gson.fromJson(json, ReplyQaConfigModel::class.java)
         return if(replyQaConfigModel != null) {
             val guideTexts = replyQaConfigModel.guideTexts
+            val standardQuestions = replyQaConfigModel.standardQuestions
+            val totalSize = (guideTexts?.size?:0) + (standardQuestions?.size?:0)
+            ITEM_COUNTS = if(totalSize > 10){
+                10
+            }else{
+                totalSize
+            }
             val finalTexts = if ((guideTexts?.size ?: 0) < ITEM_COUNTS) {
                 val size = ITEM_COUNTS - (guideTexts?.size ?: 0)
                 val addList = replyQaConfigModel.standardQuestions?.shuffled()?.slice(0..size)
