@@ -824,7 +824,7 @@ class InteractionMqtt {
                 //创建文件夹
                 MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/"+points!!.pointName+"/")
                 guidePointPicDB.pointName = points.pointName
-                guidePointPicDB.guidePicUrl = Universal.robotFile+"GuidePic/"+points.pointName+"/"+MqttMessageHandler.FileName(points.guidePicUrl!!)
+                guidePointPicDB.guidePicUrl = Universal.robotFile+"GuidePic/"+points.pointName+"/"+"test.${fileName(points.guidePicUrl!!)}"
                 guidePointPicDB.pointTimeStamp = points.pointTimeStamp
                 guidePointPicDB.mapTimeStamp = maps.mapTimeStamp
                 guidePointPicDB.mapName = maps.mapName
@@ -833,7 +833,7 @@ class InteractionMqtt {
                     DownloadBill.getInstance().addTask(
                         Universal.pathDownload +points.guidePicUrl ,
                         Universal.robotFile+"GuidePic/"+points.pointName+"/",
-                        MqttMessageHandler.FileName(points.guidePicUrl!!),
+                        "test.${fileName(points.guidePicUrl!!)}",
                         MyApplication.listener
                     )
                 }
@@ -1071,5 +1071,9 @@ class InteractionMqtt {
         if (guideFoundationConfigDB.save()){
             RobotStatus.newUpdata.postValue(2)
         }
+    }
+
+    fun fileName(url: String): String {
+        return url.substring(url.lastIndexOf(".") + 1)
     }
 }
