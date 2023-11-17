@@ -103,7 +103,7 @@ class BusinessIngFragment : Fragment() {
         LogUtil.i("打断任务时间："+QuerySql.QueryBasic().businessWhetherTime)
 
         status()
-        actionData = QuerySql.SelectActionData(Universal.MapName, pointName,RobotStatus.shoppingType)
+        actionData = QuerySql.SelectActionData(QuerySql.robotConfig().mapName, pointName,RobotStatus.shoppingType)
         LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
 
 

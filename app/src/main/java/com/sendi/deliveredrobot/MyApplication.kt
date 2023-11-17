@@ -54,7 +54,7 @@ class MyApplication : Application() {
                 if (DownloadBill.getInstance().taskCount == 0) {
                     Log.e("TAG", "onProgress: FinishAll")
                     DialogHelper.loadingDialog.dismiss()
-                    UpdateReturn().method(Universal.mapType)
+                    UpdateReturn().method(Universal.mapType.value!!)
                     RobotStatus.newUpdata.postValue(1)
                 }
             }

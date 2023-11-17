@@ -62,22 +62,25 @@ public class ExplanationFragment extends Fragment {
     private int centerToLiftDistance; //RecyclerView款度的一半 ,也就是控件中间位置到左部的距离 ，
     private int childViewHalfCount = 0; //当前RecyclerView一半最多可以存在几个Item
     NavController controller;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Override
     public void onResume() {
         super.onResume();
         VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
         voiceRecorder.setCallback((s, pinyinString) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
-                Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
+                Log.i("AudioChannel", "包含" + WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);
             }
             return null;
         });
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,6 +93,7 @@ public class ExplanationFragment extends Fragment {
             binding.firstFragment.setVisibility(View.VISIBLE);
             binding.llReturn.setVisibility(View.GONE);
         }
+        updateDataAndRefreshList();
         controller = Navigation.findNavController(requireView());
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
@@ -101,7 +105,8 @@ public class ExplanationFragment extends Fragment {
                 if (Boolean.TRUE.equals(RobotStatus.INSTANCE.getPassWordToSetting().getValue())) {
                     try {
                         controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
-                    }catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
                     fromeSettingDialog.dismiss();
                     RobotStatus.INSTANCE.getPassWordToSetting().postValue(false);
                 }
@@ -144,17 +149,20 @@ public class ExplanationFragment extends Fragment {
         });
         try {
             binding.explainRv.postDelayed(() -> scrollToCenter(childViewHalfCount), 100L);
-        }catch (Exception e){
-            Log.d("TAG", "列表为空: "+e);
+        } catch (Exception e) {
+            Log.d("TAG", "列表为空: " + e);
         }
     }
 
     private List<RouteMapList> mDatas;
 
     private void initData() {
-        if (mDatas == null)
-            //查询当前设置的总图下所有的路线
-            mDatas = QuerySql.queryRoute(Universal.MapName);
+        if (mDatas !=null) {
+            mDatas.clear();
+        }
+        mDatas = new ArrayList<>();
+        mDatas = QuerySql.queryRoute( QuerySql.robotConfig().getMapName());
+        LogUtil.INSTANCE.d("dadsad:"+mDatas.size()+","+QuerySql.robotConfig().getMapName());
         for (int j = 0; j < childViewHalfCount; j++) { //头部的空布局
             mDatas.add(0, null);
         }
@@ -162,11 +170,12 @@ public class ExplanationFragment extends Fragment {
             mDatas.add(null);
         }
     }
+
     private boolean isTouch = false;
 
     private List<CenterItemUtils.CenterViewItem> centerViewItems = new ArrayList<>();
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "NotifyDataSetChanged"})
     private void findView() {
         mAdapter = new explantionAdapter();
         binding.explainRv.setAdapter(mAdapter);
@@ -226,6 +235,7 @@ public class ExplanationFragment extends Fragment {
      * @param position
      */
     private void scrollToCenter(int position) {
+        if (mAdapter == null) return;
         position = position < childViewHalfCount ? childViewHalfCount : position;
         position = position < mAdapter.getItemCount() - childViewHalfCount - 1 ? position : mAdapter.getItemCount() - childViewHalfCount - 1;
 
@@ -323,7 +333,7 @@ public class ExplanationFragment extends Fragment {
                 } else {
                     scrollToCenter(fp);
                     RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
-                    Log.d("TAG", "onBindViewHolder: "+mDatas.get(position).getId());
+                    Log.d("TAG", "onBindViewHolder: " + mDatas.get(position).getId());
                     controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
                     SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getPointListText());
                 }
@@ -347,7 +357,7 @@ public class ExplanationFragment extends Fragment {
 
             public TextView tv;
             public View view;
-            public ImageView imageView, imgBottom, imgStart, imgEnd, textNameImg,bottomImg;
+            public ImageView imageView, imgBottom, imgStart, imgEnd, textNameImg, bottomImg;
 
             public VH(@NonNull View itemView) {
                 super(itemView);
@@ -362,6 +372,30 @@ public class ExplanationFragment extends Fragment {
             }
         }
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void updateDataAndRefreshList() {
+        // 更新了地图配置
+        Universal.mapType.observe(getViewLifecycleOwner(), mapType -> {
+            if (mapType) {
+                // 设置新的适配器
+                init();
+                mAdapter.notifyDataSetChanged(); // 刷新列表
+                binding.explainRv.getAdapter().notifyDataSetChanged();
+            }
+        });
+        // 更新了引领配置
+        RobotStatus.INSTANCE.getNewUpdata().observe(getViewLifecycleOwner(), newUpdata -> {
+            if (newUpdata == 1 || newUpdata == 2) {
+                // 设置新的适配器
+                init();
+                mAdapter.notifyDataSetChanged(); // 刷新列表
+                binding.explainRv.getAdapter().notifyDataSetChanged();
+            }
+        });
+    }
+
+
 
     /**
      * 设置控件大小

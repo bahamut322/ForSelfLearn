@@ -314,7 +314,9 @@ class InteractionMqtt {
                 touchScreenConfigDB.save()
                 shoppingActionDB.touchScreenConfig = touchScreenConfigDB
             }
-            shoppingActionDB.save()
+            if(shoppingActionDB.save()){
+                RobotStatus.newUpdata.postValue(2)
+            }
         }
 
     }
@@ -753,6 +755,7 @@ class InteractionMqtt {
                     if (routeDB.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 讲解点数据保存成功")
+                        RobotStatus.newUpdata.postValue(2)
                     } else {
                         // 数据保存失败
                         Log.d("TAG", "receive: 讲解点数据保存失败")
@@ -833,7 +836,9 @@ class InteractionMqtt {
                 }
                 guideConfigDB.pointList = pointList
 
-                guidePointPicDB.save()
+                if (guidePointPicDB.save()){
+                    RobotStatus.newUpdata.postValue(2)
+                }
             }
         }
     }
@@ -1060,6 +1065,8 @@ class InteractionMqtt {
             touchScreenConfigDB.save()
             guideFoundationConfigDB.touchScreenConfig = touchScreenConfigDB
         }
-        guideFoundationConfigDB.save()
+        if (guideFoundationConfigDB.save()){
+            RobotStatus.newUpdata.postValue(2)
+        }
     }
 }
