@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModelLazy
+import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -674,18 +675,18 @@ object MqttMessageHandler {
     fun compareArrays(array1: Array<String?>, array2: Array<String?>): SameName {
         val sameName = SameName()
         // 比较两个数组
-        val commonFiles = array1.map { it?.substringAfterLast('/') }
-            .intersect(array2.map { it?.substringAfterLast('/') })
-        val uniqueFiles1 = array1.map { it?.substringAfterLast('/') }
-            .subtract(array2.map { it?.substringAfterLast('/') })
-        val uniqueFiles2 = array2.map { it?.substringAfterLast('/') }
-            .subtract(array1.map { it?.substringAfterLast('/') })
+        val commonFiles = array1.mapNotNull { it?.substringAfterLast('/') }
+            .intersect(array2.mapNotNull { it?.substringAfterLast('/') })
+        val uniqueFiles1 = array1.mapNotNull { it?.substringAfterLast('/') }
+            .subtract(array2.mapNotNull { it?.substringAfterLast('/') })
+        val uniqueFiles2 = array2.mapNotNull { it?.substringAfterLast('/') }
+            .subtract(array1.mapNotNull { it?.substringAfterLast('/') })
         //共同包含的文件
-        sameName.SameAll = commonFiles.map { name -> array1.find { it!!.endsWith("/$name") } }
+        sameName.SameAll = commonFiles.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
         //第一个数组中独有的文件
-        sameName.SameOne = uniqueFiles1.map { name -> array1.find { it!!.endsWith("/$name") } }
+        sameName.SameOne = uniqueFiles1.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
         //第二个数组中独有的文件
-        sameName.SameTwo = uniqueFiles2.map { name -> array2.find { it!!.endsWith("/$name") } }
+        sameName.SameTwo = uniqueFiles2.mapNotNull { name -> array2.find { it?.endsWith("/$name") == true } }
         return sameName
     }
 }

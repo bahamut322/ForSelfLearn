@@ -66,6 +66,7 @@ class InteractionMqtt {
                 } else {
                     LogUtil.d("导购：地图${action.rootMapName}中${action.name}删除失败")
                 }
+                RobotStatus.newUpdata.postValue(2)
                 continue
             }
             map = LinkedHashMap()
@@ -92,6 +93,7 @@ class InteractionMqtt {
                     DeleteSql.deleteShoppingAction(action.name, action.rootMapName)
                     println("Name: $action.name, Timestamp: $timestamp")
                 } else if (action.timeStamp == timestamp) {
+                    RobotStatus.newUpdata.postValue(2)
                     continue
                 }
             }
@@ -814,6 +816,7 @@ class InteractionMqtt {
                         val values = ContentValues()
                         values.put("maptimestamp",maps.mapTimeStamp )
                         updateAll(GuidePointPicDB::class.java, values, "pointname = ? and mapname = ?",points.pointName,maps.mapName)
+                        RobotStatus.newUpdata.postValue(2)
                         continue
                     }
                 }
