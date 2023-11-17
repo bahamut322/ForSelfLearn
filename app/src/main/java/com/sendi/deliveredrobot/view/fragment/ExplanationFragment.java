@@ -157,12 +157,12 @@ public class ExplanationFragment extends Fragment {
     private List<RouteMapList> mDatas;
 
     private void initData() {
-        if (mDatas !=null) {
+        if (mDatas != null) {
             mDatas.clear();
         }
         mDatas = new ArrayList<>();
-        mDatas = QuerySql.queryRoute( QuerySql.robotConfig().getMapName());
-        LogUtil.INSTANCE.d("dadsad:"+mDatas.size()+","+QuerySql.robotConfig().getMapName());
+        mDatas = QuerySql.queryRoute(QuerySql.robotConfig().getMapName());
+        LogUtil.INSTANCE.d("dadsad:" + mDatas.size() + "," + QuerySql.robotConfig().getMapName());
         for (int j = 0; j < childViewHalfCount; j++) { //头部的空布局
             mDatas.add(0, null);
         }
@@ -393,8 +393,10 @@ public class ExplanationFragment extends Fragment {
                 binding.explainRv.getAdapter().notifyDataSetChanged();
             }
         });
+        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {
+            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdata.getWakeUpWord()));
+        });
     }
-
 
 
     /**

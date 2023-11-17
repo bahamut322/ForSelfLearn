@@ -172,7 +172,7 @@ class BusinessFragment : Fragment() {
         }
     }
 
-    //刷新列表
+    //刷新
     private fun updateDataAndRefreshList() {
         //更新了地图配置
         Universal.mapType.observe(viewLifecycleOwner) {
@@ -185,6 +185,9 @@ class BusinessFragment : Fragment() {
             if (it == 1 || it == 2) {
                 updateList()
             }
+        }
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner){
+            binding.bubbleTv.text = String.format(getString(R.string.ask), it.wakeUpWord)
         }
     }
 

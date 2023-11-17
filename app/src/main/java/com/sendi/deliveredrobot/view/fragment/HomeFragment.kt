@@ -553,6 +553,9 @@ class HomeFragment : Fragment(), IMainView {
                 else -> {}
             }
         }
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner){
+            binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
+        }
     }
 
     /**

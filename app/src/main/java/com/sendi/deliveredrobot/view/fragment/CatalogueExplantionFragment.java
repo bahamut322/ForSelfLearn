@@ -31,6 +31,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
+import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 import com.sendi.fooddeliveryrobot.VoiceRecorder;
 
@@ -62,6 +63,9 @@ public class CatalogueExplantionFragment extends Fragment {
         controller = Navigation.findNavController(requireView());
         binding = DataBindingUtil.bind(view);
         mAdapter = new CatalogueAdapter(viewModel.inForListData(), getContext());
+        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {
+            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdata.getWakeUpWord()));
+        });
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {
             viewModel.start();

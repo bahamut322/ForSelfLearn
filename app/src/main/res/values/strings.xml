@@ -464,7 +464,7 @@
     <string name="time_hour">17:58</string>
     <string name="month">9月5日</string>
     <string name="week">星期一</string>
-    <string name="ask">喊我“小迪”，问我问题</string>
+    <string name="ask">喊我“%s”，问我问题</string>
     <string name="patrol">智能巡逻</string>
     <string name="Patrol_content">巡逻内容</string>
     <string name="Single_Temp">单人测温</string>
