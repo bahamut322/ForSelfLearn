@@ -51,7 +51,7 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
         }
 
         myHolder.text.text = datas[position].pointName
-        val imageUrl: String = QuerySql.selectGuideConfig(Universal.MapName, datas[position].pointName).guidePicUrl!!
+        val imageUrl: String = QuerySql.selectGuideConfig(QuerySql.robotConfig().mapName, datas[position].pointName).guidePicUrl!!
         Glide.with(context)
             .load(imageUrl)
             .apply(RequestOptions().placeholder(R.drawable.img_strat_explation)) // 设置占位图

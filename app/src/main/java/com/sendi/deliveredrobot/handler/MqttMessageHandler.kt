@@ -357,7 +357,7 @@ object MqttMessageHandler {
                     if (robotConfigSql.save()) {
                         Log.d("TAG", "receive: 配置数据保存成功")
                         updateConfig(false)
-                        Universal.mapType = false
+                        Universal.mapType.postValue( false)
                     } else {
                         // 数据保存失败
                         Log.d("TAG", "receive: 配置数据保存失败")

@@ -3,6 +3,8 @@ package com.sendi.deliveredrobot.entity;
 
 import android.annotation.SuppressLint;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
@@ -66,8 +68,6 @@ public class Universal {
     public static String advPics = "";
     //广告视频名字
     public static String advVideoFile = "";
-    //当前使用的总图
-    public static String MapName = QuerySql.robotConfig().getMapName();
 
 
     //TODO 门岗管理
@@ -104,7 +104,7 @@ public class Universal {
     //图片布局
     public static int picType = 1;
     //是否下发机器人配置
-    public static boolean mapType = true;
+    public static MutableLiveData<Boolean> mapType = new MutableLiveData<>(false);
     //密码
     public static String password;
     //播放进度

@@ -21,6 +21,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
+import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
@@ -43,6 +44,7 @@ import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.concurrent.thread
 
 /**
@@ -94,6 +96,7 @@ class BusinessFragment : Fragment() {
         val toSettingDialog = FromeSettingDialog(context)
         //设置速度
         ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
+        updateDataAndRefreshList()
         //进入页面播报
         viewModel.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
@@ -140,14 +143,14 @@ class BusinessFragment : Fragment() {
 
                     RobotStatus.shoppingName = shoppingActionList[position].pointName!!
                     BaiduTTSHelper.getInstance().stop()
-                    if (shoppingActionList[position].actionType == 1){
+                    if (shoppingActionList[position].actionType == 1) {
                         RobotStatus.shoppingType = 1
                         LogUtil.d("定点")
                         MyApplication.instance?.sendBroadcast(Intent().apply {
                             action = ACTION_NAVIGATE
                             putExtra(NAVIGATE_ID, R.id.businessIngFragment)
                         })
-                    }else {
+                    } else {
                         LogUtil.d("去某点${RobotStatus.shoppingName}")
                         RobotStatus.shoppingType = 2
                         thread {
@@ -167,10 +170,40 @@ class BusinessFragment : Fragment() {
         }
     }
 
+    //刷新列表
+    private fun updateDataAndRefreshList() {
+        //更新了地图配置
+        Universal.mapType.observe(viewLifecycleOwner) {
+            if (it) {
+                updateList()
+            }
+        }
+        //更新了导购配置
+        RobotStatus.newUpdata.observe(viewLifecycleOwner) {
+            if (it == 1 || it ==2) {
+                updateList()
+            }
+        }
+    }
+
+    private fun updateList() {
+        shoppingActionList = ArrayList()
+        mainScope.launch(Dispatchers.Default) {
+            val newShoppingActionList = QuerySql.SelectShoppingAction(QuerySql.robotConfig().mapName)
+            withContext(Dispatchers.Main) {
+                shoppingActionList = newShoppingActionList
+                // 设置新的适配器
+                binding.businessGv.adapter = context?.let { BusinessAdapter(it, shoppingActionList) }
+                // 通知Adapter数据已变更
+                (binding.businessGv.adapter as? BusinessAdapter)?.notifyDataSetChanged()
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        VoiceRecorder.getInstance().callback =  { _, pinyinString ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
+        VoiceRecorder.getInstance().callback = { _, pinyinString ->
+            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
