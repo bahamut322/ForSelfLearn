@@ -79,7 +79,7 @@ object RobotStatus {
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
-    var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()
+    var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()//接收完MQTT、配置下载完成都会通知相关页面获取跟新
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容

@@ -67,6 +67,7 @@ class BusinessFragment : Fragment() {
         shoppingActionList = ArrayList()
         mainScope.launch(Dispatchers.Default) {
             shoppingActionList = QuerySql.SelectShoppingAction(QuerySql.robotConfig().mapName)
+            LogUtil.d("列表长度："+shoppingActionList.size)
         }
         val taskConsumer =
             Consumer { task: String ->
@@ -106,7 +107,8 @@ class BusinessFragment : Fragment() {
             binding.firstFragment.visibility = View.VISIBLE
             binding.llReturn.visibility = View.GONE
         }
-
+        //设置列表最大高度
+        binding.businessGv.setMaxHeight(520)
         binding.businessName.text = QuerySql.ShoppingConfig().name
 
         //返回按钮
@@ -180,7 +182,7 @@ class BusinessFragment : Fragment() {
         }
         //更新了导购配置
         RobotStatus.newUpdata.observe(viewLifecycleOwner) {
-            if (it == 1 || it ==2) {
+            if (it == 1 || it == 2) {
                 updateList()
             }
         }

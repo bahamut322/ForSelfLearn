@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.adapter.base.i
 
+import android.R.attr.radius
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,15 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 
@@ -54,9 +55,17 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
         val imageUrl: String = QuerySql.selectGuideConfig(QuerySql.robotConfig().mapName, datas[position].pointName).guidePicUrl!!
         Glide.with(context)
             .load(imageUrl)
-            .apply(RequestOptions().placeholder(R.drawable.img_strat_explation)) // 设置占位图
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.img_strat_explation) // 设置占位图
+                    .priority((Priority.HIGH))//优先级设置最高
+                    .error(R.drawable.img_strat_explation)//设置错误视图
+            )
+            .skipMemoryCache(true) // 跳过内存缓存
+            .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
             .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
             .into(myHolder.imageId)
+
         return view!!
     }
 

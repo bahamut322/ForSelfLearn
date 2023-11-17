@@ -17,26 +17,26 @@
             android:id="@+id/businessName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_68"
             android:text="@string/business"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_40"
-            android:layout_marginTop="@dimen/dp_68"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.sendi.deliveredrobot.view.widget.MyGridView
+        <com.sendi.deliveredrobot.view.widget.ExpandableHeightGridView
             android:id="@+id/businessGv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_30"
-            android:layout_marginTop="@dimen/dp_140"
+            android:layout_marginTop="@dimen/dp_150"
             android:layout_marginEnd="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_120"
             android:horizontalSpacing="@dimen/dp_22"
             android:numColumns="4"
             android:verticalSpacing="@dimen/dp_50"
-            android:layout_marginBottom="@dimen/dp_120"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,11 +48,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
             android:layout_marginTop="@dimen/dp_68"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:gravity="center"
+            android:orientation="horizontal"
             android:visibility="gone"
-            android:orientation="horizontal">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:layout_width="@dimen/dp_32"
@@ -62,29 +62,29 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sp_32"
-                android:textColor="@color/white"
                 android:layout_marginStart="@dimen/dp_11"
                 android:alpha="0.6"
-                android:text="@string/home" />
+                android:text="@string/home"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/firstFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_68"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_68"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                 android:id="@+id/imageViewSetting"
                 android:layout_width="@dimen/dp_40"
                 android:layout_height="@dimen/dp_40"
-                android:src="@drawable/setting_svg"
-                />
+                android:src="@drawable/setting_svg" />
 
             <ImageView
                 android:id="@+id/regularImg"
