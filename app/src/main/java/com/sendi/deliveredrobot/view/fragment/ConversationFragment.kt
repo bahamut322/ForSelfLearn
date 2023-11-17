@@ -105,7 +105,11 @@ class ConversationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)
-        val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout)
+        val myFlowLayout = view.findViewById<MyFlowLayout>(R.id.my_flow_layout).apply {
+            layoutParams = this.layoutParams.apply {
+                setPadding(40,0,40,0)
+            }
+        }
         mainScope.launch {
             val list = ReplyQaConfigHelper.queryReplyConfig()
             list.forEach{ text ->
@@ -159,9 +163,6 @@ class ConversationFragment : Fragment() {
             }
         }
         binding?.linearLayoutConversation?.apply {
-            layoutParams = this.layoutParams.apply {
-                setPadding(80,0,80,0)
-            }
             val linearLayoutCompat = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
             val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)

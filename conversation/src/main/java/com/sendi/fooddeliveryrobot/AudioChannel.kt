@@ -24,7 +24,7 @@ class AudioChannel(audioRecord: AudioRecord) {
     private var audioRecord: AudioRecord? = null
     private var writer: FileOutputStream? = null
     private var time: String? = null
-    private var initialized = false
+    var initialized = false
     private val gson = Gson()
     private var audioChannel: AudioChannel? = null
     private var retrofit: Retrofit? = null
@@ -41,7 +41,7 @@ class AudioChannel(audioRecord: AudioRecord) {
     }
 
     private fun write(byteArray: ByteArray) {
-        if (isRecoding){
+        if (initialized){
             writer?.write(byteArray,0,byteArray.size)
         }
     }
@@ -51,7 +51,6 @@ class AudioChannel(audioRecord: AudioRecord) {
         Log.i("AudioChannel", "init")
         initialized = true
         time = "${System.currentTimeMillis()}"
-
         try {
             // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
             writer = FileOutputStream(
@@ -118,25 +117,16 @@ class AudioChannel(audioRecord: AudioRecord) {
 //        Log.i("AudioChannel", "AudioChannel run finish ")
     }
 
-    private fun startLive(byteArray: ByteArray) {
-        isRecoding = true
-        if (!initialized) {
-            init()
-        }
-        write(byteArray)
-    }
-
     private fun stopLive() {
-        isRecoding = false
         stopWrite()
     }
 
-    fun startRecord(byteArray: ByteArray?) {
+    fun writeRecord(byteArray: ByteArray?) {
         if (byteArray == null || byteArray.isEmpty()) {
             Log.e("AudioChannel", "byteArray is null")
             return
         }
-        startLive(byteArray)
+        write(byteArray)
     }
 
     fun stopRecord(){
@@ -144,8 +134,10 @@ class AudioChannel(audioRecord: AudioRecord) {
         audioChannel = null
     }
 
-
-    companion object{
-        var isRecoding = false
+    fun initRecord(byteArray: ByteArray){
+        if (!initialized) {
+            init()
+            writeRecord(byteArray)
+        }
     }
 }

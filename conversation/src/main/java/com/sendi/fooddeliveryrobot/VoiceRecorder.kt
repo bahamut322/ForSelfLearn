@@ -47,50 +47,51 @@ class VoiceRecorder {
         audioRecorder?.startRecording()
         isRecording = true
         thread {
-            val audioBuffer2 = ByteArray(minBufferSize)
-            println("startRecording thread")
-            val booleanStack = Stack<Boolean>()
+            val audioBuffer = ByteArray(minBufferSize)
+            val trueStack = Stack<Boolean>()
+            val falseStack = Stack<Boolean>()
             while (isRecording) {
-                val result = audioRecorder?.read(audioBuffer2, 0, minBufferSize) ?: 0
+                val result = audioRecorder?.read(audioBuffer, 0, minBufferSize) ?: 0
                 if (result == AudioRecord.ERROR_INVALID_OPERATION || result == AudioRecord.ERROR_BAD_VALUE) {
                     continue
                 }
                 val shortArray = ShortArray(320)
-                for ((index) in audioBuffer2.withIndex()) {
+                for ((index) in audioBuffer.withIndex()) {
                     if(index >= 640){
                         break
                     }
                     if (index % 2 == 1) {
-                        shortArray[index / 2] = (audioBuffer2[index - 1].toInt() and 0xff or (audioBuffer2[index].toInt() shl 8)).toShort()
+                        shortArray[index / 2] = (audioBuffer[index - 1].toInt() and 0xff or (audioBuffer[index].toInt() shl 8)).toShort()
                     }
+                }
+                if (!ttsIsPlaying && audioChannel?.initialized == true) {
+                    audioChannel?.writeRecord(audioBuffer)
                 }
                 when (fvad?.process(shortArray) ?: -1) {
                     0 -> {
 //                        Log.e("VoiceRecorder", "人声 no")
-                        if (AudioChannel.isRecoding) {
-                            booleanStack.push(false)
-                            if (booleanStack.size > 110) {
-                                var falseCount = 0f
-                                var trueCount = 0f
-                                booleanStack.map {
-                                    if (it) {
-                                        trueCount++
-                                    } else {
-                                        falseCount++
-                                    }
-                                }
-                                if (falseCount / trueCount > 0.8f) {
+                        if (audioChannel?.initialized == true) {
+                            falseStack.push(false)
+                            val totalSize = trueStack.size * 2 + falseStack.size
+                            if (trueStack.size > 0) {
+                                val percentFalseTotal = (falseStack.size * 1f) / totalSize
+                                if (percentFalseTotal > 0.6f) {
+                                    println("trueSize:${trueStack.size}")
+                                    println("falseSize:${falseStack.size}")
+                                    println("totalSize: $totalSize")
+                                    println("percentFalseTotal: $percentFalseTotal")
                                     audioChannel?.stopRecord()
-                                    booleanStack.clear()
+                                    trueStack.clear()
+                                    falseStack.clear()
                                 }
                             }
                         }
                     }
                     1 -> {
 //                        Log.i("VoiceRecorder", "人声 yes")
-                        booleanStack.push(true)
-                        if (!ttsIsPlaying) {
-                            audioChannel?.startRecord(audioBuffer2)
+                        trueStack.push(true)
+                        if (audioChannel?.initialized == false) {
+                            audioChannel?.initRecord(audioBuffer)
                         }
                     }
                     else -> {
