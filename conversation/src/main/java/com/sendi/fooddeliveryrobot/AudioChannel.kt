@@ -48,72 +48,75 @@ class AudioChannel(audioRecord: AudioRecord) {
 
 
     private fun init() {
-        Log.i("AudioChannel", "init")
-        initialized = true
-        time = "${System.currentTimeMillis()}"
-        try {
-            // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
-            writer = FileOutputStream(
-                Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm", true
-            )
+        synchronized(this){
+            Log.i("AudioChannel", "init")
+            initialized = true
+            time = "${System.currentTimeMillis()}"
+            try {
+                // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
+                writer = FileOutputStream(
+                    Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm", true
+                )
 
-        } catch (e: IOException) {
-            e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
-
     }
 
     private fun stopWrite(){
-        Log.i("AudioChannel", "stopWrite")
-        initialized = false
-        try {
-            writer?.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        PcmToWavUtil(
-            audioRecord?.sampleRate?:44100, audioRecord?.channelConfiguration?:AudioFormat.CHANNEL_IN_MONO,
-            audioRecord?.channelCount?:2, AudioFormat.ENCODING_PCM_16BIT
-        ).pcmToWav(
-            Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm",
-            Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav"
-        )
+        synchronized(this){
+            Log.i("AudioChannel", "stopWrite")
+            initialized = false
+            try {
+                writer?.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            PcmToWavUtil(
+                audioRecord?.sampleRate?:44100, audioRecord?.channelConfiguration?:AudioFormat.CHANNEL_IN_MONO,
+                audioRecord?.channelCount?:2, AudioFormat.ENCODING_PCM_16BIT
+            ).pcmToWav(
+                Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm",
+                Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav"
+            )
 
-        val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
-        val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
-        val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
-        val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
-        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
-        call?.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                try {
-                    val s = response.body()?.string()
-                    if (!s.isNullOrEmpty()) {
-                        Log.i("AudioChannel", s)
-                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
-                        val textProcessed = audioTransTextModel.text_postprocessed?:""
-                        val resultList = HanziToPinyin.instance?.get(textProcessed)
-                        val stringBuilder = StringBuilder()
-                        resultList?.map {
-                            Log.i("AudioChannel", it.toString())
-                            stringBuilder.append(it.target)
+            val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
+            val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
+            val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
+            val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
+            val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
+            call?.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    try {
+                        val s = response.body()?.string()
+                        if (!s.isNullOrEmpty()) {
+                            Log.i("AudioChannel", s)
+                            val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
+                            val textProcessed = audioTransTextModel.text_postprocessed?:""
+                            val resultList = HanziToPinyin.instance?.get(textProcessed)
+                            val stringBuilder = StringBuilder()
+                            resultList?.map {
+                                Log.i("AudioChannel", it.toString())
+                                stringBuilder.append(it.target)
+                            }
+                            callback?.invoke(textProcessed, stringBuilder.toString())
                         }
-                        callback?.invoke(textProcessed, stringBuilder.toString())
+                    } catch (e: IOException) {
+                        throw RuntimeException(e)
+                    }finally {
+                        fileWav.delete()
+                        filePcm.delete()
                     }
-                } catch (e: IOException) {
-                    throw RuntimeException(e)
-                }finally {
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.e("AudioChannel", t.message!!)
                     fileWav.delete()
                     filePcm.delete()
                 }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("AudioChannel", t.message!!)
-                fileWav.delete()
-                filePcm.delete()
-            }
-        })
+            })
+        }
 //        Log.i("AudioChannel", "AudioChannel run finish ")
     }
 
