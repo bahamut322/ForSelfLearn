@@ -221,7 +221,8 @@
     <string name="current_volume">当前音量</string>
     <string name="hello_we_are_going_to_please_follow_me">您好，我们正要前往%s%s，请跟我来，要跟紧我哟</string>
     <string name="hello_we_are_going_to_please_follow_me_1">您好，欢迎来到"中国电信数字化体验中心"，我们正在前往%s</string>
-    <string name="business_going">正在进行 %s</string>
+    <string name="business_going">正在前往 %s</string>
+    <string name="business_doing">正在进行 %s</string>
     <string name="what_is_up">怎么了呀？那我就等你一下吧</string>
     <string name="welcome_to_use_delivery_please_input_password">您好，欢迎使用送物功能，请输入验证密码</string>
     <string name="xiao_di_serve_you_please_input_room_number">小迪为您服务，请输入要前往的房间号</string>

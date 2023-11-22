@@ -818,6 +818,18 @@ class InteractionMqtt {
                         updateAll(GuidePointPicDB::class.java, values, "pointname = ? and mapname = ?",points.pointName,maps.mapName)
                         RobotStatus.newUpdata.postValue(2)
                         continue
+                    }else if (points.pointTimeStamp!! <= 0){
+                        Log.e("TAG", "ActionShoppingType: 引领数据删除")
+                        // 删除map中的数据
+                        guidPointTime.remove(points.pointName)
+                        //删除对应的图片文件夹
+                        MqttMessageHandler.deleteFiles(File(Universal.robotFile + "GuidePic/" + points.pointName + "/"))
+                        //删除数据库中的数据
+                        DeleteSql.deleteGuidePointConfig(
+                            points.pointName,
+                            maps.mapName
+                        )
+                        continue
                     }
                 }
 

@@ -13,6 +13,7 @@ import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentFinishDockBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.service.UpdateReturn
@@ -42,6 +43,9 @@ class FinishReadyFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         controller = Navigation.findNavController(requireView())
         binding.successTv.text = "已到达待命点"
+        Universal.guideTask = false
+        RobotStatus.selectRoutMapItem!!.postValue(-1)
+        Universal.businessTask = null
         MainScope().launch {
             virtualTaskExecute(2, "到达待命点")
             RobotStatus.batteryStateNumber.value = true

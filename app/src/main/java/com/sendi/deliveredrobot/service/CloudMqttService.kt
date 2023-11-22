@@ -175,8 +175,8 @@ class CloudMqttService : Service() {
         @Throws(Exception::class)
         override fun messageArrived(topic: String, message: MqttMessage) {
             if (topic == "${RESPONSE_TOPIC}/${RobotStatus.SERIAL_NUMBER}") {
-                MqttMessageHandler.receive(message)
                 LogUtil.i("{MQTT:$topic}收到消息:" + String(message.payload))
+                MqttMessageHandler.receive(message)
             }
         }
 

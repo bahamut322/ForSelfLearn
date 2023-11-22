@@ -73,6 +73,14 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/business_going"/>
 
+        <ImageView
+            android:id="@+id/argPic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/motionLayoutGuideArrive"
             android:layout_width="match_parent"
@@ -124,12 +132,13 @@
                     android:layout_width="800dp"
                     android:layout_height="@dimen/dp_400"
                     android:layout_gravity="center"
+                    android:background="@drawable/img_arrive"
                     android:contentDescription="@string/image_description"
                     app:layout_constraintBottom_toBottomOf="@+id/lin"
                     app:layout_constraintEnd_toEndOf="@id/motionLayoutGuideArrive"
                     app:layout_constraintStart_toStartOf="@id/motionLayoutGuideArrive"
                     app:layout_constraintTop_toTopOf="@id/motionLayoutGuideArrive"
-                    tools:src="@drawable/img_arrive" />
+                   />
 
             </LinearLayout>
 

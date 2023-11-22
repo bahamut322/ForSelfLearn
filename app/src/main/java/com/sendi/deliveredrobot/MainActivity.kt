@@ -38,6 +38,7 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
+import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -515,7 +516,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             if (sdScreenStatus!!.value == 2 && mPresentation != null) {
                 renovate()
                 doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.SecondModel!!.value?.type!! !=0) {
+                if (RobotStatus.SecondModel!!.value?.type !=0) {
                     layoutThis(
                         RobotStatus.SecondModel!!.value?.picPlayTime!!,
                         RobotStatus.SecondModel!!.value?.file,
@@ -553,7 +554,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             if (sdScreenStatus!!.value == 4 && mPresentation != null) {
                 renovate()
                 doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.businessBigModel!!.value?.type!! !=0) {
+                if (RobotStatus.businessBigModel!!.value?.type !=0) {
                     layoutThis(
                         RobotStatus.businessBigModel!!.value?.picPlayTime!!,
                         RobotStatus.businessBigModel!!.value?.file,
@@ -591,7 +592,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             if (sdScreenStatus!!.value == 3 && mPresentation != null) {
                 renovate()
                 doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.businessBigModel!!.value?.type!! !=0) {
+                if (RobotStatus.businessBigModel!!.value?.type !=0) {
                     layoutThis(
                         RobotStatus.businessBigModel!!.value?.picPlayTime!!,
                         RobotStatus.businessBigModel!!.value?.file,
@@ -607,7 +608,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         RobotStatus.businessBigModel!!.value?.videoAudio!!
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    val defaultModel =DefaultModel(file = Universal.guideDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
                     Log.d(TAG, "screenRenew:file "+defaultModel.file)
                     layoutThis(
                         defaultModel.picPlayTime!!,
@@ -650,18 +651,18 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             renovate()
             if (mPresentation != null) {
                 layoutThis(
-                    it?.picPlayTime!!,
-                    it.file,
-                    it.type!!,
-                    it.textPosition!!,
-                    it.fontLayout!!,
-                    it.fontContent,
-                    it.fontBackGround,
-                    it.fontColor,
-                    it.fontSize!!,
-                    it.picType!!,
-                    it.videolayout!!,
-                    it.videoAudio!!
+                    it?.picPlayTime ?: 30,
+                    it?.file ?: "",
+                    it?.type ?: 0,
+                    it?.textPosition ?: 0,
+                    it?.fontLayout?: 0,
+                    it?.fontContent,
+                    it?.fontBackGround,
+                    it?.fontColor,
+                    it?.fontSize?: 0,
+                    it?.picType?: 0,
+                    it?.videolayout?: 0,
+                    it?.videoAudio?: 0
                 )
             }
         }

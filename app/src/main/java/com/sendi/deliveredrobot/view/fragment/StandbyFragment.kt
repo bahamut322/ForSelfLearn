@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
@@ -58,19 +59,28 @@ class StandbyFragment : Fragment() {
     }
 
     private fun getFilesAllNames(path: String?) {
-        //传入指定文件夹的路径
+        // 传入指定文件夹的路径
         val file = path?.let { File(it) }
-        val files = file?.listFiles()!!
-        imagePaths = ArrayList()
-        for (value in files) {
-            if (checkIsImageFile(value.path)) {
-                //图片
-                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "2",1,3))
-            }else {
-                //视频
-                (imagePaths as ArrayList<Advance>).add(Advance(value.path, "1",0,3))
+        if (file?.exists() == true) { // 检查文件夹是否存在
+            val files = file.listFiles()
+            if (files != null && files.isNotEmpty()) { // 检查文件夹内容是否为空
+                imagePaths = ArrayList()
+                for (value in files) {
+                    if (checkIsImageFile(value.path)) {
+                        // 图片
+                        (imagePaths as ArrayList<Advance>).add(Advance(value.path, "2", 1, 3))
+                    } else {
+                        // 视频
+                        (imagePaths as ArrayList<Advance>).add(Advance(value.path, "1", 0, 3))
+                    }
+                }
+                binding.Standby.setData(imagePaths) // 将数据传入到控件中显示
+            } else {
+                (imagePaths as ArrayList<Advance>).add(Advance(Universal.gifDefault, "1", 0, 3))
+                binding.Standby.setData(imagePaths) // 将数据传入到控件中显示
             }
-            binding.Standby.setData(imagePaths) //将数据传入到控件中显示
+        } else {
+          LogUtil.e("待机时传入无效路径")
         }
     }
 

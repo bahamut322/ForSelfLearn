@@ -261,11 +261,12 @@ FROM
 	INNER JOIN map_point ON relationship_point.point_id = map_point.id
 	INNER JOIN map_route ON relationship_point.route_id = map_route.id
 WHERE
-	relationship_point.root_map_id = (SELECT root_map_id FROM map_config) AND map_point.type = :type AND map_point.name = :name
+	relationship_point.root_map_id = (SELECT root_map_id FROM map_config) AND map_point.name = :name
+    AND map_point.type IN (${PointType.CHARGE_POINT}, ${PointType.READY_POINT})
     """
     )
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    fun queryPointName(type: Int,name: String): QueryPointEntity?
+    fun queryPointName(name: String): QueryPointEntity?
 
 
     /**

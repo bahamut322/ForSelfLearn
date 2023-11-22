@@ -12,13 +12,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
+import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -27,9 +27,9 @@ import com.sendi.deliveredrobot.entity.ShoppingActionDB
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
-import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.TaskQueues
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
@@ -38,7 +38,6 @@ import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.Stat
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -50,7 +49,6 @@ import java.io.File
  */
 class BusinessIngFragment : Fragment() {
     private lateinit var binding: FragmentBusinessingBinding
-    private lateinit var mainScope: CoroutineScope
     private var controller: NavController? = null
     private var viewModel: BusinessViewModel? = null
     var pointName: String = RobotStatus.shoppingName
@@ -96,14 +94,17 @@ class BusinessIngFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
-
         processClickDialog = ProcessClickDialog(requireActivity())
         finishTaskDialog = FinishTaskDialog(requireActivity())
         processClickDialog?.setCountdownTime(QuerySql.QueryBasic().businessWhetherTime)//打断任务时间
-        LogUtil.i("打断任务时间："+QuerySql.QueryBasic().businessWhetherTime)
+        LogUtil.i("打断任务时间：" + QuerySql.QueryBasic().businessWhetherTime)
 
         status()
-        actionData = QuerySql.SelectActionData(QuerySql.robotConfig().mapName, pointName,RobotStatus.shoppingType)
+        actionData = QuerySql.SelectActionData(
+            QuerySql.robotConfig().mapName,
+            pointName,
+            RobotStatus.shoppingType
+        )
         LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
 
 
@@ -112,38 +113,49 @@ class BusinessIngFragment : Fragment() {
         viewModel!!.secondBusinessScreenModel(actionData)
         //小屏显示
         try {
-
-
-        layoutThis(
-            actionData?.touchScreenConfig!!.touch_picPlayTime,
-            actionData?.touchScreenConfig!!.touch_imageFile ?: "",
-            actionData?.touchScreenConfig!!.touch_type,
-            actionData?.touchScreenConfig!!.touch_textPosition,
-            actionData?.touchScreenConfig!!.touch_fontLayout,
-            actionData?.touchScreenConfig?.touch_fontContent ?: "",
-            actionData?.touchScreenConfig!!.touch_fontBackGround ?: "",
-            actionData?.touchScreenConfig!!.touch_fontColor ?: "",
-            actionData?.touchScreenConfig!!.touch_fontSize,
-            actionData?.touchScreenConfig!!.touch_picType
-        )
-        }catch (_:Exception){
+            //正常图片&文字
+            layoutThis(
+                actionData?.touchScreenConfig!!.touch_picPlayTime,
+                actionData?.touchScreenConfig!!.touch_imageFile ?: "",
+                actionData?.touchScreenConfig!!.touch_type,
+                actionData?.touchScreenConfig!!.touch_textPosition,
+                actionData?.touchScreenConfig!!.touch_fontLayout,
+                actionData?.touchScreenConfig?.touch_fontContent ?: "",
+                actionData?.touchScreenConfig!!.touch_fontBackGround ?: "",
+                actionData?.touchScreenConfig!!.touch_fontColor ?: "",
+                actionData?.touchScreenConfig!!.touch_fontSize,
+                actionData?.touchScreenConfig!!.touch_picType
+            )
+            //表情组（不可点击 单独处理）
+            if (actionData?.touchScreenConfig!!.touch_type == 4) {
+                Glide.with(this)
+                    .asGif()
+                    .load(actionData?.touchScreenConfig!!.touch_walkPic)
+                    .placeholder(R.drawable.ic_warming) // 设置默认图片
+                    .into(binding.argPic)
+            }
+        } catch (_: Exception) {
 
         }
         lifecycleScope.launch {
-            delay(2000L) // 延迟1秒
+            delay(1000L) // 延迟1秒
 
             if (actionData?.actionType == 2) {
                 RobotStatus.repeatedReading++
                 //添加任务
                 if (RobotStatus.repeatedReading % 2 == 0) {
                     viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
+                    binding.businessName.text =
+                        String.format(getString(R.string.business_going), actionData!!.name)
+                    Universal.businessTask = actionData!!.name
                 }
             } else {
                 viewModel!!.splitTextByPunctuation(actionData?.standText)
+                binding.businessName.text =
+                    String.format(getString(R.string.business_doing), actionData!!.name)
             }
         }
 
-        binding.businessName.text = String.format(getString(R.string.business_going), actionData!!.name)
         binding.bottomAlarmTextViewArrive.text = actionData!!.name
 
         // 添加第一个源（到点）
@@ -173,10 +185,13 @@ class BusinessIngFragment : Fragment() {
                         viewModel!!.hasArrive = true
                         Order.setFlage("0")
                         LogUtil.i("到点，并任务执行完毕")
+                        RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
                     } else if (actionData?.moveText.isNullOrEmpty() && value1 == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
+                        Order.setFlage("0")
                         LogUtil.i("到点，并任务执行完毕")
+                        RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
                     }
                 }
@@ -190,6 +205,7 @@ class BusinessIngFragment : Fragment() {
                     LogUtil.i("day:${viewModel!!.hasArrive},${Universal.ExplainLength},${it}")
                     if (it == Universal.ExplainLength && !viewModel!!.hasArrive) {
                         LogUtil.i("任务执行完毕")
+                        Order.setFlage("0")
                         //定点任务完成倒计时
                         viewModel!!.countDownTimer!!.startCountDown()
                     }
@@ -198,10 +214,11 @@ class BusinessIngFragment : Fragment() {
         }
 
         //暂停
-        binding.pauseCon.setOnClickListener {
-            if (QuerySql.QueryBasic().businessInterrupt)
+        binding.argPic.setOnClickListener {
+            if (QuerySql.QueryBasic().businessInterrupt && actionData!!.touchScreenConfig?.touch_type != 4) {
                 processClickDialog?.show()
-            pause()
+                pause()
+            }
         }
     }
 
@@ -228,16 +245,24 @@ class BusinessIngFragment : Fragment() {
         if (!viewModel!!.hasArrive) {
             return
         }
+        //到点表情组
+        if (actionData?.touchScreenConfig!!.touch_type == 4) {
+            Glide.with(this)
+                .asGif()
+                .load(actionData?.touchScreenConfig!!.touch_arrivePic)
+                .placeholder(R.drawable.ic_warming) // 设置默认图片
+                .into(binding.argPic)
+        }
         viewModel!!.splitTextByPunctuation(arriveText!!)
-
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
-            LogUtil.i("到点，并任务执行完毕")
+            LogUtil.i("到点，并任务执行完毕_返回")
+            Order.setFlage("0")
             viewModel!!.countDownTimer!!.startCountDown()
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.ExplainLength && viewModel!!.hasArrive) {
+                LogUtil.i("到点，并任务执行完毕_返回")
                 Order.setFlage("0")
-                LogUtil.i("到点，并任务执行完毕")
                 viewModel!!.countDownTimer!!.startCountDown()
 
             }
@@ -249,8 +274,14 @@ class BusinessIngFragment : Fragment() {
     private fun pause() {
         processClickDialog?.otherBtn?.visibility = View.GONE //切换其他任务
         processClickDialog?.nextBtn?.visibility = View.GONE //下一个任务
+        viewModel!!.countDownTimer!!.pause()
         processClickDialog?.finishBtn?.setOnClickListener {
             secondRecognition()
+        }
+        processClickDialog?.continueBtn?.setOnClickListener { view: View? ->
+            viewModel!!.countDownTimer!!.resume()
+            UpdateReturn().resume()
+            processClickDialog?.dismiss()
         }
     }
 
@@ -258,6 +289,7 @@ class BusinessIngFragment : Fragment() {
     private fun secondRecognition() {
         finishTaskDialog?.show()
         finishTaskDialog?.YesExit?.setOnClickListener {
+            viewModel!!.countDownTimer!!.cancel()
             when (actionData!!.actionType) {
                 2 -> {
                     processClickDialog?.dismiss()
@@ -274,7 +306,10 @@ class BusinessIngFragment : Fragment() {
                 }
             }
         }
-        finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+        finishTaskDialog?.NoExit?.setOnClickListener {
+            viewModel!!.countDownTimer!!.resume()
+            finishTaskDialog?.dismiss()
+        }
     }
 
     /**

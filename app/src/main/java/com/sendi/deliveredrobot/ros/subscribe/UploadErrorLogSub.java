@@ -44,7 +44,7 @@ public class UploadErrorLogSub extends IAbstractClient {
         LocalDateTime localDateTime = LocalDateTime.now();
         String time = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         ChassisLogModel chassisLogModel = new ChassisLogModel(time, error_log);
-        CloudMqttService.Companion.publish(chassisLogModel.toString(),true,2);
+//        CloudMqttService.Companion.publish(chassisLogModel.toString(),true,2);
     }
 
     @Override

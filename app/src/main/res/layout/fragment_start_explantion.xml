@@ -237,7 +237,7 @@
 
                 <TextView
                     android:id="@+id/horizontalTV"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginEnd="@dimen/dp_32"
@@ -250,7 +250,7 @@
                 <!--80大 60中 40小 -->
                 <com.sendi.deliveredrobot.view.widget.VerticalTextView
                     android:id="@+id/verticalTV"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginEnd="@dimen/dp_32"

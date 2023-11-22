@@ -11,9 +11,9 @@ data class ShoppingActionDB(
     //导购子功能名称
     var name: String? = "",
     //导购子功能动作类型 1：定点 2：去某点
-    var actionType: Int? = 2,
+    var actionType: Int? = 1,
     //目标点名字
-    var pointName: String? = "",
+    var pointName: String? = "定点任务",
     //等待时间
     var waitingTime: Int? = 20,
     //大屏配置

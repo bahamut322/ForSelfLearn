@@ -2,6 +2,8 @@ package com.sendi.deliveredrobot.viewmodel
 
 import android.content.Intent
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
@@ -21,6 +23,7 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -71,12 +74,28 @@ class BusinessViewModel : ViewModel() {
         return splitText
     }
 
+    fun restoreVideo(owner: LifecycleOwner) {
+        // 创建一个观察者
+        val observer = Observer<Int> {
+            if (it == Universal.ExplainLength) {
+                LogUtil.i("恢复视频声音")
+                // 恢复视频声音
+                Order.setFlage("0")
+            }
+        }
+        // 检查是否已经添加了观察者
+        if (!RobotStatus.progress.hasObservers()) {
+            // 如果没有观察者，则添加新的观察者
+            RobotStatus.progress.observe(owner, observer)
+        }
+    }
+
     /**
      * 倒计时
      * @param timer 倒计时所需时间
      * @param type 任务类型
      */
-    fun downTimer(timer:Int, type : Int,controller: NavController) {
+    fun downTimer(timer: Int, type: Int, controller: NavController) {
         RobotStatus.speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = timer * 1000L, // 倒计时总时长，单位为毫秒
@@ -92,9 +111,9 @@ class BusinessViewModel : ViewModel() {
                 RobotStatus.progress.postValue(0)
                 hasArrive = false
                 RobotStatus.ready.postValue(0)
-                if (type == 1){
+                if (type == 1) {
                     pageJump(controller)
-                }else{
+                } else {
                     TaskNext.setToDo("1")
                     splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)
 //                    BillManager.currentBill()?.executeNextTask()
@@ -112,22 +131,23 @@ class BusinessViewModel : ViewModel() {
 
 //            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
+            Order.setFlage("0")
             RobotStatus.ArrayPointExplan.postValue(0)
         }
     }
 
-    fun secondBusinessScreenModel( mData: ShoppingActionDB?) {
-        var file  = ""
-        if (mData!!.bigScreenConfig?.videoFile !=null){
+    fun secondBusinessScreenModel(mData: ShoppingActionDB?) {
+        var file = ""
+        if (mData!!.bigScreenConfig?.videoFile != null) {
             file = mData.bigScreenConfig?.videoFile.toString()
-        }else if (mData.bigScreenConfig?.imageFile!=null){
+        } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
         RobotStatus.businessBigModel?.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,
-                type = mData.bigScreenConfig?.type,
+                type = mData.bigScreenConfig?.type ?: 0,
                 textPosition = mData.bigScreenConfig?.textPosition,
                 fontLayout = mData.bigScreenConfig?.fontLayout,
                 fontContent = mData.bigScreenConfig?.fontContent.toString(),
@@ -142,18 +162,19 @@ class BusinessViewModel : ViewModel() {
         RobotStatus.sdScreenStatus!!.postValue(4)
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
-    fun secondGuideScreenModel( mData: GuideFoundationConfigDB?) {
-        var file  = ""
-        if (mData!!.bigScreenConfig?.videoFile !=null){
+
+    fun secondGuideScreenModel(mData: GuideFoundationConfigDB?) {
+        var file = ""
+        if (mData!!.bigScreenConfig?.videoFile != null) {
             file = mData.bigScreenConfig?.videoFile.toString()
-        }else if (mData.bigScreenConfig?.imageFile!=null){
+        } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
         RobotStatus.businessBigModel?.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,
-                type = mData.bigScreenConfig?.type,
+                type = mData.bigScreenConfig?.type ?: 0,
                 textPosition = mData.bigScreenConfig?.textPosition,
                 fontLayout = mData.bigScreenConfig?.fontLayout,
                 fontContent = mData.bigScreenConfig?.fontContent.toString(),
@@ -170,7 +191,7 @@ class BusinessViewModel : ViewModel() {
     }
 
 
-    fun pageJump(controller : NavController) {
+    fun pageJump(controller: NavController) {
         when (FunctionSkip.selectFunction()) {
             0 -> {
                 MyApplication.instance?.sendBroadcast(Intent().apply {
@@ -214,7 +235,8 @@ class BusinessViewModel : ViewModel() {
             }
 
             -1 -> {
-                Toast.makeText(MyApplication.context, "请勾选主页面功能模块", Toast.LENGTH_SHORT).show()
+                Toast.makeText(MyApplication.context, "请勾选主页面功能模块", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }

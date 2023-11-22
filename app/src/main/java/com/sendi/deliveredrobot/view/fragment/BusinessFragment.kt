@@ -12,6 +12,7 @@ import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
@@ -57,7 +58,7 @@ class BusinessFragment : Fragment() {
     private var shoppingActionList: List<ShoppingActionDB> = ArrayList()
     val mainScope = MainScope()
     val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
-    private val viewModel: BusinessViewModel by viewModels({ requireActivity() })
+    private var viewModel: BusinessViewModel?  = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,11 +94,13 @@ class BusinessFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(requireView())
         val toSettingDialog = FromeSettingDialog(context)
+        viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
+        viewModel!!.restoreVideo(viewLifecycleOwner)
         //设置速度
         ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
         updateDataAndRefreshList()
         //进入页面播报
-        viewModel.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
+        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE
             binding.llReturn.visibility = View.VISIBLE
@@ -135,10 +138,9 @@ class BusinessFragment : Fragment() {
         //item点击
         binding.businessGv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                if (RobotStatus.batteryStateNumber.value == false) {
-                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                if (RobotStatus.batteryStateNumber.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
                     DialogHelper.briefingDialog.show()
-                } else {
+                }else {
                     LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")
 
                     RobotStatus.shoppingName = shoppingActionList[position].pointName!!

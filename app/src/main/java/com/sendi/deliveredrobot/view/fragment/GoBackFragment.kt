@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -26,57 +28,9 @@ import kotlin.properties.Delegates
 
 class GoBackFragment : Fragment() {
     private lateinit var binding: FragmentGoBackBinding
-    private var timer: Timer? = null
-    private var timer2:Timer? = null
     private lateinit var seconds: MutableLiveData<Int>
     private lateinit var mainScope: CoroutineScope
-    private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
 
-    private var state by Delegates.observable(0){
-            _, _, newValue ->
-        when (newValue) {
-            0 -> {
-                IdleGateDataHelper.reportIdleGateCount()
-                binding.imageViewGoBack.apply {
-                    isEnabled = true
-                }
-                mainScope.launch {
-                    withContext(Dispatchers.Default) {
-                        virtualTaskExecute(5, "GoBackFragment语音前")
-                        if (CommonHelper.atChargePointFloor()) {
-                            //如果是在充电桩的楼层
-                            timer2?.cancel()
-                            timer2?.purge()
-                            timer2 = Timer()
-                            timer2Schedule()
-                        }
-                    }
-                }
-                seconds.value = 30
-                LogUtil.i("current:state2")
-            }
-            1 -> {
-                IdleGateDataHelper.reportIdleGateCount(0)
-                timer?.cancel()
-                timer2?.cancel()
-                timer2?.purge()
-                if (RobotStatus.stopButtonPressed.value != RobotCommand.STOP_BUTTON_PRESSED) {
-                    SpeakHelper.speak(getString(R.string.can_i_help_you))
-                    timer = Timer()
-                    timer?.schedule(object : TimerTask() {
-                        override fun run() {
-                            mainScope.launch {
-                                withContext(Dispatchers.Main) {
-                                    seconds.value = seconds.value?.minus(1)
-                                }
-                            }
-                        }
-                    }, Date(), 1000)
-                }
-                LogUtil.i("current:state3")
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,26 +62,40 @@ class GoBackFragment : Fragment() {
                         .into(this)
                 }
             }
+            Log.d("TAG", "返回查询: ${QuerySql.selectGuideFouConfig().touchScreenConfig?.touch_type},${Universal.guideTask}")
+            if (QuerySql.selectGuideFouConfig().touchScreenConfig?.touch_type == 4 && Universal.guideTask) {
+                binding.goBackTv.visibility = View.GONE
+                binding.imageViewGoBack.apply {
+                    Glide.with(this)
+                        .asGif()
+                        .load(QuerySql.selectGuideFouConfig().touchScreenConfig?.touch_overTaskPic)
+                        .placeholder(R.drawable.ic_warming) // 设置默认图片
+                        .into(this)
+                }
+            }
+            if (QuerySql.SelectActionData(
+                    QuerySql.robotConfig().mapName,
+                    Universal.businessTask,
+                    RobotStatus.shoppingType
+                ).touchScreenConfig?.touch_type == 4 && Universal.businessTask.isNullOrEmpty()
+            ) {
+                binding.goBackTv.visibility = View.GONE
+                binding.imageViewGoBack.apply {
+                    Glide.with(this)
+                        .asGif()
+                        .load(
+                            QuerySql.SelectActionData(
+                                QuerySql.robotConfig().mapName,
+                                Universal.businessTask,
+                                RobotStatus.shoppingType
+                            ).touchScreenConfig?.touch_overTaskPic
+                        )
+                        .placeholder(R.drawable.ic_warming) // 设置默认图片
+                        .into(this)
+                }
+            }
         } catch (_: Exception) {
         }
     }
 
-    /**
-     * @describe 第二个定时器（用于循环播报语音）
-     */
-    private fun timer2Schedule() {
-        val welcome1 = getString(R.string.welcome_i_am_xiao_di)
-        val welcome2 = getString(R.string.i_am_going_to_work_if_you_need_my_serve)
-        val welcome3 = getString(R.string.i_hope_to_serve_you)
-        timer2!!.schedule(object : TimerTask() {
-            override fun run() {
-                mainScope.launch(Dispatchers.IO) {
-                    if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return@launch
-                    SpeakHelper.speakWithoutStop(welcome1)
-                    SpeakHelper.speakWithoutStop(welcome2)
-                    SpeakHelper.speakWithoutStop(welcome3)
-                }
-            }
-        }, Date(), 25000)
-    }
 }

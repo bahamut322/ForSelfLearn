@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import geometry_msgs.Pose2D
+import java.util.Date
 
 /**
  *   @author: heky
@@ -26,7 +27,7 @@ object RobotStatus {
     var mqttConnected = false //mqtt连接状态
     var retryDockTimes = 0      //重试自主充电次数
     var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
-    val sysTimeStamp : MutableLiveData<Long> = MutableLiveData(0)
+    val sysTimeStamp : MutableLiveData<Long> = MutableLiveData(Date().time)
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点
     var currentLocation: QueryPointEntity? = null //记录当前所在楼层

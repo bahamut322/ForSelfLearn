@@ -13,13 +13,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
+import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -40,7 +40,6 @@ import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.Stat
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
-import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -96,6 +95,7 @@ class GuidingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
+        Universal.guideTask = true
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         processClickDialog = ProcessClickDialog(requireActivity())
@@ -108,8 +108,8 @@ class GuidingFragment : Fragment() {
             Universal.speakInt++
             var pointName = bill?.endTarget()
             pointName = pointName?.toList()?.joinToString(" ")
-            binding.businessName.text = pointName
             binding.bottomAlarmTextViewArrive.text = pointName
+            binding.businessName.text = String.format(getString(R.string.business_going), pointName)
         }
 //        }
 
@@ -121,26 +121,37 @@ class GuidingFragment : Fragment() {
         //副屏显示
         viewModel!!.secondGuideScreenModel(actionData)
         //小屏显示
-        layoutThis(
-            actionData?.touchScreenConfig!!.touch_picPlayTime,
-            actionData?.touchScreenConfig!!.touch_imageFile ?: "",
-            actionData?.touchScreenConfig!!.touch_type,
-            actionData?.touchScreenConfig!!.touch_textPosition,
-            actionData?.touchScreenConfig!!.touch_fontLayout,
-            actionData?.touchScreenConfig?.touch_fontContent ?: "",
-            actionData?.touchScreenConfig!!.touch_fontBackGround ?: "",
-            actionData?.touchScreenConfig!!.touch_fontColor ?: "",
-            actionData?.touchScreenConfig!!.touch_fontSize,
-            actionData?.touchScreenConfig!!.touch_picType
-        )
+        try {
+            //正常图片&文字
+            layoutThis(
+                actionData?.touchScreenConfig!!.touch_picPlayTime,
+                actionData?.touchScreenConfig!!.touch_imageFile ?: "",
+                actionData?.touchScreenConfig!!.touch_type,
+                actionData?.touchScreenConfig!!.touch_textPosition,
+                actionData?.touchScreenConfig!!.touch_fontLayout,
+                actionData?.touchScreenConfig?.touch_fontContent ?: "",
+                actionData?.touchScreenConfig!!.touch_fontBackGround ?: "",
+                actionData?.touchScreenConfig!!.touch_fontColor ?: "",
+                actionData?.touchScreenConfig!!.touch_fontSize,
+                actionData?.touchScreenConfig!!.touch_picType
+            )
+            //表情组（不可点击 单独处理）
+            if (actionData?.touchScreenConfig!!.touch_type == 4) {
+                Glide.with(this)
+                    .asGif()
+                    .load(actionData?.touchScreenConfig!!.touch_walkPic)
+                    .placeholder(R.drawable.ic_warming) // 设置默认图片
+                    .into(binding.argPic)
+            }
+        } catch (_: Exception) {
+        }
 
 
 
         lifecycleScope.launch {
             delay(1000L) // 延迟1秒
             RobotStatus.repeatedReading++
-            LogUtil.i("激素："+RobotStatus.repeatedReading)
-            if ( RobotStatus.repeatedReading % 2 == 0) {
+            if (RobotStatus.repeatedReading % 2 == 0) {
                 viewModel!!.splitTextByPunctuation(actionData?.movePrompt!!)
             }
 
@@ -159,25 +170,28 @@ class GuidingFragment : Fragment() {
         mediatorLiveData.observe(viewLifecycleOwner) { (value1, value2) ->
             // 非定点任务
             if (value2 == Universal.ExplainLength && value1 == 1 && !viewModel!!.hasArrive) {
-                viewModel!!.hasArrive = true
-                Order.setFlage("0")
                 LogUtil.i("到点，并任务执行完毕")
-                RobotStatus.progress.postValue(0)
+                RobotStatus.progress.value = 0
+                Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
+                viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
             } else if (actionData?.movePrompt.isNullOrEmpty() && value1 == 1 && !viewModel!!.hasArrive) {
-                viewModel!!.hasArrive = true
                 LogUtil.i("到点，并任务执行完毕")
-                RobotStatus.progress.postValue(0)
+                RobotStatus.progress.value = 0
+                Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
+                viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
             }
         }
 
         //暂停
-        binding.pauseCon.setOnClickListener {
-            processClickDialog?.show()
-            pause()
+        binding.argPic.setOnClickListener {
+            if (actionData!!.touchScreenConfig?.touch_type != 4) {
+                processClickDialog?.show()
+                pause()
+            }
         }
     }
 
@@ -212,21 +226,32 @@ class GuidingFragment : Fragment() {
         if (!viewModel!!.hasArrive) {
             return
         }
-        binding.motionLayoutGuideArrive.visibility = View.VISIBLE
+        //到点表情组
+        if (actionData?.touchScreenConfig!!.touch_type == 4) {
+            Glide.with(this)
+                .asGif()
+                .load(actionData?.touchScreenConfig!!.touch_arrivePic)
+                .placeholder(R.drawable.ic_warming) // 设置默认图片
+                .into(binding.argPic)
+        }else{
+            binding.motionLayoutGuideArrive.visibility = View.VISIBLE
+        }
+        RobotStatus.progress.postValue(0)
         viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
-            LogUtil.i("到点，并任务执行完毕")
+            LogUtil.i("到点，并任务执行完毕_返回")
             BillManager.currentBill()?.executeNextTask()
             RobotStatus.progress.postValue(0)
+            Order.setFlage("0")
             RobotStatus.ready.postValue(0)
             viewModel!!.hasArrive = false
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.ExplainLength && viewModel!!.hasArrive) {
-                Order.setFlage("0")
-                LogUtil.i("到点，并任务执行完毕")
+                LogUtil.i("到点，并任务执行完毕_返回")
                 BillManager.currentBill()?.executeNextTask()
                 RobotStatus.progress.postValue(0)
+                Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = false
             }

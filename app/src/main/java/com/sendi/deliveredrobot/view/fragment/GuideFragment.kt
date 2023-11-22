@@ -11,6 +11,7 @@ import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.BuildConfig
@@ -36,6 +37,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
@@ -45,6 +47,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Timer
+import kotlin.concurrent.thread
 
 
 /**
@@ -58,7 +61,7 @@ class GuideFragment : Fragment() {
     private lateinit var binding: FragmentGuideBinding
     val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var queryFloorPoints: List<QueryPointEntity> = ArrayList()
-    private val viewModel: BusinessViewModel by viewModels({ requireActivity() })
+    private var viewModel: BusinessViewModel?  = null
     private var fromType: String? = null
     private lateinit var timer: Timer
 
@@ -96,8 +99,10 @@ class GuideFragment : Fragment() {
         //回到主页面的时候初始化一下选择讲解点的值
         selectRoutMapItem!!.postValue(-1)
         pointItem!!.postValue(-1)
+        viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         updateDataAndRefreshList()
-        viewModel.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
+        viewModel!!.restoreVideo(viewLifecycleOwner)
+        viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
 //        UpdateReturn().method()
         controller = Navigation.findNavController(requireView())
         timer = Timer()
@@ -121,8 +126,7 @@ class GuideFragment : Fragment() {
         //item点击
         binding.GvGuideList.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                if (RobotStatus.batteryStateNumber.value == false) {
-                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+                if (RobotStatus.batteryStateNumber.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
                     DialogHelper.briefingDialog.show()
                 } else {
                     BaiduTTSHelper.getInstance().stop()

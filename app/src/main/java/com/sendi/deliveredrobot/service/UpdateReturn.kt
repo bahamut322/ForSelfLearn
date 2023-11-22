@@ -147,6 +147,7 @@ class UpdateReturn {
                 val shoppingGuide = JSONObject()
 
                 val jsonObject = JSONObject()//时间戳
+                try {
                 jsonObject["type"] = "queryConfigTime"
                 jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
                 jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
@@ -159,8 +160,9 @@ class UpdateReturn {
                 shoppingGuide["actions"] = actions
                 // 创建一个包含shoppingGuide的更大的JSONObject
                 jsonObject["shoppingGuide"] = shoppingGuide
-                jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp
+                jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp ?: 0
                 jsonObject["guide"] = QuerySql.sendGuideConfig()
+                }catch (_:Exception){}
 
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
                 //上报版本
@@ -280,7 +282,6 @@ class UpdateReturn {
             LogUtil.d("地图ID： $mapId")
             //查询充电桩
             val chargePoint = dao.queryPointName(
-                PointType.CHARGE_POINT,
                 config.chargePointName ?: ""
             )
 
@@ -324,7 +325,6 @@ class UpdateReturn {
                 }
                 //查询待命点
                 val readyPoint = dao.queryPointName(
-                    PointType.READY_POINT,
                     config.waitingPointName
                 )
                 //设置待命点

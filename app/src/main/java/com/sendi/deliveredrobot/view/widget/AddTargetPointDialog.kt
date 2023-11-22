@@ -44,15 +44,15 @@ class AddTargetPointDialog(context: Context,
     private var elevatorNameArray: Array<String>
     init {
         this.areaListData = when(model){
-          0 -> {
-              areaListData.filter {
-                  "电梯内部停靠点" != it.name
-              } as ArrayList<PublicArea>
-          }
-          1 -> {
-              areaListData
-          }
-          else -> areaListData
+            0 -> {
+                areaListData.filter {
+                    "电梯内部停靠点" != it.name
+                } as ArrayList<PublicArea>
+            }
+            1 -> {
+                areaListData
+            }
+            else -> areaListData
         }
         for (item in this.areaListData){
             areaStrList.add(item.name?:"")
@@ -110,8 +110,8 @@ class AddTargetPointDialog(context: Context,
                         position: Int,
                         id: Long
                     ) {
-                        when (position) {
-                            1 -> {
+                        when (listOf("电梯外部停靠点","电梯锚点").contains(areaListData[position].name)) {
+                            true -> {
                                 tvRange.visibility = View.VISIBLE
                                 edtRange.visibility = View.VISIBLE
                                 tvElevator.visibility = View.VISIBLE
@@ -122,7 +122,7 @@ class AddTargetPointDialog(context: Context,
                                     setLayoutParams(layoutParams)
                                 }
                             }
-                            else -> {
+                            false -> {
                                 tvRange.visibility = View.GONE
                                 edtRange.visibility = View.GONE
                                 tvElevator.visibility = View.GONE
@@ -148,8 +148,8 @@ class AddTargetPointDialog(context: Context,
                         position: Int,
                         id: Long
                     ) {
-                        when (position) {
-                            1,2 -> {
+                        when (listOf("电梯外部停靠点","电梯锚点","电梯内部停靠点").contains(areaListData[position].name)) {
+                            true -> {
 //                                tvRange.visibility = View.VISIBLE
 //                                edtRange.visibility = View.VISIBLE
                                 tvElevator.visibility = View.VISIBLE
@@ -160,7 +160,7 @@ class AddTargetPointDialog(context: Context,
                                     setLayoutParams(layoutParams)
                                 }
                             }
-                            else -> {
+                            false -> {
 //                                tvRange.visibility = View.GONE
 //                                edtRange.visibility = View.GONE
                                 tvElevator.visibility = View.GONE
@@ -207,7 +207,7 @@ class AddTargetPointDialog(context: Context,
                             0.0,
                             subMapId,
                             areaListData[spSort.selectedItemPosition].id,
-                            elevator = spElevator.selectedItem as String
+                            elevator = spElevator.selectedItem?.toString()
                         )
                         try {
                             when (newPoint.type) {
@@ -227,7 +227,7 @@ class AddTargetPointDialog(context: Context,
                             editPoint?.w,
                             subMapId,
                             areaListData[spSort.selectedItemPosition].id,
-                            elevator = spElevator.selectedItem as String
+                            elevator = spElevator.selectedItem?.toString()
                         )
                         addPointDialogListener?.confirm(newPoint,0.0)
                     }

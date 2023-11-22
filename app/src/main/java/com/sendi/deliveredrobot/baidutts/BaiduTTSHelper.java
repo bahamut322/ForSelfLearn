@@ -190,6 +190,7 @@ public class BaiduTTSHelper {
 
     public void stop(){
         synthesizer.stop();
+        Order.setFlage("0");
         MediaPlayerHelper.getInstance().resume();
     }
 

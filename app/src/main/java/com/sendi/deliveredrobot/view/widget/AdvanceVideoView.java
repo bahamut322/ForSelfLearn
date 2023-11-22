@@ -74,7 +74,7 @@ public class AdvanceVideoView extends RelativeLayout {
 
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
-        if (viewType == 1) {
+        if (viewType == 0) {
             try {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(path1);
@@ -104,7 +104,6 @@ public class AdvanceVideoView extends RelativeLayout {
                 mediaPlayer.setVolume(0, 0);
             }
             new Handler().postDelayed(() -> imageView.setVisibility(GONE), 400);//防止video view播放视频前有个闪烁的黑屏
-            Log.d("TAG", "setVideo: " + getFileCount(Universal.advertisement));
             progressBar.setVisibility(View.GONE);
             if (getFileCount(Universal.advertisement) <= 1) {
                 mediaPlayer.setLooping(true);

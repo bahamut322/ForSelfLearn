@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -36,7 +38,6 @@ class BrieFingDialog (
             }
         }
         textTip = dialogView.findViewById(R.id.tipTV)
-        textTip.text = "请把我推到充电桩后再操作"
         textViewDate = dialogView.findViewById(R.id.textViewDate)
         mWindowWidth = displayMetrics.widthPixels
         mWindowHeight = displayMetrics.heightPixels
@@ -50,6 +51,14 @@ class BrieFingDialog (
 
     private fun setDate(){
         textViewDate.text = sdf.format(Date())
+        val robotConfig = QuerySql.robotConfig()
+        if (RobotStatus.batteryStateNumber.value == false) {
+            textTip.text = "请把我推到充电桩后再操作"
+        } else if (robotConfig.chargePointName.isNullOrEmpty()) {
+            textTip.text = "请到管理平台设置充电点"
+        } else if (robotConfig.waitingPointName.isNullOrEmpty()) {
+            textTip.text = "请到管理平台设置待命点"
+        }
     }
 
     override fun show() {

@@ -42,6 +42,8 @@ public class Universal {
     public static String usherDefault = "/storage/emulated/0/ResProvider/default/usherdefault.png";
     //讲解默认图
     public static String explainDefault = "/storage/emulated/0/ResProvider/default/explandefault.png";
+    //引领默认
+    public static String guideDefault = "/storage/emulated/0/ResProvider/default/guidedefault.png";
     //存放待机视频/图片/GIF的目录
     @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
@@ -68,6 +70,10 @@ public class Universal {
     public static String advPics = "";
     //广告视频名字
     public static String advVideoFile = "";
+    //引领返回是否播放表情标志位
+    public static boolean guideTask = false;
+    //导购返回是否播放表情标志位
+    public static String businessTask = null;
 
 
     //TODO 门岗管理

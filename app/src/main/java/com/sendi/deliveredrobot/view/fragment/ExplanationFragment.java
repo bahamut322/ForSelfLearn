@@ -159,7 +159,6 @@ public class ExplanationFragment extends Fragment {
         }
         mDatas = new ArrayList<>();
         mDatas = QuerySql.queryRoute(QuerySql.robotConfig().getMapName());
-        LogUtil.INSTANCE.d("dadsad:" + mDatas.size() + "," + QuerySql.robotConfig().getMapName());
         for (int j = 0; j < childViewHalfCount; j++) { //头部的空布局
             mDatas.add(0, null);
         }
@@ -324,8 +323,7 @@ public class ExplanationFragment extends Fragment {
             //item点击
             vh.view.setOnClickListener(v -> {
                 Universal.lastValue = null;
-                if (!RobotStatus.INSTANCE.getBatteryStateNumber().getValue()) {
-                    Toast.makeText(getContext(), "请先对接充电桩", Toast.LENGTH_SHORT).show();
+                if (!RobotStatus.INSTANCE.getBatteryStateNumber().getValue()|| QuerySql.robotConfig().getChargePointName().isEmpty() || QuerySql.robotConfig().getWaitingPointName().isEmpty()) {
                     DialogHelper.briefingDialog.show();
                 } else {
                     scrollToCenter(fp);
@@ -375,19 +373,31 @@ public class ExplanationFragment extends Fragment {
         // 更新了地图配置
         Universal.mapType.observe(getViewLifecycleOwner(), mapType -> {
             if (mapType) {
-                // 设置新的适配器
+                // 初始化适配器和其他相关组件
                 init();
-                mAdapter.notifyDataSetChanged(); // 刷新列表
-                binding.explainRv.getAdapter().notifyDataSetChanged();
+                // 检查 mAdapter 是否非空，然后调用 notifyDataSetChanged()
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged(); // 刷新列表
+                }
+                // 检查 RecyclerView 和它的适配器是否非空，然后调用 notifyDataSetChanged()
+                if (binding.explainRv.getAdapter() != null) {
+                    binding.explainRv.getAdapter().notifyDataSetChanged();
+                }
             }
         });
         // 更新了引领配置
         RobotStatus.INSTANCE.getNewUpdata().observe(getViewLifecycleOwner(), newUpdata -> {
             if (newUpdata == 1 || newUpdata == 2) {
-                // 设置新的适配器
+                // 初始化适配器和其他相关组件
                 init();
-                mAdapter.notifyDataSetChanged(); // 刷新列表
-                binding.explainRv.getAdapter().notifyDataSetChanged();
+                // 检查 mAdapter 是否非空，然后调用 notifyDataSetChanged()
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged(); // 刷新列表
+                }
+                // 检查 RecyclerView 和它的适配器是否非空，然后调用 notifyDataSetChanged()
+                if (binding.explainRv.getAdapter() != null) {
+                    binding.explainRv.getAdapter().notifyDataSetChanged();
+                }
             }
         });
         RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {

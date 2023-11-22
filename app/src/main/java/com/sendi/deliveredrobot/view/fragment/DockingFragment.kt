@@ -11,8 +11,10 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentDockingBinding
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.ToastUtil
 
 /**
@@ -39,6 +41,9 @@ class DockingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
+        Universal.guideTask = false
+        RobotStatus.selectRoutMapItem!!.postValue(-1)
+        Universal.businessTask = null
 //        Glide.with(this).asGif().load(R.raw.docking).into(binding.imageViewDocking)
         binding.textViewBeginPush.apply {
             isClickable = true

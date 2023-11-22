@@ -537,23 +537,29 @@ public class QuerySql {
         return listAction;
     }
 
-    public static GuideConfigList selectGuideConfig(String rootMapName , String pointName){
-        GuideConfigList guideList = new GuideConfigList() ;
+    public static List<GuideConfigList> selectGuideConfig(String rootMapName, String pointName) {
+        List<GuideConfigList> guideList = new ArrayList<>();
+        if (rootMapName == null || pointName == null) {
+            // Handle the case where parameters are null
+            return guideList; // Return an empty list or throw an exception
+        }
         String sql = "SELECT * FROM guidepointpicdb WHERE guidepointpicdb.mapname = ? AND guidepointpicdb.pointname = ?";
-        Cursor cursor = LitePal.findBySQL(sql , rootMapName,pointName);
-        if (cursor!=null && cursor.moveToFirst()){
+        Cursor cursor = LitePal.findBySQL(sql, rootMapName, pointName);
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                guideList.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
-                guideList.setMapTimeStamp(cursor.getLong(cursor.getColumnIndex("maptimestamp")));
-                guideList.setPointName(cursor.getString(cursor.getColumnIndex("pointname")));
-                guideList.setGuidePicUrl(cursor.getString(cursor.getColumnIndex("guidepicurl")));
-                guideList.setPointTimeStamp(cursor.getLong(cursor.getColumnIndex("pointtimestamp")));
-
-            }while (cursor.moveToNext());
+                GuideConfigList guideConfig = new GuideConfigList();
+                guideConfig.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
+                guideConfig.setMapTimeStamp(cursor.getLong(cursor.getColumnIndex("maptimestamp")));
+                guideConfig.setPointName(cursor.getString(cursor.getColumnIndex("pointname")));
+                guideConfig.setGuidePicUrl(cursor.getString(cursor.getColumnIndex("guidepicurl")));
+                guideConfig.setPointTimeStamp(cursor.getLong(cursor.getColumnIndex("pointtimestamp")));
+                guideList.add(guideConfig);
+            } while (cursor.moveToNext());
             cursor.close();
         }
         return guideList;
     }
+
 
     public static List<GuideConfigList> selectGuideList(String rootMapName){
         List<GuideConfigList> guideList = new ArrayList<>() ;
