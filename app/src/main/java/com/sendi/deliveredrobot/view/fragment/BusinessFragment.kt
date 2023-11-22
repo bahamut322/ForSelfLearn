@@ -12,7 +12,6 @@ import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MediatorLiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
@@ -21,7 +20,6 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
-import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
@@ -207,7 +205,7 @@ class BusinessFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        VoiceRecorder.getInstance().callback = { _, pinyinString ->
+        VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)

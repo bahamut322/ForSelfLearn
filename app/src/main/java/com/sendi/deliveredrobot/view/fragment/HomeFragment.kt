@@ -76,7 +76,7 @@ class HomeFragment : Fragment(), IMainView {
 //            LogUtil.i("homefragment onDestinationChangedListener")
 //            voiceRecorder?.removeCallback()
 //        }
-        VoiceRecorder.getInstance().callback =  { _, pinyinString ->
+        VoiceRecorder.getInstance().recordCallback =  { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
@@ -93,9 +93,6 @@ class HomeFragment : Fragment(), IMainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         mPresenter = MainPresenter(this)
         super.onCreate(savedInstanceState)
-        thread {
-            VoiceRecorder.getInstance().startRecording()
-        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

@@ -18,11 +18,13 @@ class VoiceRecorder {
     private var audioChannel: AudioChannel? = null
 
     private val minBufferSize: Int
-    var callback: ((conversation: String, pinyinString: String)-> Unit)? = null
+    var recordCallback: ((conversation: String, pinyinString: String)-> Unit)? = null
         set(value) {
             audioChannel?.callback = value
             field = value
         }
+
+    var talkingCallback: ((talking: Boolean) -> Unit)? = null
 
     init {
         fvad = FvadWrapper()
@@ -44,9 +46,9 @@ class VoiceRecorder {
     @SuppressLint("MissingPermission")
     fun startRecording() {
         println("startRecording")
-        audioRecorder?.startRecording()
-        isRecording = true
         thread {
+            audioRecorder?.startRecording()
+            isRecording = true
             val audioBuffer = ByteArray(minBufferSize)
             val trueStack = Stack<Boolean>()
             val falseStack = Stack<Boolean>()
@@ -64,38 +66,42 @@ class VoiceRecorder {
                         shortArray[index / 2] = (audioBuffer[index - 1].toInt() and 0xff or (audioBuffer[index].toInt() shl 8)).toShort()
                     }
                 }
-                if (!ttsIsPlaying && audioChannel?.initialized == true) {
+                if (!ttsIsPlaying && audioChannel?.initialized == true && recordCallback != null) {
                     audioChannel?.writeRecord(audioBuffer)
                 }
-                when (fvad?.process(shortArray) ?: -1) {
-                    0 -> {
-//                        Log.e("VoiceRecorder", "人声 no")
-                        if (audioChannel?.initialized == true) {
-                            falseStack.push(false)
-                            val totalSize = trueStack.size * 2 + falseStack.size
-                            if (trueStack.size > 0) {
-                                val percentFalseTotal = (falseStack.size * 1f) / totalSize
-                                if (percentFalseTotal > 0.6f) {
-                                    println("trueSize:${trueStack.size}")
-                                    println("falseSize:${falseStack.size}")
-                                    println("totalSize: $totalSize")
-                                    println("percentFalseTotal: $percentFalseTotal")
-                                    audioChannel?.stopRecord()
-                                    trueStack.clear()
-                                    falseStack.clear()
+                if (recordCallback != null) {
+                    when (fvad?.process(shortArray) ?: -1) {
+                        0 -> {
+                            talkingCallback?.invoke(false)
+                            if (audioChannel?.initialized == true) {
+                                falseStack.push(false)
+                                val totalSize = trueStack.size * 2 + falseStack.size
+                                if (trueStack.size > 0) {
+                                    val percentFalseTotal = (falseStack.size * 1f) / totalSize
+                                    if (percentFalseTotal > 0.6f) {
+                                        println("trueSize:${trueStack.size}")
+                                        println("falseSize:${falseStack.size}")
+                                        println("totalSize: $totalSize")
+                                        println("percentFalseTotal: $percentFalseTotal")
+                                        audioChannel?.stopRecord()
+                                        trueStack.clear()
+                                        falseStack.clear()
+                                    }
                                 }
                             }
                         }
-                    }
-                    1 -> {
+                        1 -> {
 //                        Log.i("VoiceRecorder", "人声 yes")
-                        trueStack.push(true)
-                        if (audioChannel?.initialized == false) {
-                            audioChannel?.initRecord(audioBuffer)
+                            talkingCallback?.invoke(true)
+                            trueStack.push(true)
+                            if (audioChannel?.initialized == false && recordCallback != null) {
+                                audioChannel?.initRecord(audioBuffer)
+                            }
+
                         }
-                    }
-                    else -> {
+                        else -> {
 //                        Log.e("VoiceRecorder", "人声 unknown")
+                        }
                     }
                 }
             }
@@ -110,7 +116,7 @@ class VoiceRecorder {
     }
 
     fun removeCallback(){
-        callback = null
+        recordCallback = null
     }
 
     companion object{

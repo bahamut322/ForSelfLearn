@@ -48,9 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
-
 /**
  * @author swn
  * @describe 智能讲解
@@ -72,7 +69,7 @@ public class ExplanationFragment extends Fragment {
     public void onResume() {
         super.onResume();
         VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
-        voiceRecorder.setCallback((s, pinyinString) -> {
+        voiceRecorder.setRecordCallback((s, pinyinString) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
                 Log.i("AudioChannel", "包含" + WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);

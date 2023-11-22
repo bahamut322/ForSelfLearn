@@ -34,10 +34,12 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
+import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -108,6 +110,7 @@ class SelfCheckFragment : Fragment() {
                 }
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                VoiceRecorder.getInstance().startRecording()
                 LogUtil.i("初始化状态机")
                 if (resCheck != 0x1FF) {
                     LogUtil.d("打印收到数据——— $resCheck")

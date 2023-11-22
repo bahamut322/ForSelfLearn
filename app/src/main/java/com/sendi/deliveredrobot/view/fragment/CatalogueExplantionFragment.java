@@ -136,7 +136,7 @@ public class CatalogueExplantionFragment extends Fragment {
     public void onResume() {
         super.onResume();
         VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
-        voiceRecorder.setCallback((s, pinyinString) -> {
+        voiceRecorder.setRecordCallback((s, pinyinString) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
                 Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);

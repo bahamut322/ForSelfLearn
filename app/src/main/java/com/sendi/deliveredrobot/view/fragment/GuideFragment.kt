@@ -193,7 +193,7 @@ class GuideFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        VoiceRecorder.getInstance().callback = { _, pinyinString ->
+        VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
