@@ -68,6 +68,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechStart(String utteranceId) {
         sendMessage("播放开始回调, 序列号:" + utteranceId);
+        new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
     }
 
@@ -81,8 +82,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
-        Order.setFlage("1");
-        new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
 
         //耗时计算的方法，丢到子线程去做咯，面的卡线程
         new Thread(() -> {

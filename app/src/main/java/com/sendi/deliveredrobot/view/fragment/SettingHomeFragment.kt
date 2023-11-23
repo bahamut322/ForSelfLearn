@@ -71,7 +71,7 @@ class SettingHomeFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         fragments.add(DebugBasicSettingFragment())
         fragments.add(ModeSettingFragment())
-        fragments.add(NetworkFragment())
+        fragments.add(WifiSettingFragment())
         fragments.add(AboutMeSettingFragment())
         binding.recyclerViewSettingHome.apply {
             layoutManager = LinearLayoutManager(context)

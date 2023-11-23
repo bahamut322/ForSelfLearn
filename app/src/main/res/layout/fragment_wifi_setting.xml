@@ -17,14 +17,24 @@
             android:orientation="vertical"
             tools:context=".view.fragment.WifiSettingFragment">
 
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_81"
+                android:text="@string/Intent"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32" />
+
+
             <LinearLayout
                 android:id="@+id/linearLayoutWifiOpen"
-                android:layout_width="1006.6dp"
+                android:layout_width="@dimen/dp_1010"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="33dp"
-                android:layout_marginTop="72dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/shape_solid_0e40a4_corners_10dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_24"
+                android:background="@drawable/setting_item_bg"
                 android:minHeight="100dp"
                 android:orientation="vertical"
                 tools:ignore="UselessParent">
@@ -34,15 +44,14 @@
                     android:layout_width="1006.6dp"
                     android:layout_height="99.5dp">
 
-                    <Switch
+                    <CheckBox
                         android:id="@+id/switchOpenWifi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/dp_56"
+                        android:layout_height="@dimen/dp_32"
                         android:layout_marginStart="913dp"
                         android:layout_marginTop="36dp"
-                        android:thumb="@drawable/selector_switch_thumb"
-                        android:track="@drawable/selector_switch_track"
-                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+                        android:button="@drawable/selector_switch_track"
+                        android:layout_marginEnd="@dimen/dp_32" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -71,7 +80,7 @@
                     <ImageView
                         android:id="@+id/imageViewConnectStatus"
                         android:layout_width="32dp"
-                        android:layout_height="24dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="928dp"
                         android:contentDescription="@string/image_description"
@@ -105,21 +114,20 @@
                 android:id="@+id/textViewChooseWifi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="33dp"
-                android:layout_marginTop="69dp"
+                android:layout_marginStart="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_24"
                 android:layout_marginEnd="0dp"
                 android:text="@string/choose_wifi"
-                android:textColor="@color/color_4D6FBE"
-                android:textSize="@dimen/mid_small_small_text_size" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32" />
 
             <com.sendi.deliveredrobot.view.widget.NoScrollRecyclerView
                 android:id="@+id/recyclerViewWifi"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/dp_1010"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="33dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="41dp"
-                android:background="@drawable/shape_solid_0e40a4_corners_10dp" />
+                android:layout_gravity="center"
+                android:background="@drawable/setting_item_bg" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="75dp"/>
