@@ -68,6 +68,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechStart(String utteranceId) {
         sendMessage("播放开始回调, 序列号:" + utteranceId);
+        if (utteranceId == "explanation") {
+            return;
+        }
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
     }
 
@@ -128,7 +131,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
      */
     @Override
     public void onSpeechFinish(String utteranceId) {
-        RobotStatus.INSTANCE.setTtsIsPlaying(false);
+        if(!Objects.equals(utteranceId, "explanation")){
+            RobotStatus.INSTANCE.setTtsIsPlaying(false);
+        }
         sendMessage("播放结束回调, 序列号:" + utteranceId);
 //        if (TaskQueues.isCompleted()) {
 //            Order.setFlage("0");

@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
@@ -19,6 +21,7 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -92,7 +95,9 @@ class ConversationFragment : Fragment() {
         }
         voiceRecorder?.talkingCallback = {talking ->
             when (talking) {
-                true -> startTime = System.currentTimeMillis()
+                true -> {
+                    startTime = System.currentTimeMillis()
+                }
                 false -> {}
             }
         }
