@@ -110,6 +110,7 @@ class ConversationFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SpeakHelper.stop()
     }
 
     @SuppressLint("InflateParams")
