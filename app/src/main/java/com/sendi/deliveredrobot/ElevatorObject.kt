@@ -16,4 +16,8 @@ object ElevatorObject {
     override fun toString(): String {
         return """"""
     }
+
+    fun checkDataExist(): Boolean{
+        return originFloorModel != null && originElevatorModel != null
+    }
 }

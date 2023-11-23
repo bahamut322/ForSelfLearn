@@ -74,7 +74,7 @@ public class AdvanceVideoView extends RelativeLayout {
 
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
-        if (viewType == 0) {
+        if (viewType == 1) {
             try {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(path1);
