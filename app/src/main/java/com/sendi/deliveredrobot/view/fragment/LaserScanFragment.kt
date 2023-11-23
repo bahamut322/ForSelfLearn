@@ -16,18 +16,26 @@ import com.sendi.deliveredrobot.NAVIGATE_TO_LASER_SCAN_CREATE
 import com.sendi.deliveredrobot.NAVIGATE_TO_LASER_SCAN_EDIT
 import com.sendi.deliveredrobot.databinding.FragmentLaserScanBinding
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.QueryElevatorListModel
+import com.sendi.deliveredrobot.model.QueryFloorListModel
 import com.sendi.deliveredrobot.navigationtask.virtualTaskExecute
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.ros.debug.MapLaserServiceImpl
+import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.HideNavigationBarDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
+import java.util.Date
+import java.util.Timer
 
 /**
  * @author heky
@@ -106,6 +114,21 @@ class LaserScanFragment : Fragment() {
                         when (from) {
                             NAVIGATE_TO_LASER_SCAN_CREATE -> {
                                 // 新建
+                                if(!ElevatorObject.checkDataExist()){
+                                    ToastUtil.show(resources.getString(R.string.elevator_list_retry))
+                                    // 楼层
+                                    CloudMqttService.publish(QueryFloorListModel().toString())
+                                    // 电梯
+                                    CloudMqttService.publish(QueryElevatorListModel().toString())
+                                    DialogHelper.loadingDialog.show()
+                                    virtualTaskExecute(1)
+                                    DialogHelper.loadingDialog.dismiss()
+                                    if(!ElevatorObject.checkDataExist()){
+                                        ToastUtil.show(resources.getString(R.string.elevator_list_request_error))
+                                        return@launch
+                                    }
+                                    dialog = initCreateLaserMapDialog()
+                                }
                                 dialog.show()
                             }
                             NAVIGATE_TO_LASER_SCAN_EDIT -> {
@@ -134,7 +157,24 @@ class LaserScanFragment : Fragment() {
                             DialogHelper.loadingDialog.show()
                             withContext(Dispatchers.Default) {
                                 //结束扫描
-                                mapLaserServiceImpl.stop()
+                                val result = mapLaserServiceImpl.stop()
+                                if (result.data["result"] == 1) {
+                                    val timer = Timer()
+                                    var timeOver = true
+                                    timer.schedule(object : java.util.TimerTask() {
+                                        override fun run() {
+                                            timeOver = false
+                                            timer.cancel()
+                                        }
+                                    }, Date(), 1000 * 60 * 5)
+
+                                    var saveMapFlagResult: Boolean
+                                    do {
+                                        saveMapFlagResult = ROSHelper.getParam("/map/saving_map_flag") == "1"
+                                        delay(100L)
+                                    }while (!saveMapFlagResult && timeOver)
+                                    timer.cancel()
+                                }
                             }
                             DialogHelper.loadingDialog.dismiss()
                             //跳转激光修正图页面
@@ -171,7 +211,7 @@ class LaserScanFragment : Fragment() {
             dialogView.findViewById<EditText>(R.id.pop_ups_edittext)
 //        val editTextFloorName = dialogView.findViewById<EditText>(R.id.editTextFloorName)
 //        val editTextFloorCode = dialogView.findViewById<EditText>(R.id.editTextFloorCode)
-        val floorNameArray = ElevatorObject.floorNameArray?: arrayOf()
+        var floorNameArray = ElevatorObject.floorNameArray?: arrayOf()
         val spinnerFloorName = dialogView.findViewById<Spinner>(R.id.spinnerFloorName).apply {
             val arrayAdapter = ArrayAdapter(
                 context,
@@ -207,27 +247,10 @@ class LaserScanFragment : Fragment() {
                         ToastUtil.show(getString(R.string.laser_name_existed))
                         return@launch
                     }
-//                    if(editTextFloorName.text.isNullOrEmpty()){
-//                        ToastUtil.show(getString(R.string.please_input_floor_name))
-//                        return@launch
-//                    }
-//                    if(editTextFloorName.text.contains(Regex("[@&]"))){
-//                        ToastUtil.show(getString(R.string.floor_name_can_not_contain))
-//                        return@launch
-//                    }
-//                    val floorCode:String = editTextFloorCode.text.toString()
-//                    if(floorCode.isEmpty()){
-//                        ToastUtil.show(getString(R.string.please_input_floor_code))
-//                        return@launch
-//                    }
-                    //底盘创建子图
-//                    val floorCodeInt: Int
-//                    try {
-//                        floorCodeInt = floorCode.toInt()
-//                    }catch (e:Exception){
-//                        ToastUtil.show(getString(R.string.floor_code_must_be_integer))
-//                        return@launch
-//                    }
+                    if (floorNameArray.isEmpty()) {
+                        ToastUtil.show(getString(R.string.elevator_array_not_exist))
+                        return@launch
+                    }
                     DialogHelper.loadingDialog.show()
                     withContext(Dispatchers.Default) {
                         mapLaserServiceImpl.create()
@@ -235,7 +258,7 @@ class LaserScanFragment : Fragment() {
                             popUpsEditText.text.toString().trim(),
 //                            floorCodeInt,
 //                            editTextFloorName.text.toString()
-                            if(floorNameArray.isNotEmpty()) floorNameArray[spinnerFloorName.selectedItemPosition] else ""
+                            floorNameArray[spinnerFloorName.selectedItemPosition]
                         )
                     }
                     DialogHelper.loadingDialog.dismiss()

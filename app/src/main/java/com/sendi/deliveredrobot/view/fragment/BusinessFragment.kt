@@ -114,6 +114,7 @@ class BusinessFragment : Fragment() {
 
         //返回按钮
         binding.llReturn.setOnClickListener {
+            BaiduTTSHelper.getInstance().stop()
             controller!!.navigate(R.id.action_businessFragment_to_homeFragment)
         }
         //设置按钮
@@ -122,6 +123,7 @@ class BusinessFragment : Fragment() {
             RobotStatus.PassWordToSetting.observe(viewLifecycleOwner) {
                 if (RobotStatus.PassWordToSetting.value == true) {
                     try {
+                        BaiduTTSHelper.getInstance().stop()
                         controller!!.navigate(R.id.action_businessFragment_to_planSettingFragment)
                     } catch (_: Exception) {
                     }

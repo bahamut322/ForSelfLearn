@@ -54,7 +54,7 @@ class BusinessViewModel : ViewModel() {
         Universal.ExplainLength = text!!.length
         LogUtil.i("总内容长度: ${text.length}")
         val pattern = "(?<=[，；？！。,.;])".toRegex()
-        val splitText = text.split(pattern)
+        val splitText = text.split(pattern).filter { it.isNotEmpty() } // 过滤掉空字符串
         for (i in splitText.indices) {
             val subText = text.split(pattern)[i]
             if (subText.length > 45) {

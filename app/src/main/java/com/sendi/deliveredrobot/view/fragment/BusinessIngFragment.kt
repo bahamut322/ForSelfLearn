@@ -193,6 +193,9 @@ class BusinessIngFragment : Fragment() {
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
+                    } else if (value2 == Universal.ExplainLength && value1 != 1) {
+                        LogUtil.i("未到点，但播报任务完毕")
+                        Order.setFlage("0")
                     }
                 }
             }
@@ -204,7 +207,8 @@ class BusinessIngFragment : Fragment() {
                 1 -> {
                     LogUtil.i("day:${viewModel!!.hasArrive},${Universal.ExplainLength},${it}")
                     if (it == Universal.ExplainLength && !viewModel!!.hasArrive) {
-                        LogUtil.i("任务执行完毕")
+                        LogUtil.i("定点任务执行完毕")
+                        arrayPic()
                         Order.setFlage("0")
                         //定点任务完成倒计时
                         viewModel!!.countDownTimer!!.startCountDown()
@@ -245,14 +249,7 @@ class BusinessIngFragment : Fragment() {
         if (!viewModel!!.hasArrive) {
             return
         }
-        //到点表情组
-        if (actionData?.touchScreenConfig!!.touch_type == 4) {
-            Glide.with(this)
-                .asGif()
-                .load(actionData?.touchScreenConfig!!.touch_arrivePic)
-                .placeholder(R.drawable.ic_warming) // 设置默认图片
-                .into(binding.argPic)
-        }
+        arrayPic()
         viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
@@ -268,6 +265,17 @@ class BusinessIngFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun arrayPic() {
+        //到点表情组
+        if (actionData?.touchScreenConfig!!.touch_type == 4) {
+            Glide.with(this)
+                .asGif()
+                .load(actionData?.touchScreenConfig!!.touch_arrivePic)
+                .placeholder(R.drawable.ic_warming) // 设置默认图片
+                .into(binding.argPic)
+        }
     }
 
     //暂停

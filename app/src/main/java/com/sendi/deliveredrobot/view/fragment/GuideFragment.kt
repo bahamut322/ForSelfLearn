@@ -140,6 +140,7 @@ class GuideFragment : Fragment() {
                 }
             }
         binding.llReturn.setOnClickListener {
+            BaiduTTSHelper.getInstance().stop()
             controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
         }
         binding.imageViewSetting.setOnClickListener {
@@ -147,6 +148,7 @@ class GuideFragment : Fragment() {
             PassWordToSetting.observe(viewLifecycleOwner) {
                 if (PassWordToSetting.value == true) {
                     try {
+                        BaiduTTSHelper.getInstance().stop()
                         controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
                     } catch (_: Exception) {
                     }

@@ -168,7 +168,6 @@ class GuidingFragment : Fragment() {
 
 
         mediatorLiveData.observe(viewLifecycleOwner) { (value1, value2) ->
-            // 非定点任务
             if (value2 == Universal.ExplainLength && value1 == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
@@ -183,6 +182,9 @@ class GuidingFragment : Fragment() {
                 RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
+            }else  if (value2 == Universal.ExplainLength && value1 != 1){
+                LogUtil.i("未到点，但播报任务完毕")
+                Order.setFlage("0")
             }
         }
 

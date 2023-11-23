@@ -64,7 +64,7 @@ class WifiSettingFragment : Fragment(), OnWifiChangeListener, OnWifiConnectListe
                         val mWindowWidth: Int
                         val mWindowHeight: Int
                         val dialog =
-                            HideNavigationBarDialog(requireContext(), R.style.simpleDialogStyle)
+                            HideNavigationBarDialog(requireContext(), R.style.Dialog)
                         val dialogView: View = LayoutInflater.from(requireContext())
                             .inflate(R.layout.dialog_wifi_password, null)
                         val displayMetrics = this@WifiSettingFragment.resources.displayMetrics
@@ -123,9 +123,6 @@ class WifiSettingFragment : Fragment(), OnWifiChangeListener, OnWifiConnectListe
                         with(binding.frameLayoutWifiOpenDown) {
                             visibility = View.VISIBLE
                         }
-                        with(binding.textViewChooseWifi) {
-                            visibility = View.VISIBLE
-                        }
                         with(binding.recyclerViewWifi) {
                             visibility = View.VISIBLE
                         }
@@ -134,9 +131,6 @@ class WifiSettingFragment : Fragment(), OnWifiChangeListener, OnWifiConnectListe
                     false -> {
                         manager.closeWifi()
                         with(binding.frameLayoutWifiOpenDown) {
-                            visibility = View.GONE
-                        }
-                        with(binding.textViewChooseWifi) {
                             visibility = View.GONE
                         }
                         with(binding.recyclerViewWifi) {
@@ -159,18 +153,12 @@ class WifiSettingFragment : Fragment(), OnWifiChangeListener, OnWifiConnectListe
                     with(binding.frameLayoutWifiOpenDown) {
                         visibility = View.VISIBLE
                     }
-                    with(binding.textViewChooseWifi) {
-                        visibility = View.VISIBLE
-                    }
                     with(binding.recyclerViewWifi) {
                         visibility = View.VISIBLE
                     }
                 }
                 false -> {
                     with(binding.frameLayoutWifiOpenDown) {
-                        visibility = View.GONE
-                    }
-                    with(binding.textViewChooseWifi) {
                         visibility = View.GONE
                     }
                     with(binding.recyclerViewWifi) {
