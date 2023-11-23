@@ -6,6 +6,7 @@ package com.sendi.deliveredrobot.model
  * @describe 用于发送引领配置
  */
 data class GuideSendModel (
+    val baseTimeStamp : Long? = 0,
     val maps : List<MapConfig?>? = null
 )
 data class MapConfig(

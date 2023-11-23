@@ -477,16 +477,17 @@ public class QuerySql {
 
     /**
      * 查询单个导购点的所有信息
+     *
      * @param rootMapName 总图名字
-     * @param name 导购点名字：自己后台拟定的
+     * @param name        导购点名字：自己后台拟定的
      */
-    public static ShoppingActionDB SelectActionData(String rootMapName,String name,int type) {
+    public static ShoppingActionDB SelectActionData(String rootMapName, String name, int type) {
         ShoppingActionDB listAction = new ShoppingActionDB();
         String sql = "SELECT * FROM shoppingactiondb actionpoint " +
                 "LEFT JOIN bigscreenconfigdb bigscreen ON actionpoint.id = bigscreen.shoppingactiondb_id " +
                 "LEFT JOIN touchscreenconfigdb touch ON actionpoint.id = touch.shoppingactiondb_id " +
                 "WHERE actionpoint.rootmapname = ? AND actionpoint.pointName = ? AND actionpoint.actiontype = ?";
-        Cursor cursor = LitePal.findBySQL(sql, rootMapName,name,type+"");
+        Cursor cursor = LitePal.findBySQL(sql, rootMapName, name, type + "");
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 listAction.setActionType(cursor.getInt(cursor.getColumnIndex("actiontype")));
@@ -561,11 +562,11 @@ public class QuerySql {
     }
 
 
-    public static List<GuideConfigList> selectGuideList(String rootMapName){
-        List<GuideConfigList> guideList = new ArrayList<>() ;
+    public static List<GuideConfigList> selectGuideList(String rootMapName) {
+        List<GuideConfigList> guideList = new ArrayList<>();
         String sql = "SELECT * FROM guidepointpicdb WHERE guidepointpicdb.mapname = ? ";
-        Cursor cursor = LitePal.findBySQL(sql , rootMapName);
-        if (cursor!=null && cursor.moveToFirst()){
+        Cursor cursor = LitePal.findBySQL(sql, rootMapName);
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 GuideConfigList config = new GuideConfigList();
                 config.setMapName(cursor.getString(cursor.getColumnIndex("mapname")));
@@ -574,7 +575,7 @@ public class QuerySql {
                 config.setGuidePicUrl(cursor.getString(cursor.getColumnIndex("guidepicurl")));
                 config.setPointTimeStamp(cursor.getLong(cursor.getColumnIndex("pointtimestamp")));
                 guideList.add(config);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
             cursor.close();
         }
         return guideList;
@@ -599,9 +600,9 @@ public class QuerySql {
         return listAction;
     }
 
-    public static GuideSendModel sendGuideConfig(){
+    public static GuideSendModel sendGuideConfig() {
         GuideSendModel sendList = new GuideSendModel();
-        String sql = "SELECT distinct guidepointpicdb.mapname,guidepointpicdb.maptimestamp FROM guidepointpicdb";
+        String sql = "SELECT guidepointpicdb.mapname, MAX(guidepointpicdb.maptimestamp) AS max_timestamp FROM guidepointpicdb GROUP BY guidepointpicdb.mapname;";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             // 创建一个 MapConfig 列表
@@ -609,20 +610,34 @@ public class QuerySql {
             do {
                 // 从 cursor 中获取数据
                 String mapName = cursor.getString(cursor.getColumnIndex("mapname"));
-                long mapTimeStamp = cursor.getLong(cursor.getColumnIndex("maptimestamp"));
+                long mapTimeStamp = cursor.getLong(cursor.getColumnIndex("max_timestamp"));
 
                 // 创建 MapConfig 对象并添加到列表中
                 MapConfig mapConfig = new MapConfig(mapName, mapTimeStamp);
                 mapConfigs.add(mapConfig);
             } while (cursor.moveToNext());
             // 将 MapConfig 列表设置到 GuideSendModel 对象中
-            sendList = new GuideSendModel(mapConfigs);
+            sendList = new GuideSendModel(sendGuideTimeStamp(), mapConfigs);
             cursor.close();
         }
         return sendList;
     }
 
-    public static GuideFoundationConfigDB selectGuideFouConfig(){
+    public static Long sendGuideTimeStamp() {
+        long time = 0L;
+        String sql = "SELECT guidefoundationconfigdb.timestamp FROM guidefoundationconfigdb";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                time = cursor.getLong(cursor.getColumnIndex("timestamp"));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return time;
+    }
+
+    public static GuideFoundationConfigDB selectGuideFouConfig() {
         GuideFoundationConfigDB ConfigList = new GuideFoundationConfigDB();
         String sql = "SELECT * FROM guidefoundationconfigdb foundation\n" +
                 "    LEFT JOIN bigscreenconfigdb bigscreen ON foundation.id = bigscreen.guidefoundationconfigdb_id \n" +
@@ -668,16 +683,17 @@ public class QuerySql {
                 touchScreenConfig.setTouch_arrivePic(cursor.getString(cursor.getColumnIndex("touch_arrivepic")));
                 touchScreenConfig.setTouch_overTaskPic(cursor.getString(cursor.getColumnIndex("touch_overtaskpic")));
                 ConfigList.setTouchScreenConfig(touchScreenConfig);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         return ConfigList;
     }
 
     /**
      * 查询问答配置
+     *
      * @return
      */
-    public static String selectQaConfig(){
+    public static String selectQaConfig() {
         String qaJson = "";
         String sql = "SELECT qajson FROM qaconfigdb";
         Cursor cursor = LitePal.findBySQL(sql);

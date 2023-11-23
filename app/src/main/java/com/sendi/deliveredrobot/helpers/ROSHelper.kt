@@ -652,7 +652,7 @@ object ROSHelper {
         val getParamService =
             Client(ClientConstant.GET_PARAM, para)
         val rosResult = ClientManager.sendClientMsg(getParamService)
-        if (!rosResult.isFlag) return "0"
+        if (!rosResult.isFlag) return "-1"
         val clientResponse = rosResult.response as GetParamResponse
         return clientResponse.value.toString()
     }

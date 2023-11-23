@@ -158,24 +158,24 @@ class LaserScanFragment : Fragment() {
                             withContext(Dispatchers.Default) {
                                 //结束扫描
                                 val result = mapLaserServiceImpl.stop()
-                                if (result.data["result"] == 1) {
-                                    val timer = Timer()
-                                    var timeOver = true
-                                    timer.schedule(object : java.util.TimerTask() {
-                                        override fun run() {
-                                            timeOver = false
-                                            timer.cancel()
-                                        }
-                                    }, Date(), 1000 * 60 * 5)
-
-                                    var saveMapFlagResult: Boolean
-                                    do {
-                                        saveMapFlagResult = ROSHelper.getParam("/map/saving_map_flag") == "1"
-                                        delay(100L)
-                                    }while (!saveMapFlagResult && timeOver)
-                                    timer.cancel()
-                                }
+//                                if (result.data["result"] == 1) {
+                                val timer = Timer()
+                                var timeOver = true
+                                timer.schedule(object : java.util.TimerTask() {
+                                    override fun run() {
+                                        timeOver = false
+                                        timer.cancel()
+                                    }
+                                }, Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                                var saveMapFlagResult: Boolean
+                                do {
+                                    saveMapFlagResult = (ROSHelper.getParam("/map/saving_map_flag") == "0")
+//                                        LogUtil.i("/map/saving_map_flag:$saveMapFlagResult")
+                                    delay(100L)
+                                }while ((!saveMapFlagResult) && timeOver)
+                                timer.cancel()
                             }
+//                            }
                             DialogHelper.loadingDialog.dismiss()
                             //跳转激光修正图页面
                             findNavController().navigate(R.id.fixLaserMapFragment, Bundle().apply {
