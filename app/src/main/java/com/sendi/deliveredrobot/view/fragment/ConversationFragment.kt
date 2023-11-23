@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
@@ -21,7 +19,6 @@ import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -29,6 +26,7 @@ import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
+import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -96,21 +94,26 @@ class ConversationFragment : Fragment() {
         voiceRecorder?.talkingCallback = {talking ->
             when (talking) {
                 true -> {
+//                    println("****talking")
                     startTime = System.currentTimeMillis()
                 }
-                false -> {}
+                false -> {
+//                    println("not talking")
+                }
             }
         }
     }
     override fun onStop() {
         super.onStop()
         timer.cancel()
+        Order.setFlage("0")
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SpeakHelper.stop()
+        Order.setFlage("1")
     }
 
     @SuppressLint("InflateParams")

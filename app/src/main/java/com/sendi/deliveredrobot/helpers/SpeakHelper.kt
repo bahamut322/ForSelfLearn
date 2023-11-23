@@ -49,7 +49,7 @@ object SpeakHelper {
                 list.add(result)
             }
             list.map {
-                BaiduTTSHelper.getInstance().speak(it)
+                BaiduTTSHelper.getInstance().speaks(it, "speakWithoutStop")
             }
 //            }
         }
