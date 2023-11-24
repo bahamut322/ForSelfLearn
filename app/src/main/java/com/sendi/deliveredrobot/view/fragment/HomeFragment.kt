@@ -82,6 +82,16 @@ class HomeFragment : Fragment(), IMainView {
                 controller?.navigate(R.id.conversationFragment)
             }
         }
+        VoiceRecorder.getInstance().talkingCallback = { talking ->
+            when (talking) {
+                true -> {
+                    println("****talking")
+                }
+                false -> {
+                    println("not talking")
+                }
+            }
+        }
     }
 
     override fun onPause() {

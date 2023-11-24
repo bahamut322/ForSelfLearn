@@ -10,7 +10,7 @@ import kotlin.concurrent.thread
 
 @SuppressLint("MissingPermission")
 class VoiceRecorder {
-    private val sampleRate = 44100
+    private val sampleRate = 16000
     private var audioRecorder: AudioRecord? = null
     private var fvad: FvadWrapper? = null
 
@@ -35,8 +35,13 @@ class VoiceRecorder {
         //双通道应该传的值
         val channelConfig = AudioFormat.CHANNEL_IN_MONO
         //读取麦克风的数据
+//        audioRecorder = AudioRecord(
+//            MediaRecorder.AudioSource.MIC,
+//            sampleRate, channelConfig,
+//            AudioFormat.ENCODING_PCM_16BIT, minBufferSize
+//        )
         audioRecorder = AudioRecord(
-            MediaRecorder.AudioSource.MIC,
+            MediaRecorder.AudioSource.VOICE_COMMUNICATION,
             sampleRate, channelConfig,
             AudioFormat.ENCODING_PCM_16BIT, minBufferSize
         )
@@ -100,7 +105,7 @@ class VoiceRecorder {
 
                         }
                         else -> {
-//                        Log.e("VoiceRecorder", "人声 unknown")
+                            println("talking 未知")
                         }
                     }
                 }

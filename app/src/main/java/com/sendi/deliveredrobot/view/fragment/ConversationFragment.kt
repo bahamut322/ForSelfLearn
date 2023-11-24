@@ -26,7 +26,6 @@ import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -94,11 +93,11 @@ class ConversationFragment : Fragment() {
         voiceRecorder?.talkingCallback = {talking ->
             when (talking) {
                 true -> {
-//                    println("****talking")
+                    println("****talking")
                     startTime = System.currentTimeMillis()
                 }
                 false -> {
-//                    println("not talking")
+                    println("not talking")
                 }
             }
         }
@@ -106,14 +105,12 @@ class ConversationFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         timer.cancel()
-        Order.setFlage("0")
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SpeakHelper.stop()
-        Order.setFlage("1")
     }
 
     @SuppressLint("InflateParams")
