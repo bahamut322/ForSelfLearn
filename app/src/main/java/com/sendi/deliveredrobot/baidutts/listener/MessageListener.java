@@ -73,6 +73,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             return;
         }
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
+        Order.setFlage("1");
     }
 
     /**

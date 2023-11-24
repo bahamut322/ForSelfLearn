@@ -80,10 +80,10 @@ class VoiceRecorder {
                             talkingCallback?.invoke(false)
                             if (audioChannel?.initialized == true) {
                                 falseStack.push(false)
-                                val totalSize = trueStack.size * 2 + falseStack.size
+                                val totalSize = trueStack.size * 1.5 + falseStack.size
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
-                                    if (percentFalseTotal > 0.6f) {
+                                    if (percentFalseTotal > 0.5f) {
                                         println("trueSize:${trueStack.size}")
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
