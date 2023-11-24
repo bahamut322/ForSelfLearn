@@ -30,7 +30,7 @@ public class AdvanceVideoView extends RelativeLayout {
     public int viewType;
 
 
-    public AdvanceVideoView(Context context,int viewType) {
+    public AdvanceVideoView(Context context, int viewType) {
         super(context);
         this.viewType = viewType;
         initView();
@@ -71,7 +71,6 @@ public class AdvanceVideoView extends RelativeLayout {
         LayoutParams progressParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         progressParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         videoRela.addView(progressBar, progressParams);
-
         videoView = new FastVideoView(getContext());
         videoView.setVideoPath(path1);
         if (viewType == 1) {
@@ -82,9 +81,15 @@ public class AdvanceVideoView extends RelativeLayout {
                 String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
                 int videoWidth = Integer.parseInt(width);
                 int videoHeight = Integer.parseInt(height);
-                videoView.setScaleX(1080 / videoWidth);
-                videoView.setScaleY(1920 / videoHeight);
-            }catch (Exception ignored){}
+
+                // 计算缩放因子
+                float scaleX = (1080.0f / videoWidth)*2;
+                float scaleY = (1920.0f / videoHeight)*2;
+
+                videoView.setScaleX(scaleX);
+                videoView.setScaleY(scaleY);
+            } catch (Exception ignored) {
+            }
         }
 
         LayoutParams layoutParams = new LayoutParams(-1, -1);
