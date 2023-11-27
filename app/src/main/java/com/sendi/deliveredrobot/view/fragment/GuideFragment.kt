@@ -102,7 +102,6 @@ class GuideFragment : Fragment() {
         controller = Navigation.findNavController(requireView())
         timer = Timer()
 //        Universal.Model="引领"
-        binding.tvGuideName.text = QuerySql.QueryExplainConfig().slogan
         ROSHelper.setSpeed(QuerySql.QueryBasic().leadingSpeed.toString())
 //        NextTask.setNextTasK(true)
         val toSettingDialog = FromeSettingDialog(context)

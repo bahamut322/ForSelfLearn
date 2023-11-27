@@ -141,6 +141,7 @@ object MqttMessageHandler {
                     explainConfigDB.timeStamp = explainConfig.timeStamp!!
                     if (explainConfigDB.save()) {
                         // 数据保存成功
+                        RobotStatus.newUpdata.postValue(2)
                         Log.d("TAG", "receive: 讲解配置数据保存成功")
                         UpdateReturn().method()
                     } else {
@@ -220,6 +221,7 @@ object MqttMessageHandler {
                     shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
                     if (shoppingConfigDB.save()) {
                         // 数据保存成功
+                        RobotStatus.newUpdata.postValue(2)
                         Log.d("TAG", "云平台下发导购配置保存成功")
                     } else {
                         // 数据保存失败
