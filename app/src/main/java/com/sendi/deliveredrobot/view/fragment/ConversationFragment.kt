@@ -8,12 +8,15 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
@@ -23,6 +26,7 @@ import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.QueryIntentModel
+import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
@@ -146,9 +150,9 @@ class ConversationFragment : Fragment() {
         }
         ReplyIntentHelper.replyIntentLiveData.observe(viewLifecycleOwner) {
             //addConversationView
+            addAnswerView(it)
             val answer = it.questionAnswer
             if (answer.isNullOrEmpty()) return@observe
-            addAnswerView(answer)
             SpeakHelper.speakWithoutStop(answer)
         }
 
@@ -162,6 +166,7 @@ class ConversationFragment : Fragment() {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun addQuestionView(conversation: String) {
         binding?.group1?.apply {
             if (visibility == View.VISIBLE) {
@@ -206,17 +211,36 @@ class ConversationFragment : Fragment() {
         }
     }
 
-    private fun addAnswerView(answer: String) {
+    @SuppressLint("InflateParams")
+    private fun addAnswerView(replyIntentModel: ReplyIntentModel) {
         val linearLayoutCompat = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
         val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
-        textView.text = answer
+        val linearLayoutContent = linearLayoutCompat.findViewById<LinearLayoutCompat>(R.id.linear_layout_content)
+        textView.text = replyIntentModel.questionAnswer?:""
         val emptyView = View(requireContext()).apply {
             layoutParams = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply {
                 setMargins(0, 0, 0, 96)
+            }
+        }
+        val images = replyIntentModel.images
+        images?.forEach { imagePath ->
+            val imageView = ImageView(requireContext())
+            imageView.apply {
+                layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(24, 0, 24, 16)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                }
+            }
+            linearLayoutContent.addView(imageView)
+            imageView.post{
+                Glide.with(imageView).load("${BuildConfig.HTTP_HOST}$imagePath").override(319,240).into(imageView)
             }
         }
         binding?.linearLayoutConversation?.apply {
