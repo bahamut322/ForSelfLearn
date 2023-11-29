@@ -398,6 +398,10 @@ public class ExplanationFragment extends Fragment {
                 if (binding.explainRv.getAdapter() != null) {
                     binding.explainRv.getAdapter().notifyDataSetChanged();
                 }
+                String slogan = (RobotStatus.INSTANCE.getExplainConfig().getValue() != null
+                        ? RobotStatus.INSTANCE.getExplainConfig().getValue().getSlogan()
+                        : QuerySql.QueryExplainConfig().getSlogan());
+                binding.tvExplanationName.setText(slogan);
             }
         });
         RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {

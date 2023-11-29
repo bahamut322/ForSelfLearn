@@ -68,8 +68,8 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-//            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
-            if (!jsonObject.has("type")) return
+            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
+//            if (!jsonObject.has("type")) return
 
             when (jsonObject.get("type").asString) {
                 "callElevatorState" -> {
@@ -141,6 +141,7 @@ object MqttMessageHandler {
                     explainConfigDB.timeStamp = explainConfig.timeStamp!!
                     if (explainConfigDB.save()) {
                         // 数据保存成功
+                        RobotStatus.newUpdata.postValue(2)
                         Log.d("TAG", "receive: 讲解配置数据保存成功")
                         UpdateReturn().method()
                     } else {
@@ -220,6 +221,7 @@ object MqttMessageHandler {
                     shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
                     if (shoppingConfigDB.save()) {
                         // 数据保存成功
+                        RobotStatus.newUpdata.postValue(2)
                         Log.d("TAG", "云平台下发导购配置保存成功")
                     } else {
                         // 数据保存失败

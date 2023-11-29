@@ -286,7 +286,7 @@ class BusinessIngFragment : Fragment() {
         processClickDialog?.finishBtn?.setOnClickListener {
             secondRecognition()
         }
-        processClickDialog?.continueBtn?.setOnClickListener { view: View? ->
+        processClickDialog?.continueBtn?.setOnClickListener {
             viewModel!!.countDownTimer!!.resume()
             UpdateReturn().resume()
             processClickDialog?.dismiss()
