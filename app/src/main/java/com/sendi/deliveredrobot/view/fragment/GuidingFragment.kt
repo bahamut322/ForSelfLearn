@@ -64,7 +64,8 @@ class GuidingFragment : Fragment() {
     private var finishTaskDialog: FinishTaskDialog? = null
     private val liveData1 = RobotStatus.ArrayPointExplan
     private val liveData2 = RobotStatus.progress
-    private var layoutParams: ConstraintLayout.LayoutParams? = null
+    private var layoutParamsVertical: ConstraintLayout.LayoutParams? = null
+    private var layoutParamsHorizontal: ConstraintLayout.LayoutParams? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,7 +136,7 @@ class GuidingFragment : Fragment() {
                 actionData?.touchScreenConfig!!.touch_fontSize,
                 actionData?.touchScreenConfig!!.touch_picType
             )
-            //表情组（不可点击 单独处理）
+            //表情组（不可点击 单独处理）；tmd现在PM又变卦了，可以暂停了
             if (actionData?.touchScreenConfig!!.touch_type == 4) {
                 Glide.with(this)
                     .asGif()
@@ -190,10 +191,8 @@ class GuidingFragment : Fragment() {
 
         //暂停
         binding.argPic.setOnClickListener {
-            if (actionData!!.touchScreenConfig?.touch_type != 4) {
                 processClickDialog?.show()
                 pause()
-            }
         }
     }
 
@@ -264,6 +263,8 @@ class GuidingFragment : Fragment() {
     private fun pause() {
         processClickDialog?.otherBtn?.visibility = View.GONE //切换其他任务
         processClickDialog?.nextBtn?.visibility = View.GONE //下一个任务
+        processClickDialog?.finishBtn?.text = "结束引领"
+        processClickDialog?.continueBtn?.text = "继续引领"
         processClickDialog?.finishBtn?.setOnClickListener {
             secondRecognition()
         }
@@ -318,10 +319,11 @@ class GuidingFragment : Fragment() {
 
             6 -> {
                 binding.pointImage.visibility = View.GONE
-                layoutParams = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsVertical = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsHorizontal = binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
                 when (textPosition) {
                     0 -> {
-                        binding.horizontalTV.gravity = Gravity.CENTER //居中
+//                        binding.horizontalTV.gravity = Gravity.CENTER //居中
                         textLayoutThis(
                             fontLayout!!,
                             fontContent!!,
@@ -332,9 +334,11 @@ class GuidingFragment : Fragment() {
                     }
 
                     1 -> {
-                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParams!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParams
+//                        binding.horizontalTV.gravity = Gravity.TOP //居上
+                        layoutParamsHorizontal!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
+                        layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        binding.verticalTV.layoutParams = layoutParamsVertical
                         textLayoutThis(
                             fontLayout!!,
                             fontContent!!,
@@ -345,9 +349,11 @@ class GuidingFragment : Fragment() {
                     }
 
                     2 -> {
-                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
-                        layoutParams!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParams
+//                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
+                        layoutParamsHorizontal!!.topToTop = ConstraintLayout.LayoutParams.UNSET
+                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
+                        layoutParamsVertical!!.topToTop = ConstraintLayout.LayoutParams.UNSET
+                        binding.verticalTV.layoutParams = layoutParamsVertical
                         textLayoutThis(
                             fontLayout!!,
                             fontContent!!,
@@ -362,7 +368,8 @@ class GuidingFragment : Fragment() {
             7 -> {
                 //读取文件
                 getFilesAllName(file, picType!!, picPlayTime!!)
-                layoutParams = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsVertical = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsHorizontal = binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
                 when (textPosition) {
                     0 -> {
                         binding.horizontalTV.gravity = Gravity.CENTER //居中
@@ -376,9 +383,11 @@ class GuidingFragment : Fragment() {
                     }
 
                     1 -> {
-                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParams!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParams
+//                        binding.horizontalTV.gravity = Gravity.TOP //居上
+                        layoutParamsHorizontal!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
+                        layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        binding.verticalTV.layoutParams = layoutParamsVertical
                         textLayoutThis(
                             fontLayout!!,
                             fontContent!!,
@@ -389,9 +398,11 @@ class GuidingFragment : Fragment() {
                     }
 
                     2 -> {
-                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
-                        layoutParams!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParams
+//                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
+                        layoutParamsHorizontal!!.topToTop = ConstraintLayout.LayoutParams.UNSET
+                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
+                        layoutParamsVertical!!.topToTop = ConstraintLayout.LayoutParams.UNSET
+                        binding.verticalTV.layoutParams = layoutParamsVertical
                         textLayoutThis(
                             fontLayout!!,
                             fontContent!!,
@@ -421,6 +432,7 @@ class GuidingFragment : Fragment() {
         fontSize: Int
     ) {
 
+        Log.d("TAG", "textLayoutThis: ${fontBackGround}")
         //横向
         if (fontLayout == 1) {
             //隐藏纵向文字，显示横向文字

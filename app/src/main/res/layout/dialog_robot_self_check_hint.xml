@@ -133,7 +133,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:includeFontPadding="false"
-        android:text="错误编码：0347886124"
+        android:text="编码：0347886124"
         android:textColor="@color/color_4D6FBE"
         android:textSize="@dimen/small_text_size"
         app:layout_constraintEnd_toEndOf="@+id/confirm_btn"

@@ -155,14 +155,6 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/homeFragment" />
-        <action
-            android:id="@+id/action_choosePlaceFragment_to_businessIngFragment"
-            app:destination="@id/businessIngFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            app:popUpTo="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/chargeFragment"
@@ -452,10 +444,7 @@
         android:name="com.sendi.deliveredrobot.view.fragment.WifiSettingFragment"
         android:label="fragment_wifi_setting"
         tools:layout="@layout/fragment_wifi_setting" />
-    <fragment
-        android:id="@+id/containFragment"
-        android:name="com.sendi.deliveredrobot.view.fragment.ContainFragment"
-        android:label="ContainFragment" />
+
 
     <fragment
         android:id="@+id/selfCheckFragment"

@@ -119,14 +119,14 @@ class LaserScanFragment : Fragment() {
                                     // 楼层
                                     CloudMqttService.publish(QueryFloorListModel().toString())
                                     // 电梯
-                                    CloudMqttService.publish(QueryElevatorListModel().toString())
+//                                    CloudMqttService.publish(QueryElevatorListModel().toString())
                                     DialogHelper.loadingDialog.show()
                                     virtualTaskExecute(1)
                                     DialogHelper.loadingDialog.dismiss()
-                                    if(!ElevatorObject.checkDataExist()){
-                                        ToastUtil.show(resources.getString(R.string.elevator_list_request_error))
-                                        return@launch
-                                    }
+//                                    if(!ElevatorObject.checkDataExist()){
+//                                        ToastUtil.show(resources.getString(R.string.elevator_list_request_error))
+//                                        return@launch
+//                                    }
                                     dialog = initCreateLaserMapDialog()
                                 }
                                 dialog.show()

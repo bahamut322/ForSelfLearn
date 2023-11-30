@@ -593,6 +593,7 @@ public class QuerySql {
                 SendShoppingActionModel sendShoppingActionModel = new SendShoppingActionModel();
                 sendShoppingActionModel.setName(cursor.getString(cursor.getColumnIndex("name")));
                 sendShoppingActionModel.setTimeStamp(cursor.getLong(cursor.getColumnIndex("timestamp")));
+                sendShoppingActionModel.setMapName(cursor.getString(cursor.getColumnIndex("rootmapname")));
                 listAction.add(sendShoppingActionModel);
             } while (cursor.moveToNext());
             cursor.close();

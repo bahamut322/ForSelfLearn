@@ -5,20 +5,37 @@ import android.content.ContentValues
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModelLazy
-import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.entity.*
-import com.sendi.deliveredrobot.entity.interaction.InteractionMqtt
+import com.sendi.deliveredrobot.ElevatorObject
+import com.sendi.deliveredrobot.MainActivity
+import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
+import com.sendi.deliveredrobot.entity.ExplainConfigDB
+import com.sendi.deliveredrobot.entity.ReplyGateConfig
+import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.ShoppingConfigDB
+import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.UpDataSQL
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql.robotConfig
+import com.sendi.deliveredrobot.entity.interaction.InteractionMqtt
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
-import com.sendi.deliveredrobot.model.*
+import com.sendi.deliveredrobot.model.AdvertisingConfig
+import com.sendi.deliveredrobot.model.ExplainConfig
+import com.sendi.deliveredrobot.model.Gatekeeper
+import com.sendi.deliveredrobot.model.ReplyElevatorListModel
+import com.sendi.deliveredrobot.model.ReplyFloorListModel
+import com.sendi.deliveredrobot.model.ResetVerificationCodeAckModel
+import com.sendi.deliveredrobot.model.RobotConfig
+import com.sendi.deliveredrobot.model.SameName
+import com.sendi.deliveredrobot.model.ShoppingGuideConfing
 import com.sendi.deliveredrobot.model.log.RobotLog
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -35,7 +52,6 @@ import kotlinx.coroutines.withContext
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.litepal.LitePal.deleteAll
 import java.io.File
-import java.util.*
 import kotlin.concurrent.thread
 
 
@@ -55,16 +71,15 @@ object MqttMessageHandler {
     private val mainScope = MainScope()
     private val gson = Gson()
     private val floorNameSet = HashSet<String>()
-    private var fileNames: Array<String?>? = null//副屏内容
-    private var houseFile: Array<String?>? = null//主屏内容
-    private var advFile: Array<String?>? = null //广告内容
+    private var mapNameChanged: Boolean = true
+    private var waitingPointChanged: Boolean = true
+    private var chargePointChanged: Boolean = true
 
     /**
      * @describe 接收消息
      */
     @SuppressLint("SdCardPath", "SuspiciousIndentation")
     fun receive(mqttMessage: MqttMessage) {
-        downLoadFinish()
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
@@ -124,6 +139,7 @@ object MqttMessageHandler {
                 }
                 //讲解配置
                 "replyExplanationConfig" -> {
+                    ToastUtil.show("收到讲解配置信息")
                     LogUtil.d("obtain: 收到讲解配置信息")
                     val gson = Gson()
                     val explainConfig = gson.fromJson(message, ExplainConfig::class.java)
@@ -155,10 +171,9 @@ object MqttMessageHandler {
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
                     deleteAll(AdvertisingConfigDB::class.java)
                     deleteFiles(File(Universal.advertisement))
-                    advFile = null
-                    Universal.advVideoFile = ""
-                    Universal.advPics = ""
+//                    advFile = null
                     RobotStatus.advertisingConfig?.value = advertisingConfig
+                    ToastUtil.show("收到广告配置")
                     LogUtil.d("收到广告配置")
                     val advertisingConfigDB = AdvertisingConfigDB()
                     //创建文件的方法
@@ -166,7 +181,16 @@ object MqttMessageHandler {
                     advertisingConfigDB.timeStamp = advertisingConfig.timeStamp
                     advertisingConfigDB.type = advertisingConfig.argConfig!!.type!!
                     if (advertisingConfig.argConfig.argPic != null) {
-                        Universal.advPics = advertisingConfig.argConfig.argPic.pics
+                        val advPics =
+                            UpdateReturn().splitStr(advertisingConfig.argConfig.argPic.pics)
+                        for (i in advPics.indices) {
+                            DownloadBill.getInstance().addTask(
+                                Universal.pathDownload + advPics[i],
+                                Universal.advertisement,
+                                FileName(advPics[i]!!),
+                                MyApplication.listener
+                            )
+                        }
                         advertisingConfigDB.picType = advertisingConfig.argConfig.argPic.picType
                         advertisingConfigDB.picPlayTime =
                             advertisingConfig.argConfig.argPic.picPlayTime
@@ -186,7 +210,16 @@ object MqttMessageHandler {
                             advertisingConfig.argConfig.argFont.textPosition
                     }
                     if (advertisingConfig.argConfig.argVideo != null) {
-                        Universal.advVideoFile = advertisingConfig.argConfig.argVideo.videos
+                        val advVideoFile =
+                            UpdateReturn().splitStr(advertisingConfig.argConfig.argVideo.videos)
+                        for (i in advVideoFile.indices) {
+                            DownloadBill.getInstance().addTask(
+                                Universal.pathDownload + advVideoFile[i],
+                                Universal.advertisement,
+                                FileName(advVideoFile[i]!!),
+                                MyApplication.listener
+                            )
+                        }
                         advertisingConfigDB.videoAudio =
                             advertisingConfig.argConfig.argVideo.videoAudio!!
                         advertisingConfigDB.videolayout =
@@ -201,6 +234,7 @@ object MqttMessageHandler {
                     if (advertisingConfigDB.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 广告配置数据保存成功")
+                        RobotStatus.newUpdata.postValue(1)
                         updateConfig()
                     } else {
                         // 数据保存失败
@@ -210,6 +244,7 @@ object MqttMessageHandler {
 
                 "replyShoppingGuideConfig" -> {
                     val gson = Gson()
+                    ToastUtil.show("收到导购配置")
                     val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
                     RobotStatus.shoppingConfigList?.value = shoppingConfig
                     deleteAll(ShoppingConfigDB::class.java)
@@ -230,6 +265,7 @@ object MqttMessageHandler {
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
+                    ToastUtil.show("收到讲解路线配置")
                     InteractionMqtt().ExplainType(message)
                 }
 
@@ -243,6 +279,7 @@ object MqttMessageHandler {
                     deleteFiles(File(Universal.Secondary))
                     //创建文件的方法
                     createFolder()
+                    ToastUtil.show("收到新的门岗配置信息")
                     Log.d(ContentValues.TAG, "obtain: 收到新的门岗配置信息")
                     val replyGateConfig = ReplyGateConfig()
                     replyGateConfig.temperatureThreshold = gatekeeper.temperatureThreshold!!
@@ -254,7 +291,16 @@ object MqttMessageHandler {
                     if (gatekeeper.argConfig.screen == 1) {
                         if (gatekeeper.argConfig.argPic != null) {
                             println("收到：argPic")
-                            Universal.pics = gatekeeper.argConfig.argPic.pics
+                            val pics =
+                                UpdateReturn().splitStr(gatekeeper.argConfig.argPic.pics)
+                            for (i in pics.indices) {
+                                DownloadBill.getInstance().addTask(
+                                    Universal.pathDownload + pics[i],
+                                    Universal.Secondary,
+                                    FileName(pics[i]!!),
+                                    MyApplication.listener
+                                )
+                            }
                             replyGateConfig.picType = gatekeeper.argConfig.argPic.picType
                             replyGateConfig.picPlayType =
                                 gatekeeper.argConfig.argPic.picPlayType
@@ -276,7 +322,16 @@ object MqttMessageHandler {
                         }
                         if (gatekeeper.argConfig.argVideo != null) {
                             println("收到：argVideo")
-                            Universal.videoFile = gatekeeper.argConfig.argVideo.videos
+                            val videoFile =
+                                UpdateReturn().splitStr(gatekeeper.argConfig.argVideo.videos)
+                            for (i in videoFile.indices) {
+                                DownloadBill.getInstance().addTask(
+                                    Universal.pathDownload + videoFile[i],
+                                    Universal.Secondary,
+                                    FileName(videoFile[i]!!),
+                                    MyApplication.listener
+                                )
+                            }
                             replyGateConfig.videoAudio =
                                 gatekeeper.argConfig.argVideo.videoAudio!!
                             replyGateConfig.videolayout =
@@ -302,14 +357,24 @@ object MqttMessageHandler {
                 //机器人配置
                 "replyRobotConfig" -> {
                     val gson = Gson()
+                    ToastUtil.show("收到机器人配置")
+                    Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
                     RobotStatus.robotConfig?.value = robotConfig
+                    val currentConfig: RobotConfigSql? = robotConfig()
+                    if (currentConfig != null) {
+                        mapNameChanged = currentConfig.mapName != robotConfig.mapName
+                        waitingPointChanged =
+                            currentConfig.waitingPointName != robotConfig.waitingPointName
+                        chargePointChanged =
+                            currentConfig.chargePointName != robotConfig.chargePointName
+                    }
                     deleteAll(RobotConfigSql::class.java)
                     //提交数据到数据库
                     deleteFiles(File(Universal.Standby))
                     //创建文件的方法
                     createFolder()
-                    Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
+
                     val robotConfigSql = RobotConfigSql()
                     //更新数据——基础设置
                     val values = ContentValues()
@@ -318,7 +383,10 @@ object MqttMessageHandler {
                     UpDataSQL.update("basicsetting", values, "id = ?", whereArgs)
                     //单独处理女声
                     if (robotConfig.audioType == 0) {
-                        UpdateReturn().randomVoice(1, QuerySql.QueryBasic().speechSpeed.toString())
+                        UpdateReturn().randomVoice(
+                            1,
+                            QuerySql.QueryBasic().speechSpeed.toString()
+                        )
                     } else {
                         UpdateReturn().randomVoice(
                             robotConfig.audioType,
@@ -340,27 +408,68 @@ object MqttMessageHandler {
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
-                            Universal.sleepContentName = robotConfig.argConfig.argPic.pics
+                            val videos =
+                                UpdateReturn().splitStr(robotConfig.argConfig.argPic.pics)
+                            for (i in videos.indices) {
+                                DownloadBill.getInstance().addTask(
+                                    Universal.pathDownload + videos[i],
+                                    Universal.Standby,
+                                    FileName(videos[i]!!),
+                                    MyApplication.listener
+                                )
+                            }
+
                             robotConfigSql.picType = robotConfig.argConfig.argPic.picType
                         }
                         if (robotConfig.argConfig.argFont != null) {
                             println("收到：小屏幕无argFont")
                         }
                         if (robotConfig.argConfig.argVideo != null) {
-                            Universal.sleepContentName = robotConfig.argConfig.argVideo.videos
+                            val videos =
+                                UpdateReturn().splitStr(robotConfig.argConfig.argVideo.videos)
+                            for (i in videos.indices) {
+                                DownloadBill.getInstance().addTask(
+                                    Universal.pathDownload + videos[i],
+                                    Universal.Standby,
+                                    FileName(videos[i]!!),
+                                    MyApplication.listener
+                                )
+                            }
                             println("收到：argVideo")
                         }
                         if (robotConfig.argConfig.argRadio != null) {
                             println("收到：argRadio 暂无")
                         }
                         if (robotConfig.argConfig.argPicGroup != null) {
-                            Universal.sleepContentName = robotConfig.argConfig.argPicGroup.sleepPic
+                            val videos =
+                                UpdateReturn().splitStr(robotConfig.argConfig.argPicGroup.sleepPic!!)
+                            for (i in videos.indices) {
+                                DownloadBill.getInstance().addTask(
+                                    Universal.pathDownload + videos[i],
+                                    Universal.Standby,
+                                    FileName(videos[i]!!),
+                                    MyApplication.listener
+                                )
+                            }
                         }
+
                     }
                     if (robotConfigSql.save()) {
                         Log.d("TAG", "receive: 配置数据保存成功")
-                        updateConfig(false)
-                        Universal.mapType.postValue( false)
+                        if (mapNameChanged || waitingPointChanged || chargePointChanged) {
+                            updateConfig(false)
+                            DialogHelper.selfCheckDialog(
+                                "检查到机器人地图改变",
+                                "请把机器人推到充电桩：\n${robotConfig.chargePointName!!}，\n自动进行位置切换",
+                                "地图改变",
+                                true,
+                                false,
+                                null
+                            ).show()
+                        } else {
+                            updateConfig(true)
+                        }
+                        Universal.mapType.postValue(false)
                     } else {
                         // 数据保存失败
                         Log.d("TAG", "receive: 配置数据保存失败")
@@ -368,10 +477,12 @@ object MqttMessageHandler {
                 }
                 //云平台下发导购配置
                 "replyShoppingGuideActionConfig" -> {
+                    ToastUtil.show("收到发导购配置")
                     InteractionMqtt().ActionShoppingType(message)
                 }
                 //引领子功能配置
                 "replyGuidePointConfig" -> {
+                    ToastUtil.show("收到引领子功能配置")
                     InteractionMqtt().guidePointConfig(message)
                 }
 
@@ -383,6 +494,7 @@ object MqttMessageHandler {
                 }
 
                 "replyGuideConfig" -> {
+                    ToastUtil.show("收到引领配置")
                     InteractionMqtt().guideFoundation(message)
 
                 }
@@ -517,150 +629,15 @@ object MqttMessageHandler {
 
 
     private fun updateConfig(boolean: Boolean = true) {
-        //这里必须过几秒钟后才能赋值，否者可能会将原来数据库中的值赋给变量
-        val assignmentThread = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(2000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-            println(threadName + "任务执行完毕")
-            UpdateReturn().assignment()
-            if (!boolean) {
-                UpdateReturn().settingMap()
-            }
-        }, "assignment")
-        assignmentThread.start()
-        //门岗配置图片&视频下载
-        val thread = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(2000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-//            nullData(boolean)
-            if (Universal.pics != "" || Universal.videoFile != "") {
-                if (Universal.pics != "") {
-                    fileNames = null
-                    fileNames = UpdateReturn().splitStr(Universal.pics)
-                } else if (Universal.videoFile != "") {
-                    fileNames = null
-                    fileNames = UpdateReturn().splitStr(Universal.videoFile)
-                }
-//                try {
-                //副屏
-                if (fileNames!!.isNotEmpty()) {
-                    for (i in 0 until fileNames!!.size) {
-                        DownloadBill.getInstance().addTask(
-                            Universal.pathDownload + fileNames!![i],
-                            Universal.Secondary,
-                            FileName(fileNames!![i]!!),
-                            MyApplication.listener
-                        )
-                    }
-                }
-            }
-        }, "fileName")
-        thread.start()
-
-        //主屏幕休眠图片下载
-        val thread1 = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(2000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-//            nullData(boolean)
-            if (Universal.sleepContentName != "") {
-                houseFile = UpdateReturn().splitStr(Universal.sleepContentName)
-            }
-            if (houseFile != null) {
-                for (i in 0 until houseFile!!.size) {
-                    DownloadBill.getInstance().addTask(
-                        Universal.pathDownload + houseFile!![i],
-                        Universal.Standby,
-                        FileName(houseFile!![i]!!),
-                        MyApplication.listener
-                    )
-                }
-            }
-        }, "sleepName")
-        thread1.start()
-
-        //广告图片&视频下载
-        val thread2 = Thread({
-            val threadName = Thread.currentThread().name
-            println(threadName + "线程开始执行")
-            try {
-                Thread.sleep(2000)
-                //15000
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-//            nullData(boolean)
-            if (Universal.advVideoFile != "" || Universal.advPics != "") {
-                if (Universal.advPics != "") {
-                    advFile = null
-                    advFile = UpdateReturn().splitStr(Universal.advPics)
-                } else if (Universal.advVideoFile != "") {
-                    advFile = null
-                    advFile = UpdateReturn().splitStr(Universal.advVideoFile)
-                }
-//                try {
-                //副屏
-                if (advFile != null) {
-                    for (i in 0 until advFile!!.size) {
-                        DownloadBill.getInstance().addTask(
-                            Universal.pathDownload + advFile!![i],
-                            Universal.advertisement,
-                            FileName(advFile!![i]!!),
-                            MyApplication.listener
-                        )
-                    }
-                }
-            }
-        }, "advName")
-        thread2.start()
+        if (!boolean) {
+            UpdateReturn().settingMap()
+        }
         UpdateReturn().method(boolean)
     }
 
     fun FileName(url: String): String {
         return url.substring(url.lastIndexOf("/") + 1)
     }
-
-    private fun nullData() {
-        if (Universal.pics == "" && Universal.videoFile == "" && Universal.sleepContentName == "" && Universal.advVideoFile == "" && Universal.advPics == "") {
-            Looper.prepare()
-            Universal.pics = ""
-            Universal.sleepContentName = ""
-            Universal.videoFile = ""
-            Universal.advVideoFile == ""
-            Universal.advPics == ""
-            RobotStatus.newUpdata.postValue(1)
-            UpdateReturn().method()
-            Looper.loop()
-        }
-    }
-
-    fun downLoadFinish() {
-        Universal.pics = ""
-        Universal.sleepContentName = ""
-        Universal.videoFile = ""
-        Universal.advVideoFile == ""
-        Universal.advPics == ""
-//        LogUtil.d("1114")
-//        UpdateReturn().method()
-    }
-
 
 
     fun selectImagePath(path: String?): Array<String?> {
@@ -684,11 +661,14 @@ object MqttMessageHandler {
         val uniqueFiles2 = array2.mapNotNull { it?.substringAfterLast('/') }
             .subtract(array1.mapNotNull { it?.substringAfterLast('/') })
         //共同包含的文件
-        sameName.SameAll = commonFiles.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
+        sameName.SameAll =
+            commonFiles.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
         //第一个数组中独有的文件
-        sameName.SameOne = uniqueFiles1.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
+        sameName.SameOne =
+            uniqueFiles1.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
         //第二个数组中独有的文件
-        sameName.SameTwo = uniqueFiles2.mapNotNull { name -> array2.find { it?.endsWith("/$name") == true } }
+        sameName.SameTwo =
+            uniqueFiles2.mapNotNull { name -> array2.find { it?.endsWith("/$name") == true } }
         return sameName
     }
 }
