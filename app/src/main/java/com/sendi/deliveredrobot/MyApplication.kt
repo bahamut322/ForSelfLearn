@@ -13,6 +13,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.LogUtil.d
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.fragment.FaceModule
 import com.sendi.deliveredrobot.view.fragment.Utils
 import com.tencent.bugly.crashreport.CrashReport
@@ -45,23 +46,24 @@ class MyApplication : Application() {
             override fun onProgress(progress: Int) {
                 // 更新进度条
                 Log.e("TAG", "onProgress: $progress 剩余任务数：${DownloadBill.getInstance().taskCount}")
-                DialogHelper.loadingDialog.show()
+                DialogHelper.robotUpDataDialog.show()
+
 
             }
             override fun onFinish() {
                 // 下载完成
                 Log.e("TAG", "DownLoad FinishOnce")
                 if (DownloadBill.getInstance().taskCount == 0) {
+                    DialogHelper.robotUpDataDialog.dismiss()
                     Log.e("TAG", "onProgress: FinishAll")
-                    DialogHelper.loadingDialog.dismiss()
                     UpdateReturn().method(Universal.mapType.value!!)
                     RobotStatus.newUpdata.postValue(1)
                 }
             }
             override fun onError(e: Exception) {
                 // 下载出错
+                ToastUtil.show("下载失败")
                 Log.e("TAG", "downLoad Error: $e")
-                DialogHelper.loadingDialog.dismiss()
             }
         }
 

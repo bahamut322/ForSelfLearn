@@ -126,8 +126,12 @@ public class AdvanceVideoView extends RelativeLayout {
     public void mediaRestart() {
         if (videoView != null && videoView.isPlaying()) {
             Log.d("TAG", "setVideo: 调节声音大小");
-            mediaPlayer1.setVolume(1.0f, 1.0f);
-            new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
+            if (Universal.AllvideoAudio == 1) {
+                new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
+                mediaPlayer1.setVolume(1, 1);
+            } else {
+                mediaPlayer1.setVolume(0, 0);
+            }
         }
     }
 

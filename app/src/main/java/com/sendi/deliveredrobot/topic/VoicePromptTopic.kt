@@ -1,13 +1,8 @@
 package com.sendi.deliveredrobot.topic
 
-import android.content.Intent
 import androidx.navigation.NavController
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.ACTION_NAVIGATE
-import com.sendi.deliveredrobot.NAVIGATE_ID
-import com.sendi.deliveredrobot.POP_BACK_STACK
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.helpers.LiftHelper
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.dto.RosResult
@@ -28,8 +23,7 @@ object VoicePromptTopic {
     private val THERE_IS_A_OBSTACLE_HALF_METER_FAR_AWAY = MyApplication.instance!!.getString(R.string.there_is_a_obstacle_half_meter_far_away)
     private val mainScope = MainScope()
     private var voiceContent = ""
-    private  var timer: Timer? = null
-
+    private var timer: Timer? = null
 
 
     fun handle(
@@ -47,15 +41,12 @@ object VoicePromptTopic {
                 // 正常运行
                 // 取消等待的语音
                 //                                navController.popBackStack()
-                //此处硬编码判断当前页面是否是在ContainFragment中，暂未找到更优雅的方式
-                if ("ContainFragment" == navController.currentDestination?.label) {
-                    MyApplication.instance!!.sendBroadcast(Intent().apply {
-                        action = ACTION_NAVIGATE
-                        putExtra(NAVIGATE_ID, POP_BACK_STACK)
-                    })
+                if (isDialogShowing()) {
+                    DialogHelper.containDialog.dismiss()
                 }
                 resetTimer()
             }
+
             2 -> { // 太靠近障碍物，不可行走，进行左右旋转，寻找方向
                 voiceContent = when (grade) {
                     2 -> BLOCK_GRADE_1
@@ -69,6 +60,7 @@ object VoicePromptTopic {
                 playAudio()
 
             }
+
             3 -> { // 前方0.5m外有障碍物挡住，直接停下来等待
                 voiceContent = when (grade) {
                     1 -> BLOCK_GRADE_3
@@ -77,9 +69,8 @@ object VoicePromptTopic {
                 }
                 ToastUtil.show(THERE_IS_A_OBSTACLE_HALF_METER_FAR_AWAY)
                 LogUtil.i(THERE_IS_A_OBSTACLE_HALF_METER_FAR_AWAY)
-                //此处硬编码判断当前页面是否是不在ContainFragment中，暂未找到更优雅的方式
-                if ("ContainFragment" == navController.currentDestination?.label) return
-                navigateToContainFragment()
+                if (isDialogShowing()) return
+                DialogHelper.containDialog.show()
                 resetTimer()
                 SpeakHelper.stop()
                 playAudio()
@@ -87,27 +78,24 @@ object VoicePromptTopic {
         }
     }
 
-    private fun navigateToContainFragment(){
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, R.id.containFragment)
-        })
+    private fun isDialogShowing(): Boolean {
+        return DialogHelper.containDialog != null && DialogHelper.containDialog.isShowing
     }
 
-    private fun playAudio(){
-        timer?.schedule(object : TimerTask(){
+    private fun playAudio() {
+        timer?.schedule(object : TimerTask() {
             override fun run() {
-                if(RobotStatus.stopButtonPressed.value != RobotCommand.STOP_BUTTON_PRESSED){
+                if (RobotStatus.stopButtonPressed.value != RobotCommand.STOP_BUTTON_PRESSED) {
                     mainScope.launch(Dispatchers.IO) {
-                        if(RobotStatus.currentStatus == TYPE_EXCEPTION) return@launch
+                        if (RobotStatus.currentStatus == TYPE_EXCEPTION) return@launch
                         SpeakHelper.speakWithoutStop(voiceContent)
                     }
                 }
             }
-        }, Date(),6000)
+        }, Date(), 6000)
     }
 
-    private fun resetTimer(){
+    private fun resetTimer() {
         timer?.cancel()
         timer = Timer()
     }

@@ -202,7 +202,7 @@ class BusinessFragment : Fragment() {
                 binding.businessGv.adapter = context?.let { BusinessAdapter(it, shoppingActionList) }
                 // 通知Adapter数据已变更
                 (binding.businessGv.adapter as? BusinessAdapter)?.notifyDataSetChanged()
-                binding.businessName.text = RobotStatus.shoppingConfigList?.value!!.name ?: QuerySql.ShoppingConfig().name
+                binding.businessName.text = RobotStatus.shoppingConfigList?.value?.name ?: QuerySql.ShoppingConfig()?.name
             }
         }
     }

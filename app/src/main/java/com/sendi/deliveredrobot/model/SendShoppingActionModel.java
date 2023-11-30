@@ -8,6 +8,15 @@ package com.sendi.deliveredrobot.model;
 public class SendShoppingActionModel {
     private String name;
     private Long timeStamp;
+    private String mapName;
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
 
     public String getName() {
         return name;
