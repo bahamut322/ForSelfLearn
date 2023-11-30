@@ -21,13 +21,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/shape_solid_5a5582_border_878cf8_bottom_left"
         android:layout_marginStart="@dimen/dp_24"
+        android:padding="@dimen/dp_20"
         android:orientation="vertical">
         <TextView
             android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:padding="@dimen/dp_20"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_28"
             tools:text="测试text" />

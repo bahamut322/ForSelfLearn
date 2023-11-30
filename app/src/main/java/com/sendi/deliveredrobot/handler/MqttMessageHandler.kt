@@ -545,7 +545,9 @@ object MqttMessageHandler {
 
                 "replyIntent" -> {
                     //平台回复机器人问题结果
-                    ReplyIntentHelper.replyIntent(message)
+                    mainScope.launch(Dispatchers.Main) {
+                        ReplyIntentHelper.replyIntent(message)
+                    }
                 }
 
                 else -> {}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dp_320"
+    android:layout_height="@dimen/dp_180">
+
+    <ImageView
+        android:id="@+id/image_view_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/image_description"
+        android:scaleType="centerCrop"
+        tools:background="@drawable/bg" />
+
+    <View
+        android:layout_width="@dimen/dp_88"
+        android:layout_height="@dimen/dp_88"
+        android:background="@drawable/ic_play"
+        android:layout_gravity="center"/>
+
+</FrameLayout>
