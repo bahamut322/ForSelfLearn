@@ -39,11 +39,13 @@ public class Universal {
     //广告默认图
     public static String advDefault = "/storage/emulated/0/ResProvider/default/advdefault.jpg";
     //门岗默认图
-    public static String usherDefault = "/storage/emulated/0/ResProvider/default/usherdefault.png";
+    public static String usherDefault = "/storage/emulated/0/ResProvider/default/usherdefault.jpg";
     //讲解默认图
-    public static String explainDefault = "/storage/emulated/0/ResProvider/default/explandefault.png";
+    public static String explainDefault = "/storage/emulated/0/ResProvider/default/explandefault.jpg";
     //引领默认
-    public static String guideDefault = "/storage/emulated/0/ResProvider/default/guidedefault.png";
+    public static String guideDefault = "/storage/emulated/0/ResProvider/default/guidedefault.jpg";
+    //导购默认
+    public static String businessDefault = "/storage/emulated/0/ResProvider/default/businessdefault.jpg";
     //存放待机视频/图片/GIF的目录
     @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
@@ -60,16 +62,6 @@ public class Universal {
     //机器人主要存放的路径
     @SuppressLint("SdCardPath")
     public static String robotFile = "/mnt/sdcard/X8ROBOT/";
-    //待机图片名字
-    public static String sleepContentName = "";
-    //图片名字
-    public static String pics = "";
-    //视频名字
-    public static String videoFile = "";
-    //广告图片名字
-    public static String advPics = "";
-    //广告视频名字
-    public static String advVideoFile = "";
     //引领返回是否播放表情标志位
     public static boolean guideTask = false;
     //导购返回是否播放表情标志位

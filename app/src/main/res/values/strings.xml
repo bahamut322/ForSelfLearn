@@ -510,5 +510,6 @@
     <string name="elevator_list_retry" >电梯列表未获取，正在重新获取</string>
     <string name="elevator_list_request_error" >电梯列表获取失败，请检查网络或平台数据</string>
     <string name="elevator_array_not_exist">电梯列表未创建</string>
+    <string name="robot_updata_tips">机器人配置更新中…</string>
 
 </resources>

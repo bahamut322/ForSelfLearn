@@ -50,8 +50,10 @@ class DialogHelper {
         lateinit var exceptionWaitForHelpDialog: Dialog
         lateinit var chargingDialog: Dialog
         lateinit var loadingDialog: Dialog
+        lateinit var robotUpDataDialog : Dialog
         lateinit var lowPowerGoBack : Dialog
         lateinit var briefingDialog : Dialog
+        lateinit var containDialog : Dialog
         var myCustomPopupWin: MyCustomPopupWin? = null
 
         /**
@@ -68,6 +70,8 @@ class DialogHelper {
             pullOutAdapterDialog = PullOutAdapterDialog(activity)
             exceptionWaitForHelpDialog = ExceptionWaitForHelpDialog(activity, needBlur = false)
             loadingDialog = LoadingDialog(activity, R.style.simpleDialogStyle)
+            robotUpDataDialog = RobotUpDataDialog(activity,R.style.simpleDialogStyle)
+            containDialog = ContainDialog(activity,R.style.simpleDialogStyle)
             lowPowerGoBack = LowPowerDialog(activity,R.style.simpleDialogStyle)
         }
 

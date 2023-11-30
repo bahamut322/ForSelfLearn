@@ -59,7 +59,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var binding: ActivityMainBinding
     private val dateViewModel by viewModels<DateViewModel>()
     private val fileNames =
-        arrayOf("advdefault.jpg", "explandefault.png", "guidedefault.png", "usherdefault.png","default_explain.gif")
+        arrayOf("advdefault.jpg", "explandefault.jpg", "guidedefault.jpg", "usherdefault.jpg","default_explain.gif","businessdefault.jpg")
     @SuppressLint("SimpleDateFormat")
     private val sdf2 = SimpleDateFormat("HH:mm")
     private lateinit var navigationReceiver: NavigationReceiver
@@ -457,7 +457,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         advertisingConfigDB.fontSize,
                         advertisingConfigDB.picType,
                         advertisingConfigDB.videolayout,
-                        advertisingConfigDB.videoAudio
+                        advertisingConfigDB.videoAudio,
+                        true
                     )
                 }else{
                     val defaultModel = DefaultModel(file =Universal.advDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
@@ -473,7 +474,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         defaultModel.fontSize!!,
                         defaultModel.picType!!,
                         defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!
+                        defaultModel.videoAudio!!,
+                        true
                     )
                 }
             }
@@ -493,7 +495,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         Universal.fontSize,
                         Universal.picTypeNum,
                         Universal.TempVideoLayout,
-                        Universal.AllvideoAudio
+                        Universal.AllvideoAudio,
+                        false
                     )
                 }else{
                     val defaultModel =DefaultModel(file = Universal.usherDefault , picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
@@ -509,7 +512,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         defaultModel.fontSize!!,
                         defaultModel.picType!!,
                         defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!
+                        defaultModel.videoAudio!!,
+                        false
                     )
                 }
             }
@@ -530,6 +534,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         RobotStatus.SecondModel!!.value?.picType!!,
                         RobotStatus.SecondModel!!.value?.videolayout!!,
                         RobotStatus.SecondModel!!.value?.videoAudio!!
+                        ,false
                     )
                 }else{
                     val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
@@ -546,7 +551,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         defaultModel.fontSize!!,
                         defaultModel.picType!!,
                         defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!
+                        defaultModel.videoAudio!!,
+                        false
                     )
                 }
             }
@@ -567,10 +573,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         RobotStatus.businessBigModel!!.value?.fontSize!!,
                         RobotStatus.businessBigModel!!.value?.picType!!,
                         RobotStatus.businessBigModel!!.value?.videolayout!!,
-                        RobotStatus.businessBigModel!!.value?.videoAudio!!
+                        RobotStatus.businessBigModel!!.value?.videoAudio!!,
+                        false
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
+                    val defaultModel =DefaultModel(file = Universal.businessDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
                     Log.d(TAG, "screenRenew:file "+defaultModel.file)
                     layoutThis(
                         defaultModel.picPlayTime!!,
@@ -584,7 +591,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         defaultModel.fontSize!!,
                         defaultModel.picType!!,
                         defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!
+                        defaultModel.videoAudio!!,
+                        false
                     )
                 }
             }
@@ -605,7 +613,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         RobotStatus.businessBigModel!!.value?.fontSize!!,
                         RobotStatus.businessBigModel!!.value?.picType!!,
                         RobotStatus.businessBigModel!!.value?.videolayout!!,
-                        RobotStatus.businessBigModel!!.value?.videoAudio!!
+                        RobotStatus.businessBigModel!!.value?.videoAudio!!,
+                        false
                     )
                 }else{
                     val defaultModel =DefaultModel(file = Universal.guideDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
@@ -622,7 +631,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         defaultModel.fontSize!!,
                         defaultModel.picType!!,
                         defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!
+                        defaultModel.videoAudio!!,
+                        false
                     )
                 }
             }
@@ -643,7 +653,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     it.fontSize!!,
                     it.picType!!,
                     it.videolayout!!,
-                    it.videoAudio!!
+                    it.videoAudio!!,
+                    false
                 )
             }
         }
@@ -662,7 +673,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     it?.fontSize?: 0,
                     it?.picType?: 0,
                     it?.videolayout?: 0,
-                    it?.videoAudio?: 0
+                    it?.videoAudio?: 0,
+                    false
                 )
             }
         }

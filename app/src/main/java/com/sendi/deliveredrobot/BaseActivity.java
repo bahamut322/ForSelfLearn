@@ -70,7 +70,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final String TAG = "BaseActivity";
     private BaseViewModel baseViewModel;
     AdvertisingConfigDB advertisingConfigDB;
-    ConstraintLayout.LayoutParams layoutParams;
+    ConstraintLayout.LayoutParams layoutParamsVertical;
+    ConstraintLayout.LayoutParams layoutParamsHorizontal;
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理
     @Override
     public void onResume() {
@@ -354,7 +355,7 @@ public class BaseActivity extends AppCompatActivity {
      * @param videolayout    视频显示样式
      * @param AllvideoAudio  是否播放声音
      */
-    public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio) {
+    public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio, boolean adv) {
         switch (type) {
             case 1:
             case 2:
@@ -375,20 +376,25 @@ public class BaseActivity extends AppCompatActivity {
                 } catch (IOException ignored) {
 
                 }
-                layoutParams = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+                layoutParamsVertical = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+                layoutParamsHorizontal = (ConstraintLayout.LayoutParams) horizontalTV.getLayoutParams();
                 if (textPosition == 0) {
-                    horizontalTV.setGravity(Gravity.CENTER);//居中
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+//                    horizontalTV.setGravity(Gravity.CENTER);//居中
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 } else if (textPosition == 1) {
-                    horizontalTV.setGravity(Gravity.TOP );//居上
-                    layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
-                    verticalTV.setLayoutParams(layoutParams);
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+//                    horizontalTV.setGravity(Gravity.TOP );//居上
+                    layoutParamsHorizontal.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    horizontalTV.setLayoutParams(layoutParamsHorizontal);
+                    layoutParamsVertical.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParamsVertical);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 } else if (textPosition == 2) {
-                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
-                    layoutParams.topToTop = ConstraintLayout.LayoutParams.UNSET;
-                    verticalTV.setLayoutParams(layoutParams);
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+//                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
+                    layoutParamsHorizontal.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    horizontalTV.setLayoutParams(layoutParamsHorizontal);
+                    layoutParamsVertical.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParamsVertical);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 }
                 break;
             case 7:
@@ -397,20 +403,25 @@ public class BaseActivity extends AppCompatActivity {
                     getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
                 } catch (IOException ignored) {
                 }
-                layoutParams = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+                layoutParamsVertical = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+                layoutParamsHorizontal = (ConstraintLayout.LayoutParams) horizontalTV.getLayoutParams();
                 if (textPosition == 0) {
                     horizontalTV.setGravity(Gravity.CENTER);//居中
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 } else if (textPosition == 1) {
-                    horizontalTV.setGravity(Gravity.TOP );//居上
-                    layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
-                    verticalTV.setLayoutParams(layoutParams);
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+//                    horizontalTV.setGravity(Gravity.TOP );//居上
+                    layoutParamsHorizontal.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    horizontalTV.setLayoutParams(layoutParamsHorizontal);
+                    layoutParamsVertical.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParamsVertical);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 } else if (textPosition == 2) {
-                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
-                    layoutParams.topToTop = ConstraintLayout.LayoutParams.UNSET;
-                    verticalTV.setLayoutParams(layoutParams);
-                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
+//                    horizontalTV.setGravity(Gravity.BOTTOM);//居下
+                    layoutParamsHorizontal.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    horizontalTV.setLayoutParams(layoutParamsHorizontal);
+                    layoutParamsVertical.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                    verticalTV.setLayoutParams(layoutParamsVertical);
+                    textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
                 }
                 advanceView.setVisibility(View.VISIBLE);
                 break;
@@ -424,7 +435,7 @@ public class BaseActivity extends AppCompatActivity {
      * @param fontColor      文字颜色
      * @param fontSize       文字大小：1-大，2-中，3-小,
      */
-    private void textLayoutThis(int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize) {
+    private void textLayoutThis(int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize ,boolean adv) {
 
         //横向
         if (fontLayout == 1) {
@@ -434,7 +445,11 @@ public class BaseActivity extends AppCompatActivity {
             //显示内容
             horizontalTV.setText(baseViewModel.getLength(fontContent));
             //背景颜色&图片
-            constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            if (!adv) {
+                horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            }else {
+                constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            }
             //文字颜色
             horizontalTV.setTextColor(Color.parseColor(fontColor + ""));
             //字体大小
@@ -453,7 +468,11 @@ public class BaseActivity extends AppCompatActivity {
             //显示内容
             verticalTV.setText(fontContent);
             //背景颜色
-            constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            if (!adv) {
+                verticalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            }else {
+                constraintLayout2.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            }
             //文字颜色
             verticalTV.setTextColor(Color.parseColor(fontColor + ""));
             //字体大小
@@ -476,19 +495,22 @@ public class BaseActivity extends AppCompatActivity {
         for (String fileName : fileNames) {
             String filePath = file.getAbsolutePath() + File.separator + fileName;
             File imageFile = new File(filePath);
-            if (!imageFile.exists()) {
-                InputStream inputStream = MyApplication.context.getAssets().open(fileName);
-                FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
-
-                int len = -1;
-                byte[] buffer = new byte[1024];
-                while ((len = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, len);
-                }
-
-                fileOutputStream.close();
-                inputStream.close();
+            // 如果文件存在，则删除它
+            if (imageFile.exists()) {
+                imageFile.delete();
             }
+            // 无论文件是否存在，都创建新文件
+            InputStream inputStream = MyApplication.context.getAssets().open(fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+
+            int len;
+            byte[] buffer = new byte[1024];
+            while ((len = inputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, len);
+            }
+
+            fileOutputStream.close();
+            inputStream.close();
         }
     }
 
