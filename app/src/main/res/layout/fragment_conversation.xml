@@ -133,6 +133,54 @@
             app:layout_constraintStart_toStartOf="@+id/image_view_preview"
             app:layout_constraintTop_toTopOf="@+id/image_view_preview"
             app:layout_constraintVertical_bias="0.0" />
+        
+        <VideoView
+            android:id="@+id/video_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+        
+        <View
+            android:id="@+id/view_play"
+            android:layout_width="@dimen/dp_128"
+            android:layout_height="@dimen/dp_128"
+            android:background="@drawable/ic_play"
+            app:layout_constraintBottom_toBottomOf="@+id/video_view"
+            app:layout_constraintEnd_toEndOf="@+id/video_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/video_view"
+            app:layout_constraintTop_toTopOf="@+id/video_view"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <View
+            android:id="@+id/view_close_2"
+            android:layout_width="@dimen/dp_88"
+            android:layout_height="@dimen/dp_88"
+            android:background="@drawable/ic_close"
+            app:layout_constraintBottom_toBottomOf="@+id/video_view"
+            app:layout_constraintEnd_toEndOf="@+id/video_view"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/video_view"
+            app:layout_constraintTop_toTopOf="@+id/video_view"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/CustomSeekbarStyle"
+            android:splitTrack="false"
+            app:layout_constraintBottom_toBottomOf="@+id/video_view"
+            app:layout_constraintEnd_toEndOf="@+id/video_view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/video_view"
+            app:layout_constraintTop_toTopOf="@+id/video_view"
+            app:layout_constraintVertical_bias="1.0" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_1"
@@ -155,6 +203,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="view_close,image_view_preview,view_preview_background"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="view_close_2,video_view,view_preview_background,seek_bar,view_play"
             android:visibility="gone"
             tools:visibility="visible"
             />

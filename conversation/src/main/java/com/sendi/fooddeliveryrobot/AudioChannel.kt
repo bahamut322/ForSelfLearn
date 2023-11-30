@@ -103,7 +103,7 @@ class AudioChannel(audioRecord: AudioRecord) {
                             callback?.invoke(textProcessed, stringBuilder.toString())
                         }
                     } catch (e: IOException) {
-                        throw RuntimeException(e)
+//                        throw RuntimeException(e)
                     }finally {
                         fileWav.delete()
                         filePcm.delete()

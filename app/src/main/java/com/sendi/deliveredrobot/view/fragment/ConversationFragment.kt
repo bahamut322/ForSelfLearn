@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -40,7 +41,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
-import java.util.SimpleTimeZone
 import java.util.Timer
 
 /**
@@ -56,6 +56,7 @@ class ConversationFragment : Fragment() {
     private var totalHeight: Int = 0
     private var voiceRecorder: VoiceRecorder? = null
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +69,7 @@ class ConversationFragment : Fragment() {
         startTime = System.currentTimeMillis()
         timer.schedule(object : java.util.TimerTask() {
             override fun run() {
-                if (RobotStatus.ttsIsPlaying) {
+                if (RobotStatus.ttsIsPlaying || binding?.videoView?.isPlaying == true) {
                     startTime = System.currentTimeMillis()
                 }
                 val durationSeconds = (System.currentTimeMillis() - startTime) / 1000
@@ -78,6 +79,7 @@ class ConversationFragment : Fragment() {
                         putExtra(NAVIGATE_ID, POP_BACK_STACK)
                     })
                 }
+                binding?.seekBar?.progress = binding?.videoView?.currentPosition ?: 0
             }
         }, Date(), 1000)
         voiceRecorder = VoiceRecorder.getInstance()
@@ -175,6 +177,23 @@ class ConversationFragment : Fragment() {
         binding?.viewClose?.apply {
             setOnClickListener {
                 binding?.group3?.visibility = View.GONE
+            }
+        }
+        binding?.viewClose2?.apply {
+            setOnClickListener {
+                binding?.group4?.visibility = View.GONE
+                binding?.videoView?.stopPlayback()
+            }
+        }
+        binding?.videoView?.apply {
+            setOnClickListener {
+                if (isPlaying){
+                    binding?.viewPlay?.visibility = View.VISIBLE
+                    pause()
+                }else{
+                    binding?.viewPlay?.visibility = View.GONE
+                    start()
+                }
             }
         }
     }
@@ -295,7 +314,7 @@ class ConversationFragment : Fragment() {
             }
         }
         val frames = replyIntentModel.frames
-        frames?.forEach { framePath ->
+        frames?.forEachIndexed { index, framePath ->
             val frameLayout = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_video_thumbnail, null) as FrameLayout
             frameLayout.apply {
@@ -306,7 +325,62 @@ class ConversationFragment : Fragment() {
                     setMargins(0, 16, 0, 0)
                 }
             }
-            val imageView = frameLayout.findViewById<ImageView>(R.id.image_view_thumbnail)
+            val imageView = frameLayout.findViewById<ImageView>(R.id.image_view_thumbnail).apply {
+                setOnClickListener {
+                    val videoView = binding?.videoView
+                    videoView?.apply {
+                        setVideoPath("${BuildConfig.HTTP_HOST}${replyIntentModel.videos?.get(index)?:""}")
+                        start()
+                        setOnPreparedListener {
+                            it.isLooping = true
+                            binding?.seekBar?.apply{
+                                max = it.duration
+                                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                                    override fun onProgressChanged(
+                                        seekBar: SeekBar?,
+                                        progress: Int,
+                                        fromUser: Boolean
+                                    ) {
+                                        if (fromUser){
+                                            it.seekTo(progress)
+                                        }
+                                    }
+
+                                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                                    }
+
+                                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                                    }
+
+                                })
+                            }
+                            post {
+                                var finalWidth = 0
+                                layoutParams = layoutParams.apply {
+                                    if(videoView.measuredHeight > videoView.measuredWidth){
+                                        finalWidth = videoView.measuredWidth * resources.displayMetrics.heightPixels / videoView.measuredHeight
+                                        this.width = finalWidth
+                                        this.height = resources.displayMetrics.heightPixels
+                                    }
+                                    if(videoView.measuredWidth > videoView.measuredHeight){
+                                        finalWidth = resources.displayMetrics.widthPixels
+                                        this.width = finalWidth
+                                        this.height = videoView.measuredHeight * resources.displayMetrics.widthPixels / videoView.measuredWidth
+                                    }
+                                }
+                                binding?.seekBar?.layoutParams = binding?.seekBar?.layoutParams.apply {
+                                    this?.width = finalWidth
+                                    this?.height = 64
+                                }
+                            }
+                        }
+                    }
+                    binding?.group4?.visibility = View.VISIBLE
+                    binding?.viewPlay?.visibility = View.GONE
+                }
+            }
             linearLayoutContent.addView(frameLayout)
             imageView.post {
                 Glide.with(requireContext())
