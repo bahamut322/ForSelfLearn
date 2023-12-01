@@ -82,7 +82,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         }
 
         pushImage(fileNames)
-
         AppUtils.checkPermission(this, 0)
         //检查日志
         FileUtil.checkAndDeleteLogFilesCache()
@@ -438,9 +437,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                     sdScreenStatus!!.postValue(4)
                 }
             }
+            if (newUpdata.value ==3) {
+                default(Universal.advDefault,true)
+            }
         }
         sdScreenStatus!!.observe(this) {
-            renovate()
             advertisingConfigDB = findFirst(AdvertisingConfigDB::class.java) //查询副屏第一条数据
             if (sdScreenStatus!!.value == 0 && mPresentation != null ) {
                 doubleScreen = sdScreenStatus!!.value!!
@@ -461,26 +462,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         true
                     )
                 }else{
-                    val defaultModel = DefaultModel(file =Universal.advDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
-                    layoutThis(
-                        defaultModel.picPlayTime!!,
-                        defaultModel.file,
-                        defaultModel.type!!,
-                        defaultModel.textPosition!!,
-                        defaultModel.fontLayout!!,
-                        defaultModel.fontContent,
-                        defaultModel.fontBackGround,
-                        defaultModel.fontColor,
-                        defaultModel.fontSize!!,
-                        defaultModel.picType!!,
-                        defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!,
-                        true
-                    )
+                    default(Universal.advDefault,true)
                 }
             }
             if (sdScreenStatus!!.value == 1 && mPresentation != null) {
-                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 if ( Universal.bigScreenType !=0) {
                     layoutThis(
@@ -499,26 +484,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         false
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.usherDefault , picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
-                    layoutThis(
-                        defaultModel.picPlayTime!!,
-                        defaultModel.file,
-                        defaultModel.type!!,
-                        defaultModel.textPosition!!,
-                        defaultModel.fontLayout!!,
-                        defaultModel.fontContent,
-                        defaultModel.fontBackGround,
-                        defaultModel.fontColor,
-                        defaultModel.fontSize!!,
-                        defaultModel.picType!!,
-                        defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!,
-                        false
-                    )
+                    default(Universal.usherDefault,false)
                 }
             }
             if (sdScreenStatus!!.value == 2 && mPresentation != null) {
-                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 if (RobotStatus.SecondModel!!.value?.type !=0) {
                     layoutThis(
@@ -537,28 +506,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         ,false
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.explainDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
-                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
-                    layoutThis(
-                        defaultModel.picPlayTime!!,
-                        defaultModel.file,
-                        defaultModel.type!!,
-                        defaultModel.textPosition!!,
-                        defaultModel.fontLayout!!,
-                        defaultModel.fontContent,
-                        defaultModel.fontBackGround,
-                        defaultModel.fontColor,
-                        defaultModel.fontSize!!,
-                        defaultModel.picType!!,
-                        defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!,
-                        false
-                    )
+                    default(Universal.explainDefault,false)
                 }
             }
 
             if (sdScreenStatus!!.value == 4 && mPresentation != null) {
-                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 if (RobotStatus.businessBigModel!!.value?.type !=0) {
                     layoutThis(
@@ -577,28 +529,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         false
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.businessDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
-                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
-                    layoutThis(
-                        defaultModel.picPlayTime!!,
-                        defaultModel.file,
-                        defaultModel.type!!,
-                        defaultModel.textPosition!!,
-                        defaultModel.fontLayout!!,
-                        defaultModel.fontContent,
-                        defaultModel.fontBackGround,
-                        defaultModel.fontColor,
-                        defaultModel.fontSize!!,
-                        defaultModel.picType!!,
-                        defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!,
-                        false
-                    )
+                    default(Universal.businessDefault,false)
                 }
             }
 
             if (sdScreenStatus!!.value == 3 && mPresentation != null) {
-                renovate()
                 doubleScreen = sdScreenStatus!!.value!!
                 if (RobotStatus.businessBigModel!!.value?.type !=0) {
                     layoutThis(
@@ -617,29 +552,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                         false
                     )
                 }else{
-                    val defaultModel =DefaultModel(file = Universal.guideDefault, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 2, videolayout = 0, videoAudio = 0)
-                    Log.d(TAG, "screenRenew:file "+defaultModel.file)
-                    layoutThis(
-                        defaultModel.picPlayTime!!,
-                        defaultModel.file,
-                        defaultModel.type!!,
-                        defaultModel.textPosition!!,
-                        defaultModel.fontLayout!!,
-                        defaultModel.fontContent,
-                        defaultModel.fontBackGround,
-                        defaultModel.fontColor,
-                        defaultModel.fontSize!!,
-                        defaultModel.picType!!,
-                        defaultModel.videolayout!!,
-                        defaultModel.videoAudio!!,
-                        false
-                    )
+                    default(Universal.guideDefault,false)
                 }
             }
 
         }
         RobotStatus.SecondModel!!.observe(this) {
-            renovate()
             if (mPresentation != null) {
                 layoutThis(
                     it?.picPlayTime!!,
@@ -659,7 +577,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         RobotStatus.businessBigModel!!.observe(this) {
-            renovate()
             if (mPresentation != null) {
                 layoutThis(
                     it?.picPlayTime ?: 30,
@@ -679,12 +596,23 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
     }
-    private fun renovate() {
-//        if (mPresentation != null) {
-//            mPresentation.dismiss()
-//            mPresentation = null
-//        }
-//        ShowPresentationByDisplaymanager()
-
+    //默认+下载时大屏幕的样式
+    private fun default( picFile : String,boolean: Boolean){
+        val defaultModel = DefaultModel(file = picFile, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
+        layoutThis(
+            defaultModel.picPlayTime!!,
+            defaultModel.file,
+            defaultModel.type!!,
+            defaultModel.textPosition!!,
+            defaultModel.fontLayout!!,
+            defaultModel.fontContent,
+            defaultModel.fontBackGround,
+            defaultModel.fontColor,
+            defaultModel.fontSize!!,
+            defaultModel.picType!!,
+            defaultModel.videolayout!!,
+            defaultModel.videoAudio!!,
+            boolean
+        )
     }
 }

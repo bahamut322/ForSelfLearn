@@ -17,7 +17,6 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.warnyul.android.widget.FastVideoView;
 
 import java.io.File;
 

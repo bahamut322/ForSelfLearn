@@ -25,7 +25,12 @@ public class DownloadBill {
         }
         return instance;
     }
-
+/**
+ * @param url 下载网络地址
+ * @param path 想要存储的路径
+ * @param fileName 自定义存储的名字
+ * @param listener 监听
+ */
     public void addTask(String url, String path, String fileName, DownloadListener listener) {
         DownloadTask task = new DownloadTask(url, path, fileName, listener);
         taskList.add(task);

@@ -29,11 +29,16 @@ import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.helpers.DialogHelper;
+import com.sendi.deliveredrobot.interfaces.DownLoadListener;
+import com.sendi.deliveredrobot.navigationtask.DownloadBill;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.room.dao.DebugDao;
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 
+import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
+import com.sendi.deliveredrobot.utils.ToastUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
 import com.sendi.deliveredrobot.view.widget.Order;
@@ -81,7 +86,7 @@ public class BaseActivity extends AppCompatActivity {
         // Register to receive events from the display manager.
         mDisplayManager.registerDisplayListener(mDisplayListener, null);
         Show(flag);
-        /**
+        /*
          * 处理情况：
          * 自检通过之后回到主页面
          * 按下home键盘
@@ -130,11 +135,6 @@ public class BaseActivity extends AppCompatActivity {
         mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
         SharedPreferences sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
         videoAudio = (int) sp.getFloat("videoAudio", 0); // 视频音量
-        DebugDao debugDao = DataBaseDeliveredRobotMap.Companion.getDatabase(
-                Objects.requireNonNull(
-                        MyApplication.Companion.getInstance()
-                )
-        ).getDebug();
         baseViewModel = new ViewModelProvider(this).get(BaseViewModel.class);
     }
 
@@ -356,6 +356,15 @@ public class BaseActivity extends AppCompatActivity {
      * @param AllvideoAudio  是否播放声音
      */
     public void layoutThis(int picPlayTime, String file, int type, int textPosition, int fontLayout, String fontContent, String fontBackGround, String fontColor, int fontSize, int PicType, int videolayout, int AllvideoAudio, boolean adv) {
+        //重新恢复约束绑定
+        layoutParamsHorizontal = (ConstraintLayout.LayoutParams) horizontalTV.getLayoutParams();
+        layoutParamsHorizontal.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        layoutParamsHorizontal.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        horizontalTV.setLayoutParams(layoutParamsHorizontal);
+        layoutParamsVertical = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
+        layoutParamsVertical.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        layoutParamsVertical.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        verticalTV.setLayoutParams(layoutParamsVertical);
         switch (type) {
             case 1:
             case 2:
@@ -376,8 +385,6 @@ public class BaseActivity extends AppCompatActivity {
                 } catch (IOException ignored) {
 
                 }
-                layoutParamsVertical = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
-                layoutParamsHorizontal = (ConstraintLayout.LayoutParams) horizontalTV.getLayoutParams();
                 if (textPosition == 0) {
 //                    horizontalTV.setGravity(Gravity.CENTER);//居中
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
@@ -403,8 +410,6 @@ public class BaseActivity extends AppCompatActivity {
                     getFilesAllName(file, picPlayTime, PicType, videolayout, AllvideoAudio);
                 } catch (IOException ignored) {
                 }
-                layoutParamsVertical = (ConstraintLayout.LayoutParams) verticalTV.getLayoutParams();
-                layoutParamsHorizontal = (ConstraintLayout.LayoutParams) horizontalTV.getLayoutParams();
                 if (textPosition == 0) {
                     horizontalTV.setGravity(Gravity.CENTER);//居中
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize,adv);
