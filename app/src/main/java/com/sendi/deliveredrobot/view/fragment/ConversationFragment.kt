@@ -34,7 +34,6 @@ import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
-import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -175,6 +174,7 @@ class ConversationFragment : Fragment() {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
                     action = ACTION_NAVIGATE
                     putExtra(NAVIGATE_ID, POP_BACK_STACK)
+                    SpeakHelper.stop()
                 })
             }
         }
