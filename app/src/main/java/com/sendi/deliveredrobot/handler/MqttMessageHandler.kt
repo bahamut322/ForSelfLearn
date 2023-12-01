@@ -83,8 +83,8 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
-//            if (!jsonObject.has("type")) return
+//            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
+            if (!jsonObject.has("type")) return
 
             when (jsonObject.get("type").asString) {
                 "callElevatorState" -> {
@@ -234,7 +234,9 @@ object MqttMessageHandler {
                     if (advertisingConfigDB.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 广告配置数据保存成功")
-                        RobotStatus.newUpdata.postValue(1)
+                        if (advertisingConfig.argConfig.argPic == null && advertisingConfig.argConfig.argVideo == null) {
+                            RobotStatus.newUpdata.postValue(1)
+                        }
                         updateConfig()
                     } else {
                         // 数据保存失败

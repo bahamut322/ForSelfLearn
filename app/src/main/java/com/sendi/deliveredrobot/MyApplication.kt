@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
@@ -45,17 +46,21 @@ class MyApplication : Application() {
         listener = object : DownloadBill.DownloadListener {
             override fun onProgress(progress: Int) {
                 // 更新进度条
-                Log.e("TAG", "onProgress: $progress 剩余任务数：${DownloadBill.getInstance().taskCount}")
-                DialogHelper.robotUpDataDialog.show()
-
-
+                DownLoadListener.setProgress(progress)
+                Log.d("TAG", "onProgress: $progress 剩余任务数：${DownloadBill.getInstance().taskCount}")
+                //避免资源过多消耗
+                if (!DialogHelper.robotUpDataDialog.isShowing) {
+                    DialogHelper.robotUpDataDialog.show()
+                    //设置一个大屏幕默认的图片
+                    RobotStatus.newUpdata.postValue(3)
+                }
             }
             override fun onFinish() {
                 // 下载完成
-                Log.e("TAG", "DownLoad FinishOnce")
+                Log.d("TAG", "DownLoad FinishOnce")
                 if (DownloadBill.getInstance().taskCount == 0) {
                     DialogHelper.robotUpDataDialog.dismiss()
-                    Log.e("TAG", "onProgress: FinishAll")
+                    Log.d("TAG", "onProgress: FinishAll")
                     UpdateReturn().method(Universal.mapType.value!!)
                     RobotStatus.newUpdata.postValue(1)
                 }
@@ -63,7 +68,7 @@ class MyApplication : Application() {
             override fun onError(e: Exception) {
                 // 下载出错
                 ToastUtil.show("下载失败")
-                Log.e("TAG", "downLoad Error: $e")
+                Log.i("TAG", "downLoad Error: $e")
             }
         }
 

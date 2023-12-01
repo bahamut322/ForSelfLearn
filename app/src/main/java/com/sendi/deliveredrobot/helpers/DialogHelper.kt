@@ -3,13 +3,18 @@ package com.sendi.deliveredrobot.helpers
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
@@ -70,7 +75,7 @@ class DialogHelper {
             pullOutAdapterDialog = PullOutAdapterDialog(activity)
             exceptionWaitForHelpDialog = ExceptionWaitForHelpDialog(activity, needBlur = false)
             loadingDialog = LoadingDialog(activity, R.style.simpleDialogStyle)
-            robotUpDataDialog = RobotUpDataDialog(activity,R.style.simpleDialogStyle)
+            robotUpDataDialog = RobotUpDataDialog(activity)
             containDialog = ContainDialog(activity,R.style.simpleDialogStyle)
             lowPowerGoBack = LowPowerDialog(activity,R.style.simpleDialogStyle)
         }

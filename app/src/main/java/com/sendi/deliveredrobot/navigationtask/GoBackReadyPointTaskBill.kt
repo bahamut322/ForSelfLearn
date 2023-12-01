@@ -64,8 +64,7 @@ class GoBackReadyPointTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskMod
                 )
             )
             add(
-                AdvanceGuidingTask(
-                    cmd = 1,
+                GuidingTask(
                     taskModel = TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
