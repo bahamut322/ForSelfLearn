@@ -133,6 +133,12 @@
             app:layout_constraintStart_toStartOf="@+id/image_view_preview"
             app:layout_constraintTop_toTopOf="@+id/image_view_preview"
             app:layout_constraintVertical_bias="0.0" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         
         <VideoView
             android:id="@+id/video_view"
@@ -144,7 +150,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone"
             tools:visibility="visible"/>
-        
+
         <View
             android:id="@+id/view_play"
             android:layout_width="@dimen/dp_128"

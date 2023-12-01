@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -90,9 +91,12 @@ class ConversationFragment : Fragment() {
                     putExtra(NAVIGATE_ID, POP_BACK_STACK)
                 })
             } else {
-                if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying) {
+                if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying && !binding?.videoView?.isPlaying!!) {
                     mainScope.launch(Dispatchers.Main) {
                         if (RobotStatus.ttsIsPlaying) {
+                            return@launch
+                        }
+                        if(binding?.videoView?.isPlaying == true){
                             return@launch
                         }
                         addQuestionView(conversation)
@@ -330,7 +334,6 @@ class ConversationFragment : Fragment() {
                     val videoView = binding?.videoView
                     videoView?.apply {
                         setVideoPath("${BuildConfig.HTTP_HOST}${replyIntentModel.videos?.get(index)?:""}")
-                        start()
                         setOnPreparedListener {
                             it.isLooping = true
                             binding?.seekBar?.apply{
@@ -358,22 +361,45 @@ class ConversationFragment : Fragment() {
                             }
                             post {
                                 var finalWidth = 0
+                                var finalHeight = 0
                                 layoutParams = layoutParams.apply {
-                                    if(videoView.measuredHeight > videoView.measuredWidth){
-                                        finalWidth = videoView.measuredWidth * resources.displayMetrics.heightPixels / videoView.measuredHeight
+                                    if(videoView.height > videoView.width){
+                                        finalWidth = videoView.width * resources.displayMetrics.heightPixels / videoView.height
+                                        finalWidth = when(finalWidth > resources.displayMetrics.widthPixels){
+                                            true -> {
+                                                finalHeight = resources.displayMetrics.widthPixels * videoView.height / videoView.width
+                                                resources.displayMetrics.widthPixels
+                                            }
+                                            false -> {
+                                                finalHeight = resources.displayMetrics.heightPixels
+                                                finalWidth
+                                            }
+                                        }
                                         this.width = finalWidth
-                                        this.height = resources.displayMetrics.heightPixels
+                                        this.height = finalHeight
+
                                     }
-                                    if(videoView.measuredWidth > videoView.measuredHeight){
+                                    if(videoView.width > videoView.height){
                                         finalWidth = resources.displayMetrics.widthPixels
+                                        finalHeight = when((videoView.height * resources.displayMetrics.widthPixels / videoView.width) > resources.displayMetrics.heightPixels){
+                                            true -> {
+                                                finalWidth = resources.displayMetrics.heightPixels * videoView.width / videoView.height
+                                                resources.displayMetrics.heightPixels
+                                            }
+                                            false -> {
+                                                finalWidth = resources.displayMetrics.widthPixels
+                                                videoView.height * resources.displayMetrics.widthPixels / videoView.width
+                                            }
+                                        }
                                         this.width = finalWidth
-                                        this.height = videoView.measuredHeight * resources.displayMetrics.widthPixels / videoView.measuredWidth
+                                        this.height = finalHeight
                                     }
                                 }
                                 binding?.seekBar?.layoutParams = binding?.seekBar?.layoutParams.apply {
                                     this?.width = finalWidth
                                     this?.height = 64
                                 }
+                                start()
                             }
                         }
                     }
