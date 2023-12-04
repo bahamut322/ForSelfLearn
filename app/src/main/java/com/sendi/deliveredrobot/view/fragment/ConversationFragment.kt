@@ -102,7 +102,9 @@ class ConversationFragment : Fragment() {
                         }
 //                        addQuestionView(conversation)
 //                        question(conversation, System.currentTimeMillis())
-                        addConversationView(conversation)
+                        val res = addConversationView(conversation)
+                        if (res.isNullOrEmpty()) return@launch
+                        SpeakHelper.speakWithoutStop(res)
                     }
                 }
             }
@@ -158,7 +160,9 @@ class ConversationFragment : Fragment() {
                     mainScope.launch(Dispatchers.Main) {
 //                        addQuestionView(text)
 //                        question(text, System.currentTimeMillis())
-                        addConversationView(text)
+                        val res = addConversationView(text)
+                        if (res.isNullOrEmpty()) return@launch
+                        SpeakHelper.speakWithoutStop(res)
                     }
                 }
                 myFlowLayout.addView(linearLayoutCompat)
