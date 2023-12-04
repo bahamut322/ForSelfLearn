@@ -28,16 +28,16 @@ class AudioChannel(audioRecord: AudioRecord) {
     private val gson = Gson()
     private var audioChannel: AudioChannel? = null
     private var retrofit: Retrofit? = null
-    private var body:RequestBody? = null
     var callback: ((conversation: String, pinyinString: String)-> Unit)? = null
 
     init {
         this.audioRecord = audioRecord
         retrofit = Retrofit.Builder() //设置网络请求BaseUrl地址
-            .baseUrl("http://192.168.60.203:7721/") //设置数据解析器
+//            .baseUrl("http://192.168.60.203:7721/") //设置数据解析器
+            .baseUrl("http://app.yuexiu.gov.cn/") //设置数据解析器
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        body = RequestBody.create(MediaType.parse("text/plain"), "普通话")
+//        body = RequestBody.create(MediaType.parse("text/plain"), "普通话")
     }
 
     private fun write(byteArray: ByteArray) {
@@ -83,16 +83,19 @@ class AudioChannel(audioRecord: AudioRecord) {
         val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
         val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
         val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
-        val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
-        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
+//        val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
+        val part = MultipartBody.Part.createFormData("File", fileWav.name, fileBody)
+//        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
+        val call = retrofit?.create(ApiService::class.java)?.uploadFile2(part)
         call?.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 try {
                     val s = response.body()?.string()
                     if (!s.isNullOrEmpty()) {
                         Log.i("AudioChannel", s)
-                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
-                        val textProcessed = audioTransTextModel.text_postprocessed?:""
+//                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
+                        val audioTransTextModel = gson.fromJson(s, GetVFFileToTextModel::class.java)
+                        val textProcessed = audioTransTextModel.data?:""
                         val resultList = HanziToPinyin.instance?.get(textProcessed)
                         val stringBuilder = StringBuilder()
                         resultList?.map {

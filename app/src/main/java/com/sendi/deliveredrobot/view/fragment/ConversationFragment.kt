@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,7 @@ class ConversationFragment : Fragment() {
         .apiHost("https://api.openai.com/") //反向代理地址
         .build()
         .init()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -197,7 +199,8 @@ class ConversationFragment : Fragment() {
             }
 
             return withContext(Dispatchers.Default) {
-                val res: String = chatGPT.chat(conversation)
+//                val res: String = chatGPT.chat(conversation)
+                val res = GenerateReplyToX8Utils.generateReplyToX8(conversation)
                 val linearLayoutCompat2 = LayoutInflater.from(requireContext())
                     .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
                 val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
