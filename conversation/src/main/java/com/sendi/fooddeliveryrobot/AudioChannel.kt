@@ -30,11 +30,14 @@ class AudioChannel(audioRecord: AudioRecord) {
     private var retrofit: Retrofit? = null
     private var body:RequestBody? = null
     var callback: ((conversation: String, pinyinString: String)-> Unit)? = null
+    var url: String = ""
 
     init {
         this.audioRecord = audioRecord
+//        url = "http://192.168.60.203:7721/"
+        url = "http://app.yuexiu.gov.cn/"
         retrofit = Retrofit.Builder() //设置网络请求BaseUrl地址
-            .baseUrl("http://192.168.60.203:7721/") //设置数据解析器
+            .baseUrl(url) //设置数据解析器
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         body = RequestBody.create(MediaType.parse("text/plain"), "普通话")
@@ -80,42 +83,7 @@ class AudioChannel(audioRecord: AudioRecord) {
                 Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm",
                 Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav"
             )
-
-            val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
-            val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
-            val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
-            val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
-            val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
-            call?.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    try {
-                        val s = response.body()?.string()
-                        if (!s.isNullOrEmpty()) {
-                            Log.i("AudioChannel", s)
-                            val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
-                            val textProcessed = audioTransTextModel.text_postprocessed?:""
-                            val resultList = HanziToPinyin.instance?.get(textProcessed)
-                            val stringBuilder = StringBuilder()
-                            resultList?.map {
-                                Log.i("AudioChannel", it.toString())
-                                stringBuilder.append(it.target)
-                            }
-                            callback?.invoke(textProcessed, stringBuilder.toString())
-                        }
-                    } catch (e: IOException) {
-//                        throw RuntimeException(e)
-                    }finally {
-                        fileWav.delete()
-                        filePcm.delete()
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Log.e("AudioChannel", t.message!!)
-                    fileWav.delete()
-                    filePcm.delete()
-                }
-            })
+            call2()
         }
 //        Log.i("AudioChannel", "AudioChannel run finish ")
     }
@@ -142,5 +110,84 @@ class AudioChannel(audioRecord: AudioRecord) {
             init()
             writeRecord(byteArray)
         }
+    }
+
+    private fun call1(){
+        val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
+        val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
+        val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
+        val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
+        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                try {
+                    val s = response.body()?.string()
+                    if (!s.isNullOrEmpty()) {
+                        Log.i("AudioChannel", s)
+                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
+                        val textProcessed = audioTransTextModel.text_postprocessed?:""
+                        val resultList = HanziToPinyin.instance?.get(textProcessed)
+                        val stringBuilder = StringBuilder()
+                        resultList?.map {
+                            Log.i("AudioChannel", it.toString())
+                            stringBuilder.append(it.target)
+                        }
+                        callback?.invoke(textProcessed, stringBuilder.toString())
+                    }
+                } catch (e: IOException) {
+//                        throw RuntimeException(e)
+                }finally {
+                    fileWav.delete()
+                    filePcm.delete()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("AudioChannel", t.message!!)
+                fileWav.delete()
+                filePcm.delete()
+            }
+        })
+    }
+
+    private fun call2(){
+        val filePcm = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm")
+        val fileWav = File(Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav")
+        val fileBody = RequestBody.create(MediaType.parse("audio/*"), fileWav)
+//        val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
+        val part = MultipartBody.Part.createFormData("File", fileWav.name, fileBody)
+//        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
+        val call = retrofit?.create(ApiService::class.java)?.uploadFile2(part)
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                try {
+                    val s = response.body()?.string()
+                    if (!s.isNullOrEmpty()) {
+                        Log.i("AudioChannel", s)
+//                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
+                        val audioTransTextModel = gson.fromJson(s, GetVFFileToTextModel::class.java)
+                        val textProcessed = audioTransTextModel.data?:""
+                        val resultList = HanziToPinyin.instance?.get(textProcessed)
+                        val stringBuilder = StringBuilder()
+                        resultList?.map {
+                            Log.i("AudioChannel", it.toString())
+                            stringBuilder.append(it.target)
+                        }
+                        callback?.invoke(textProcessed, stringBuilder.toString())
+                    }
+                } catch (e: IOException) {
+                    throw RuntimeException(e)
+                }finally {
+                    fileWav.delete()
+                    filePcm.delete()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("AudioChannel", t.message!!)
+                fileWav.delete()
+                filePcm.delete()
+            }
+        })
     }
 }

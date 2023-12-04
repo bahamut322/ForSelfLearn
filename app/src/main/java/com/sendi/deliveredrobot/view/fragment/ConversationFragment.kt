@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
+import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,7 @@ class ConversationFragment : Fragment() {
     private var startTime: Long = 0
     private var totalHeight: Int = 0
     private var voiceRecorder: VoiceRecorder? = null
+
 
 
     override fun onCreateView(
@@ -98,8 +100,9 @@ class ConversationFragment : Fragment() {
                         if(binding?.videoView?.isPlaying == true){
                             return@launch
                         }
-                        addQuestionView(conversation)
-                        question(conversation, System.currentTimeMillis())
+//                        addQuestionView(conversation)
+//                        question(conversation, System.currentTimeMillis())
+                        addConversationView(conversation)
                     }
                 }
             }
@@ -153,8 +156,9 @@ class ConversationFragment : Fragment() {
                 textView.text = text
                 linearLayoutCompat.setOnClickListener {
                     mainScope.launch(Dispatchers.Main) {
-                        addQuestionView(text)
-                        question(text, System.currentTimeMillis())
+//                        addQuestionView(text)
+//                        question(text, System.currentTimeMillis())
+                        addConversationView(text)
                     }
                 }
                 myFlowLayout.addView(linearLayoutCompat)
@@ -436,6 +440,90 @@ class ConversationFragment : Fragment() {
             addView(emptyView)
         }
         ReplyIntentHelper.replyIntentLiveData.value = null
+    }
+
+    private suspend fun addConversationView(conversation: String): String? {
+        binding?.group1?.apply {
+            if (visibility == View.VISIBLE) {
+                visibility = View.GONE
+            }
+        }
+        binding?.group2?.apply {
+            if (visibility == View.GONE) {
+                visibility = View.VISIBLE
+            }
+        }
+        binding?.linearLayoutConversation?.apply {
+            val linearLayoutCompat = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
+            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
+            textView.text = conversation
+            addView(linearLayoutCompat)
+            val emptyView = View(requireContext()).apply {
+                layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 96)
+                }
+            }
+            addView(emptyView)
+            linearLayoutCompat.post {
+                linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.END
+                    linearLayoutCompat.visibility = View.VISIBLE
+//                                setMargins(0,0,0,96)
+                }
+                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
+                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+            }
+            emptyView.post {
+                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
+                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+            }
+
+            return withContext(Dispatchers.Default) {
+//                val res: String = chatGPT.chat(conversation)
+                val res = GenerateReplyToX8Utils.generateReplyToX8(conversation)
+                val linearLayoutCompat2 = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
+                val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
+                textView2.text = res
+                val emptyView2 = View(requireContext()).apply {
+                    layoutParams = LinearLayoutCompat.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(0, 0, 0, 96)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    addView(linearLayoutCompat2)
+                    addView(emptyView2)
+                    linearLayoutCompat2.post {
+                        linearLayoutCompat2.layoutParams = LinearLayoutCompat.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            gravity = Gravity.START
+                            linearLayoutCompat2.visibility = View.VISIBLE
+//                                        setMargins(0,0,0,96)
+                        }
+                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                    }
+                    emptyView2.post {
+                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                    }
+                }
+                return@withContext res
+            }
+        }
+        return null
     }
 
     private suspend fun question(question: String, questionNumber: Long) {
