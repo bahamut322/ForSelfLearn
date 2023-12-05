@@ -83,7 +83,7 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
+//            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
 //            if (!jsonObject.has("type")) return
 
             when (jsonObject.get("type").asString) {

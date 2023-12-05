@@ -8,7 +8,6 @@ import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -38,9 +37,8 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -106,7 +104,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             LogUtil.i("mainactivity onDestinationChangedListener")
-            VoiceRecorder.getInstance().removeCallback()
+            BaseVoiceRecorder.getInstance()?.removeCallback()
         }
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController

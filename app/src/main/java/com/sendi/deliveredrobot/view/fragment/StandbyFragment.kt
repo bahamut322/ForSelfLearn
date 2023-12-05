@@ -19,7 +19,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import java.io.File
 
 
@@ -70,7 +70,7 @@ class StandbyFragment : Fragment() {
         }
         if (contains3) {
             println("字符串中包含数字3,唤醒词")
-            VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
+            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString ->
                 if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                     Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                     controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)

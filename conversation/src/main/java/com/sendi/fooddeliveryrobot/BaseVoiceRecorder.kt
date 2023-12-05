@@ -9,9 +9,9 @@ import kotlin.concurrent.thread
 
 
 @SuppressLint("MissingPermission")
-class VoiceRecorder {
+abstract class BaseVoiceRecorder {
     private val sampleRate = 16000
-    private var audioRecorder: AudioRecord? = null
+    protected var audioRecorder: AudioRecord? = null
     private var fvad: FvadWrapper? = null
 
     private var isRecording = false
@@ -48,10 +48,7 @@ class VoiceRecorder {
         baseAudioChannel = initAudioChannel()
     }
 
-    abstract fun initAudioChannel(): BaseAudioChannel?{
-
-        return null
-    }
+    abstract fun initAudioChannel(): BaseAudioChannel?
 
     @SuppressLint("MissingPermission")
     fun startRecording() {
@@ -130,13 +127,24 @@ class VoiceRecorder {
     }
 
     companion object{
-        private var _instance: VoiceRecorder? = null
+        private var _instance: BaseVoiceRecorder? = null
         var ttsIsPlaying = false
-        fun getInstance():VoiceRecorder{
+        const val VOICE_RECORD_TYPE_SENDI = 0
+        const val VOICE_RECORD_TYPE_AIXIAOYUE = 1
+        var VOICE_RECORD_TYPE = VOICE_RECORD_TYPE_SENDI
+        fun getInstance():BaseVoiceRecorder?{
             if(_instance == null){
-                _instance = VoiceRecorder()
+                _instance = when (VOICE_RECORD_TYPE) {
+                    VOICE_RECORD_TYPE_SENDI -> SendiVoiceRecorder()
+                    VOICE_RECORD_TYPE_AIXIAOYUE -> AiXiaoYueVoiceRecorder()
+                    else -> throw Exception("void recorder type is not set")
+                }
             }
-            return _instance!!
+            return _instance
+        }
+
+        fun release(){
+            _instance = null
         }
     }
 }

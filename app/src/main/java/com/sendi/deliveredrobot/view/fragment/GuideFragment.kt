@@ -38,7 +38,7 @@ import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -193,7 +193,7 @@ class GuideFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
+        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)

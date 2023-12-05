@@ -24,7 +24,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
@@ -41,7 +40,7 @@ import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog;
-import com.sendi.fooddeliveryrobot.VoiceRecorder;
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,8 +67,8 @@ public class ExplanationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
-        voiceRecorder.setRecordCallback((s, pinyinString) -> {
+        BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
+        baseVoiceRecorder.setRecordCallback((s, pinyinString) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
                 Log.i("AudioChannel", "包含" + WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);

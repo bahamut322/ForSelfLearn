@@ -1,4 +1,7 @@
 package com.sendi.fooddeliveryrobot
 
-class SendiVoiceRecorder {
+class SendiVoiceRecorder: BaseVoiceRecorder() {
+    override fun initAudioChannel(): BaseAudioChannel? {
+        return SendiAudioChannel(audioRecorder!!)
+    }
 }

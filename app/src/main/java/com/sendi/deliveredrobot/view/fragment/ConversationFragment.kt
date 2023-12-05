@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
@@ -36,7 +37,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ class ConversationFragment : Fragment() {
     val timer = Timer()
     private var startTime: Long = 0
     private var totalHeight: Int = 0
-    private var voiceRecorder: VoiceRecorder? = null
+    private var voiceRecorder: BaseVoiceRecorder? = null
 
 
 
@@ -84,7 +85,7 @@ class ConversationFragment : Fragment() {
                 binding?.seekBar?.progress = binding?.videoView?.currentPosition ?: 0
             }
         }, Date(), 1000)
-        voiceRecorder = VoiceRecorder.getInstance()
+        voiceRecorder = BaseVoiceRecorder.getInstance()
         voiceRecorder?.recordCallback = { conversation, pinyinString ->
             if (pinyinString.contains("TUICHU")) {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
@@ -100,11 +101,20 @@ class ConversationFragment : Fragment() {
                         if(binding?.videoView?.isPlaying == true){
                             return@launch
                         }
-//                        addQuestionView(conversation)
-//                        question(conversation, System.currentTimeMillis())
-                        val res = addConversationView(conversation)
-                        if (res.isNullOrEmpty()) return@launch
-                        SpeakHelper.speakWithoutStop(res)
+                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                                addQuestionView(conversation)
+                                question(conversation, System.currentTimeMillis())
+                            }
+
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                                val res = addConversationView(conversation)
+                                if (res.isNullOrEmpty()) return@launch
+                                SpeakHelper.speakWithoutStop(res)
+                            }
+                        }
+
+
                     }
                 }
             }
@@ -158,11 +168,18 @@ class ConversationFragment : Fragment() {
                 textView.text = text
                 linearLayoutCompat.setOnClickListener {
                     mainScope.launch(Dispatchers.Main) {
-//                        addQuestionView(text)
-//                        question(text, System.currentTimeMillis())
-                        val res = addConversationView(text)
-                        if (res.isNullOrEmpty()) return@launch
-                        SpeakHelper.speakWithoutStop(res)
+                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                                addQuestionView(text)
+                                question(text, System.currentTimeMillis())
+                            }
+
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                                val res = addConversationView(text)
+                                if (res.isNullOrEmpty()) return@launch
+                                SpeakHelper.speakWithoutStop(res)
+                            }
+                        }
                     }
                 }
                 myFlowLayout.addView(linearLayoutCompat)

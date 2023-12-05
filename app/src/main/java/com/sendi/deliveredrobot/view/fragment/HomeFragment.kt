@@ -31,7 +31,7 @@ import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.*
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,13 +76,13 @@ class HomeFragment : Fragment(), IMainView {
 //            LogUtil.i("homefragment onDestinationChangedListener")
 //            voiceRecorder?.removeCallback()
 //        }
-        VoiceRecorder.getInstance().recordCallback =  { _, pinyinString ->
+        BaseVoiceRecorder.getInstance()?.recordCallback =  { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
         }
-        VoiceRecorder.getInstance().talkingCallback = { talking ->
+        BaseVoiceRecorder.getInstance()?.talkingCallback = { talking ->
             when (talking) {
                 true -> {
                     println("****talking")
