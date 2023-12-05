@@ -15,12 +15,12 @@ class VoiceRecorder {
     private var fvad: FvadWrapper? = null
 
     private var isRecording = false
-    private var audioChannel: AudioChannel? = null
+    private var baseAudioChannel: BaseAudioChannel? = null
 
     private val minBufferSize: Int
     var recordCallback: ((conversation: String, pinyinString: String)-> Unit)? = null
         set(value) {
-            audioChannel?.callback = value
+            baseAudioChannel?.callback = value
             field = value
         }
 
@@ -45,7 +45,12 @@ class VoiceRecorder {
             sampleRate, channelConfig,
             AudioFormat.ENCODING_PCM_16BIT, minBufferSize
         )
-        audioChannel = AudioChannel(audioRecorder!!)
+        baseAudioChannel = initAudioChannel()
+    }
+
+    abstract fun initAudioChannel(): BaseAudioChannel?{
+
+        return null
     }
 
     @SuppressLint("MissingPermission")
@@ -71,14 +76,14 @@ class VoiceRecorder {
                         shortArray[index / 2] = (audioBuffer[index - 1].toInt() and 0xff or (audioBuffer[index].toInt() shl 8)).toShort()
                     }
                 }
-                if (!ttsIsPlaying && audioChannel?.initialized == true && recordCallback != null) {
-                    audioChannel?.writeRecord(audioBuffer)
+                if (!ttsIsPlaying && baseAudioChannel?.initialized == true && recordCallback != null) {
+                    baseAudioChannel?.writeRecord(audioBuffer)
                 }
                 if (recordCallback != null) {
                     when (fvad?.process(shortArray) ?: -1) {
                         0 -> {
                             talkingCallback?.invoke(false)
-                            if (audioChannel?.initialized == true) {
+                            if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
                                 val totalSize = trueStack.size * 1.5 + falseStack.size
                                 if (trueStack.size > 0) {
@@ -88,7 +93,7 @@ class VoiceRecorder {
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
                                         println("percentFalseTotal: $percentFalseTotal")
-                                        audioChannel?.stopRecord()
+                                        baseAudioChannel?.stopRecord()
                                         trueStack.clear()
                                         falseStack.clear()
                                     }
@@ -99,8 +104,8 @@ class VoiceRecorder {
 //                        Log.i("VoiceRecorder", "人声 yes")
                             talkingCallback?.invoke(true)
                             trueStack.push(true)
-                            if (audioChannel?.initialized == false && recordCallback != null) {
-                                audioChannel?.initRecord(audioBuffer)
+                            if (baseAudioChannel?.initialized == false && recordCallback != null) {
+                                baseAudioChannel?.initRecord(audioBuffer)
                             }
 
                         }

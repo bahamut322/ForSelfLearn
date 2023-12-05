@@ -20,7 +20,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class AudioChannel(audioRecord: AudioRecord) {
+abclass AudioChannel(audioRecord: AudioRecord) {
     private var audioRecord: AudioRecord? = null
     private var writer: FileOutputStream? = null
     private var time: String? = null
