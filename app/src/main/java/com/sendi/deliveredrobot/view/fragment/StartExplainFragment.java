@@ -437,7 +437,6 @@ public class StartExplainFragment extends Fragment {
                 binding.parentCon.setClickable(QuerySql.QueryBasic().getExplainInterrupt());
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
-                try {
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
 
@@ -457,11 +456,12 @@ public class StartExplainFragment extends Fragment {
                         binding.goingLin.setVisibility(View.VISIBLE);
                         binding.contentCL.setVisibility(View.GONE);
                         if (viewModel.inForListData().get(position).getTouch_imagefile() != null) {
-                            //带光晕的背景图
-                            Glide.with(requireActivity()).load(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0)).into(binding.startImg);//轮播
+                            //带光晕的背景图(新加了默认值，直接try，就会显示布局中设置的图片)
+                            try {
+                                Glide.with(requireActivity()).load(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0)).into(binding.startImg);//轮播
+                            }catch (Exception ignored){}
                         }
                     }
-
                     if (Universal.taskQueue.isTaskQueueCompleted()) {
                         //要执行的任务代码
                         try {
@@ -556,9 +556,6 @@ public class StartExplainFragment extends Fragment {
                             }
                         });
                     }
-                } catch (Exception e) {
-                    Log.i("TAG", "Error: " + e);
-                }
             } else {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first);

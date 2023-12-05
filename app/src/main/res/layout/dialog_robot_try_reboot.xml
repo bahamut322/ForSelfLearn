@@ -15,7 +15,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <ImageView
+        android:id="@+id/imageView14"
+        android:layout_width="540dp"
+        android:layout_height="164dp"
+        android:src="@drawable/robot_exception_2_bg"
+        app:layout_constraintEnd_toEndOf="@+id/view19"
+        app:layout_constraintStart_toStartOf="@+id/view19"
+        app:layout_constraintTop_toTopOf="@+id/view19" />
     <ImageView
         android:id="@+id/imageView15"
         android:layout_width="@dimen/dp_120"
@@ -27,14 +34,7 @@
         app:layout_constraintEnd_toEndOf="@+id/view19"
         app:layout_constraintStart_toStartOf="@+id/view19" />
 
-    <ImageView
-        android:id="@+id/imageView14"
-        android:layout_width="540dp"
-        android:layout_height="164dp"
-        android:src="@drawable/robot_exception_2_bg"
-        app:layout_constraintEnd_toEndOf="@+id/view19"
-        app:layout_constraintStart_toStartOf="@+id/view19"
-        app:layout_constraintTop_toTopOf="@+id/view19" />
+
 
     <TextView
         android:id="@+id/textView71"

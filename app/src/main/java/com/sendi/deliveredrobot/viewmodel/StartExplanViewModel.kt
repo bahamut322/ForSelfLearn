@@ -319,18 +319,18 @@ class StartExplanViewModel : ViewModel() {
         }
         SecondModel?.postValue(
             SecondModel(
-                picPlayTime = mData[position]!!.big_picplaytime,
-                file = file,
-                type = mData[position]!!.big_type,
-                textPosition = mData[position]!!.big_textposition,
-                fontLayout = mData[position]!!.big_fontlayout,
-                fontContent = mData[position]!!.big_fontcontent?.toString(),
-                fontBackGround = mData[position]!!.big_fontbackground?.toString(),
-                fontColor = mData[position]!!.big_fontcolor?.toString(),
-                fontSize = mData[position]!!.big_fontsize,
-                picType = mData[position]!!.big_pictype,
-                videolayout = mData[position]!!.videolayout,
-                videoAudio = mData[position]!!.big_videoaudio
+                picPlayTime = mData[position]?.big_picplaytime ,
+                file = file ?:"",
+                type = mData[position]?.big_type?: 0,
+                textPosition = mData[position]?.big_textposition,
+                fontLayout = mData[position]?.big_fontlayout,
+                fontContent = mData[position]?.big_fontcontent?.toString(),
+                fontBackGround = mData[position]?.big_fontbackground?.toString(),
+                fontColor = mData[position]?.big_fontcolor?.toString(),
+                fontSize = mData[position]?.big_fontsize,
+                picType = mData[position]?.big_pictype,
+                videolayout = mData[position]?.videolayout,
+                videoAudio = mData[position]?.big_videoaudio
             )
         )
         sdScreenStatus!!.postValue(2)

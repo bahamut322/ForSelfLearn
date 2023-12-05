@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.handler
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
@@ -170,7 +169,7 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
                     deleteAll(AdvertisingConfigDB::class.java)
-                    deleteFiles(File(Universal.advertisement))
+//                    deleteFiles(File(Universal.advertisement))
 //                    advFile = null
                     RobotStatus.advertisingConfig?.value = advertisingConfig
                     ToastUtil.show("收到广告配置")
@@ -182,8 +181,11 @@ object MqttMessageHandler {
                     advertisingConfigDB.type = advertisingConfig.argConfig!!.type!!
                     if (advertisingConfig.argConfig.argPic != null) {
                         val advPics =
-                            UpdateReturn().splitStr(advertisingConfig.argConfig.argPic.pics)
-                        for (i in advPics.indices) {
+                            compareArrays(
+                                Universal.advertisement,
+                                advertisingConfig.argConfig.argPic.pics
+                            )
+                        for (i in advPics!!.indices) {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + advPics[i],
                                 Universal.advertisement,
@@ -211,8 +213,11 @@ object MqttMessageHandler {
                     }
                     if (advertisingConfig.argConfig.argVideo != null) {
                         val advVideoFile =
-                            UpdateReturn().splitStr(advertisingConfig.argConfig.argVideo.videos)
-                        for (i in advVideoFile.indices) {
+                            compareArrays(
+                                Universal.advertisement,
+                                advertisingConfig.argConfig.argVideo.videos
+                            )
+                        for (i in advVideoFile!!.indices) {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + advVideoFile[i],
                                 Universal.advertisement,
@@ -234,9 +239,7 @@ object MqttMessageHandler {
                     if (advertisingConfigDB.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 广告配置数据保存成功")
-                        if (advertisingConfig.argConfig.argPic == null && advertisingConfig.argConfig.argVideo == null) {
-                            RobotStatus.newUpdata.postValue(1)
-                        }
+                        RobotStatus.newUpdata.postValue(1)
                         updateConfig()
                     } else {
                         // 数据保存失败
@@ -278,7 +281,7 @@ object MqttMessageHandler {
                     RobotStatus.gatekeeper?.value = gatekeeper
                     deleteAll(ReplyGateConfig::class.java)
                     //提交到数据库
-                    deleteFiles(File(Universal.Secondary))
+//                    deleteFiles(File(Universal.Secondary))
                     //创建文件的方法
                     createFolder()
                     ToastUtil.show("收到新的门岗配置信息")
@@ -293,8 +296,10 @@ object MqttMessageHandler {
                     if (gatekeeper.argConfig.screen == 1) {
                         if (gatekeeper.argConfig.argPic != null) {
                             println("收到：argPic")
-                            val pics =
-                                UpdateReturn().splitStr(gatekeeper.argConfig.argPic.pics)
+                            val pics = compareArrays(
+                                Universal.Secondary,
+                                gatekeeper.argConfig.argPic.pics
+                            )!!
                             for (i in pics.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + pics[i],
@@ -324,8 +329,10 @@ object MqttMessageHandler {
                         }
                         if (gatekeeper.argConfig.argVideo != null) {
                             println("收到：argVideo")
-                            val videoFile =
-                                UpdateReturn().splitStr(gatekeeper.argConfig.argVideo.videos)
+                            val videoFile = compareArrays(
+                                Universal.Secondary,
+                                gatekeeper.argConfig.argVideo.videos
+                            )!!
                             for (i in videoFile.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videoFile[i],
@@ -373,7 +380,7 @@ object MqttMessageHandler {
                     }
                     deleteAll(RobotConfigSql::class.java)
                     //提交数据到数据库
-                    deleteFiles(File(Universal.Standby))
+//                    deleteFiles(File(Universal.Standby))
                     //创建文件的方法
                     createFolder()
 
@@ -410,8 +417,12 @@ object MqttMessageHandler {
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
-                            val videos =
-                                UpdateReturn().splitStr(robotConfig.argConfig.argPic.pics)
+//                            val videos =
+//                                UpdateReturn().splitStr(robotConfig.argConfig.argPic.pics)
+                            val videos = compareArrays(
+                                Universal.Standby,
+                                robotConfig.argConfig.argPic.pics
+                            )!!
                             for (i in videos.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
@@ -427,8 +438,12 @@ object MqttMessageHandler {
                             println("收到：小屏幕无argFont")
                         }
                         if (robotConfig.argConfig.argVideo != null) {
-                            val videos =
-                                UpdateReturn().splitStr(robotConfig.argConfig.argVideo.videos)
+//                            val videos =
+//                                UpdateReturn().splitStr(robotConfig.argConfig.argVideo.videos)
+                            val videos = compareArrays(
+                                Universal.Standby,
+                                robotConfig.argConfig.argVideo.videos
+                            )!!
                             for (i in videos.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
@@ -443,8 +458,12 @@ object MqttMessageHandler {
                             println("收到：argRadio 暂无")
                         }
                         if (robotConfig.argConfig.argPicGroup != null) {
-                            val videos =
-                                UpdateReturn().splitStr(robotConfig.argConfig.argPicGroup.sleepPic!!)
+//                            val videos =
+//                                UpdateReturn().splitStr(robotConfig.argConfig.argPicGroup.sleepPic!!)
+                            val videos = compareArrays(
+                                Universal.Standby,
+                                robotConfig.argConfig.argPicGroup.sleepPic!!
+                            )!!
                             for (i in videos.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
@@ -655,24 +674,38 @@ object MqttMessageHandler {
         return imagePaths.toTypedArray()
     }
 
-    fun compareArrays(array1: Array<String?>, array2: Array<String?>): SameName {
+    /**
+     * @param sdcardFile sdcard的路径
+     * @param needDownload Mqtt传入下载的路径
+     */
+    fun compareArrays(sdcardFile: String?, needDownload: String?): List<String?>? {
         val sameName = SameName()
+        val sdcardPic = selectImagePath(sdcardFile)
+        val download = UpdateReturn().splitStr(needDownload!!)
         // 比较两个数组
-        val commonFiles = array1.mapNotNull { it?.substringAfterLast('/') }
-            .intersect(array2.mapNotNull { it?.substringAfterLast('/') })
-        val uniqueFiles1 = array1.mapNotNull { it?.substringAfterLast('/') }
-            .subtract(array2.mapNotNull { it?.substringAfterLast('/') })
-        val uniqueFiles2 = array2.mapNotNull { it?.substringAfterLast('/') }
-            .subtract(array1.mapNotNull { it?.substringAfterLast('/') })
+        val commonFiles = sdcardPic.mapNotNull { it?.substringAfterLast('/') }
+            .intersect(download.mapNotNull { it?.substringAfterLast('/') })
+        val uniqueFiles1 = sdcardPic.mapNotNull { it?.substringAfterLast('/') }
+            .subtract(download.mapNotNull { it?.substringAfterLast('/') })
+        val uniqueFiles2 = download.mapNotNull { it?.substringAfterLast('/') }
+            .subtract(sdcardPic.mapNotNull { it?.substringAfterLast('/') })
         //共同包含的文件
         sameName.SameAll =
-            commonFiles.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
+            commonFiles.mapNotNull { name -> sdcardPic.find { it?.endsWith("/$name") == true } }
         //第一个数组中独有的文件
         sameName.SameOne =
-            uniqueFiles1.mapNotNull { name -> array1.find { it?.endsWith("/$name") == true } }
+            uniqueFiles1.mapNotNull { name -> sdcardPic.find { it?.endsWith("/$name") == true } }
         //第二个数组中独有的文件
         sameName.SameTwo =
-            uniqueFiles2.mapNotNull { name -> array2.find { it?.endsWith("/$name") == true } }
-        return sameName
+            uniqueFiles2.mapNotNull { name -> download.find { it?.endsWith("/$name") == true } }
+        //删除Sdcard中多余的文件
+        Log.d("compareArrays", "共同包含的文件: ${sameName.SameAll}")
+        Log.d("compareArrays", "sdcard独有的文件: ${sameName.SameOne}")
+        Log.d("compareArrays", "需要下载的的文件: ${sameName.SameTwo}")
+
+        for (i in sameName.SameOne!!.indices) {
+            UpdateReturn().deleteFolderFile(sameName.SameOne!![i], true)
+        }
+        return sameName.SameTwo
     }
 }

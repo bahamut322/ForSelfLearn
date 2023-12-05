@@ -122,13 +122,14 @@ class InteractionMqtt {
                         action.bigScreenConfig!!.argPic!!.picPlayTime
                     //图片
                     MqttMessageHandler.openFile(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/")
-                    val picfile =
-                        UpdateReturn().splitStr(action.bigScreenConfig!!.argPic!!.pics)
+                    val picfile =MqttMessageHandler.compareArrays(
+                        Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
+                        action.bigScreenConfig!!.argPic!!.pics )
                     //创建对应文件夹。以路线名字命名(存放大屏幕)
                     bigScreenConfigDB.imageFile =
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/"
                     Thread {
-                        for (i in picfile.indices) {
+                        for (i in picfile!!.indices) {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
@@ -167,13 +168,13 @@ class InteractionMqtt {
                     //视频储存位置
                     //创建对应文件夹。以路线名字命名(存放大屏幕)
                     MqttMessageHandler.openFile(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/")
-
-                    val picfile =
-                        UpdateReturn().splitStr(action.bigScreenConfig!!.argVideo?.videos!!)
+                    val picfile =MqttMessageHandler.compareArrays(
+                        Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
+                        action.bigScreenConfig!!.argVideo?.videos!! )
                     bigScreenConfigDB.videoFile =
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/"
                     Thread {
-                        for (i in picfile.indices) {
+                        for (i in picfile!!.indices) {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
@@ -203,13 +204,13 @@ class InteractionMqtt {
                         action.touchScreenConfig!!.argPic?.picPlayTime!!
                     //图片路径
                     if (action.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
-                        val picfile =
-                            UpdateReturn().splitStr(action.touchScreenConfig!!.argPic?.pics!!)
-
+                        val picfile =MqttMessageHandler.compareArrays(
+                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/",
+                            action.touchScreenConfig!!.argPic?.pics!! )
                         touchScreenConfigDB.touch_imageFile =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/"
                         Thread {
-                            for (i in picfile.indices) {
+                            for (i in picfile!!.indices) {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + picfile[i],
                                     Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/",
@@ -403,33 +404,18 @@ class InteractionMqtt {
                 if (route.backgroundPic?.isNotEmpty() == true) {
                     MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                     MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
-                    val sdcardFile =
-                        MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
-                    val picfile =
-                        UpdateReturn().splitStr(route.backgroundPic)
-
-                    val backPic = MqttMessageHandler.compareArrays(sdcardFile, picfile)
-                    for (i in backPic.SameOne!!.indices) {
-                        UpdateReturn().deleteFolderFile(backPic.SameOne!![i], true)
-                    }
+                    val backPic = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch", route.backgroundPic)
                     routeDB.backgroundPic =
                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + route.backgroundPic.substring(
                             route.backgroundPic.lastIndexOf("/") + 1
                         ) //路线背景图
-                    if (backPic.SameAll?.isNotEmpty() == true) {
-                        for (i in backPic.SameTwo!!.indices)
-                            UpdateReturn().deleteFolderFile(
-                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + (backPic.SameTwo!![i]!!),
-                                true
-                            )
-                    }
-                    if (backPic.SameTwo?.isNotEmpty() == true) {
+                    if (backPic?.isNotEmpty() == true) {
                         Thread {
-                            for (i in backPic.SameTwo!!.indices) {
+                            for (i in backPic.indices) {
                                 DownloadBill.getInstance().addTask(
-                                    Universal.pathDownload + backPic.SameTwo!![i],
+                                    Universal.pathDownload + backPic[i],
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch",
-                                    MqttMessageHandler.FileName(backPic.SameTwo!![i]!!),
+                                    MqttMessageHandler.FileName(backPic[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -456,20 +442,15 @@ class InteractionMqtt {
                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice).substring(
                                 (point.walkVoice).lastIndexOf("/") + 1
                             )
-                        val sdcardFile =
-                            MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
-                        val picfile =
-                            UpdateReturn().splitStr(point.walkVoice)
+                        val walkMp3 = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/", point.walkVoice)
 
-                        val walkMp3 = MqttMessageHandler.compareArrays(sdcardFile, picfile)
-
-                        if (walkMp3.SameTwo?.isNotEmpty() == true) {
+                        if (walkMp3?.isNotEmpty() == true) {
                             Thread {
-                                for (i in walkMp3.SameTwo!!.indices) {
+                                for (i in walkMp3.indices) {
                                     DownloadBill.getInstance().addTask(
-                                        Universal.pathDownload + walkMp3.SameTwo!![i],
+                                        Universal.pathDownload + walkMp3[i],
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                        MqttMessageHandler.FileName(walkMp3.SameTwo!![i]!!),
+                                        MqttMessageHandler.FileName(walkMp3[i]!!),
                                         MyApplication.listener
                                     )
                                 }
@@ -483,20 +464,16 @@ class InteractionMqtt {
                                 (point.explanationVoice).lastIndexOf("/") + 1
                             )
 
-                        val sdcardFile =
-                            MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/")
-                        val picfile =
-                            UpdateReturn().splitStr(point.explanationVoice)
 
                         val explanationMp3 =
-                            MqttMessageHandler.compareArrays(sdcardFile, picfile)
-                        if (explanationMp3.SameTwo?.isNotEmpty() == true) {
+                            MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/", point.explanationVoice)
+                        if (explanationMp3?.isNotEmpty() == true) {
                             Thread {
-                                for (i in explanationMp3.SameTwo!!.indices) {
+                                for (i in explanationMp3.indices) {
                                     DownloadBill.getInstance().addTask(
-                                        Universal.pathDownload + explanationMp3.SameTwo!![i],
+                                        Universal.pathDownload + explanationMp3[i],
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                        MqttMessageHandler.FileName(explanationMp3.SameTwo!![i]!!),
+                                        MqttMessageHandler.FileName(explanationMp3[i]!!),
                                         MyApplication.listener
                                     )
                                 }
@@ -518,30 +495,20 @@ class InteractionMqtt {
                                 point.bigScreenConfig.argPic.picPlayTime
                             //图片
                             MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                            val sdcardFile =
-                                MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                            val picfile =
-                                UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
-                            val bigPic = MqttMessageHandler.compareArrays(sdcardFile, picfile)
+                            val bigPic = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name, point.bigScreenConfig.argPic.pics)
 
-                            for (i in bigPic.SameOne!!.indices) {
-                                UpdateReturn().deleteFolderFile(
-                                    bigPic.SameOne!![i],
-                                    true
-                                )
-                            }
                             //创建对应文件夹。以路线名字命名(存放大屏幕)
                             bigScreenConfigDB.imageFile =
                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
 //                                            val bigPicFile =
 //                                                UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
-                            if (bigPic.SameTwo?.isNotEmpty() == true) {
+                            if (bigPic?.isNotEmpty() == true) {
                                 Thread {
-                                    for (i in bigPic.SameTwo!!.indices) {
+                                    for (i in bigPic.indices) {
                                         DownloadBill.getInstance().addTask(
-                                            Universal.pathDownload + bigPic.SameTwo!![i],
+                                            Universal.pathDownload + bigPic[i],
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                            MqttMessageHandler.FileName(bigPic.SameTwo!![i]!!),
+                                            MqttMessageHandler.FileName(bigPic[i]!!),
                                             MyApplication.listener
                                         )
                                     }
@@ -577,28 +544,17 @@ class InteractionMqtt {
                             //视频储存位置
                             //创建对应文件夹。以路线名字命名(存放大屏幕)
                             MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-
-                            val sdcardFile =
-                                MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                            val picfile =
-                                UpdateReturn().splitStr(point.bigScreenConfig.argVideo.videos)
                             val argVideoName =
-                                MqttMessageHandler.compareArrays(sdcardFile, picfile)
-                            for (i in argVideoName.SameOne!!.indices) {
-                                UpdateReturn().deleteFolderFile(
-                                    argVideoName.SameOne!![i],
-                                    true
-                                )
-                            }
+                                MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name, point.bigScreenConfig.argVideo.videos)
                             bigScreenConfigDB.videoFile =
                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
-                            if (argVideoName.SameTwo?.isNotEmpty() == true) {
+                            if (argVideoName?.isNotEmpty() == true) {
                                 Thread {
-                                    for (i in argVideoName.SameTwo!!.indices) {
+                                    for (i in argVideoName.indices) {
                                         DownloadBill.getInstance().addTask(
-                                            Universal.pathDownload + argVideoName.SameTwo!![i],
+                                            Universal.pathDownload + argVideoName[i],
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                            MqttMessageHandler.FileName(argVideoName.SameTwo!![i]!!),
+                                            MqttMessageHandler.FileName(argVideoName[i]!!),
                                             MyApplication.listener
                                         )
                                     }
@@ -625,29 +581,19 @@ class InteractionMqtt {
                                 point.touchScreenConfig.argPic.picPlayTime
                             //图片路径
                             if (point.touchScreenConfig.argPic.pics.isNotEmpty()) {
-                                val sdcardFile =
-                                    MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name)
-                                val picfile =
-                                    UpdateReturn().splitStr(point.touchScreenConfig.argPic.pics)
                                 val touchFileName =
-                                    MqttMessageHandler.compareArrays(sdcardFile, picfile)
+                                    MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name, point.touchScreenConfig.argPic.pics)
 
-                                for (i in touchFileName.SameOne!!.indices) {
-                                    UpdateReturn().deleteFolderFile(
-                                        touchFileName.SameOne!![i],
-                                        true
-                                    )
-                                }
                                 touchScreenConfigDB.touch_imageFile =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name + "/"
 
-                                if (touchFileName.SameTwo!!.isNotEmpty()) {
+                                if (touchFileName?.isNotEmpty() == true) {
                                     Thread {
-                                        for (i in touchFileName.SameTwo!!.indices) {
+                                        for (i in touchFileName.indices) {
                                             DownloadBill.getInstance().addTask(
-                                                Universal.pathDownload + touchFileName.SameTwo!![i],
+                                                Universal.pathDownload + touchFileName[i],
                                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name,
-                                                MqttMessageHandler.FileName(touchFileName.SameTwo!![i]!!),
+                                                MqttMessageHandler.FileName(touchFileName[i]!!),
                                                 MyApplication.listener
                                             )
                                         }
@@ -887,13 +833,15 @@ class InteractionMqtt {
                     guideFoundation.bigScreenConfig!!.argPic!!.picPlayTime
                 //图片
                 MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/big/")
-                val picfile =
-                    UpdateReturn().splitStr(guideFoundation.bigScreenConfig!!.argPic!!.pics)
+
+                val picfile =MqttMessageHandler.compareArrays(
+                    Universal.robotFile + "GuidePic/foundation/big/",
+                    guideFoundation.bigScreenConfig!!.argPic!!.pics )
                 //创建对应文件夹。以路线名字命名(存放大屏幕)
                 bigScreenConfigDB.imageFile =
                     Universal.robotFile + "GuidePic/foundation/big/"
                 Thread {
-                    for (i in picfile.indices) {
+                    for (i in picfile!!.indices) {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "GuidePic/foundation/big/",
@@ -933,12 +881,13 @@ class InteractionMqtt {
                 //创建对应文件夹。以路线名字命名(存放大屏幕)
                 MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/foundation/big/")
 
-                val picfile =
-                    UpdateReturn().splitStr(guideFoundation.bigScreenConfig!!.argVideo?.videos!!)
+                val picfile =MqttMessageHandler.compareArrays(
+                    Universal.robotFile + "GuidePic/foundation/big/",
+                    guideFoundation.bigScreenConfig!!.argVideo?.videos!! )
                 bigScreenConfigDB.videoFile =
                     Universal.robotFile +"GuidePic/foundation/big/"
                 Thread {
-                    for (i in picfile.indices) {
+                    for (i in picfile!!.indices) {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "GuidePic/foundation/big/",
@@ -967,13 +916,13 @@ class InteractionMqtt {
                     guideFoundation.touchScreenConfig!!.argPic?.picPlayTime!!
                 //图片路径
                 if (guideFoundation.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
-                    val picfile =
-                        UpdateReturn().splitStr(guideFoundation.touchScreenConfig!!.argPic?.pics!!)
-
+                    val picfile =MqttMessageHandler.compareArrays(
+                        Universal.robotFile + "GuidePic/foundation/touch/",
+                        guideFoundation.touchScreenConfig!!.argPic?.pics!!)
                     touchScreenConfigDB.touch_imageFile =
                         Universal.robotFile + "GuidePic/foundation/touch/"
                     Thread {
-                        for (i in picfile.indices) {
+                        for (i in picfile!!.indices) {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "GuidePic/foundation/touch/",

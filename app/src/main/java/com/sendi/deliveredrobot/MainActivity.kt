@@ -560,18 +560,18 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         RobotStatus.SecondModel!!.observe(this) {
             if (mPresentation != null) {
                 layoutThis(
-                    it?.picPlayTime!!,
-                    it.file,
-                    it.type!!,
-                    it.textPosition!!,
-                    it.fontLayout!!,
-                    it.fontContent,
-                    it.fontBackGround,
-                    it.fontColor,
-                    it.fontSize!!,
-                    it.picType!!,
-                    it.videolayout!!,
-                    it.videoAudio!!,
+                    it?.picPlayTime ?: 30,
+                    it?.file ?: "",
+                    it?.type ?: 0,
+                    it?.textPosition ?: 0,
+                    it?.fontLayout?: 0,
+                    it?.fontContent,
+                    it?.fontBackGround,
+                    it?.fontColor,
+                    it?.fontSize?: 0,
+                    it?.picType?: 0,
+                    it?.videolayout?: 0,
+                    it?.videoAudio?: 0,
                     false
                 )
             }

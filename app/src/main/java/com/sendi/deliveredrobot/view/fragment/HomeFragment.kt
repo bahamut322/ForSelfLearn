@@ -85,10 +85,10 @@ class HomeFragment : Fragment(), IMainView {
         VoiceRecorder.getInstance().talkingCallback = { talking ->
             when (talking) {
                 true -> {
-                    println("****talking")
+//                    println("****talking")
                 }
                 false -> {
-                    println("not talking")
+//                    println("not talking")
                 }
             }
         }
