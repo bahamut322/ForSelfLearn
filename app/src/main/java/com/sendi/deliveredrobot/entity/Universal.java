@@ -122,7 +122,10 @@ public class Universal {
     public static TaskQueues<String> taskQueue;
     public static List<Integer> ExplainSpeak = new ArrayList<>();
     //用来判断按下急停之后暂停讲解的状态
-    public static Boolean speakIng = false;
+    public static Boolean speakIng = false;//观察页面按钮暂停
+    public static Boolean Process = false;
+    public static Boolean Changing = false;
+    public static Boolean Finish = false;
     //用来处理按下点击暂停。并且急停之后，再松开，会顶着暂停页面走
     public static boolean explainUnSpeak = false;
 }

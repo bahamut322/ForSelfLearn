@@ -46,14 +46,14 @@ public class ChangingOverDialog extends Dialog {
         Sure = findViewById(R.id.Yes_Exit);
         No = findViewById(R.id.No_Exit);
         dialog_button.setVisibility(View.GONE);
-        Universal.speakIng =true;
     }
 
     @Override
     public void dismiss() {
         Log.d("TAG", "dismiss: dialog");
-        Universal.speakIng =false;
-        super.dismiss();
+        Universal.Changing = false;
+        Universal.explainUnSpeak = false;
+    super.dismiss();
     }
 
     /**
@@ -63,6 +63,8 @@ public class ChangingOverDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
+        Log.d("TAG", "show: dialog");
+        Universal.Changing = true;
         dialog_button.setVisibility(View.GONE);
         new UpdateReturn().pause();
         fullScreenImmersive(getWindow().getDecorView());

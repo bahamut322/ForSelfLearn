@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="wakeUpName"
+            type="com.sendi.deliveredrobot.entity.entitySql.QuerySql" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/businessCon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg">
+
+        <TextView
+            android:id="@+id/applicationName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_68"
+            android:text="@string/Light_application"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_40"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.sendi.deliveredrobot.view.widget.ExpandableHeightGridView
+            android:id="@+id/applicationGv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_120"
+            android:horizontalSpacing="@dimen/dp_22"
+            android:numColumns="4"
+            android:verticalSpacing="@dimen/dp_50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/applicationName" />
+
+        <LinearLayout
+            android:id="@+id/ll_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_68"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="@dimen/dp_32"
+                android:layout_height="@dimen/dp_32"
+                android:src="@drawable/return_home" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_11"
+                android:alpha="0.6"
+                android:text="@string/home"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_32" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/firstFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_68"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewSetting"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:src="@drawable/setting_svg" />
+
+            <ImageView
+                android:id="@+id/regularImg"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginStart="@dimen/dp_32"
+                android:src="@drawable/timeoclick_svg"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
+                app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
+                app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/microphone"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginStart="@dimen/dp_48"
+            android:layout_marginBottom="@dimen/dp_28"
+            android:src="@drawable/horn_svg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/bubbleTv"
+            android:text="@{@string/ask(wakeUpName.robotConfig().wakeUpWord)}"
+            android:textColor="@color/white"
+            android:textStyle="normal"
+            android:alpha="0.7"
+            android:layout_marginStart="@dimen/dp_14"
+            android:textSize="@dimen/sp_24"
+            android:gravity="center"
+            android:shadowColor="@color/red"
+            android:shadowRadius="10.0"
+            android:shadowDx="50.0"
+            android:shadowDy="30.0"
+            android:singleLine="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:clickable="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:layout_width="@dimen/dp_320"
+            android:layout_height="wrap_content"
+            tools:text="@string/ask"
+            android:background="@drawable/rectangle"
+            app:layout_constraintBottom_toBottomOf="@+id/microphone"
+            app:layout_constraintStart_toEndOf="@+id/microphone" >
+            <requestFocus />
+        </TextView>
+
+        <ImageView
+            android:layout_width="@dimen/dp_6"
+            android:layout_height="@dimen/dp_7"
+            android:src="@drawable/rt_horn"
+            app:layout_constraintBottom_toBottomOf="@+id/bubbleTv"
+            app:layout_constraintEnd_toStartOf="@+id/bubbleTv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

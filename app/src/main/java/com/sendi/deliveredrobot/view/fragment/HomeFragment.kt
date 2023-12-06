@@ -2,6 +2,9 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -76,8 +79,8 @@ class HomeFragment : Fragment(), IMainView {
 //            LogUtil.i("homefragment onDestinationChangedListener")
 //            voiceRecorder?.removeCallback()
 //        }
-        VoiceRecorder.getInstance().recordCallback =  { _, pinyinString ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
+        VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
+            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
@@ -87,6 +90,7 @@ class HomeFragment : Fragment(), IMainView {
                 true -> {
 //                    println("****talking")
                 }
+
                 false -> {
 //                    println("not talking")
                 }
@@ -204,7 +208,7 @@ class HomeFragment : Fragment(), IMainView {
         fromeSettingDialog = FromeSettingDialog(context)
         RobotStatus.sdScreenStatus?.postValue(0)
         controller = Navigation.findNavController(requireView())
-        RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner){
+        RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner) {
             showFunction(true)
         }
         LogUtil.i("当前待机时间：" + QuerySql.robotConfig().sleepTime)
@@ -513,11 +517,11 @@ class HomeFragment : Fragment(), IMainView {
     }
 
 
-    private fun showFunction(renew : Boolean = false){
+    private fun showFunction(renew: Boolean = false) {
         if (QuerySql.QueryBasic().defaultValue != null) {
             shoppingName = if (renew) {
                 RobotStatus.shoppingConfigList!!.value!!.name!!
-            }else{
+            } else {
                 QuerySql.ShoppingConfig().name!!
             }
             rescolors = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
@@ -560,7 +564,7 @@ class HomeFragment : Fragment(), IMainView {
                 else -> {}
             }
         }
-        RobotStatus.robotConfig?.observe(viewLifecycleOwner){
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
         }
     }
@@ -595,6 +599,20 @@ class HomeFragment : Fragment(), IMainView {
                 //跳转到测温模式
                 Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
                 Log.d("TAG", "点击轻应用")
+                controller?.navigate(R.id.appContentFragment)
+//                try {
+//                    val alipayScheme = "alipays://platformapi/startapp?appId=20000754"
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(alipayScheme))
+//                    // 启动模式
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    // 跳转
+//                    startActivity(intent)
+//
+//                } catch (e: ActivityNotFoundException) {
+//                    //没支付宝
+//                    Toast.makeText(context, "未检测到支付宝，请安装支付宝后重试", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
@@ -651,18 +669,20 @@ class HomeFragment : Fragment(), IMainView {
             str = "APPLICATION"
         } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
-        } else if ("业务办理"== String) {
+        } else if ("业务办理" == String) {
             str = "BUSINESS"
         }
         return str
     }
-    private fun itemName(ItemName:  String): String{
-        return if (ItemName == "业务办理"){
+
+    private fun itemName(ItemName: String): String {
+        return if (ItemName == "业务办理") {
             shoppingName
-        }else{
+        } else {
             ItemName
         }
     }
+
     /**
      * 不同标签背景
      */
@@ -699,7 +719,7 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.application_svg
         } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg
-        } else if ( "业务办理" == Imagestr) {
+        } else if ("业务办理" == Imagestr) {
             image = R.drawable.business_svg
         }
         return image

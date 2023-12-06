@@ -65,35 +65,43 @@ object SafeStateTopic {
                                         BillManager.currentBill()?.addCurrentTask()
                                     }
                                 }
+
                                 RobotCommand.MANAGE_STATUS_PAUSE -> {}
                                 RobotCommand.MANAGE_STATUS_CONTINUE -> {
                                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
                                 }
                             }
-                        }else{
+                        } else {
                             safeStateListener?.invoke(safeState)
                         }
                         //按下急停时，释放开门，提升用户体验
-                        LiftHelper.releaseLiftDoor(BillManager.currentBill()?.currentTask()?.taskModel?.elevator?:"")
+                        LiftHelper.releaseLiftDoor(
+                            BillManager.currentBill()?.currentTask()?.taskModel?.elevator ?: ""
+                        )
                     } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
-
+                        if (!Universal.speakIng && !Universal.Process && !Universal.Changing && !Universal.Finish) {
+                            MediaPlayerHelper.getInstance().resume()
+                            BaiduTTSHelper.getInstance().resume()
+                        }
                         IdleGateDataHelper.reportIdleGateCount()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED
                         }
                         if (previousStatus == TYPE_EXCEPTION) return@launch //如果按下急停之前已经处于报错的状态，则不用往下走
-                        when(previousStatus){
+                        when (previousStatus) {
                             TYPE_CHARGING -> {
-                                if(RobotStatus.chargeStatus.value == false){
+                                if (RobotStatus.chargeStatus.value == false) {
                                     RobotStatus.currentStatus = TYPE_IDLE
-                                }else{
+                                } else {
                                     RobotStatus.currentStatus = previousStatus
                                 }
                             }
+
                             else -> RobotStatus.currentStatus = previousStatus
                         }
+                        IdleGateDataHelper.reportIdleGateCount()
                         if (safeStateListener == null) {
                             when (RobotStatus.manageStatus) {
                                 RobotCommand.MANAGE_STATUS_STOP -> {
@@ -103,20 +111,21 @@ object SafeStateTopic {
                                         BillManager.currentBill()?.executeNextTask()
                                     }
                                 }
+
                                 RobotCommand.MANAGE_STATUS_PAUSE -> {
-                                    if (Universal.explainUnSpeak){
+                                    if (Universal.explainUnSpeak) {
                                         TaskArray.setToDo("5")
-                                        if (!Universal.speakIng) {
-                                            MediaPlayerHelper.getInstance().resume()
-                                            BaiduTTSHelper.getInstance().resume()
-                                        }
                                         return@launch
                                     }
+                                    Universal.explainUnSpeak = false
                                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
                                 }
+
                                 RobotCommand.MANAGE_STATUS_CONTINUE -> {}
+
                             }
-                        }else{
+
+                        } else {
                             safeStateListener?.invoke(safeState)
                         }
                     }

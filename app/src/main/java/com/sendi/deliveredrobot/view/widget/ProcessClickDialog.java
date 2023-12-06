@@ -91,7 +91,7 @@ public class ProcessClickDialog extends Dialog {
             @Override
             public void onTick(long millisUntilFinished) {
                 // 倒计时间隔
-                returnTv.setText((int) (millisUntilFinished / 1000)+"");
+                returnTv.setText(String.valueOf((int) (millisUntilFinished / 1000)));
             }
 
             @Override
@@ -114,8 +114,7 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     protected void onStop() {
-
-        Universal.speakIng =false;
+        Universal.Process = false;
         if (mTimer!=null) {
             mTimer.stop();
         }
@@ -124,7 +123,7 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     public void dismiss() {
-        Universal.speakIng =false;
+        Universal.Process = false;
         if (mTimer!=null) {
             mTimer.stop();
         }
@@ -139,7 +138,7 @@ public class ProcessClickDialog extends Dialog {
     public void show( ) {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Universal.speakIng = true;
+        Universal.Process = true;
         MediaPlayerHelper.getInstance().pause();
         BaiduTTSHelper.getInstance().pause();
         startCountdown(countdownTime); // 使用成员变量中的时间值

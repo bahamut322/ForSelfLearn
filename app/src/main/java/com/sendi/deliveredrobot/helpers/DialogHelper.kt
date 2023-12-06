@@ -3,26 +3,17 @@ package com.sendi.deliveredrobot.helpers
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.topic.BatteryStateTopic
 import com.sendi.deliveredrobot.view.widget.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -74,7 +65,7 @@ class DialogHelper {
             dockFailDialog = DockFailDialog(activity)
             pullOutAdapterDialog = PullOutAdapterDialog(activity)
             exceptionWaitForHelpDialog = ExceptionWaitForHelpDialog(activity, needBlur = false)
-            loadingDialog = LoadingDialog(activity, R.style.simpleDialogStyle)
+            loadingDialog = LoadingDialog(activity, R.style.Dialog)
             robotUpDataDialog = RobotUpDataDialog(activity)
             containDialog = ContainDialog(activity,R.style.simpleDialogStyle)
             lowPowerGoBack = LowPowerDialog(activity,R.style.simpleDialogStyle)

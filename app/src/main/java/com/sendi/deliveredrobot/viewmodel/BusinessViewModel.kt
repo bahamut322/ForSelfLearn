@@ -215,6 +215,7 @@ class BusinessViewModel : ViewModel() {
             }
 
             3 -> {
+                controller.navigate(R.id.appContentFragment)
                 LogUtil.i("轻应用")
             }
 

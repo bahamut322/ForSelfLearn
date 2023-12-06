@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.entity.Universal;
 
 /**
  * @Author Swn
@@ -40,6 +41,11 @@ public class FinishTaskDialog extends Dialog {
     }
 
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        Universal.Finish = false;
+    }
 
     /**
      * 调用弹窗全屏显示方法
@@ -48,6 +54,7 @@ public class FinishTaskDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
+        Universal.Finish = true;
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

@@ -16,7 +16,7 @@ import java.util.*
 
 class TroubleDialog(
     context: Context,
-    themeResId: Int = R.style.simpleDialogStyle,
+    themeResId: Int = R.style.Dialog,
     needBlur: Boolean = true
 ) : HideNavigationBarDialog(context = context, themeResId = themeResId, needBlur = needBlur) {
     @SuppressLint("SimpleDateFormat")

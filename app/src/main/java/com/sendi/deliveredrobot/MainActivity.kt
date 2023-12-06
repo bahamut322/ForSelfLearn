@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
@@ -15,7 +17,10 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
@@ -38,11 +43,11 @@ import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
-import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import com.sendi.fooddeliveryrobot.VoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
@@ -66,6 +71,19 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var timeChangeReceiver: TimeChangeReceiver
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
+    private var screenland : MutableLiveData<Boolean> = MutableLiveData(false)
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        if (newConfig.orientation === Configuration.ORIENTATION_LANDSCAPE) {
+            screenland.value = false
+            Log.e(TAG,"\n 当前屏幕为横屏")
+        } else {
+            screenland.value = true
+            Log.e(TAG,"\n 当前屏幕为竖屏")
+        }
+        super.onConfigurationChanged(newConfig)
+        Log.e("TAG", "onConfigurationChanged")
+    }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -80,6 +98,16 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             basicSetting.id = 1
             basicSetting.save()
         }
+        val handler = Handler(Looper.getMainLooper())
+        screenland.observe(this) {
+            if (it) {
+                handler.postDelayed({
+                    Log.d(TAG, "onCreate: Pmu")
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }, 4000) // 延迟
+            }
+        }
+
 
         pushImage(fileNames)
         AppUtils.checkPermission(this, 0)
