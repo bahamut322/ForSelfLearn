@@ -108,8 +108,11 @@ class ConversationFragment : Fragment() {
                             }
 
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                val res = addConversationView(conversation)
+                                var res = addConversationView(conversation)
                                 if (res.isNullOrEmpty()) return@launch
+                                if (res.contains("我猜您可能对以下内容感兴趣")) {
+                                   res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                }
                                 SpeakHelper.speakWithoutStop(res)
                             }
                         }
