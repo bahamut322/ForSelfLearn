@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
@@ -55,7 +56,7 @@ import kotlin.coroutines.suspendCoroutine
 class ConversationFragment : Fragment() {
     var binding: FragmentConversationBinding? = null
     val mainScope = MainScope()
-    val timer = Timer()
+    lateinit var timer:Timer
     private var startTime: Long = 0
     private var totalHeight: Int = 0
     private var voiceRecorder: BaseVoiceRecorder? = null
@@ -67,6 +68,8 @@ class ConversationFragment : Fragment() {
         }
     private var waitTalk = true
     private lateinit var spanUtils: SpanUtils
+    val pattern =
+        "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,8 +80,9 @@ class ConversationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        spanUtils = SpanUtils(requireContext())
+        spanUtils = SpanUtils(requireContext(), findNavController())
         startTime = System.currentTimeMillis()
+        timer = Timer()
         timer.schedule(object : java.util.TimerTask() {
             override fun run() {
                 if (RobotStatus.ttsIsPlaying || binding?.videoView?.isPlaying == true) {
@@ -130,7 +134,7 @@ class ConversationFragment : Fragment() {
                                     if (res.contains("我猜您可能对以下内容感兴趣")) {
                                         res = res.substringBefore("我猜您可能对以下内容感兴趣")
                                     }
-                                    res = res.replace(Regex(spanUtils.pattern),"")
+                                    res = res.replace(Regex(pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
                             }
@@ -233,7 +237,7 @@ class ConversationFragment : Fragment() {
                                     if (res.contains("我猜您可能对以下内容感兴趣")) {
                                         res = res.substringBefore("我猜您可能对以下内容感兴趣")
                                     }
-                                    res = res.replace(Regex(spanUtils.pattern),"")
+                                    res = res.replace(Regex(pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
                             }

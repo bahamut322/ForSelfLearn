@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -15,6 +18,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
@@ -64,6 +68,19 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var timeChangeReceiver: TimeChangeReceiver
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
+    private var screenland : MutableLiveData<Boolean> = MutableLiveData(false)
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        if (newConfig.orientation === Configuration.ORIENTATION_LANDSCAPE) {
+            screenland.value = false
+            Log.e(TAG,"\n 当前屏幕为横屏")
+        } else {
+            screenland.value = true
+            Log.e(TAG,"\n 当前屏幕为竖屏")
+        }
+        super.onConfigurationChanged(newConfig)
+        Log.e("TAG", "onConfigurationChanged")
+    }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -78,6 +95,16 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             basicSetting.id = 1
             basicSetting.save()
         }
+        val handler = Handler(Looper.getMainLooper())
+        screenland.observe(this) {
+            if (it) {
+                handler.postDelayed({
+                    Log.d(TAG, "onCreate: Pmu")
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }, 4000) // 延迟
+            }
+        }
+
 
         pushImage(fileNames)
         AppUtils.checkPermission(this, 0)
@@ -558,18 +585,18 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         RobotStatus.SecondModel!!.observe(this) {
             if (mPresentation != null) {
                 layoutThis(
-                    it?.picPlayTime!!,
-                    it.file,
-                    it.type!!,
-                    it.textPosition!!,
-                    it.fontLayout!!,
-                    it.fontContent,
-                    it.fontBackGround,
-                    it.fontColor,
-                    it.fontSize!!,
-                    it.picType!!,
-                    it.videolayout!!,
-                    it.videoAudio!!,
+                    it?.picPlayTime ?: 30,
+                    it?.file ?: "",
+                    it?.type ?: 0,
+                    it?.textPosition ?: 0,
+                    it?.fontLayout?: 0,
+                    it?.fontContent,
+                    it?.fontBackGround,
+                    it?.fontColor,
+                    it?.fontSize?: 0,
+                    it?.picType?: 0,
+                    it?.videolayout?: 0,
+                    it?.videoAudio?: 0,
                     false
                 )
             }

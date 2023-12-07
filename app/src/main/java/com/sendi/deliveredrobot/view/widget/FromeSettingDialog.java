@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,6 +46,7 @@ public class FromeSettingDialog extends Dialog {
         errorTv = findViewById(R.id.errorhint);
 
         YesExit.setOnClickListener(v -> {
+            Log.d("TAG", "密码：: "+passwordEt.getContent()+"输入："+QuerySql.robotConfig().getPassword());
             if (Objects.equals(passwordEt.getContent(), QuerySql.robotConfig().getPassword())){
                 cancel();
                 dismiss();

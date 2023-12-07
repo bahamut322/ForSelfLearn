@@ -152,6 +152,7 @@ class SettingHomeFragment : Fragment() {
                 }
                 //轻应用
                 3->{
+                    controller!!.navigate(R.id.appContentFragment)
                     Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
                     LogUtil.i("轻应用")
                 }

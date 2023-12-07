@@ -101,6 +101,7 @@
     <color name="black">#0F1012</color>
     <color name="bg">#232229</color>
     <color name="backgroud">#0F1012</color>
+    <color name="dialog_coolor">#A60A003D</color>
     <color name="red">#583737</color>
     <color name="gray">#944141</color>
     <color name="line">#B3B0B0</color>
@@ -133,5 +134,6 @@
     <color name="text_border_normal">#E5E5E5</color>
     <color name="color_5A55B2">#5A55B2</color>
     <color name="color_878CF8">#878CF8</color>
+    <color name="color_260C7B">#260C7B</color>
 
 </resources>

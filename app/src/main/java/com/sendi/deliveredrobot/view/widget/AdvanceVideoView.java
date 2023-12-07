@@ -18,7 +18,6 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 
-import java.io.File;
 
 public class AdvanceVideoView extends RelativeLayout {
     private ImageView imageView;
@@ -27,11 +26,13 @@ public class AdvanceVideoView extends RelativeLayout {
     private String path1;
     private MediaPlayer mediaPlayer1;
     public int viewType;
+    private int size;
 
 
-    public AdvanceVideoView(Context context, int viewType) {
+    public AdvanceVideoView(Context context, int viewType,int size) {
         super(context);
         this.viewType = viewType;
+        this.size  = size;
         initView();
     }
 
@@ -109,7 +110,7 @@ public class AdvanceVideoView extends RelativeLayout {
             }
             new Handler().postDelayed(() -> imageView.setVisibility(GONE), 400);//防止video view播放视频前有个闪烁的黑屏
             progressBar.setVisibility(View.GONE);
-            if (getFileCount(Universal.advertisement) <= 1) {
+            if (size <= 1) {
                 mediaPlayer.setLooping(true);
             }
         });
@@ -141,25 +142,6 @@ public class AdvanceVideoView extends RelativeLayout {
         }
     }
 
-    public static int getFileCount(String directoryPath) {
-        File directory = new File(directoryPath);
-        if (!directory.exists() || !directory.isDirectory()) {
-            return 0;
-        }
-
-        int count = 0;
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    count++;
-                } else if (file.isDirectory()) {
-                    count += getFileCount(file.getAbsolutePath());
-                }
-            }
-        }
-        return count;
-    }
 
     public void setRestart() {
         if (videoView != null) {

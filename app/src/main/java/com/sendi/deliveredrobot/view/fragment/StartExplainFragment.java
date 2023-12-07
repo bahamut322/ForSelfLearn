@@ -182,6 +182,8 @@ public class StartExplainFragment extends Fragment {
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
                 finishTaskDialog.YesExit.setOnClickListener(v1 -> {
+                    processClickDialog.dismiss();
+                    finishTaskDialog.dismiss();
                     Universal.ExplainLength = -1;
                     beforePage = -1;
                     //返回
@@ -196,8 +198,7 @@ public class StartExplainFragment extends Fragment {
                     MediaPlayerHelper.getInstance().stop();
                     RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                     binding.acceptstationTv.stopPlay();
-                    processClickDialog.dismiss();
-                    finishTaskDialog.dismiss();
+
                     viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
                     viewModel.finishTask();
                 });
@@ -228,7 +229,6 @@ public class StartExplainFragment extends Fragment {
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 binding.acceptstationTv.stopPlay();
                 viewModel.nextTask(true);
-//                isMethodExecuted = false;
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
@@ -263,7 +263,6 @@ public class StartExplainFragment extends Fragment {
                 if (clickCount % 2 == 1) {
                     Universal.speakIng = true;
                     // 奇数次点击，执行暂停操作
-                    Log.d("", "pause: zhantzant5");
                     BaiduTTSHelper.getInstance().pause();
                     MediaPlayerHelper.getInstance().pause();
                     binding.PauseBtn.setText("继续讲解");
@@ -325,6 +324,7 @@ public class StartExplainFragment extends Fragment {
             DialogHelper.loadingDialog.show();
             targetName = s;
             LogUtil.INSTANCE.i("当前讲解点: " + s);
+            Universal.speakIng = false;
             // 在这里处理新值，比如更新UI或执行其他逻辑
             for (int i = 0; i < Objects.requireNonNull(viewModel.inForListData()).size(); i++) {
                 if (Objects.equals(Objects.requireNonNull(viewModel.inForListData()).get(i).getName(), s)) {
@@ -437,7 +437,6 @@ public class StartExplainFragment extends Fragment {
                 binding.parentCon.setClickable(QuerySql.QueryBasic().getExplainInterrupt());
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
-                try {
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
 
@@ -457,11 +456,12 @@ public class StartExplainFragment extends Fragment {
                         binding.goingLin.setVisibility(View.VISIBLE);
                         binding.contentCL.setVisibility(View.GONE);
                         if (viewModel.inForListData().get(position).getTouch_imagefile() != null) {
-                            //带光晕的背景图
-                            Glide.with(requireActivity()).load(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0)).into(binding.startImg);//轮播
+                            //带光晕的背景图(新加了默认值，直接try，就会显示布局中设置的图片)
+                            try {
+                                Glide.with(requireActivity()).load(BaseViewModel.getFilesAllName(Objects.requireNonNull(viewModel.inForListData()).get(position).getTouch_imagefile()).get(0)).into(binding.startImg);//轮播
+                            }catch (Exception ignored){}
                         }
                     }
-
                     if (Universal.taskQueue.isTaskQueueCompleted()) {
                         //要执行的任务代码
                         try {
@@ -549,16 +549,13 @@ public class StartExplainFragment extends Fragment {
                             }
                         }));
                     }
-                    if (viewModel.inForListData().get(position).getWalkvoice() == null && viewModel.inForListData().get(position).getWalktext() == null) {
+                    if (viewModel.inForListData().get(position).getWalkvoice() == null && viewModel.inForListData().get(position).getWalktext() == null ) {
                         RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
-                            if (integer1 == 1) {
+                            if (integer1 == 1 && !array) {
                                 arrayToDo(viewModel.inForListData(), position);
                             }
                         });
                     }
-                } catch (Exception e) {
-                    Log.i("TAG", "Error: " + e);
-                }
             } else {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first);
@@ -847,7 +844,6 @@ public class StartExplainFragment extends Fragment {
 
     private void changeDialog(boolean array) {
         //暂停页面
-        Log.d("", "pause: zhantzant6");
         BaiduTTSHelper.getInstance().pause();
         BaiduTTSHelper.getInstance().pause();
         changingOverDialog.show();

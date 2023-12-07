@@ -6,6 +6,8 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.UnderlineSpan
 import android.widget.TextView
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphNavigator
 import com.sendi.deliveredrobot.view.widget.CustomUrlSpan
 import com.thanosfisherman.wifiutils.LocationUtils
 import java.util.LinkedList
@@ -13,26 +15,14 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-class SpanUtils(mContext: Context?) {
+class SpanUtils(mContext: Context?, navigator: NavController) {
 
     private var mContext: Context? = null
+    private var navigator: NavController? = null
 
-    @Volatile
-    private var uniqueInstance: SpanUtils? = null
     init {
         this.mContext = mContext
-    }
-
-    //采用Double CheckLock(DCL)实现单例
-    fun getInstance(context: Context?): SpanUtils? {
-        if (uniqueInstance == null) {
-            synchronized(LocationUtils::class.java) {
-                if (uniqueInstance == null) {
-                    uniqueInstance = SpanUtils(context)
-                }
-            }
-        }
-        return uniqueInstance
+        this.navigator = navigator
     }
 
     /**
@@ -94,7 +84,7 @@ class SpanUtils(mContext: Context?) {
                 val preStr = contentText.toString().substring(0, mUrlInfos[0].start)
                 spanBuilder.append(preStr)
                 val url = mStringList[0]
-                val customUrlSpan = mContext?.let { CustomUrlSpan(it, url) }
+                val customUrlSpan = mContext?.let { CustomUrlSpan(it, url, navigator!!) }
                 val start = spanBuilder.length
                 spanBuilder.append(url, UnderlineSpan(), flag)
                 val end = spanBuilder.length
@@ -107,7 +97,7 @@ class SpanUtils(mContext: Context?) {
                 //有多个网址
                 for (i in mStringList.indices) {
                     val url = mStringList[i]
-                    val customUrlSpan = mContext?.let { CustomUrlSpan(it, url) }
+                    val customUrlSpan = mContext?.let { CustomUrlSpan(it, url, navigator!!) }
                     if (i == 0) {
                         //拼接第1个span的前面文本
                         val headStr = contentText.toString().substring(0, mUrlInfos[0].start)

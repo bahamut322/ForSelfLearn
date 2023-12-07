@@ -41,12 +41,12 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
             time = 3000;
         }
         if (advances != null) {
-            addView(advances.get(advances.size() - 1));
+            addView(advances.get(advances.size() - 1),advances.size());
             if (advances.size() > 1) { //多于1个要循环
                 for (Advance d : advances) { //中间的N个（index:1~N）
-                    addView(d);
+                    addView(d,advances.size());
                 }
-                addView(advances.get(0));
+                addView(advances.get(0),advances.size());
             }
         }
         viewPager.addOnPageChangeListener(this);
@@ -64,9 +64,9 @@ public class AdvancePagerAdapter extends PagerAdapter implements ViewPager.OnPag
     }
 
 
-    private void addView(Advance advance) {
+    private void addView(Advance advance,int size) {
         if (advance.type.equals("1")) {
-            AdvanceVideoView videoView = new AdvanceVideoView(context,advance.viewType);
+            AdvanceVideoView videoView = new AdvanceVideoView(context,advance.viewType,size);
             videoView.setImage(advance.path);
             list.add(videoView);
         } else {

@@ -726,5 +726,14 @@
         android:name="com.sendi.deliveredrobot.view.fragment.ConversationFragment"
         android:label="fragment_conversation"
         tools:layout="@layout/fragment_conversation" />
-
+    <fragment
+        android:id="@+id/appManagerFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.AppManagerFragment"
+        android:label="fragment_app_manager"
+        tools:layout="@layout/fragment_app_manager" />
+    <fragment
+        android:id="@+id/appContentFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.AppContentFragment"
+        android:label="fragment_app_content"
+        tools:layout="@layout/fragment_app_content" />
 </navigation>
