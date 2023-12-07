@@ -26,7 +26,6 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
@@ -44,6 +43,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.Timer
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * @author heky
@@ -57,8 +58,13 @@ class ConversationFragment : Fragment() {
     private var startTime: Long = 0
     private var totalHeight: Int = 0
     private var voiceRecorder: BaseVoiceRecorder? = null
-
-
+    private var talkingView: LinearLayoutCompat? = null
+    private val defaultTalkingStr = "...."
+    private var talkingStr = defaultTalkingStr
+        set(value) {
+            field = ".".repeat(value.length % 4 + 1)
+        }
+    private var waitTalk = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +89,10 @@ class ConversationFragment : Fragment() {
                     })
                 }
                 binding?.seekBar?.progress = binding?.videoView?.currentPosition ?: 0
+                if (talkingView != null && waitTalk) {
+                    talkingStr = talkingStr
+                    talkingView?.findViewById<TextView>(R.id.tv_content)?.text = talkingStr
+                }
             }
         }, Date(), 1000)
         voiceRecorder = BaseVoiceRecorder.getInstance()
@@ -103,21 +113,24 @@ class ConversationFragment : Fragment() {
                         }
                         when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                                addQuestionView(conversation)
+                                addQuestionView(conversation, talkingView)
                                 question(conversation, System.currentTimeMillis())
                             }
 
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                var res = addConversationView(conversation)
-                                if (res.isNullOrEmpty()) return@launch
-                                if (res.contains("我猜您可能对以下内容感兴趣")) {
-                                   res = res.substringBefore("我猜您可能对以下内容感兴趣")
+//                                var res = addConversationView(conversation,talkingView)
+                                addQuestionView(conversation, talkingView)
+                                withContext(Dispatchers.IO){
+                                    var res = question2(conversation)
+                                    if (res.isEmpty()) return@withContext
+                                    addAnswer2(res)
+                                    if (res.contains("我猜您可能对以下内容感兴趣")) {
+                                        res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                    }
+                                    SpeakHelper.speakWithoutStop(res)
                                 }
-                                SpeakHelper.speakWithoutStop(res)
                             }
                         }
-
-
                     }
                 }
             }
@@ -131,6 +144,34 @@ class ConversationFragment : Fragment() {
 
                 false -> {
                     println("not talking")
+                }
+            }
+        }
+
+        voiceRecorder?.recordStatusCallback = { startRecord ->
+            when (startRecord) {
+                true -> {
+                    //开始录音
+                    when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                        BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                            mainScope.launch(Dispatchers.Main) {
+                                if (talkingView == null) {
+                                    addQuestionView(defaultTalkingStr)
+                                }
+                            }
+                        }
+
+                        BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                            mainScope.launch(Dispatchers.Main) {
+                                if (talkingView == null) {
+                                    addQuestionView(defaultTalkingStr)
+                                }
+                            }
+                        }
+                    }
+                }
+                false -> {
+                    //结束录音
                 }
             }
         }
@@ -173,14 +214,23 @@ class ConversationFragment : Fragment() {
                     mainScope.launch(Dispatchers.Main) {
                         when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                                addQuestionView(text)
+                                addQuestionView(defaultTalkingStr)
+                                addQuestionView(text, talkingView)
                                 question(text, System.currentTimeMillis())
                             }
 
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                val res = addConversationView(text)
-                                if (res.isNullOrEmpty()) return@launch
-                                SpeakHelper.speakWithoutStop(res)
+                                addQuestionView(defaultTalkingStr)
+                                addQuestionView(text,talkingView)
+                                withContext(Dispatchers.IO){
+                                    var res = question2(text)
+                                    if (res.isEmpty()) return@withContext
+                                    addAnswer2(res)
+                                    if (res.contains("我猜您可能对以下内容感兴趣")) {
+                                        res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                    }
+                                    SpeakHelper.speakWithoutStop(res)
+                                }
                             }
                         }
                     }
@@ -231,7 +281,7 @@ class ConversationFragment : Fragment() {
     }
 
     @SuppressLint("InflateParams")
-    private fun addQuestionView(conversation: String) {
+    private fun addQuestionView(conversation: String, view:LinearLayoutCompat? = null) {
         binding?.group1?.apply {
             if (visibility == View.VISIBLE) {
                 visibility = View.GONE
@@ -243,8 +293,21 @@ class ConversationFragment : Fragment() {
             }
         }
         binding?.linearLayoutConversation?.apply {
-            val linearLayoutCompat = LayoutInflater.from(requireContext())
-                .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
+            val linearLayoutCompat = when (view == null) {
+                true -> {
+                    waitTalk = true
+                    LayoutInflater.from(requireContext())
+                        .inflate(
+                            R.layout.layout_conversation_text_view_right,
+                            null
+                        ) as LinearLayoutCompat
+                }
+
+                false -> {
+                    waitTalk = false
+                    view
+                }
+            }
             val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
             textView.text = conversation
             val emptyView = View(requireContext()).apply {
@@ -255,14 +318,18 @@ class ConversationFragment : Fragment() {
                     setMargins(0, 0, 0, 96)
                 }
             }
+            if (view == null) {
+                addView(linearLayoutCompat)
+                addView(emptyView)
+            }
             linearLayoutCompat.post {
                 linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply {
                     gravity = Gravity.END
+                    linearLayoutCompat.visibility = View.VISIBLE
                 }
-                linearLayoutCompat.visibility = View.VISIBLE
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
@@ -270,8 +337,9 @@ class ConversationFragment : Fragment() {
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
-            addView(linearLayoutCompat)
-            addView(emptyView)
+            if (conversation == defaultTalkingStr) {
+                talkingView = linearLayoutCompat
+            }
         }
     }
 
@@ -464,26 +532,16 @@ class ConversationFragment : Fragment() {
             addView(emptyView)
         }
         ReplyIntentHelper.replyIntentLiveData.value = null
+        talkingView = null
     }
 
-    private suspend fun addConversationView(conversation: String): String? {
-        binding?.group1?.apply {
-            if (visibility == View.VISIBLE) {
-                visibility = View.GONE
-            }
-        }
-        binding?.group2?.apply {
-            if (visibility == View.GONE) {
-                visibility = View.VISIBLE
-            }
-        }
+    private suspend fun addAnswer2(conversation: String){
         binding?.linearLayoutConversation?.apply {
-            val linearLayoutCompat = LayoutInflater.from(requireContext())
-                .inflate(R.layout.layout_conversation_text_view_right, null) as LinearLayoutCompat
-            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
-            textView.text = conversation
-            addView(linearLayoutCompat)
-            val emptyView = View(requireContext()).apply {
+            val linearLayoutCompat2 = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
+            val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
+            textView2.text = conversation
+            val emptyView2 = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -491,65 +549,29 @@ class ConversationFragment : Fragment() {
                     setMargins(0, 0, 0, 96)
                 }
             }
-            addView(emptyView)
-            linearLayoutCompat.post {
-                linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    gravity = Gravity.END
-                    linearLayoutCompat.visibility = View.VISIBLE
-//                                setMargins(0,0,0,96)
-                }
-                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
-                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-            }
-            emptyView.post {
-                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
-                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-            }
-
-            return withContext(Dispatchers.Default) {
-//                val res: String = chatGPT.chat(conversation)
-                val res = GenerateReplyToX8Utils.generateReplyToX8(conversation)
-                val linearLayoutCompat2 = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
-                val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
-                textView2.text = res
-                val emptyView2 = View(requireContext()).apply {
-                    layoutParams = LinearLayoutCompat.LayoutParams(
+            withContext(Dispatchers.Main) {
+                addView(linearLayoutCompat2)
+                addView(emptyView2)
+                linearLayoutCompat2.post {
+                    linearLayoutCompat2.layoutParams = LinearLayoutCompat.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     ).apply {
-                        setMargins(0, 0, 0, 96)
-                    }
-                }
-                withContext(Dispatchers.Main) {
-                    addView(linearLayoutCompat2)
-                    addView(emptyView2)
-                    linearLayoutCompat2.post {
-                        linearLayoutCompat2.layoutParams = LinearLayoutCompat.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            gravity = Gravity.START
-                            linearLayoutCompat2.visibility = View.VISIBLE
+                        gravity = Gravity.START
+                        linearLayoutCompat2.visibility = View.VISIBLE
 //                                        setMargins(0,0,0,96)
-                        }
-                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
-                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                     }
-                    emptyView2.post {
-                        totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
-                        binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-                    }
+                    totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
-                return@withContext res
+                emptyView2.post {
+                    totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                }
             }
+            talkingView = null
         }
-        return null
     }
-
     private suspend fun question(question: String, questionNumber: Long) {
         withContext(Dispatchers.IO) {
             CloudMqttService.publish(
@@ -560,4 +582,9 @@ class ConversationFragment : Fragment() {
             )
         }
     }
+
+    private suspend fun question2(conversation: String): String = suspendCoroutine {
+        it.resume(GenerateReplyToX8Utils.generateReplyToX8(conversation))
+    }
+
 }

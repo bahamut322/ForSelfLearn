@@ -40,6 +40,9 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
                         Log.i("AudioChannel", s)
                         val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
                         val textProcessed = audioTransTextModel.text_postprocessed?:""
+                        if (textProcessed.isEmpty()) {
+                            return
+                        }
                         val resultList = HanziToPinyin.instance?.get(textProcessed)
                         val stringBuilder = StringBuilder()
                         resultList?.map {

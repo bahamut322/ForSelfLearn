@@ -42,6 +42,9 @@ class AiXiaoYueAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRec
 //                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
                         val audioTransTextModel = gson.fromJson(s, GetVFFileToTextModel::class.java)
                         val textProcessed = audioTransTextModel.data?:""
+                        if (textProcessed.isEmpty()) {
+                            return
+                        }
                         val resultList = HanziToPinyin.instance?.get(textProcessed)
                         val stringBuilder = StringBuilder()
                         resultList?.map {

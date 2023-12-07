@@ -13,7 +13,6 @@ abstract class BaseVoiceRecorder {
     private val sampleRate = 16000
     protected var audioRecorder: AudioRecord? = null
     private var fvad: FvadWrapper? = null
-
     private var isRecording = false
     private var baseAudioChannel: BaseAudioChannel? = null
 
@@ -25,6 +24,8 @@ abstract class BaseVoiceRecorder {
         }
 
     var talkingCallback: ((talking: Boolean) -> Unit)? = null
+
+    var recordStatusCallback: ((startRecord: Boolean) -> Unit)? = null
 
     init {
         fvad = FvadWrapper()
@@ -90,6 +91,7 @@ abstract class BaseVoiceRecorder {
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
                                         println("percentFalseTotal: $percentFalseTotal")
+                                        recordStatusCallback?.invoke(false)
                                         baseAudioChannel?.stopRecord()
                                         trueStack.clear()
                                         falseStack.clear()
@@ -102,6 +104,7 @@ abstract class BaseVoiceRecorder {
                             talkingCallback?.invoke(true)
                             trueStack.push(true)
                             if (baseAudioChannel?.initialized == false && recordCallback != null) {
+                                recordStatusCallback?.invoke(true)
                                 baseAudioChannel?.initRecord(audioBuffer)
                             }
 
