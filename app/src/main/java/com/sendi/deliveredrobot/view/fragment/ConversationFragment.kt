@@ -35,6 +35,7 @@ import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
+import com.sendi.deliveredrobot.utils.SpanUtils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +66,7 @@ class ConversationFragment : Fragment() {
             field = ".".repeat(value.length % 4 + 1)
         }
     private var waitTalk = true
+    private lateinit var spanUtils: SpanUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,6 +77,7 @@ class ConversationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        spanUtils = SpanUtils(requireContext())
         startTime = System.currentTimeMillis()
         timer.schedule(object : java.util.TimerTask() {
             override fun run() {
@@ -127,6 +130,7 @@ class ConversationFragment : Fragment() {
                                     if (res.contains("我猜您可能对以下内容感兴趣")) {
                                         res = res.substringBefore("我猜您可能对以下内容感兴趣")
                                     }
+                                    res = res.replace(Regex(spanUtils.pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
                             }
@@ -229,6 +233,7 @@ class ConversationFragment : Fragment() {
                                     if (res.contains("我猜您可能对以下内容感兴趣")) {
                                         res = res.substringBefore("我猜您可能对以下内容感兴趣")
                                     }
+                                    res = res.replace(Regex(spanUtils.pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
                             }
@@ -351,6 +356,7 @@ class ConversationFragment : Fragment() {
         val linearLayoutContent =
             linearLayoutCompat.findViewById<LinearLayoutCompat>(R.id.linear_layout_content)
         textView.text = replyIntentModel.questionAnswer ?: ""
+        spanUtils.interceptHyperLink(textView)
         val emptyView = View(requireContext()).apply {
             layoutParams = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -537,10 +543,11 @@ class ConversationFragment : Fragment() {
 
     private suspend fun addAnswer2(conversation: String){
         binding?.linearLayoutConversation?.apply {
-            val linearLayoutCompat2 = LayoutInflater.from(requireContext())
+            val linearLayoutCompat = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
-            val textView2 = linearLayoutCompat2.findViewById<TextView>(R.id.tv_content)
-            textView2.text = conversation
+            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
+            textView.text = conversation
+            spanUtils.interceptHyperLink(textView)
             val emptyView2 = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -550,22 +557,22 @@ class ConversationFragment : Fragment() {
                 }
             }
             withContext(Dispatchers.Main) {
-                addView(linearLayoutCompat2)
+                addView(linearLayoutCompat)
                 addView(emptyView2)
-                linearLayoutCompat2.post {
-                    linearLayoutCompat2.layoutParams = LinearLayoutCompat.LayoutParams(
+                linearLayoutCompat.post {
+                    linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     ).apply {
                         gravity = Gravity.START
-                        linearLayoutCompat2.visibility = View.VISIBLE
+                        linearLayoutCompat.visibility = View.VISIBLE
 //                                        setMargins(0,0,0,96)
                     }
-                    totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                    totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
                 emptyView2.post {
-                    totalHeight += (linearLayoutCompat2.measuredHeight + 96 * 3)
+                    totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
             }
