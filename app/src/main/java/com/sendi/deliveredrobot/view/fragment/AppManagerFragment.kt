@@ -12,10 +12,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -23,6 +25,7 @@ import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAppManagerBinding
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlin.math.abs
 
 
@@ -31,7 +34,7 @@ class AppManagerFragment : Fragment() {
     private lateinit var binding: FragmentAppManagerBinding
     private var controller: NavController? = null
     private lateinit var gestureDetector: GestureDetector
-
+    var url = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,13 +126,13 @@ class AppManagerFragment : Fragment() {
         initWebView()
         //网页
         arguments?.let {
-            val url = it.getString("ManagerUrl")
+            url = it.getString("ManagerUrl")!!
             val name = it.getString("name")
             binding.tvAppTitle.text  = name
-            binding.webView.loadUrl(url!!)
+            binding.webView.loadUrl(url)
         }
         binding.returnBlack.setOnClickListener {
-            controller?.navigate(R.id.appContentFragment)
+            goBackInWebView()
         }
         //网页监听
         binding.webView.webViewClient = object : WebViewClient() {
@@ -140,13 +143,22 @@ class AppManagerFragment : Fragment() {
                 return true
             }
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-                DialogHelper.loadingDialog.show()
+                binding.progress.visibility = View.VISIBLE
                 super.onPageStarted(view, url, favicon)
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                DialogHelper.loadingDialog.dismiss()
+                binding.progress.visibility = View.GONE
                 super.onPageFinished(view, url)
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                binding.progress.visibility = View.GONE
+                ToastUtil.show("网页请求出错：$error")
             }
         }
 

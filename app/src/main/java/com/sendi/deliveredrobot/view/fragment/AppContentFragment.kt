@@ -93,7 +93,7 @@ class AppContentFragment : Fragment() {
             ApplicationModel(name = "消防安全", url = "http://www.qmxf119.org.cn/gmxf_list.html"),
             ApplicationModel(name = "党史学习", url = "http://www.12371.cn/dsxx/"),
             ApplicationModel(name = "党建动态", url = "https://mp.weixin.qq.com/mp/homepage?__biz=MzAwODMwNDYwMg==&hid=3&sn=333e05466acdbd2a872ab60fdc4a7a28&scene=18"),
-            ApplicationModel(name = "管理平台", url = "http://103.215.44.45:9891/sdIncubator/login"),
+            ApplicationModel(name = "测试网站", url = "https://stackoverflow.com/ "),
             )
 
         // 打印列表中的每个ApplicationModel对象
