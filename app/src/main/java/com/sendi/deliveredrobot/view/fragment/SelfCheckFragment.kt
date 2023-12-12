@@ -34,12 +34,11 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
 import java.util.*
-import kotlin.concurrent.thread
 
 
 /**
@@ -112,7 +111,7 @@ class SelfCheckFragment : Fragment() {
                 }catch (_:Exception){}
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-                VoiceRecorder.getInstance().startRecording()
+                BaseVoiceRecorder.getInstance()?.startRecording()
                 LogUtil.i("初始化状态机")
                 if (resCheck != 0x1FF) {
                     LogUtil.d("打印收到数据——— $resCheck")
@@ -185,6 +184,9 @@ class SelfCheckFragment : Fragment() {
                         if (liftControlTime != null) {
                             RobotCommand.LIFT_CONTROL_TIME = this.liftControlTime.toInt()
                         }
+                    }
+                    VoiceRecordCommand.getInstance(requireContext()).apply {
+                        BaseVoiceRecorder.VOICE_RECORD_TYPE = this.voiceRecordType.toInt()
                     }
                     DeliverMqttService.publish(QueryFloorListModel().toString())
                     // 电梯

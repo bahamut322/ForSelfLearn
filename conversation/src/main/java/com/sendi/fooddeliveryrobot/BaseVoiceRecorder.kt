@@ -9,22 +9,23 @@ import kotlin.concurrent.thread
 
 
 @SuppressLint("MissingPermission")
-class VoiceRecorder {
+abstract class BaseVoiceRecorder {
     private val sampleRate = 16000
-    private var audioRecorder: AudioRecord? = null
+    protected var audioRecorder: AudioRecord? = null
     private var fvad: FvadWrapper? = null
-
     private var isRecording = false
-    private var audioChannel: AudioChannel? = null
+    private var baseAudioChannel: BaseAudioChannel? = null
 
     private val minBufferSize: Int
     var recordCallback: ((conversation: String, pinyinString: String)-> Unit)? = null
         set(value) {
-            audioChannel?.callback = value
+            baseAudioChannel?.callback = value
             field = value
         }
 
     var talkingCallback: ((talking: Boolean) -> Unit)? = null
+
+    var recordStatusCallback: ((startRecord: Boolean) -> Unit)? = null
 
     init {
         fvad = FvadWrapper()
@@ -45,8 +46,10 @@ class VoiceRecorder {
             sampleRate, channelConfig,
             AudioFormat.ENCODING_PCM_16BIT, minBufferSize
         )
-        audioChannel = AudioChannel(audioRecorder!!)
+        baseAudioChannel = initAudioChannel()
     }
+
+    abstract fun initAudioChannel(): BaseAudioChannel?
 
     @SuppressLint("MissingPermission")
     fun startRecording() {
@@ -71,16 +74,16 @@ class VoiceRecorder {
                         shortArray[index / 2] = (audioBuffer[index - 1].toInt() and 0xff or (audioBuffer[index].toInt() shl 8)).toShort()
                     }
                 }
-                if (!ttsIsPlaying && audioChannel?.initialized == true && recordCallback != null) {
-                    audioChannel?.writeRecord(audioBuffer)
+                if (!ttsIsPlaying && baseAudioChannel?.initialized == true && recordCallback != null) {
+                    baseAudioChannel?.writeRecord(audioBuffer)
                 }
                 if (recordCallback != null) {
                     when (fvad?.process(shortArray) ?: -1) {
                         0 -> {
                             talkingCallback?.invoke(false)
-                            if (audioChannel?.initialized == true) {
+                            if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
-                                val totalSize = trueStack.size * 1.5 + falseStack.size
+                                val totalSize = trueStack.size * 1.3 + falseStack.size
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
                                     if (percentFalseTotal > 0.5f) {
@@ -88,7 +91,8 @@ class VoiceRecorder {
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
                                         println("percentFalseTotal: $percentFalseTotal")
-                                        audioChannel?.stopRecord()
+                                        recordStatusCallback?.invoke(false)
+                                        baseAudioChannel?.stopRecord()
                                         trueStack.clear()
                                         falseStack.clear()
                                     }
@@ -99,8 +103,9 @@ class VoiceRecorder {
 //                        Log.i("VoiceRecorder", "人声 yes")
                             talkingCallback?.invoke(true)
                             trueStack.push(true)
-                            if (audioChannel?.initialized == false && recordCallback != null) {
-                                audioChannel?.initRecord(audioBuffer)
+                            if (baseAudioChannel?.initialized == false && recordCallback != null) {
+                                recordStatusCallback?.invoke(true)
+                                baseAudioChannel?.initRecord(audioBuffer)
                             }
 
                         }
@@ -125,13 +130,24 @@ class VoiceRecorder {
     }
 
     companion object{
-        private var _instance: VoiceRecorder? = null
+        private var _instance: BaseVoiceRecorder? = null
         var ttsIsPlaying = false
-        fun getInstance():VoiceRecorder{
+        const val VOICE_RECORD_TYPE_SENDI = 0
+        const val VOICE_RECORD_TYPE_AIXIAOYUE = 1
+        var VOICE_RECORD_TYPE = VOICE_RECORD_TYPE_SENDI
+        fun getInstance():BaseVoiceRecorder?{
             if(_instance == null){
-                _instance = VoiceRecorder()
+                _instance = when (VOICE_RECORD_TYPE) {
+                    VOICE_RECORD_TYPE_SENDI -> SendiVoiceRecorder()
+                    VOICE_RECORD_TYPE_AIXIAOYUE -> AiXiaoYueVoiceRecorder()
+                    else -> throw Exception("void recorder type is not set")
+                }
             }
-            return _instance!!
+            return _instance
+        }
+
+        fun release(){
+            _instance = null
         }
     }
 }

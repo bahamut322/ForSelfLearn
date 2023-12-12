@@ -3,10 +3,9 @@ package com.sendi.deliveredrobot.navigationtask
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
-import com.sendi.deliveredrobot.entity.ShoppingConfigDB
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import geometry_msgs.Pose2D
 import java.util.Date
 
@@ -97,7 +96,7 @@ object RobotStatus {
     var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
     var ttsIsPlaying = false //百度语音播放状态
         set(value) {
-            VoiceRecorder.ttsIsPlaying = value
+            BaseVoiceRecorder.ttsIsPlaying = value
             field = value
         }
 

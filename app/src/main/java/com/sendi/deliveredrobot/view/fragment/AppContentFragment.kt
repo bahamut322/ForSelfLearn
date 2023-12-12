@@ -1,31 +1,27 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.graphics.ColorSpace.Adaptation
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.ApplicationAdapter
-import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
-import com.sendi.deliveredrobot.databinding.FragmentAppManagerBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.ApplicationModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 
 
 class AppContentFragment : Fragment() {
@@ -124,7 +120,7 @@ class AppContentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        VoiceRecorder.getInstance().recordCallback = { _, pinyinString ->
+        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)

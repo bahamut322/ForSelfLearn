@@ -225,6 +225,27 @@ object CommonHelper {
         ) { _, _ -> }
     }
 
+    fun checkVoiceRecordCommandProperties(context: Context, file: File){
+        if (!file.exists()) {
+            file.parentFile?.mkdirs()
+            file.createNewFile()
+            val inputStream: InputStream = context.assets.open("voice_record_command.properties")
+            val outputStream: OutputStream = FileOutputStream(file)
+            val byteArray = ByteArray(1024)
+            var result: Int
+            do {
+                result = inputStream.read(byteArray, 0, byteArray.size)
+                if (result > 0) {
+                    outputStream.write(byteArray, 0, result)
+                }
+            } while (result != -1)
+            inputStream.close()
+            outputStream.close()
+        }
+        MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), arrayOf("text/plain")
+        ) { _, _ -> }
+    }
+
     suspend fun atChargePointFloor():Boolean {
         val result:Boolean
         withContext(Dispatchers.Default){

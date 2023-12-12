@@ -7,6 +7,7 @@ import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.ttsIsPlaying
 import kotlinx.coroutines.MainScope
 
 /**
@@ -58,6 +59,7 @@ object SpeakHelper {
     fun stop() {
 //        mainScope.launch(Dispatchers.IO) {
             BaiduTTSHelper.getInstance().stop()
+            ttsIsPlaying = false
 //        }
     }
 }

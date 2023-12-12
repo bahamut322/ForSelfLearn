@@ -33,7 +33,7 @@ import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
-import com.sendi.fooddeliveryrobot.VoiceRecorder;
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
 import java.util.List;
 import java.util.Objects;
@@ -135,8 +135,8 @@ public class CatalogueExplantionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        VoiceRecorder voiceRecorder = VoiceRecorder.Companion.getInstance();
-        voiceRecorder.setRecordCallback((s, pinyinString) -> {
+        BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
+        baseVoiceRecorder.setRecordCallback((s, pinyinString) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
                 Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);

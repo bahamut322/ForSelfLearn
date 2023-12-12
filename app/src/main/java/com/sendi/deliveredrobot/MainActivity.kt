@@ -17,10 +17,8 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
@@ -44,10 +42,9 @@ import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
-import com.sendi.fooddeliveryrobot.VoiceRecorder
+import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
@@ -134,7 +131,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             LogUtil.i("mainactivity onDestinationChangedListener")
-            VoiceRecorder.getInstance().removeCallback()
+            BaseVoiceRecorder.getInstance()?.removeCallback()
         }
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController
