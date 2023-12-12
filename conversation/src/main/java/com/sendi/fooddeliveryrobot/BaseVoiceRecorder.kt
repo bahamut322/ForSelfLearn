@@ -83,7 +83,7 @@ abstract class BaseVoiceRecorder {
                             talkingCallback?.invoke(false)
                             if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
-                                val totalSize = trueStack.size * 1.5 + falseStack.size
+                                val totalSize = trueStack.size * 1.3 + falseStack.size
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
                                     if (percentFalseTotal > 0.5f) {

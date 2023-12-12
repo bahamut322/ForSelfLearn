@@ -6,4 +6,5 @@
 
 **V1.1.0**<br/>
 主要实现讲解机器人的基础功能：迎宾、业务办理页面、智能问答<br/>
+voice_record_command.properties  - voiceRecordType - 0:sendi 1:艾小越<br/>
 <br/>

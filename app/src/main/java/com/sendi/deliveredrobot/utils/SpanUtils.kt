@@ -7,9 +7,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.UnderlineSpan
 import android.widget.TextView
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphNavigator
 import com.sendi.deliveredrobot.view.widget.CustomUrlSpan
-import com.thanosfisherman.wifiutils.LocationUtils
 import java.util.LinkedList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -38,7 +36,7 @@ class SpanUtils(mContext: Context?, navigator: NavController) {
 
     private var mStringList = LinkedList<String>()
     private var mUrlInfos = LinkedList<UrlInfo>()
-    val pattern =
+    private val pattern =
         "(((htt|ft|m)ps?):\\/\\/)?([\\da-z\\.-]+)\\.([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
     var r: Pattern = Pattern.compile(pattern)
     var m: Matcher? = null
