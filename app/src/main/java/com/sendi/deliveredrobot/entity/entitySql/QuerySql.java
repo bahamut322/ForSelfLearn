@@ -449,6 +449,7 @@ public class QuerySql {
                 bigScreenConfig.setVideoAudio(cursor.getInt(cursor.getColumnIndex("videoaudio")));
                 bigScreenConfig.setVideoFile(cursor.getString(cursor.getColumnIndex("videofile")));
                 bigScreenConfig.setImageFile(cursor.getString(cursor.getColumnIndex("imagefile")));
+                bigScreenConfig.setVideolayout(cursor.getInt(cursor.getColumnIndex("videolayout")));
                 actionDB.setBigScreenConfig(bigScreenConfig);
 
                 TouchScreenConfigDB touchScreenConfig = new TouchScreenConfigDB();
@@ -513,6 +514,8 @@ public class QuerySql {
                 bigScreenConfig.setVideoAudio(cursor.getInt(cursor.getColumnIndex("videoaudio")));
                 bigScreenConfig.setVideoFile(cursor.getString(cursor.getColumnIndex("videofile")));
                 bigScreenConfig.setImageFile(cursor.getString(cursor.getColumnIndex("imagefile")));
+                bigScreenConfig.setVideolayout(cursor.getInt(cursor.getColumnIndex("videolayout")));
+
                 listAction.setBigScreenConfig(bigScreenConfig);
 
                 TouchScreenConfigDB touchScreenConfig = new TouchScreenConfigDB();
@@ -666,6 +669,7 @@ public class QuerySql {
                 bigScreenConfig.setVideoAudio(cursor.getInt(cursor.getColumnIndex("videoaudio")));
                 bigScreenConfig.setVideoFile(cursor.getString(cursor.getColumnIndex("videofile")));
                 bigScreenConfig.setImageFile(cursor.getString(cursor.getColumnIndex("imagefile")));
+                bigScreenConfig.setVideolayout(cursor.getInt(cursor.getColumnIndex("videolayout")));
                 ConfigList.setBigScreenConfig(bigScreenConfig);
 
                 TouchScreenConfigDB touchScreenConfig = new TouchScreenConfigDB();

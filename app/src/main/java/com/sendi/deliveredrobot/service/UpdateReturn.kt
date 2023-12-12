@@ -339,7 +339,9 @@ class UpdateReturn {
                     )
                 }
             }
-            sendMapData()
+            if (chargePoint == null ) {
+                sendMapData()
+            }
             DialogHelper.loadingDialog.dismiss()
             Universal.mapType.postValue(true)
         }

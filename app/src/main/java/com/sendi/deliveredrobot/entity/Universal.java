@@ -67,6 +67,8 @@ public class Universal {
     //导购返回是否播放表情标志位
     public static String businessTask = null;
 
+    public static String POST_FAST = "http://192.168.73.204:5005/get_feat";
+
 
     //TODO 门岗管理
     //副屏轮播间隔时间

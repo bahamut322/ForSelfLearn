@@ -82,9 +82,8 @@ object MqttMessageHandler {
         synchronized(MqttMessageHandler::class.java) {
             val message = String(mqttMessage.payload)
             val jsonObject = JsonParser.parseString(message) as JsonObject
-            if (!jsonObject.has("type") || RobotStatus.batteryStateNumber.value == false) return
-//            if (!jsonObject.has("type")) return
 
+            if (!jsonObject.has("type") )return
             when (jsonObject.get("type").asString) {
                 "callElevatorState" -> {
                     try {
@@ -138,6 +137,7 @@ object MqttMessageHandler {
                 }
                 //讲解配置
                 "replyExplanationConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解配置信息")
                     LogUtil.d("obtain: 收到讲解配置信息")
                     val gson = Gson()
@@ -166,6 +166,7 @@ object MqttMessageHandler {
                 }
                 //广告配置
                 "replyAdvertisementConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
                     deleteAll(AdvertisingConfigDB::class.java)
@@ -248,6 +249,7 @@ object MqttMessageHandler {
                 }
 
                 "replyShoppingGuideConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     ToastUtil.show("收到导购配置")
                     val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
@@ -270,12 +272,14 @@ object MqttMessageHandler {
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解路线配置")
                     InteractionMqtt().ExplainType(message)
                 }
 
                 //机器人门岗配置
                 "replyGateConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
                     RobotStatus.gatekeeper?.value = gatekeeper
@@ -365,6 +369,7 @@ object MqttMessageHandler {
 
                 //机器人配置
                 "replyRobotConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     ToastUtil.show("收到机器人配置")
                     Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
@@ -498,11 +503,13 @@ object MqttMessageHandler {
                 }
                 //云平台下发导购配置
                 "replyShoppingGuideActionConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到发导购配置")
                     InteractionMqtt().ActionShoppingType(message)
                 }
                 //引领子功能配置
                 "replyGuidePointConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到引领子功能配置")
                     InteractionMqtt().guidePointConfig(message)
                 }
@@ -515,6 +522,7 @@ object MqttMessageHandler {
                 }
 
                 "replyGuideConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到引领配置")
                     InteractionMqtt().guideFoundation(message)
 
