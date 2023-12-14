@@ -45,7 +45,9 @@ abstract class BaseVoiceRecorder {
             MediaRecorder.AudioSource.VOICE_COMMUNICATION,
             sampleRate, channelConfig,
             AudioFormat.ENCODING_PCM_16BIT, minBufferSize
-        )
+        ).apply {
+
+        }
         baseAudioChannel = initAudioChannel()
     }
 
@@ -58,6 +60,7 @@ abstract class BaseVoiceRecorder {
             audioRecorder?.startRecording()
             isRecording = true
             val audioBuffer = ByteArray(minBufferSize)
+            print("minBufferSize:$minBufferSize")
             val trueStack = Stack<Boolean>()
             val falseStack = Stack<Boolean>()
             while (isRecording) {
@@ -83,10 +86,11 @@ abstract class BaseVoiceRecorder {
                             talkingCallback?.invoke(false)
                             if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
-                                val totalSize = trueStack.size * 1.3 + falseStack.size
+                                val totalSize = trueStack.size * 0.7 + falseStack.size
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
-                                    if (percentFalseTotal > 0.5f) {
+//                                    if (percentFalseTotal > 0.5f) {
+                                    if(falseStack.size > 25){
                                         println("trueSize:${trueStack.size}")
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
@@ -103,6 +107,7 @@ abstract class BaseVoiceRecorder {
 //                        Log.i("VoiceRecorder", "人声 yes")
                             talkingCallback?.invoke(true)
                             trueStack.push(true)
+                            falseStack.clear()
                             if (baseAudioChannel?.initialized == false && recordCallback != null) {
                                 recordStatusCallback?.invoke(true)
                                 baseAudioChannel?.initRecord(audioBuffer)
