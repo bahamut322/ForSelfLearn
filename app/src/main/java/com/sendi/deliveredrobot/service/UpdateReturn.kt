@@ -339,7 +339,7 @@ class UpdateReturn {
                     )
                 }
             }
-            if (chargePoint == null ) {
+            if (chargePoint != null ) {
                 sendMapData()
             }
             DialogHelper.loadingDialog.dismiss()

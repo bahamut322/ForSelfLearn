@@ -34,9 +34,12 @@ import jni.Usbcontorl
 import kotlinx.coroutines.*
 import sendi_sensor_msgs.InfraredManageResponse
 import java.io.BufferedReader
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.util.*
 
 
@@ -275,7 +278,7 @@ object CheckSelfHelper {
         }
 
         if (checkSelfComplete) {
-            if(RobotStatus.batteryStateNumber.value == true) {
+            if (RobotStatus.batteryStateNumber.value == true) {
                 UpdateReturn().mapSetting(true)
                 UpdateReturn().method(false)
             }
@@ -427,16 +430,20 @@ object CheckSelfHelper {
     }
 
     //读取自检文件、如果没有读取到则按默认的项自检
-    private fun getFileContent(directoryPath: String, defaultContent: String = "110010000"): String {
+    private fun getFileContent(directoryPath: String, defaultContent: String = "110000000"): String {
         val directory = File(directoryPath)
 
         // 检查目录是否存在
         if (!directory.exists() || !directory.isDirectory) {
+            // 如果目录不存在或不是目录，写入默认值并返回
+            FileOutputStream(directory).use { fos ->
+                BufferedWriter(OutputStreamWriter(fos)).use { writer ->
+                    writer.write(defaultContent)
+                }
+            }
             return defaultContent
         }
-
         val stringBuilder = StringBuilder()
-
         // 读取目录下的所有TXT文件
         directory.listFiles { _, name -> name.endsWith(".txt") }?.forEach { file ->
             FileInputStream(file).use { fis ->
@@ -449,7 +456,6 @@ object CheckSelfHelper {
                 }
             }
         }
-
         return stringBuilder.toString()
     }
 }

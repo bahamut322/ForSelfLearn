@@ -37,14 +37,12 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.reflect.Type
 import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
+import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.entity.FaceTips
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
-import com.sendi.deliveredrobot.model.ExplainConfig
 import com.sendi.deliveredrobot.model.Similarity
-import kotlinx.coroutines.MainScope
+import java.util.Random
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.min
 
 
 /**
@@ -187,7 +185,7 @@ class FaceRecognition {
             // 将JSON对象转换为字符串
             val jsonString = jsonParams.toString()
             // 打印请求的JSON数据
-            Log.d(TAG, "请求数据: $jsonString")
+            Log.d(TAG, "发送人脸检测请求数据: $jsonString")
             // 创建RequestParams对象
             val params = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
             params.isAsJsonContent = true // 设置请求内容为JSON
@@ -195,7 +193,7 @@ class FaceRecognition {
             // 发送POST请求
             x.http().post(params, object : CommonCallback<String> {
                 override fun onSuccess(result: String?) {
-                    Log.d(TAG, "收到数据：$result")
+                    Log.d(TAG, "收到人脸检测数据：$result")
                     val gson = GsonBuilder()
                         .registerTypeAdapter(Rect::class.java, RectDeserializer())
                         .create()
@@ -204,7 +202,7 @@ class FaceRecognition {
                     FaceDataListener.setFaceModels(faceModelList)
                     // Update data
                     if (faceModelList.isNotEmpty()) {
-                        Log.d(TAG, "解析数据：${faceModelList}")
+                        Log.d(TAG, "人脸检测解析数据：${faceModelList}")
                         if (needSpeaking && !needIdentify) {
                             checkFace(owner)
                         }
@@ -223,12 +221,12 @@ class FaceRecognition {
                 override fun onError(ex: Throwable, isOnCallback: Boolean) {
                     // 请求出错，处理错误信息
                     canSendData = true
-                    Log.i(TAG, "请求出错: $ex")
+                    Log.i(TAG, "人脸检测请求出错: $ex")
                 }
 
                 override fun onCancelled(cex: Callback.CancelledException) {
                     // 请求被取消，处理取消请求'
-                    Log.d(TAG, "请求被取消: ")
+                    Log.d(TAG, "人脸检测请求被取消: ")
                 }
 
                 override fun onFinished() {
@@ -236,7 +234,7 @@ class FaceRecognition {
                     if (!needIdentify) {
                         canSendData = true
                     }
-                    Log.d(TAG, "请求完成: ")
+                    Log.d(TAG, "人脸检测请求完成: ")
                 }
             })
         }
@@ -279,7 +277,7 @@ class FaceRecognition {
     @OptIn(DelicateCoroutinesApi::class)
     private fun checkFace(
         owner: LifecycleOwner,
-        speak: String = "嗨，我是小迪，欢迎前来了解智能服务机器人"
+        speak: String = speakContent()
     ) {
         if (speakNum <= 0 && !isProcessing.get()) {
             speakNum = 1
@@ -346,7 +344,7 @@ class FaceRecognition {
     }
 
 
- fun main(similarityResponse: Similarity, owner: LifecycleOwner) {
+    fun main(similarityResponse: Similarity, owner: LifecycleOwner) {
         val chunkSize = doubleString.size // 指定子列表的大小
 
         val resultArrays = similarityResponse.similarity.chunked(chunkSize)
@@ -354,7 +352,7 @@ class FaceRecognition {
         // 调试输出
         println("Result Arrays: $resultArrays")
 
-        val maxValuesWithIndex = resultArrays.flatMapIndexed { index, array ->
+        val maxValuesWithIndex = resultArrays.flatMapIndexed { _, array ->
             val max = array.maxOrNull() ?: Double.MIN_VALUE
             val maxIndex = array.indexOf(max)
             if (max >= 0.7) listOf(Pair(maxIndex, max)) else emptyList()
@@ -370,17 +368,15 @@ class FaceRecognition {
         if (correspondingValues.isNotEmpty()) {
             checkFace(
                 owner,
-                "你好 $correspondingValues，我是小迪，欢迎前来了解智能服务机器人"
+                String.format(instance!!.getString(R.string.welcome_vip_understand), correspondingValues)
             )
         } else {
-            println("没有查到人")
+            println("人脸库：没有查到此人")
             if (QuerySql.QueryBasic().etiquette) {
                 checkFace(owner)
             }
         }
     }
-
-
 
 
     /**
@@ -404,6 +400,19 @@ class FaceRecognition {
             twoDimensionalArrayList.addAll(chunkedArray)
         }
         return twoDimensionalArrayList
+    }
+
+    //检测人脸随机播放
+    private fun speakContent(): String {
+        val list = listOf(
+            instance!!.getString(R.string.welcome_understand),
+            instance!!.getString(R.string.can_i_help_you),
+            instance!!.getString(R.string.i_hope_to_serve_you),
+            instance!!.getString(R.string.welcome_i_am_xiao_di),
+
+        )
+        val randomIndex = Random().nextInt(list.size)
+        return list[randomIndex]
     }
 
     fun onDestroy() {
