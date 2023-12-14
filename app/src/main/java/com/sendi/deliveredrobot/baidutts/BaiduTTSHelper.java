@@ -182,7 +182,6 @@ public class BaiduTTSHelper {
         Order.setFlage("1");
         //播报语音音量
         MediaPlayerHelper.getInstance().pause();
-        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());
         int result = synthesizer.speak(text);
 //        LogUtil.INSTANCE.i(text);
@@ -202,7 +201,6 @@ public class BaiduTTSHelper {
     public void speaks(String text, String utteranceId) {
         Order.setFlage("1");
         MediaPlayerHelper.getInstance().pause();
-        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         synthesizer.speak(text, utteranceId);
 

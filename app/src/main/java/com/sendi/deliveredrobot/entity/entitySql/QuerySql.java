@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.sendi.deliveredrobot.entity.BigScreenConfigDB;
 
+import com.sendi.deliveredrobot.entity.FaceTips;
 import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB;
 import com.sendi.deliveredrobot.entity.RobotConfigSql;
 import com.sendi.deliveredrobot.entity.ShoppingActionDB;
@@ -474,6 +475,23 @@ public class QuerySql {
             cursor.close();
         }
         return listAction;
+    }
+
+    public static ArrayList<FaceTips> faceMessage(){
+        ArrayList<FaceTips> listAction = new ArrayList<>();
+        String sql = "SELECT * FROM facetips";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                FaceTips faceTips = new FaceTips();
+                faceTips.setSexual(cursor.getString(cursor.getColumnIndex("sexual")));
+                faceTips.setName(cursor.getString(cursor.getColumnIndex("name")));
+                listAction.add(faceTips);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return listAction;
+
     }
 
     /**

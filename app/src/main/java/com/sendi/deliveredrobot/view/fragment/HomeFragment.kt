@@ -2,9 +2,6 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -32,6 +29,7 @@ import com.sendi.deliveredrobot.utils.MainPresenter
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
+import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.*
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
@@ -55,7 +53,8 @@ class HomeFragment : Fragment(), IMainView {
     private var remindDialog: Dialog? = null
     private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
-    private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
+
+    //    private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
     private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
 
     @SuppressLint("SimpleDateFormat")
@@ -66,21 +65,19 @@ class HomeFragment : Fragment(), IMainView {
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
     private var shoppingName = ""
-
+    private val fastRecognition: FaceRecognition = FaceRecognition()
+    private val queryBasic = QuerySql.QueryBasic()
 
     override fun onResume() {
-        //启动默认开始计时
-        if (QuerySql.QueryBasic().etiquette == false || viewModelSetting.isNumCharOne(4)) {
-            mPresenter?.startTipsTimer()
-        }
+        mPresenter?.startTipsTimer()
         super.onResume()
         LogUtil.i("homefragment onResume")
 //        controller?.addOnDestinationChangedListener { controller, destination, arguments ->
 //            LogUtil.i("homefragment onDestinationChangedListener")
 //            voiceRecorder?.removeCallback()
 //        }
-        BaseVoiceRecorder.getInstance()?.recordCallback =  { _, pinyinString ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin?:"")) {
+        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString ->
+            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
@@ -198,7 +195,7 @@ class HomeFragment : Fragment(), IMainView {
         mainScope.cancel()
         remindDialog?.dismiss()
         //释放人脸识别资源
-        faceViewModel?.onDestroy()
+        fastRecognition.onDestroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -221,23 +218,17 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
 
-        if (QuerySql.QueryBasic().etiquette == true && !viewModelSetting.isNumCharOne(4)) {
-            faceViewModel?.suerfaceInit(binding.SurfaceView)
-            if (QuerySql.QueryBasic().defaultValue != "") {
-                binding.homeClay.setBackgroundResource(R.drawable.guests_open_bg)
-            } else {
-                binding.homeClay.setBackgroundResource(R.drawable.once_guests_bg)
-            }
-        } else {
-            binding.homeClay.setBackgroundResource(R.drawable.bg)
-        }
-        //改变人脸识别工具类，人脸识别数量的最大值
-        if (QuerySql.QueryBasic().tempMode == 0) {
-            LogUtil.d("当前为单人测温")
-            Utils.mNmsLimit = 1
-        } else {
-            LogUtil.d("当前为多人测温")
-            Utils.mNmsLimit = 10
+        if (queryBasic.etiquette || queryBasic.identifyVip) {
+            fastRecognition.suerFaceInit(
+                extractFeature = queryBasic.identifyVip,
+                surfaceView = binding.SurfaceView,
+                needSpeaking = true,
+                owner = this,
+                needIdentify = queryBasic.identifyVip
+            )
+            val backgroundRes =
+                if (queryBasic.defaultValue != "") R.drawable.guests_open_bg else R.drawable.once_guests_bg
+            binding.homeClay.setBackgroundResource(backgroundRes)
         }
         showFunction()
 
@@ -518,13 +509,13 @@ class HomeFragment : Fragment(), IMainView {
 
 
     private fun showFunction(renew: Boolean = false) {
-        if (QuerySql.QueryBasic().defaultValue != null) {
+        if (queryBasic.defaultValue != null) {
             shoppingName = if (renew) {
                 RobotStatus.shoppingConfigList!!.value!!.name!!
             } else {
                 QuerySql.ShoppingConfig().name!!
             }
-            rescolors = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
+            rescolors = queryBasic.defaultValue.split(" ").toTypedArray()
             when (rescolors!!.size - 1) {
                 0 -> {
                     allInvisible()

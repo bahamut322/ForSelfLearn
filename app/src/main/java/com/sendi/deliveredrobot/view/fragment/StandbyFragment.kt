@@ -15,8 +15,10 @@ import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
+import com.sendi.deliveredrobot.interfaces.FaceDataListener
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
+import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
@@ -29,6 +31,8 @@ class StandbyFragment : Fragment() {
     private var imagePaths: List<Advance> = ArrayList()
     private var controller: NavController? = null
     private var baseViewModel: BaseViewModel? = null
+    private val fastRecognition: FaceRecognition = FaceRecognition()
+    private var sendFace: Int = 0 //用来只接收一次人脸数据，否则多次跳转页面时会报错
 
     override fun onResume() {
         super.onResume()
@@ -52,7 +56,7 @@ class StandbyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller = Navigation.findNavController(view)
+        controller = Navigation.findNavController(requireView())
         baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         getFilesAllNames(Universal.Standby)
         val str = QuerySql.robotConfig().wakeUpList
@@ -67,6 +71,23 @@ class StandbyFragment : Fragment() {
         }
         if (contains2) {
             println("字符串中包含数字2,检测到人脸")
+            fastRecognition.suerFaceInit(
+                extractFeature = false,
+                surfaceView = binding.SurfaceView,
+                needSpeaking = false,
+                owner = this,
+                needIdentify = false
+            )
+            FaceDataListener.setOnChangeListener {
+                try {
+                    if (FaceDataListener.getFaceModels().isNotEmpty() && sendFace == 0) {
+                        sendFace++
+                        controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
+
+                    }
+                } catch (_: Exception) {
+                }
+            }
         }
         if (contains3) {
             println("字符串中包含数字3,唤醒词")
@@ -103,6 +124,12 @@ class StandbyFragment : Fragment() {
         } else {
             LogUtil.e("待机时传入无效路径")
         }
+    }
+
+    override fun onStop() {
+        FaceDataListener.removeOnChangeListener()
+        fastRecognition.onDestroy()
+        super.onStop()
     }
 
 }

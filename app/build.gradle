@@ -5,12 +5,7 @@ plugins {
 }
 apply plugin: 'com.android.application'
 android {
-    compileSdk 30
-    externalNativeBuild {
-        cmake {
-            version "3.10.2"
-        }
-    }
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.sendi.fooddeliveryrobot"
@@ -21,12 +16,7 @@ android {
         setProperty("archivesBaseName", "deliveryrobot-v" + versionCode + "(" + versionName + ")")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared"
-                abiFilters "armeabi-v7a", "arm64-v8a"
-            }
-        }
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -73,20 +63,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    externalNativeBuild {
-        cmake {
-            path 'CMakeLists.txt'
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -111,9 +90,13 @@ android {
         }
     }
     ndkVersion '20.0.5594570'
-//    buildFeatures {
-//
-//    }
+    sourceSets {
+        main {
+            jni {
+                srcDirs 'src\\main\\jni'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -177,4 +160,5 @@ dependencies {
     implementation("com.github.plexpt:chatgpt:4.1.2") {
         exclude group: 'com.alibaba', module: 'fastjson'
     }
+    implementation 'org.xutils:xutils:3.9.0'
 }

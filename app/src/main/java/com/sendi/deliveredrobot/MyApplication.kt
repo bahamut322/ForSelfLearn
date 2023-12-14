@@ -15,14 +15,11 @@ import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
-import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.utils.LogUtil.d
 import com.sendi.deliveredrobot.utils.ToastUtil
-import com.sendi.deliveredrobot.view.fragment.FaceModule
-import com.sendi.deliveredrobot.view.fragment.Utils
 import com.tencent.bugly.crashreport.CrashReport
 import jni.Usbcontorl
 import org.litepal.LitePal
+import org.xutils.x
 import java.io.File
 
 class MyApplication : Application() {
@@ -30,7 +27,6 @@ class MyApplication : Application() {
         var instance: Application? = null
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        lateinit var faceModule: FaceModule
         var listener: DownloadBill.DownloadListener? = null
     }
 
@@ -43,8 +39,9 @@ class MyApplication : Application() {
         super.onCreate()
         instance = this
         context = baseContext
+        x.Ext.init(this)//初始化xUtils3
         CrashHandler().getInstance()?.init(this)
-        BaiduTTSHelper.getInstance() //初始化LitePal
+        BaiduTTSHelper.getInstance()
         LitePal.initialize(this)//数据库实例
         listener = object : DownloadBill.DownloadListener {
             override fun onProgress(progress: Int) {
@@ -82,34 +79,7 @@ class MyApplication : Application() {
             if (Usbcontorl.isload) {
                 Usbcontorl.usb3803_mode_setting(1) //打开5V
             }
-            val faceDetectionModelPath =
-                instance!!.cacheDir
-                    .absolutePath + File.separator + "yolov5n_shuffle_256x320_quan.mnn"
-            val ageAndGenderModelPath =
-                instance!!.cacheDir
-                    .absolutePath + File.separator + "ageAndGender.mnn"
-            val faceRecognizermodelPath =
-                instance!!.cacheDir
-                    .absolutePath + File.separator + "resnet18_110.mnn"
-            Utils.copyFileFromAsset(
-                instance,
-                "yolov5n_shuffle_256x320_quan.mnn",
-                faceDetectionModelPath
-            )
-            Utils.copyFileFromAsset(
-                instance,
-                "ageAndGender.mnn",
-                ageAndGenderModelPath
-            )
-            Utils.copyFileFromAsset(
-                instance,
-                "resnet18_110.mnn",
-                faceRecognizermodelPath
-            )
-//            faceModule =
-//                FaceModule(faceDetectionModelPath, ageAndGenderModelPath, faceRecognizermodelPath)
-//            d("人脸识别库初始化完成")
-//        }.start()
+
 
     }
 }

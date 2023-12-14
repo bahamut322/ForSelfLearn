@@ -13,10 +13,12 @@ import android.view.SurfaceView;
 
 
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.model.FaceModel;
 import com.sendi.deliveredrobot.utils.ImgByteDealFunction;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Cui
@@ -26,8 +28,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private SurfaceHolder mSurfaceHolder;
     private Canvas mCanvas = null;
     private Paint paint = null;
-    Info info;
-    ArrayList<Info> infoArrayList = null;
+    FaceModel info;
+    List<FaceModel> infoArrayList = null;
     private Paint pianTV = null;
     private Paint paintTV1 = null;
 
@@ -66,7 +68,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         // Surface创建时触发
         try {
-            if (info.getRect() != null && info != null) {
+            if (info.getBox() != null && info != null) {
                 new Thread(this).start();
             }
         } catch (Exception e) {
@@ -78,8 +80,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         // Surface改变时触发
-        width = 640;
-        height = 480;
+        width = 800;
+        height = 600;
     }
 
     @Override
@@ -98,7 +100,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         mCanvas.drawPaint(paint);
         //判断画布是否存在 人脸数据是否为空
-        if (null != mCanvas && info != null && info.getRect() != null) {
+        if (null != mCanvas  && info.getBox() != null ) {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
             mCanvas.drawPaint(paint);
             //创建一个for循环，更具infoArrayList的size去绘制人脸框
@@ -128,22 +130,22 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                  */
                 //将换算之后的位置传给红外
                 try {
-                    ImgByteDealFunction.getMaxTemplate((infoArrayList.get(i).getRect().left*9/4 - 128)/2,
-                            (infoArrayList.get(i).getRect().top*9/4 - 83) / 2,
-                            (infoArrayList.get(i).getRect().width()*9/4) / 2,
-                            (infoArrayList.get(i).getRect().height()*9/4) / 2);
+                    ImgByteDealFunction.getMaxTemplate((infoArrayList.get(i).getBox().left - 128)/2,
+                            (infoArrayList.get(i).getBox().top - 83) / 2,
+                            (infoArrayList.get(i).getBox().width()) / 2,
+                            (infoArrayList.get(i).getBox().height()) / 2);
                 }catch (Exception e){}
                 System.out.println("打印温度" + ImgByteDealFunction.Temperature);
                 //将folat数据只显示小数点后两位
                 DecimalFormat decimalFormat=new DecimalFormat(".00");
                 String pri=decimalFormat.format(ImgByteDealFunction.Temperature);
                 //判断温度是否大于0，防止红外还没启动，开始录入人脸
-                if(ImgByteDealFunction.Temperature > 0){
+//                if(ImgByteDealFunction.Temperature > 0){
                     //绘制矩形
-                    mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                            infoArrayList.get(i).getRect().top*9/4,
-                            infoArrayList.get(i).getRect().right*9/4,
-                            infoArrayList.get(i).getRect().bottom*9/4, paint);
+                    mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                            infoArrayList.get(i).getBox().top,
+                            infoArrayList.get(i).getBox().right,
+                            infoArrayList.get(i).getBox().bottom, paint);
                     pianTV = new Paint();
                     pianTV.setColor(Color.parseColor("#FF6079"));
                     pianTV.setStrokeWidth(2);
@@ -157,56 +159,56 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     paintTV1.setTextSize(20);
                 switch (infoArrayList.get(i).getMaskState()){
                     case 0:
-                        mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                infoArrayList.get(i).getRect().top*9/4,
-                                infoArrayList.get(i).getRect().right*9/4,
-                                infoArrayList.get(i).getRect().bottom*9/4,pianTV);
-                        mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                infoArrayList.get(i).getRect().top*9/4,
-                                infoArrayList.get(i).getRect().right*9/4,
-                                infoArrayList.get(i).getRect().bottom*9/4, paintTV1);
+                        mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                infoArrayList.get(i).getBox().top,
+                                infoArrayList.get(i).getBox().right,
+                                infoArrayList.get(i).getBox().bottom,pianTV);
+                        mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                infoArrayList.get(i).getBox().top,
+                                infoArrayList.get(i).getBox().right,
+                                infoArrayList.get(i).getBox().bottom, paintTV1);
                         if (ImgByteDealFunction.Temperature> Universal.TemperatureMax){
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-30, paintTV1);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-30, paintTV1);
                         }else {
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4,infoArrayList.get(i).getRect().top*9/4-30, paint);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left,infoArrayList.get(i).getBox().top-30, paint);
                         }
-                        mCanvas.drawText("未佩戴口罩", infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-5, pianTV);
+                        mCanvas.drawText("未佩戴口罩", infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-5, pianTV);
                         break;
                     case 1:
-                        mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                infoArrayList.get(i).getRect().top*9/4,
-                                infoArrayList.get(i).getRect().right*9/4,
-                                infoArrayList.get(i).getRect().bottom*9/4, pianTV);
-                        mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                infoArrayList.get(i).getRect().top*9/4,
-                                infoArrayList.get(i).getRect().right*9/4,
-                                infoArrayList.get(i).getRect().bottom*9/4, paintTV1);
+                        mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                infoArrayList.get(i).getBox().top,
+                                infoArrayList.get(i).getBox().right,
+                                infoArrayList.get(i).getBox().bottom, pianTV);
+                        mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                infoArrayList.get(i).getBox().top,
+                                infoArrayList.get(i).getBox().right,
+                                infoArrayList.get(i).getBox().bottom, paintTV1);
                         if (ImgByteDealFunction.Temperature> Universal.TemperatureMax){
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-30, paintTV1);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-30, paintTV1);
                         }else {
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4,infoArrayList.get(i).getRect().top*9/4-30, paint);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left,infoArrayList.get(i).getBox().top-30, paint);
                         }
-                        mCanvas.drawText("佩戴口罩不规范", infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-5, pianTV);
+                        mCanvas.drawText("佩戴口罩不规范", infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-5, pianTV);
                         break;
                     case  2:
                         if (ImgByteDealFunction.Temperature> Universal.TemperatureMax){
-                            mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                    infoArrayList.get(i).getRect().top*9/4,
-                                    infoArrayList.get(i).getRect().right*9/4,
-                                    infoArrayList.get(i).getRect().bottom*9/4, pianTV);
-                            mCanvas.drawRect(infoArrayList.get(i).getRect().left*9/4,
-                                    infoArrayList.get(i).getRect().top*9/4,
-                                    infoArrayList.get(i).getRect().right*9/4,
-                                    infoArrayList.get(i).getRect().bottom*9/4, paintTV1);
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-5, paintTV1);
+                            mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                    infoArrayList.get(i).getBox().top,
+                                    infoArrayList.get(i).getBox().right,
+                                    infoArrayList.get(i).getBox().bottom, pianTV);
+                            mCanvas.drawRect(infoArrayList.get(i).getBox().left,
+                                    infoArrayList.get(i).getBox().top,
+                                    infoArrayList.get(i).getBox().right,
+                                    infoArrayList.get(i).getBox().bottom, paintTV1);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-5, paintTV1);
                         }else {
-                            mCanvas.drawText(pri, infoArrayList.get(i).getRect().left*9/4, infoArrayList.get(i).getRect().top*9/4-5, paint);
+                            mCanvas.drawText(pri, infoArrayList.get(i).getBox().left, infoArrayList.get(i).getBox().top-5, paint);
                         }
                         break;
                     default:
                         return;
                 }
-            }
+//            }
 
         }
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);

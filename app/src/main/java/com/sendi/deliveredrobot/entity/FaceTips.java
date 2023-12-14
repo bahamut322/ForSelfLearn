@@ -7,7 +7,6 @@ public class FaceTips extends LitePalSupport {
     private int id;
     @Column(nullable = false, defaultValue = "unKnow")
     private String name;
-    private String faceCharacteristic;
     @Column(defaultValue = "unKnow")
     private String sexual;
 
@@ -28,9 +27,6 @@ public class FaceTips extends LitePalSupport {
         this.name = name;
     }
 
-    public String getFaceCharacteristic() {
-        return faceCharacteristic;
-    }
 
     public String getSexual() {
         return sexual;
@@ -40,8 +36,5 @@ public class FaceTips extends LitePalSupport {
         this.sexual = sexual;
     }
 
-    public void setFaceCharacteristic(String faceCharacteristic) {
-        this.faceCharacteristic = faceCharacteristic;
-    }
 }
 

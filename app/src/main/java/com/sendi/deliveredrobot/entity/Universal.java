@@ -68,6 +68,7 @@ public class Universal {
     public static String businessTask = null;
 
     public static String POST_FAST = "http://192.168.73.204:5005/get_feat";
+    public static String POST_IDENTIFY = "http://192.168.73.204:5005/get_similarity";
 
 
     //TODO 门岗管理

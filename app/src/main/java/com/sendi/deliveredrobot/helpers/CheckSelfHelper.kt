@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraManager
 import android.media.*
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
@@ -85,8 +87,9 @@ object CheckSelfHelper {
         val seconds = MutableLiveData(time)
         var progress = 0
         //将读取文件中的内容放入变量中，用于之后判断是否可以进行测温/人脸识别
-        RobotStatus.SelfCheckNum.postValue(getFileContent((Universal.SelfCheck)))
-        var tempFlag = getFileContent((Universal.SelfCheck)).toInt(2)//转为二进制之后，对应自检
+        val self = getFileContent((Universal.SelfCheck))
+        RobotStatus.SelfCheckNum.postValue(self)
+        var tempFlag = self.toInt(2)//转为二进制之后，对应自检
         var initRosTopic = false
         val preTopicList = listOf(
             ClientConstant.SCHEDULING_PAGE,
@@ -234,7 +237,7 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("摄像头检测通过")
             }
-            if (isMicrophoneAvailable() && tempFlag and 0x20 == 0) {
+            if (isMicrophoneAvailable(MyApplication.context) && tempFlag and 0x20 == 0) {
                 tempFlag = tempFlag or 0x20
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
@@ -339,22 +342,17 @@ object CheckSelfHelper {
      */
     @SuppressLint("UnsupportedChromeOsCameraSystemFeature")
     open fun checkCameraHardware(context: Context): Boolean {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // 检测设备是否有摄像头
-            var camera: Camera? = null
-            try {
-                camera = Camera.open()
-                // 打开摄像头
-            } catch (e: Exception) {
-                e.printStackTrace()
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        try {
+            for (cameraId in cameraManager.cameraIdList) {
+                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                // 这里可以添加更多的检查，例如检查摄像头的朝向或者其他特性
+                return true // 设备有摄像头
             }
-            if (camera != null) {
-                camera.release()
-                // 释放摄像头
-                return true
-            }
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
         }
-        return false
+        return false // 设备没有摄像头
     }
 
     fun temp(): Boolean {
@@ -374,7 +372,15 @@ object CheckSelfHelper {
     /**
      * 麦克风检测
      */
-    open fun isMicrophoneAvailable(): Boolean {
+    open fun isMicrophoneAvailable(context: Context): Boolean {
+        // 首先检查设备是否具有麦克风硬件
+        val packageManager = context.packageManager
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+            // 设备没有麦克风
+            return false
+        }
+
+        // 设备有麦克风，检查是否可以初始化AudioRecord
         var audioRecord: AudioRecord? = null
         return try {
             val bufferSize = AudioRecord.getMinBufferSize(
@@ -389,10 +395,9 @@ object CheckSelfHelper {
                 AudioFormat.ENCODING_PCM_16BIT,
                 bufferSize
             )
-            if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
-                false
-            } else true
-        } catch (e: java.lang.Exception) {
+            audioRecord.state == AudioRecord.STATE_INITIALIZED
+        } catch (e: Exception) {
+            // 初始化失败，可能是因为权限问题或其他问题
             false
         } finally {
             audioRecord?.release()
@@ -421,17 +426,30 @@ object CheckSelfHelper {
         }
     }
 
-    //读取指定目录下的所有TXT文件的文件内容
-    private fun getFileContent(files: String): String {
-        val file = File(files)
-        val inputStream = FileInputStream(file)
-        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-        val stringBuilder = StringBuilder()
-        var line: String? = bufferedReader.readLine()
-        while (line != null) {
-            stringBuilder.append(line)
-            line = bufferedReader.readLine()
+    //读取自检文件、如果没有读取到则按默认的项自检
+    private fun getFileContent(directoryPath: String, defaultContent: String = "110010000"): String {
+        val directory = File(directoryPath)
+
+        // 检查目录是否存在
+        if (!directory.exists() || !directory.isDirectory) {
+            return defaultContent
         }
+
+        val stringBuilder = StringBuilder()
+
+        // 读取目录下的所有TXT文件
+        directory.listFiles { _, name -> name.endsWith(".txt") }?.forEach { file ->
+            FileInputStream(file).use { fis ->
+                BufferedReader(InputStreamReader(fis)).use { reader ->
+                    var line: String? = reader.readLine()
+                    while (line != null) {
+                        stringBuilder.append(line).append(System.lineSeparator())
+                        line = reader.readLine()
+                    }
+                }
+            }
+        }
+
         return stringBuilder.toString()
     }
 }

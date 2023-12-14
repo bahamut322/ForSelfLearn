@@ -72,6 +72,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         if (utteranceId == "explanation") {
             return;
         }
+        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
         Order.setFlage("1");
     }

@@ -87,9 +87,10 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression",BooleanToInt(b)));
         binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent",BooleanToInt(b)));
         binding.cbEtiquette.setOnCheckedChangeListener((compoundButton, b) -> {
-            values.put("etiquette",BooleanToInt(b));
             if (viewModel.isNumCharOne(4)){
                 Toast.makeText(getContext(),"未检测到RGB摄像头，人脸识别开启无效",Toast.LENGTH_LONG).show();
+            }else {
+                values.put("etiquette",BooleanToInt(b));
             }
         });
 

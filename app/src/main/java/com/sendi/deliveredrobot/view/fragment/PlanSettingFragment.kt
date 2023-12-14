@@ -8,20 +8,17 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentSettingPlanBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoBackTaskBillFactory
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
+import com.sendi.deliveredrobot.view.widget.FaceImageDialog
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
 
 /**
@@ -33,6 +30,7 @@ class PlanSettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingPlanBinding
     private var controller: NavController? = null
     private val viewModel by viewModels<SettingViewModel>({ requireActivity() })
+    private var faceImageDialog: FaceImageDialog? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,6 +43,9 @@ class PlanSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         controller = Navigation.findNavController(view)
+
+        faceImageDialog = FaceImageDialog(context,this)
+
         //设置
         binding.setting.apply {
             setOnClickListener {
@@ -72,6 +73,10 @@ class PlanSettingFragment : Fragment() {
                 } else {
                     controller!!.navigate(R.id.action_planSettingFragment_to_cameraPreviewFragment)
                 }
+            }
+            setOnLongClickListener {
+                faceImageDialog!!.show()
+                true
             }
         }
         //回桩
