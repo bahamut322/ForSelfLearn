@@ -385,7 +385,7 @@ class ConversationFragment : Fragment() {
         val linearLayoutContent =
             linearLayoutCompat.findViewById<LinearLayoutCompat>(R.id.linear_layout_content)
         textView.text = replyIntentModel.questionAnswer ?: ""
-        SpanUtils.interceptHyperLink(textView, requireContext(), findNavController())
+        SpanUtils.interceptHyperLink(textView, findNavController())
         val emptyView = View(requireContext()).apply {
             layoutParams = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -576,7 +576,7 @@ class ConversationFragment : Fragment() {
                 .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
             val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
             textView.text = conversation
-            SpanUtils.interceptHyperLink(textView, requireContext(), findNavController())
+            SpanUtils.interceptHyperLink(textView, findNavController())
             val emptyView2 = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,

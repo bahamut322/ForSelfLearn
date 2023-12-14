@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.utils
 
-import android.content.Context
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -19,17 +18,17 @@ object SpanUtils {
      * 拦截超链接
      * @param tv
      */
-    fun interceptHyperLink(tv: TextView, mContext: Context?, navigator: NavController) {
+    fun interceptHyperLink(tv: TextView, navigator: NavController) {
         tv.movementMethod = LinkMovementMethod.getInstance()
         val text = tv.text
-        val stringBuilder = identifyUrl(text,mContext, navigator)
+        val stringBuilder = identifyUrl(text, navigator)
         tv.text = stringBuilder
     }
 
     private var mStringList = LinkedList<String>()
     private var mUrlInfos = LinkedList<UrlInfo>()
     private val pattern =
-        "(((htt|ft|m)ps?):\\/\\/)?([\\da-z\\.-]+)\\.([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
+        "(((htt|ft|m)ps?):\\/\\/)?([\\da-z\\.-]+)\\.([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?((#|\\?)[\\S]+)?"
     var r: Pattern = Pattern.compile(pattern)
     var m: Matcher? = null
     var flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -40,7 +39,7 @@ object SpanUtils {
     }
 
 
-    private fun identifyUrl(text: CharSequence?, mContext: Context?, navigator: NavController): SpannableStringBuilder {
+    private fun identifyUrl(text: CharSequence?, navigator: NavController): SpannableStringBuilder {
         mStringList.clear()
         mUrlInfos.clear()
         val tempText = text ?: ""
@@ -55,14 +54,13 @@ object SpanUtils {
             mStringList.add(m?.group()?:"")
             mUrlInfos.add(info)
         }
-        return joinText(null, contextText, mContext, navigator)
+        return joinText(null, contextText, navigator)
     }
 
     /** 拼接文本  */
     private fun joinText(
         clickSpanText: CharSequence?,
         contentText: CharSequence,
-        mContext: Context?,
         navigator: NavController
     ): SpannableStringBuilder {
         val spanBuilder: SpannableStringBuilder = if (clickSpanText != null) {
@@ -76,7 +74,7 @@ object SpanUtils {
                 val preStr = contentText.toString().substring(0, mUrlInfos[0].start)
                 spanBuilder.append(preStr)
                 val url = mStringList[0]
-                val customUrlSpan = mContext?.let { CustomUrlSpan(it, url, navigator!!) }
+                val customUrlSpan = CustomUrlSpan(url, navigator!!)
                 val start = spanBuilder.length
                 spanBuilder.append(url, UnderlineSpan(), flag)
                 val end = spanBuilder.length
@@ -89,7 +87,7 @@ object SpanUtils {
                 //有多个网址
                 for (i in mStringList.indices) {
                     val url = mStringList[i]
-                    val customUrlSpan = mContext?.let { CustomUrlSpan(it, url, navigator!!) }
+                    val customUrlSpan = CustomUrlSpan(url, navigator)
                     if (i == 0) {
                         //拼接第1个span的前面文本
                         val headStr = contentText.toString().substring(0, mUrlInfos[0].start)
