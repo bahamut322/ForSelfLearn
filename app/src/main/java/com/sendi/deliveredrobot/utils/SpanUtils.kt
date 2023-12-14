@@ -13,24 +13,16 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-class SpanUtils(mContext: Context?, navigator: NavController) {
-
-    private var mContext: Context? = null
-    private var navigator: NavController? = null
-
-    init {
-        this.mContext = mContext
-        this.navigator = navigator
-    }
+object SpanUtils {
 
     /**
      * 拦截超链接
      * @param tv
      */
-    fun interceptHyperLink(tv: TextView) {
+    fun interceptHyperLink(tv: TextView, mContext: Context?, navigator: NavController) {
         tv.movementMethod = LinkMovementMethod.getInstance()
         val text = tv.text
-        val stringBuilder = identifyUrl(text)
+        val stringBuilder = identifyUrl(text,mContext, navigator)
         tv.text = stringBuilder
     }
 
@@ -48,7 +40,7 @@ class SpanUtils(mContext: Context?, navigator: NavController) {
     }
 
 
-    private fun identifyUrl(text: CharSequence?): SpannableStringBuilder {
+    private fun identifyUrl(text: CharSequence?, mContext: Context?, navigator: NavController): SpannableStringBuilder {
         mStringList.clear()
         mUrlInfos.clear()
         val tempText = text ?: ""
@@ -63,13 +55,15 @@ class SpanUtils(mContext: Context?, navigator: NavController) {
             mStringList.add(m?.group()?:"")
             mUrlInfos.add(info)
         }
-        return joinText(null, contextText)
+        return joinText(null, contextText, mContext, navigator)
     }
 
     /** 拼接文本  */
     private fun joinText(
         clickSpanText: CharSequence?,
-        contentText: CharSequence
+        contentText: CharSequence,
+        mContext: Context?,
+        navigator: NavController
     ): SpannableStringBuilder {
         val spanBuilder: SpannableStringBuilder = if (clickSpanText != null) {
             SpannableStringBuilder(clickSpanText)

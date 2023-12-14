@@ -27,25 +27,16 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
-import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
-import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.SpanUtils
-import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +67,6 @@ class ConversationFragment : Fragment() {
             field = ".".repeat(value.length % 4 + 1)
         }
     private var waitTalk = true
-    private lateinit var spanUtils: SpanUtils
     val pattern =
         "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
 //    var guidePoint: QueryPointEntity? = null
@@ -90,7 +80,6 @@ class ConversationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        spanUtils = SpanUtils(requireContext(), findNavController())
         startTime = System.currentTimeMillis()
         timer = Timer()
         timer.schedule(object : java.util.TimerTask() {
@@ -396,7 +385,7 @@ class ConversationFragment : Fragment() {
         val linearLayoutContent =
             linearLayoutCompat.findViewById<LinearLayoutCompat>(R.id.linear_layout_content)
         textView.text = replyIntentModel.questionAnswer ?: ""
-        spanUtils.interceptHyperLink(textView)
+        SpanUtils.interceptHyperLink(textView, requireContext(), findNavController())
         val emptyView = View(requireContext()).apply {
             layoutParams = LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -587,7 +576,7 @@ class ConversationFragment : Fragment() {
                 .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
             val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
             textView.text = conversation
-            spanUtils.interceptHyperLink(textView)
+            SpanUtils.interceptHyperLink(textView, requireContext(), findNavController())
             val emptyView2 = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
