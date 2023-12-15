@@ -345,33 +345,42 @@ class FaceRecognition {
 
 
     fun main(similarityResponse: Similarity, owner: LifecycleOwner) {
-        val chunkSize = doubleString.size // 指定子列表的大小
+        if (similarityResponse.similarity.isNotEmpty()) {
+            val chunkSize = doubleString.size // 指定子列表的大小
 
-        val resultArrays = similarityResponse.similarity.chunked(chunkSize)
+            val resultArrays = similarityResponse.similarity.chunked(chunkSize)
 
-        // 调试输出
-        println("Result Arrays: $resultArrays")
+            // 调试输出
+            println("Result Arrays: $resultArrays")
 
-        val maxValuesWithIndex = resultArrays.flatMapIndexed { _, array ->
-            val max = array.maxOrNull() ?: Double.MIN_VALUE
-            val maxIndex = array.indexOf(max)
-            if (max >= 0.7) listOf(Pair(maxIndex, max)) else emptyList()
-        }
-        // 调试输出
-        println("Max Values With Index: $maxValuesWithIndex")
-        val correspondingValues = maxValuesWithIndex.mapNotNull { (maxIndex, _) ->
-            doubleString.getOrNull(maxIndex)?.name
-        }.distinct().joinToString(", ")
-        // 调试输出
-        println("Concatenated Corresponding Values: $correspondingValues")
+            val maxValuesWithIndex = resultArrays.flatMapIndexed { _, array ->
+                val max = array.maxOrNull() ?: Double.MIN_VALUE
+                val maxIndex = array.indexOf(max)
+                if (max >= 0.7) listOf(Pair(maxIndex, max)) else emptyList()
+            }
+            // 调试输出
+            println("Max Values With Index: $maxValuesWithIndex")
+            val correspondingValues = maxValuesWithIndex.mapNotNull { (maxIndex, _) ->
+                doubleString.getOrNull(maxIndex)?.name
+            }.distinct().joinToString(", ")
+            // 调试输出
+            println("Concatenated Corresponding Values: $correspondingValues")
 
-        if (correspondingValues.isNotEmpty()) {
-            checkFace(
-                owner,
-                String.format(instance!!.getString(R.string.welcome_vip_understand), correspondingValues)
-            )
+            if (correspondingValues.isNotEmpty()) {
+                checkFace(
+                    owner,
+                    String.format(
+                        instance!!.getString(R.string.welcome_vip_understand),
+                        correspondingValues
+                    )
+                )
+            } else {
+                println("人脸库：没有查到此人")
+                if (QuerySql.QueryBasic().etiquette) {
+                    checkFace(owner)
+                }
+            }
         } else {
-            println("人脸库：没有查到此人")
             if (QuerySql.QueryBasic().etiquette) {
                 checkFace(owner)
             }
@@ -410,7 +419,7 @@ class FaceRecognition {
             instance!!.getString(R.string.i_hope_to_serve_you),
             instance!!.getString(R.string.welcome_i_am_xiao_di),
 
-        )
+            )
         val randomIndex = Random().nextInt(list.size)
         return list[randomIndex]
     }
