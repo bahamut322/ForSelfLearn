@@ -134,6 +134,10 @@ abstract class BaseVoiceRecorder {
         recordCallback = null
     }
 
+    fun clearCache(){
+        baseAudioChannel?.clearCache()
+    }
+
     companion object{
         private var _instance: BaseVoiceRecorder? = null
         var ttsIsPlaying = false

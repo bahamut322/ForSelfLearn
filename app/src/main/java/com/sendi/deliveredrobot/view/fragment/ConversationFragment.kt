@@ -115,6 +115,7 @@ class ConversationFragment : Fragment() {
                 }
             }
         }, Date(), 1000)
+        initVoiceRecord()
     }
 
     override fun onStop() {
@@ -130,7 +131,7 @@ class ConversationFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        initVoiceRecord()
+
     }
 
     @SuppressLint("InflateParams")
@@ -545,6 +546,7 @@ class ConversationFragment : Fragment() {
 
     private fun initVoiceRecord(){
         val voiceRecorder = BaseVoiceRecorder.getInstance()
+        voiceRecorder?.clearCache()
         voiceRecorder?.recordCallback = { conversation, pinyinString ->
             if (pinyinString.contains("TUICHU")) {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {

@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.sendi.fooddeliveryrobot.util.PcmToWavUtil
 import okhttp3.RequestBody
 import retrofit2.Retrofit
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -92,6 +93,24 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
     fun stopRecord(){
         stopLive()
         baseAudioChannel = null
+    }
+
+    fun clearCache(){
+        synchronized(this) {
+            Log.i("AudioChannel", "clearCache")
+            initialized = false
+            writer?.close()
+            val filePcm = Environment.getExternalStorageDirectory().toString() + "/" + time + ".pcm"
+            val fileWav = Environment.getExternalStorageDirectory().toString() + "/" + time + ".wav"
+            val filePcmFile = File(filePcm)
+            val fileWavFile = File(fileWav)
+            if (filePcmFile.exists()) {
+                filePcmFile.delete()
+            }
+            if (fileWavFile.exists()) {
+                fileWavFile.delete()
+            }
+        }
     }
 
     fun initRecord(byteArray: ByteArray){
