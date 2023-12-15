@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
@@ -16,7 +17,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -36,6 +39,7 @@ import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.SpanUtils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
@@ -59,7 +63,6 @@ class ConversationFragment : Fragment() {
     lateinit var timer:Timer
     private var startTime: Long = 0
     private var totalHeight: Int = 0
-    private var voiceRecorder: BaseVoiceRecorder? = null
     private var talkingView: LinearLayoutCompat? = null
     private val defaultTalkingStr = "...."
     private var talkingStr = defaultTalkingStr
@@ -69,6 +72,15 @@ class ConversationFragment : Fragment() {
     private var waitTalk = true
     val pattern =
         "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
+    val observable = Observer<ReplyIntentModel>{
+        if (context == null) return@Observer
+        if (it == null) return@Observer
+        //addConversationView
+        addAnswerView(it)
+        val answer = it.questionAnswer
+        if (answer.isNullOrEmpty()) return@Observer
+        SpeakHelper.speakWithoutStop(answer)
+    }
 //    var guidePoint: QueryPointEntity? = null
 //    val yesWords = arrayOf("是","是的","对","对的","好","好的","嗯","嗯嗯","恩","恩恩","可以","可以的","行","行的","行行","行行行","行行行行","行行行行行","行行行行行行","行行行行行行行","行行行行行行行行","行行行行行行行行行")
     override fun onCreateView(
@@ -103,111 +115,6 @@ class ConversationFragment : Fragment() {
                 }
             }
         }, Date(), 1000)
-        voiceRecorder = BaseVoiceRecorder.getInstance()
-        voiceRecorder?.recordCallback = { conversation, pinyinString ->
-            if (pinyinString.contains("TUICHU")) {
-                MyApplication.instance!!.sendBroadcast(Intent().apply {
-                    action = ACTION_NAVIGATE
-                    putExtra(NAVIGATE_ID, POP_BACK_STACK)
-                })
-            } else {
-                if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying && !binding?.videoView?.isPlaying!!) {
-                    mainScope.launch(Dispatchers.Main) {
-                        if (RobotStatus.ttsIsPlaying) {
-                            return@launch
-                        }
-                        if(binding?.videoView?.isPlaying == true){
-                            return@launch
-                        }
-                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                                addQuestionView(conversation, talkingView)
-                                question(conversation, System.currentTimeMillis())
-                            }
-
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                addQuestionView(conversation, talkingView)
-//                                if (conversation.startsWith("带我去")) {
-//                                    withContext(Dispatchers.IO){
-//                                        val pointName = conversation.substring(conversation.indexOf("带我去") + 3)
-//                                        val point = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().queryPoint(pointName)
-//                                        if (point == null) {
-//                                            addAnswer2("没有找到【${pointName}】的位置")
-//                                            return@withContext
-//                                        }
-//                                        guidePoint = point
-//                                        val answer = "是否要带领到【${pointName}】"
-//                                        addAnswer2(answer)
-//                                        SpeakHelper.speakWithoutStop(answer)
-//                                    }
-//                                }else if(yesWords.contains(conversation)){
-//                                    //引领到
-//                                    withContext(Dispatchers.IO){
-//                                        if (guidePoint != null) {
-//                                            println("开始引领到【${guidePoint?.pointName?:""}】")
-//                                            val bill = GuideTaskBillFactory.createBill(TaskModel(location = guidePoint))
-//                                            BillManager.addAllAtIndex(bill)
-//                                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-//                                        }
-//                                    }
-//                                } else{
-                                    withContext(Dispatchers.IO){
-                                        var res = question2(conversation)
-                                        if (res.isEmpty()) return@withContext
-                                        addAnswer2(res)
-                                        if (res.contains("我猜您可能对以下内容感兴趣")) {
-                                            res = res.substringBefore("我猜您可能对以下内容感兴趣")
-                                        }
-                                        res = res.replace(Regex(pattern),"")
-                                        SpeakHelper.speakWithoutStop(res)
-                                    }
-//                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        voiceRecorder?.talkingCallback = { talking ->
-            when (talking) {
-                true -> {
-                    println("****talking")
-                    startTime = System.currentTimeMillis()
-                }
-
-                false -> {
-                    println("not talking")
-                }
-            }
-        }
-
-        voiceRecorder?.recordStatusCallback = { startRecord ->
-            when (startRecord) {
-                true -> {
-                    //开始录音
-                    when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
-                        BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                            mainScope.launch(Dispatchers.Main) {
-                                if (talkingView == null) {
-                                    addQuestionView(defaultTalkingStr)
-                                }
-                            }
-                        }
-
-                        BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                            mainScope.launch(Dispatchers.Main) {
-                                if (talkingView == null) {
-                                    addQuestionView(defaultTalkingStr)
-                                }
-                            }
-                        }
-                    }
-                }
-                false -> {
-                    //结束录音
-                }
-            }
-        }
     }
 
     override fun onStop() {
@@ -219,6 +126,11 @@ class ConversationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SpeakHelper.stop()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        initVoiceRecord()
     }
 
     @SuppressLint("InflateParams")
@@ -272,15 +184,6 @@ class ConversationFragment : Fragment() {
                 myFlowLayout.addView(linearLayoutCompat)
             }
         }
-        ReplyIntentHelper.replyIntentLiveData.observe(viewLifecycleOwner) {
-            if (it == null) return@observe
-            //addConversationView
-            addAnswerView(it)
-            val answer = it.questionAnswer
-            if (answer.isNullOrEmpty()) return@observe
-            SpeakHelper.speakWithoutStop(answer)
-        }
-
         binding?.flHome?.apply {
             setOnClickListener {
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
@@ -312,10 +215,20 @@ class ConversationFragment : Fragment() {
                 }
             }
         }
+        ReplyIntentHelper.replyIntentLiveData.observe(viewLifecycleOwner,observable)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        ReplyIntentHelper.replyIntentLiveData.removeObserver(observable)
     }
 
     @SuppressLint("InflateParams")
     private fun addQuestionView(conversation: String, view:LinearLayoutCompat? = null) {
+        if (context == null) {
+            LogUtil.e("conversation context is null")
+            return
+        }
         binding?.group1?.apply {
             if (visibility == View.VISIBLE) {
                 visibility = View.GONE
@@ -379,6 +292,9 @@ class ConversationFragment : Fragment() {
 
     @SuppressLint("InflateParams")
     private fun addAnswerView(replyIntentModel: ReplyIntentModel) {
+        if (context == null) {
+            return
+        }
         val linearLayoutCompat = LayoutInflater.from(requireContext())
             .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
         val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
@@ -571,6 +487,10 @@ class ConversationFragment : Fragment() {
     }
 
     private suspend fun addAnswer2(conversation: String){
+        if (context == null) {
+            LogUtil.e("conversation context is null")
+            return
+        }
         binding?.linearLayoutConversation?.apply {
             val linearLayoutCompat = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
@@ -621,6 +541,114 @@ class ConversationFragment : Fragment() {
 
     private suspend fun question2(conversation: String): String = suspendCoroutine {
         it.resume(GenerateReplyToX8Utils.generateReplyToX8(conversation))
+    }
+
+    private fun initVoiceRecord(){
+        val voiceRecorder = BaseVoiceRecorder.getInstance()
+        voiceRecorder?.recordCallback = { conversation, pinyinString ->
+            if (pinyinString.contains("TUICHU")) {
+                MyApplication.instance!!.sendBroadcast(Intent().apply {
+                    action = ACTION_NAVIGATE
+                    putExtra(NAVIGATE_ID, POP_BACK_STACK)
+                })
+            } else {
+                if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying && !binding?.videoView?.isPlaying!!) {
+                    mainScope.launch(Dispatchers.Main) {
+                        if (RobotStatus.ttsIsPlaying) {
+                            return@launch
+                        }
+                        if(binding?.videoView?.isPlaying == true){
+                            return@launch
+                        }
+                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                                addQuestionView(conversation, talkingView)
+                                question(conversation, System.currentTimeMillis())
+                            }
+
+                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                                addQuestionView(conversation, talkingView)
+//                                if (conversation.startsWith("带我去")) {
+//                                    withContext(Dispatchers.IO){
+//                                        val pointName = conversation.substring(conversation.indexOf("带我去") + 3)
+//                                        val point = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().queryPoint(pointName)
+//                                        if (point == null) {
+//                                            addAnswer2("没有找到【${pointName}】的位置")
+//                                            return@withContext
+//                                        }
+//                                        guidePoint = point
+//                                        val answer = "是否要带领到【${pointName}】"
+//                                        addAnswer2(answer)
+//                                        SpeakHelper.speakWithoutStop(answer)
+//                                    }
+//                                }else if(yesWords.contains(conversation)){
+//                                    //引领到
+//                                    withContext(Dispatchers.IO){
+//                                        if (guidePoint != null) {
+//                                            println("开始引领到【${guidePoint?.pointName?:""}】")
+//                                            val bill = GuideTaskBillFactory.createBill(TaskModel(location = guidePoint))
+//                                            BillManager.addAllAtIndex(bill)
+//                                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+//                                        }
+//                                    }
+//                                } else{
+                                withContext(Dispatchers.IO){
+                                    var res = question2(conversation)
+                                    if (res.isEmpty()) return@withContext
+                                    addAnswer2(res)
+                                    if (res.contains("我猜您可能对以下内容感兴趣")) {
+                                        res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                    }
+                                    res = res.replace(Regex(pattern),"")
+                                    SpeakHelper.speakWithoutStop(res)
+                                }
+//                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        voiceRecorder?.talkingCallback = { talking ->
+            when (talking) {
+                true -> {
+                    println("****talking")
+                    startTime = System.currentTimeMillis()
+                }
+
+                false -> {
+                    println("not talking")
+                }
+            }
+        }
+
+        voiceRecorder?.recordStatusCallback = { startRecord ->
+            when (startRecord) {
+                true -> {
+                    //开始录音
+                    when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                        BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                            mainScope.launch(Dispatchers.Main) {
+                                if (talkingView == null) {
+                                    addQuestionView(defaultTalkingStr)
+                                }
+                            }
+                        }
+
+                        BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                            mainScope.launch(Dispatchers.Main) {
+                                if (talkingView == null) {
+                                    addQuestionView(defaultTalkingStr)
+                                }
+                            }
+                        }
+                    }
+                }
+                false -> {
+                    //结束录音
+                }
+            }
+        }
     }
 
 }
