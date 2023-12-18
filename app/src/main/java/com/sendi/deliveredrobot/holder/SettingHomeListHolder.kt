@@ -28,7 +28,7 @@ class SettingHomeListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
                     text = model.title
                     textSize = context.resources.getDimension(R.dimen.small_small_text_size)
                     setBackgroundResource(R.color.transparency)
-                    setTextColor(ContextCompat.getColor(context!!, R.color.color_4D6FBE))
+                    setTextColor(ContextCompat.getColor(context!!, R.color.B3_white))
                 }
             }
             field = data

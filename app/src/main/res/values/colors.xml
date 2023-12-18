@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFFFF</color>
+    <color name="B3_white">#B3FFFFFF</color>
     <color name="Awhite">#E6ffffff</color>
     <color name="color_216FE8">#216FE8</color>
     <color name="transparency">#00000000</color>

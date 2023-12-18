@@ -68,19 +68,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var timeChangeReceiver: TimeChangeReceiver
     private lateinit var simNetStatusReceiver: SimNetStatusReceiver
     private lateinit var sendTaskFinishReceiver: SendTaskFinishReceiver
-    private var screenland : MutableLiveData<Boolean> = MutableLiveData(false)
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        if (newConfig.orientation === Configuration.ORIENTATION_LANDSCAPE) {
-            screenland.value = false
-            Log.e(TAG,"\n 当前屏幕为横屏")
-        } else {
-            screenland.value = true
-            Log.e(TAG,"\n 当前屏幕为竖屏")
-        }
-        super.onConfigurationChanged(newConfig)
-        Log.e("TAG", "onConfigurationChanged")
-    }
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n", "ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -95,16 +83,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             basicSetting.id = 1
             basicSetting.save()
         }
-        val handler = Handler(Looper.getMainLooper())
-        screenland.observe(this) {
-            if (it) {
-                handler.postDelayed({
-                    Log.d(TAG, "onCreate: Pmu")
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                }, 4000) // 延迟
-            }
-        }
-
 
         pushImage(fileNames)
         AppUtils.checkPermission(this, 0)
