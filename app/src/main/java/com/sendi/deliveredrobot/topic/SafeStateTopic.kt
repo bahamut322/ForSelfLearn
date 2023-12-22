@@ -105,6 +105,10 @@ object SafeStateTopic {
                         if (safeStateListener == null) {
                             when (RobotStatus.manageStatus) {
                                 RobotCommand.MANAGE_STATUS_STOP -> {
+                                    if (Universal.explainUnSpeak) {
+                                        TaskArray.setToDo("5")
+                                        return@launch
+                                    }
                                     if (BillManager.currentBill()?.firstPeek() is BeginDockTask) {
                                         ROSHelper.controlDock(RobotCommand.CMD_RESUME)
                                     } else {

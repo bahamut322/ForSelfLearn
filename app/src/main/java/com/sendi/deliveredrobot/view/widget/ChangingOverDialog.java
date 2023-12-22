@@ -53,7 +53,7 @@ public class ChangingOverDialog extends Dialog {
         Log.d("TAG", "dismiss: dialog");
         Universal.Changing = false;
         Universal.explainUnSpeak = false;
-    super.dismiss();
+        super.dismiss();
     }
 
     /**

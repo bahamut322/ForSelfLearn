@@ -30,13 +30,20 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
+import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -81,8 +88,8 @@ class ConversationFragment : Fragment() {
         if (answer.isNullOrEmpty()) return@Observer
         SpeakHelper.speakWithoutStop(answer)
     }
-//    var guidePoint: QueryPointEntity? = null
-//    val yesWords = arrayOf("是","是的","对","对的","好","好的","嗯","嗯嗯","恩","恩恩","可以","可以的","行","行的","行行","行行行","行行行行","行行行行行","行行行行行行","行行行行行行行","行行行行行行行行","行行行行行行行行行")
+    var guidePoint: QueryPointEntity? = null
+    val yesWords = arrayOf("是的","对","对的","好","好的","嗯","嗯嗯","恩","恩恩","可以","可以的","行","行的","行行","行行行","行行行行","行行行行行","行行行行行行","行行行行行行行","行行行行行行行行","行行行行行行行行行")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -570,30 +577,36 @@ class ConversationFragment : Fragment() {
 
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
                                 addQuestionView(conversation, talkingView)
-//                                if (conversation.startsWith("带我去")) {
-//                                    withContext(Dispatchers.IO){
-//                                        val pointName = conversation.substring(conversation.indexOf("带我去") + 3)
-//                                        val point = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().queryPoint(pointName)
-//                                        if (point == null) {
-//                                            addAnswer2("没有找到【${pointName}】的位置")
-//                                            return@withContext
-//                                        }
-//                                        guidePoint = point
-//                                        val answer = "是否要带领到【${pointName}】"
-//                                        addAnswer2(answer)
-//                                        SpeakHelper.speakWithoutStop(answer)
-//                                    }
-//                                }else if(yesWords.contains(conversation)){
-//                                    //引领到
-//                                    withContext(Dispatchers.IO){
-//                                        if (guidePoint != null) {
-//                                            println("开始引领到【${guidePoint?.pointName?:""}】")
-//                                            val bill = GuideTaskBillFactory.createBill(TaskModel(location = guidePoint))
-//                                            BillManager.addAllAtIndex(bill)
-//                                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-//                                        }
-//                                    }
-//                                } else{
+                                if (conversation.startsWith("带我去")) {
+                                    withContext(Dispatchers.IO){
+                                        val pointName = conversation.substring(conversation.indexOf("带我去") + 3)
+                                        val point = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().queryPoint(pointName)
+                                        if (point == null) {
+                                            addAnswer2("没有找到【${pointName}】的位置")
+                                            return@withContext
+                                        }
+                                        if (RobotStatus.batteryStateNumber.value == false) {
+                                            addAnswer2("要先将小迪推到充电桩哦")
+                                            return@withContext
+                                        }
+                                        guidePoint = point
+                                        val answer = "是否要带领到【${pointName}】"
+                                        addAnswer2(answer)
+                                        SpeakHelper.speakWithoutStop(answer)
+                                    }
+                                }else if(yesWords.any {
+                                        conversation.contains(it)
+                                    }){
+                                    //引领到
+                                    withContext(Dispatchers.IO){
+                                        if (guidePoint != null) {
+                                            println("开始引领到【${guidePoint?.pointName?:""}】")
+                                            val bill = GuideTaskBillFactory.createBill(TaskModel(location = guidePoint))
+                                            BillManager.addAllAtIndex(bill)
+                                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                                        }
+                                    }
+                                } else{
                                 withContext(Dispatchers.IO){
                                     var res = question2(conversation)
                                     if (res.isEmpty()) return@withContext
@@ -604,7 +617,7 @@ class ConversationFragment : Fragment() {
                                     res = res.replace(Regex(pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
-//                                }
+                                }
                             }
                         }
                     }

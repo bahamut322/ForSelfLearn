@@ -21,7 +21,8 @@ import com.sendi.deliveredrobot.view.widget.TaskNext
  * @Data 2023/10/23
  * @describe 业务办理到达
  */
-class BusinessArriveTask (taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
+class BusinessArriveTask(taskModel: TaskModel, needReportData: Boolean = true) :
+    AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.BusinessArriveTask
@@ -40,23 +41,19 @@ class BusinessArriveTask (taskModel: TaskModel, needReportData: Boolean = true) 
 
         virtualTaskExecute(2, "业务办理到达")
 //        TaskQueues.executeNextTask()
-        if (Universal.nextPointGo == 0) {
-            LogUtil.i("TODO 到达讲解点通知")
-            RobotStatus.ArrayPointExplan.postValue(1)
-            TaskNext.setOnChangeListener {
-                if (TaskNext.getToDo() == "1") {
-                    LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
-                    MyApplication.instance?.sendBroadcast(Intent().apply {
-                        action = ACTION_NAVIGATE
-                        //TODO guideArriveFragment需要修改成业务办理到达的
-                        putExtra(NAVIGATE_ID, R.id.guideArriveFragment)
-                    })
-                    taskModel?.bill?.executeNextTask()
-                    TaskNext.setToDo("0")
-                    RobotStatus.ArrayPointExplan.postValue(0)
-                }
+        LogUtil.i("TODO 到达讲解点通知")
+        RobotStatus.ArrayPointExplan.postValue(1)
+        TaskNext.setOnChangeListener {
+            if (TaskNext.getToDo() == "1") {
+                LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
+                MyApplication.instance?.sendBroadcast(Intent().apply {
+                    action = ACTION_NAVIGATE
+                    putExtra(NAVIGATE_ID, R.id.guideArriveFragment)
+                })
+                taskModel?.bill?.executeNextTask()
+                TaskNext.setToDo("0")
+                RobotStatus.ArrayPointExplan.postValue(0)
             }
         }
-        Universal.nextPointGo = 0
     }
 }

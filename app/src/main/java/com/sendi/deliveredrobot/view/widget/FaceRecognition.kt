@@ -71,7 +71,7 @@ class FaceRecognition {
     @OptIn(DelicateCoroutinesApi::class)
     fun suerFaceInit(
         extractFeature: Boolean = false,
-        surfaceView: SurfaceView,
+        surfaceView: SurfaceView?,
         width: Int = 800,
         height: Int = 600,
         needSpeaking: Boolean = false,
@@ -96,7 +96,7 @@ class FaceRecognition {
         }
         c?.setDisplayOrientation(0) //预览图与手机方向一致
 
-        val surfaceHolder = surfaceView.holder
+        val surfaceHolder = surfaceView!!.holder
         //启动预览，到这里就能正常预览
         surfaceHolder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
@@ -403,7 +403,7 @@ class FaceRecognition {
             // 使用 Gson 将 JSON 字符串转换为一维数组
             val typeToken = object : TypeToken<List<Double>>() {}.type
             val oneDimensionalArray: List<Double> = gson.fromJson(jsonString, typeToken)
-            // 将一维数组转换为二维数组（这里假设每个子数组有10个元素）
+            // 将一维数组转换为二维数组（这里假设每个子数组有512个元素）
             val chunkedArray = oneDimensionalArray.chunked(512)
             // 将二维数组添加到列表中
             twoDimensionalArrayList.addAll(chunkedArray)

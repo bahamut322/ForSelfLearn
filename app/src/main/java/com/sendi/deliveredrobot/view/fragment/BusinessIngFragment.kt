@@ -36,6 +36,7 @@ import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.Stat
+import com.sendi.deliveredrobot.view.widget.TaskArray
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.delay
@@ -108,6 +109,15 @@ class BusinessIngFragment : Fragment() {
         )
         LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
 
+
+        TaskArray.setOnChangeListener {
+            if (TaskArray.getToDo() == "3" && !processClickDialog!!.isShowing) {
+                viewModel!!.countDownTimer!!.pause()
+            }
+            if (TaskArray.getToDo() == "6" && !processClickDialog!!.isShowing) {
+                viewModel!!.countDownTimer!!.resume()
+            }
+        }
 
         controller = Navigation.findNavController(requireView())
         //副屏显示
@@ -290,9 +300,9 @@ class BusinessIngFragment : Fragment() {
             secondRecognition()
         }
         processClickDialog?.continueBtn?.setOnClickListener {
+            processClickDialog?.dismiss()
             viewModel!!.countDownTimer!!.resume()
             UpdateReturn().resume()
-            processClickDialog?.dismiss()
         }
     }
 
@@ -305,11 +315,12 @@ class BusinessIngFragment : Fragment() {
                 2 -> {
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
-                    //中断提示
-                    viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
-                    //返回
+                    if (liveData1.value != 1) {//如果到点点击结束
+                    } else {
+                        //中断提示
+                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
+                    }
                     viewModel!!.finishTask()
-
                 }
 
                 1 -> {
@@ -360,8 +371,10 @@ class BusinessIngFragment : Fragment() {
 
             6 -> {
                 binding.pointImage.visibility = View.GONE
-                layoutParamsVertical = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
-                layoutParamsHorizontal = binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsVertical =
+                    binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsHorizontal =
+                    binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
                 when (textPosition) {
                     0 -> {
 //                        binding.horizontalTV.gravity = Gravity.CENTER //居中
@@ -376,7 +389,8 @@ class BusinessIngFragment : Fragment() {
 
                     1 -> {
 //                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParamsHorizontal!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        layoutParamsHorizontal!!.bottomToBottom =
+                            ConstraintLayout.LayoutParams.UNSET
                         binding.horizontalTV.layoutParams = layoutParamsHorizontal
                         layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
                         binding.verticalTV.layoutParams = layoutParamsVertical
@@ -409,8 +423,10 @@ class BusinessIngFragment : Fragment() {
             7 -> {
                 //读取文件
                 getFilesAllName(file, picType!!, picPlayTime!!)
-                layoutParamsVertical = binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
-                layoutParamsHorizontal = binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsVertical =
+                    binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
+                layoutParamsHorizontal =
+                    binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
                 when (textPosition) {
                     0 -> {
                         binding.horizontalTV.gravity = Gravity.CENTER //居中
@@ -425,7 +441,8 @@ class BusinessIngFragment : Fragment() {
 
                     1 -> {
 //                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParamsHorizontal!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                        layoutParamsHorizontal!!.bottomToBottom =
+                            ConstraintLayout.LayoutParams.UNSET
                         binding.horizontalTV.layoutParams = layoutParamsHorizontal
                         layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
                         binding.verticalTV.layoutParams = layoutParamsVertical
