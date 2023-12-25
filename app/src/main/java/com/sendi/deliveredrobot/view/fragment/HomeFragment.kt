@@ -224,7 +224,7 @@ class HomeFragment : Fragment(), IMainView {
                 surfaceView = binding.SurfaceView,
                 needSpeaking = true,
                 owner = this,
-                needIdentify = queryBasic.identifyVip
+                needIdentify = queryBasic.identifyVip,
             )
             val backgroundRes =
                 if (queryBasic.defaultValue != "") R.drawable.guests_open_bg else R.drawable.once_guests_bg

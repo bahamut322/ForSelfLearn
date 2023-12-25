@@ -113,7 +113,6 @@ class GuidingFragment : Fragment() {
             binding.businessName.text = String.format(getString(R.string.business_going), pointName)
         }
 //        }
-
         status()
         actionData = QuerySql.selectGuideFouConfig()
         LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")

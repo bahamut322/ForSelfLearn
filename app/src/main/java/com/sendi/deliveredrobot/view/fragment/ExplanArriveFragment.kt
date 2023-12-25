@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentExplanArriveBinding
 import com.sendi.deliveredrobot.databinding.FragmentGuideArriveBinding
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.view.widget.Order
+import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -28,7 +31,7 @@ import kotlinx.coroutines.launch
 class ExplanArriveFragment : Fragment() {
     private lateinit var binding: FragmentExplanArriveBinding
     lateinit var mainScope: CoroutineScope
-//    private val viewModelGuide: GuidePlaceViewModel by viewModels({ requireActivity() })
+    private val viewModelGuide: StartExplanViewModel by viewModels({ requireActivity() })
 
     //倒计时
     val timer = object : CountDownTimer(3000, 1000) {
@@ -65,6 +68,7 @@ class ExplanArriveFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
         mainScope = MainScope()
+        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
         binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget() ?: ""
         binding.motionLayoutGuideArrive.apply {
             transitionToState(R.id.state2)

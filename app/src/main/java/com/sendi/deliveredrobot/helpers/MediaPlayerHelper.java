@@ -2,9 +2,11 @@ package com.sendi.deliveredrobot.helpers;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
+
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.view.widget.Order;
+
 import java.io.IOException;
 
 /**
@@ -35,23 +37,21 @@ public class MediaPlayerHelper {
         new Handler().postDelayed(() -> {
             // 要延迟执行的方法
             Order.setFlage(FLage);
-            if (mMediaPlayer == null) {
-                mMediaPlayer = new MediaPlayer();
-            } else {
-                mMediaPlayer.reset();
-            }
+            releaseMediaPlayer(); // 释放之前的 MediaPlayer
+            mMediaPlayer = new MediaPlayer();
             try {
                 if (fileName != null) {
                     new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                     mMediaPlayer.setDataSource(fileName);
-                    mMediaPlayer.prepareAsync();
                     mMediaPlayer.setOnPreparedListener(mp -> {
                         mp.start();
                         startProgressUpdate();
                     });
+                    mMediaPlayer.prepareAsync();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                releaseMediaPlayer(); // 出现异常时释放 MediaPlayer
             }
         }, 2000); // 延迟2秒执行
     }
@@ -74,11 +74,15 @@ public class MediaPlayerHelper {
     }
 
     public void stop() {
+        releaseMediaPlayer();
+        stopProgressUpdate();
+    }
+
+    private void releaseMediaPlayer() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
-            stopProgressUpdate();
         }
     }
 
@@ -103,14 +107,22 @@ public class MediaPlayerHelper {
     private final Runnable mProgressUpdateRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mMediaPlayer != null && mOnProgressListener != null) {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying() && mOnProgressListener != null) {
                 mOnProgressListener.onProgress(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
-                if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
-                    stopProgressUpdate();
-                    Order.setFlage("0");
+                try {
+                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
+                        stopProgressUpdate();
+                        Order.setFlage("0");
+                    }
+                } catch (Exception ignored) {
                 }
             }
-            mHandler.postDelayed(this, 500);
+            try {
+                if (mHandler != null) {
+                    mHandler.postDelayed(this, 500);
+                }
+            } catch (Exception ignored) {
+            }
         }
     };
 

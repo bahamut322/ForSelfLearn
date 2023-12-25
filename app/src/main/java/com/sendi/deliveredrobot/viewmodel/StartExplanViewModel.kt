@@ -135,9 +135,6 @@ class StartExplanViewModel : ViewModel() {
                 // 倒计时结束，执行操作
 //                currentBill()?.executeNextTask()
                 ready.postValue(0)
-                if (BillManager.billList().size<=1) {
-                    splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
-                }
 //                Universal.Model = "结束一段讲解"
             }
         )

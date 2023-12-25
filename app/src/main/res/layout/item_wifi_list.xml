@@ -28,7 +28,7 @@
         android:includeFontPadding="false"
         android:text="@string/test_text"
         android:textAlignment="center"
-        android:textColor="@color/color_A0BAEF"
+        android:textColor="@color/B3_white"
         android:textSize="@dimen/small_small_text_size"
         app:autoSizeMaxTextSize="@dimen/mid_small_small_text_size"
         app:autoSizeMinTextSize="18sp"
