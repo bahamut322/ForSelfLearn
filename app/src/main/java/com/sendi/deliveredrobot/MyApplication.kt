@@ -80,7 +80,7 @@ class MyApplication : Application() {
             if (Usbcontorl.isload) {
                 Usbcontorl.usb3803_mode_setting(1) //打开5V
             }
-        CommonHelper.executeRebootVoiceRecord()
+//        CommonHelper.executeRebootVoiceRecord()
 
 
     }
