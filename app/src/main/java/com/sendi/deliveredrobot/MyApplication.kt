@@ -10,6 +10,7 @@ import android.util.Log
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
+import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
@@ -79,6 +80,7 @@ class MyApplication : Application() {
             if (Usbcontorl.isload) {
                 Usbcontorl.usb3803_mode_setting(1) //打开5V
             }
+        CommonHelper.executeRebootVoiceRecord()
 
 
     }

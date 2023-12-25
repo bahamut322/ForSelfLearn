@@ -11,12 +11,15 @@ import android.text.style.RelativeSizeSpan
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.concurrent.thread
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -254,6 +257,41 @@ object CommonHelper {
             result = chargePoint?.floorName == RobotStatus.currentLocation?.floorName
         }
         return result
+    }
+
+    fun executeRebootVoiceRecord(){
+        thread {
+            val process: Process?
+            var out: OutputStream? = null
+            try {
+                //请求root
+                process = Runtime.getRuntime().exec("su")
+                out = process.outputStream
+                LogUtil.i("关闭usb供电")
+                out.write("echo 0 > proc/rp_power/usb_pwr\n".toByteArray())
+                out.flush()
+                Thread.sleep(5000)
+                LogUtil.i("打开usb供电")
+                out.write("echo 1 > proc/rp_power/usb_pwr\n".toByteArray())
+                out.flush()
+                while (true){
+
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                try {
+                    if (out != null) {
+                        out.flush()
+                        out.close()
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 }
 
