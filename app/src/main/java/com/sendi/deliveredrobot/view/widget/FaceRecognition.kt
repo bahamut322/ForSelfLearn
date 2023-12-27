@@ -369,10 +369,7 @@ class FaceRecognition {
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
                     owner,
-                    String.format(
-                        instance!!.getString(R.string.welcome_vip_understand),
-                        correspondingValues
-                    )
+                   "尊敬的 ${ correspondingValues}，欢迎光临，我是${QuerySql.robotConfig().wakeUpWord}，有什么可以帮到您吗？"
                 )
             } else {
                 println("人脸库：没有查到此人")
@@ -414,11 +411,8 @@ class FaceRecognition {
     //检测人脸随机播放
     private fun speakContent(): String {
         val list = listOf(
-            instance!!.getString(R.string.welcome_understand),
-            instance!!.getString(R.string.can_i_help_you),
-            instance!!.getString(R.string.i_hope_to_serve_you),
-            instance!!.getString(R.string.welcome_i_am_xiao_di),
-
+            "您好，我是这里的多功能党建机器人，塘小鸭，有什么可以帮到您吗？",
+            "喊我“塘小鸭”，问我问题"
             )
         val randomIndex = Random().nextInt(list.size)
         return list[randomIndex]

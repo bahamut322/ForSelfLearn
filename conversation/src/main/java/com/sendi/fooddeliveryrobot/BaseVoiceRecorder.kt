@@ -143,13 +143,13 @@ abstract class BaseVoiceRecorder {
         var ttsIsPlaying = false
         const val VOICE_RECORD_TYPE_SENDI = 0
         const val VOICE_RECORD_TYPE_AIXIAOYUE = 1
-        var VOICE_RECORD_TYPE = VOICE_RECORD_TYPE_SENDI
+        var VOICE_RECORD_TYPE = -1
         fun getInstance():BaseVoiceRecorder?{
             if(_instance == null){
                 _instance = when (VOICE_RECORD_TYPE) {
                     VOICE_RECORD_TYPE_SENDI -> SendiVoiceRecorder()
                     VOICE_RECORD_TYPE_AIXIAOYUE -> AiXiaoYueVoiceRecorder()
-                    else -> throw Exception("void recorder type is not set")
+                    else -> null
                 }
             }
             return _instance

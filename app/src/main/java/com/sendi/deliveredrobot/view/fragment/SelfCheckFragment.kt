@@ -111,7 +111,6 @@ class SelfCheckFragment : Fragment() {
                 }catch (_:Exception){}
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-                BaseVoiceRecorder.getInstance()?.startRecording()
                 LogUtil.i("初始化状态机")
                 if (resCheck != 0x1FF) {
                     LogUtil.d("打印收到数据——— $resCheck")
@@ -188,6 +187,7 @@ class SelfCheckFragment : Fragment() {
                     VoiceRecordCommand.getInstance(requireContext()).apply {
                         BaseVoiceRecorder.VOICE_RECORD_TYPE = this.voiceRecordType.toInt()
                     }
+                    BaseVoiceRecorder.getInstance()?.startRecording()
                     DeliverMqttService.publish(QueryFloorListModel().toString())
                     // 电梯
                     DeliverMqttService.publish(QueryElevatorListModel().toString())
