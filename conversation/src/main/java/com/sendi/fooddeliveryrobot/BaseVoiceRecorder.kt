@@ -90,7 +90,7 @@ abstract class BaseVoiceRecorder {
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
 //                                    if (percentFalseTotal > 0.5f) {
-                                    if(falseStack.size > 25){
+                                    if(falseStack.size > 20){
                                         println("trueSize:${trueStack.size}")
                                         println("falseSize:${falseStack.size}")
                                         println("totalSize: $totalSize")
