@@ -1136,7 +1136,7 @@ object ROSHelper {
      */
     fun updateCurrent(time : Long ): Boolean{
         // 创建一个Date对象，将时间戳作为参数传递给构造函数
-        val  dateTime  =  Date(time)
+        val dateTime = Date(time)
         val para = HashMap<String, Any>()
         para["date"] = sdf1.format(dateTime)
         para["time"] = sdf2.format(dateTime)

@@ -216,7 +216,7 @@
     <string name="excuse_me">麻烦让一让，谢谢</string>
     <string name="can_i_help_you">您好，有什么需要帮助的呢？</string>
     <string name="welcome_understand">嗨，我是小迪，欢迎前来了解智能服务机器人</string>
-    <string name="welcome_vip_understand">"你好呀 %s，我是小迪，欢迎前来了解智能服务机器人"</string>
+    <string name="welcome_vip_understand">"您好 %s，我是%s，欢迎前来了解智能服务机器人"</string>
     <string name="welcome_i_am_xiao_di">欢迎光临，我是这里的多功能服务机器人，小迪。</string>
     <string name="i_am_going_to_work_if_you_need_my_serve">我现在正要去工作,如果您需要我的服务，欢迎随时致电酒店前台</string>
     <string name="i_hope_to_serve_you">希望我能有一个荣幸的机会来为您服务，小迪会继续努力哒</string>

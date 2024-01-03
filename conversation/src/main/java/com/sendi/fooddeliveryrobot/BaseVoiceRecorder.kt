@@ -34,7 +34,7 @@ abstract class BaseVoiceRecorder {
         minBufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         println("permission granted")
         //双通道应该传的值
-        val channelConfig = AudioFormat.CHANNEL_IN_MONO
+        val channelConfig = AudioFormat.CHANNEL_IN_STEREO
         //读取麦克风的数据
 //        audioRecorder = AudioRecord(
 //            MediaRecorder.AudioSource.MIC,

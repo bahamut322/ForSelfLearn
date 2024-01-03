@@ -465,7 +465,7 @@ public class StartExplainFragment extends Fragment {
                     if (Universal.taskQueue.isTaskQueueCompleted()) {
                         //要执行的任务代码
                         try {
-                            ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.FinishChannelBroadcast, new UpdateReturn().taskDto());
+                            viewModel.getTask(TaskStageEnum.FinishChannelBroadcast);
                         } catch (Exception e) {
                             Log.d("TAG", "onBindViewHolder: " + e);
                         }
@@ -539,7 +539,7 @@ public class StartExplainFragment extends Fragment {
                                         mHandler.post(() -> {
                                             MediaPlayerHelper.getInstance().stop();
                                             try {
-                                                ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.FinishChannelBroadcast, new UpdateReturn().taskDto());
+                                                viewModel.getTask(TaskStageEnum.FinishChannelBroadcast);
                                             } catch (Exception ignored) {
                                             }
                                             arrayToDo(viewModel.inForListData(), position);
@@ -606,7 +606,7 @@ public class StartExplainFragment extends Fragment {
                     protected void onPreExecute() {
                         // 在执行后台任务之前执行，通常用于初始化操作
                         try {
-                            ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.StartChannelBroadcast, new UpdateReturn().taskDto());
+                            viewModel.getTask(TaskStageEnum.StartChannelBroadcast);
                         } catch (Exception e) {
                             Log.d("TAG", "上报StartChannelBroadcast: " + e);
                         }
@@ -701,7 +701,7 @@ public class StartExplainFragment extends Fragment {
                     beforePage = 0;
                     binding.PauseBtn.setVisibility(View.VISIBLE);
                     try {
-                        ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.StartArrayBroadcast, new UpdateReturn().taskDto());
+                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
                     } catch (Exception e) {
                         Log.d("TAG", "上报StartArrayBroadcast: " + e);
                     }
@@ -743,7 +743,7 @@ public class StartExplainFragment extends Fragment {
                         }
                         if (beforePage == (page.get() - 1) && TaskQueues.isCompleted() && integer == Universal.ExplainLength) {
                             LogUtil.INSTANCE.d("Tips: 讲解内容完成,进入倒计时");
-                            ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.FinishArrayBroadcast, new UpdateReturn().taskDto());
+                            viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
                             binding.acceptstationTv.stopPlay();
                             Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
                             if (Universal.taskQueue != null) {
@@ -763,7 +763,7 @@ public class StartExplainFragment extends Fragment {
                     binding.contentLin.setVisibility(View.GONE);
                     binding.PauseBtn.setVisibility(View.GONE);
                     try {
-                        ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.StartArrayBroadcast, new UpdateReturn().taskDto());
+                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
                     } catch (Exception e) {
                         Log.d("TAG", "上报StartArrayBroadcast: " + e);
                     }
@@ -775,7 +775,7 @@ public class StartExplainFragment extends Fragment {
                             try {
 //                                isMethodExecuted = false;
                                 MediaPlayerHelper.getInstance().stop();
-                                ReportDataHelper.INSTANCE.reportTaskDto(Objects.requireNonNull(Objects.requireNonNull(BillManager.INSTANCE.currentBill()).currentTask()).taskModel(), TaskStageEnum.FinishArrayBroadcast, new UpdateReturn().taskDto());
+                                viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
                             } catch (Exception e) {
                                 Log.d("TAG", "到点音频播放异常: " + e);
                             }
