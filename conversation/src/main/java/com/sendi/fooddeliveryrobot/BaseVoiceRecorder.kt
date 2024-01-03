@@ -17,7 +17,7 @@ abstract class BaseVoiceRecorder {
     private var baseAudioChannel: BaseAudioChannel? = null
 
     private val minBufferSize: Int
-    var recordCallback: ((conversation: String, pinyinString: String)-> Unit)? = null
+    var recordCallback: ((conversation: String, pinyinString: String, takeTime:Float)-> Unit)? = null
         set(value) {
             baseAudioChannel?.callback = value
             field = value

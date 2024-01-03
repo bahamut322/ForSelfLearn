@@ -1,5 +1,7 @@
 package com.sendi.deliveredrobot.utils
 
+import android.os.SystemClock
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.sendi.fooddeliveryrobot.GetVFFileToTextModel
@@ -38,14 +40,17 @@ object GenerateReplyToX8Utils {
             .addHeader("Content-Type", "application/json")
             .build()
         try {
+            val startTime = System.currentTimeMillis()
             val response = client.newCall(request).execute()
+            Log.i("AudioChannel", "generateReplyToX8耗时${(System.currentTimeMillis() - startTime) / 1000f}s")
+            LogUtil.i("generateReplyToX8耗时${(System.currentTimeMillis() - startTime) / 1000f}s")
             val data = response.body?.string()?:""
-            LogUtil.i(data)
+//            LogUtil.i(data)
             val getVFFileToTextModel = gson.fromJson(data, GetVFFileToTextModel::class.java)
-            return getVFFileToTextModel?.data ?: ""
+            return getVFFileToTextModel?.data ?: "网络超时，请稍后重试..."
         } catch (e: IOException) {
             LogUtil.e(e.toString())
         }
-        return ""
+        return "网络错误,请稍后重试..."
     }
 }

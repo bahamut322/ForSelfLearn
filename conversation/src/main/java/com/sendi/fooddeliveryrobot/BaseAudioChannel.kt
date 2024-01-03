@@ -21,7 +21,7 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
     private var baseAudioChannel: BaseAudioChannel? = null
     protected var retrofit: Retrofit? = null
     protected var body:RequestBody? = null
-    var callback: ((conversation: String, pinyinString: String)-> Unit)? = null
+    var callback: ((conversation: String, pinyinString: String, takeTime:Float)-> Unit)? = null
     protected var url: String = ""
 
     init {

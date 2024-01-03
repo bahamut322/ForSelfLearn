@@ -91,7 +91,7 @@ class StandbyFragment : Fragment() {
         }
         if (contains3) {
             println("字符串中包含数字3,唤醒词")
-            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString ->
+            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
                 if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                     Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                     controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)

@@ -68,7 +68,7 @@ public class ExplanationFragment extends Fragment {
     public void onResume() {
         super.onResume();
         BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
-        baseVoiceRecorder.setRecordCallback((s, pinyinString) -> {
+        baseVoiceRecorder.setRecordCallback((s, pinyinString,f) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
                 Log.i("AudioChannel", "包含" + WakeupWordHelper.INSTANCE.getWakeupWord());
                 controller.navigate(R.id.conversationFragment);

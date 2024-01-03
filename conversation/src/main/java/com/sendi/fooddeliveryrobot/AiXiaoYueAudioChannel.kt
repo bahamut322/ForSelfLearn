@@ -33,9 +33,11 @@ class AiXiaoYueAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRec
         val part = MultipartBody.Part.createFormData("File", fileWav.name, fileBody)
 //        val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
         val call = retrofit?.create(ApiService::class.java)?.uploadFile2(part)
+        val startTime = System.currentTimeMillis()
         call?.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 try {
+                    val takeTime = (System.currentTimeMillis() - startTime) / 1000f
                     val s = response.body()?.string()
                     if (!s.isNullOrEmpty()) {
                         Log.i("AudioChannel", s)
@@ -48,10 +50,10 @@ class AiXiaoYueAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRec
                         val resultList = HanziToPinyin.instance?.get(textProcessed)
                         val stringBuilder = StringBuilder()
                         resultList?.map {
-                            Log.i("AudioChannel", it.toString())
+//                            Log.i("AudioChannel", it.toString())
                             stringBuilder.append(it.target)
                         }
-                        callback?.invoke(textProcessed, stringBuilder.toString())
+                        callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
                     }
                 } catch (e: IOException) {
                     throw RuntimeException(e)
