@@ -18,7 +18,8 @@ import java.io.IOException
 
 class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord) {
     override fun initRetrofit() {
-        url = "http://192.168.60.203:7721/"
+//        url = "http://192.168.60.203:7721/"
+        url = "http://www.sendirobot.com/"
         retrofit = Retrofit.Builder() //设置网络请求BaseUrl地址
             .baseUrl(url) //设置数据解析器
             .addConverterFactory(GsonConverterFactory.create())
