@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,10 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -28,6 +25,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -35,6 +33,10 @@ import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.TaskIdGenerator
+import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.service.TaskTypeEnum
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
@@ -149,10 +151,18 @@ class BusinessFragment : Fragment() {
                     if (shoppingActionList[position].actionType == 1) {
                         RobotStatus.shoppingType = 1
                         LogUtil.d("定点")
-                        MyApplication.instance?.sendBroadcast(Intent().apply {
-                            action = ACTION_NAVIGATE
-                            putExtra(NAVIGATE_ID, R.id.businessIngFragment)
-                        })
+                        val taskId = TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.BUSINESS)
+                        val args: Bundle = Bundle().apply {
+                            // 设置 Bundle 对象参数数据
+                            this.putString("taskId", taskId)
+                        }
+                        controller?.navigate(R.id.businessIngFragment, args)
+                        //上报定点任务开始
+                        reportTaskDto(
+                            TaskModel(endTarget = "定点导购",taskId = taskId),
+                            TaskStageEnum.ALLStartTask,
+                            UpdateReturn().taskDto()
+                        )
                     } else {
                         LogUtil.d("去某点${RobotStatus.shoppingName}")
                         RobotStatus.shoppingType = 2

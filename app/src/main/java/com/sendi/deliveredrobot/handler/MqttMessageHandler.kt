@@ -247,7 +247,19 @@ object MqttMessageHandler {
                         Log.d("TAG", "receive: 广告配置数据保存失败")
                     }
                 }
-
+                "replyTimeStamp" -> {
+                    //获取时间戳
+                    var time: Long = 0
+                    try {
+                        time = jsonObject.get("sysTimeStamp").asLong
+                    } finally {
+                        mainScope.launch {
+                            withContext(Dispatchers.Main) {
+                                RobotStatus.sysTimeStamp.value = time
+                            }
+                        }
+                    }
+                }
                 "replyShoppingGuideConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()

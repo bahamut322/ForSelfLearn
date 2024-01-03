@@ -11,7 +11,7 @@ public enum TaskTypeEnum {
     GUIDING("引领模式", 2, "G"),
     USHER("迎宾模式", 3, "U"),
     EXPLAIN("讲解模式",4,"E"),
-    BUSINESS("业务办理",5,"B");
+    BUSINESS("业务办理",5,"S");
 
 
     private String name;

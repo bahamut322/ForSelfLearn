@@ -10,7 +10,6 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.BusinessArriveTask
 import com.sendi.deliveredrobot.navigationtask.task.BusinessIngTask
 import com.sendi.deliveredrobot.navigationtask.task.FinishBusinessTask
-import com.sendi.deliveredrobot.navigationtask.task.FinishGuideTask
 import com.sendi.deliveredrobot.navigationtask.task.JudgeFloorTask
 import com.sendi.deliveredrobot.navigationtask.task.OutDockTask
 import com.sendi.deliveredrobot.navigationtask.task.StartBusinessTask
@@ -38,7 +37,7 @@ class BusinessTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel ) {
 
     override suspend fun earlyFinish() {
         for (task in taskQueue) {
-            if (task is FinishGuideTask) {
+            if (task is FinishBusinessTask) {
                 task.status = -1
                 task.enum = task.configEnum()
                 task.beforeReportData(task.taskDto)

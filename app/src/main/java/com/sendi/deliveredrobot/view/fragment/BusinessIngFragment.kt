@@ -27,8 +27,14 @@ import com.sendi.deliveredrobot.entity.ShoppingActionDB
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
+import com.sendi.deliveredrobot.helpers.ReportDataHelper
+import com.sendi.deliveredrobot.model.TaskModel
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.TaskQueues
+import com.sendi.deliveredrobot.service.TaskIdGenerator
+import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.service.TaskTypeEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
@@ -42,6 +48,7 @@ import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Objects
 
 /**
  * @Author Swn
@@ -63,7 +70,7 @@ class BusinessIngFragment : Fragment() {
     private val liveData2 = RobotStatus.progress
     private var layoutParamsVertical: ConstraintLayout.LayoutParams? = null
     private var layoutParamsHorizontal: ConstraintLayout.LayoutParams? = null
-
+    private  var taskId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -100,7 +107,9 @@ class BusinessIngFragment : Fragment() {
         finishTaskDialog = FinishTaskDialog(requireActivity())
         processClickDialog?.setCountdownTime(QuerySql.QueryBasic().businessWhetherTime)//打断任务时间
         LogUtil.i("打断任务时间：" + QuerySql.QueryBasic().businessWhetherTime)
-
+        arguments?.let {
+            taskId = it.getString("taskId")!!
+        }
         status()
         actionData = QuerySql.SelectActionData(
             QuerySql.robotConfig().mapName,
@@ -164,6 +173,12 @@ class BusinessIngFragment : Fragment() {
                 viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
                     String.format(getString(R.string.business_doing), actionData!!.name)
+                //上报定点任务执行中
+                ReportDataHelper.reportTaskDto(
+                    TaskModel(endTarget = "定点导购",taskId =taskId),
+                    TaskStageEnum.BusinessIngTask,
+                    UpdateReturn().taskDto()
+                )
             }
         }
 
@@ -186,7 +201,8 @@ class BusinessIngFragment : Fragment() {
         viewModel!!.downTimer(
             actionData?.waitingTime!!,
             actionData?.actionType!!,
-            controller!!
+            controller!!,
+            taskId
         )
         mediatorLiveData.observe(viewLifecycleOwner) { (value1, value2) ->
             //非定点任务
@@ -311,6 +327,13 @@ class BusinessIngFragment : Fragment() {
         finishTaskDialog?.show()
         finishTaskDialog?.YesExit?.setOnClickListener {
             viewModel!!.countDownTimer!!.cancel()
+            //中断导购上报
+            ReportDataHelper.reportTaskDto(
+                TaskModel(endTarget = "定点导购",taskId =taskId),
+                TaskStageEnum.EarlyFinishBusinessTask,
+                UpdateReturn().taskDto()
+            )
+
             when (actionData!!.actionType) {
                 2 -> {
                     processClickDialog?.dismiss()
@@ -327,6 +350,13 @@ class BusinessIngFragment : Fragment() {
                     viewModel!!.pageJump(controller!!)
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
+                    //导购结束上报
+                    ReportDataHelper.reportTaskDto(
+                        TaskModel(endTarget = "定点导购",taskId = taskId),
+                        TaskStageEnum.FinishBusinessTask,
+                        UpdateReturn().taskDto()
+                    )
+
                 }
             }
         }

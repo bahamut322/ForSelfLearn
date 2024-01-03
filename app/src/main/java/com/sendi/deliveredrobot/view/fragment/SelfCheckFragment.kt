@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
 import com.sendi.deliveredrobot.model.QueryElevatorListModel
 import com.sendi.deliveredrobot.model.QueryFloorListModel
+import com.sendi.deliveredrobot.model.ResetTimeModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.DeliverMqttService
@@ -51,7 +53,6 @@ class SelfCheckFragment : Fragment() {
     private val basicSettingViewModel by viewModels<BasicSettingViewModel>({ requireActivity() })
     private val settingViewModel by viewModels<SettingViewModel>({ requireActivity() })
     private lateinit var mView: View
-
 
     /** 充电点检测评分检测阈值 ,暂时写死检测分数为170*/
     private val scoreMin: Int = 100
@@ -187,7 +188,6 @@ class SelfCheckFragment : Fragment() {
                     VoiceRecordCommand.getInstance(requireContext()).apply {
                         BaseVoiceRecorder.VOICE_RECORD_TYPE = this.voiceRecordType.toInt()
                     }
-                    BaseVoiceRecorder.getInstance()?.startRecording()
                     DeliverMqttService.publish(QueryFloorListModel().toString())
                     // 电梯
                     DeliverMqttService.publish(QueryElevatorListModel().toString())
@@ -198,6 +198,22 @@ class SelfCheckFragment : Fragment() {
 //                    if(BuildConfig.IS_REPORT){
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
+                    DeliverMqttService.publish(ResetTimeModel().toString())
+                    withContext(Dispatchers.Main) {
+                        Log.d("TAG", "checkHardware: 获取时间戳")
+                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
+                            if (it > 1) {
+                                SystemClock.setCurrentTimeMillis(it)
+                                var updated = false
+                                while (!updated) {
+                                    updated = ROSHelper.updateCurrent(it)
+                                    // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
+                                }
+                                // 在updated为true时执行下面的代码
+                                LogUtil.i("checkHardware: 底盘时间设置成功：$it")
+                            }
+                        }
+                    }
                     UpdateReturn().assignment()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id
@@ -315,6 +331,7 @@ class SelfCheckFragment : Fragment() {
 //            LogUtil.d("SelfCheck 获取到分数:$score")
 //        }
 //        if (score > scoreMin) {
+        BaseVoiceRecorder.getInstance()?.startRecording()
         selectFunction()
 //        } else {
 //            MainScope().launch {
@@ -422,7 +439,7 @@ class SelfCheckFragment : Fragment() {
                 LogUtil.i("自检->设置")
             }
         }
-        Looper.loop();
+        Looper.loop()
     }
 
 

@@ -111,19 +111,7 @@ object DeliveMqttMessageHandler {
                     }
                 }
 
-                "replyTimeStamp" -> {
-                    //获取时间戳
-                    var time: Long = 0
-                    try {
-                        time = jsonObject.get("sysTimeStamp").asLong
-                    } finally {
-                        mainScope.launch {
-                            withContext(Dispatchers.Main) {
-                                RobotStatus.sysTimeStamp.value = time
-                            }
-                        }
-                    }
-                }
+
 //                "callElevatorCurrentFloor" -> {
 //                    try {
 //                        val currentFloorIndex = jsonObject.get("currentFloorIndex").asInt

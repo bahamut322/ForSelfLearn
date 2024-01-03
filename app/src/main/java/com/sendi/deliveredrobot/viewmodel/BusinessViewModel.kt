@@ -18,15 +18,22 @@ import com.sendi.deliveredrobot.entity.ShoppingActionDB
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.SecondModel
+import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
+import com.sendi.deliveredrobot.service.TaskIdGenerator
+import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.service.TaskTypeEnum
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.util.Objects
 
 /**
  * @Author Swn
@@ -95,7 +102,7 @@ class BusinessViewModel : ViewModel() {
      * @param timer 倒计时所需时间
      * @param type 任务类型
      */
-    fun downTimer(timer: Int, type: Int, controller: NavController) {
+    fun downTimer(timer: Int, type: Int, controller: NavController,taskId : String) {
         RobotStatus.speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = timer * 1000L, // 倒计时总时长，单位为毫秒
@@ -107,12 +114,17 @@ class BusinessViewModel : ViewModel() {
 
             },
             onFinish = {
-
                 RobotStatus.progress.postValue(0)
                 hasArrive = false
                 RobotStatus.ready.postValue(0)
                 if (type == 1) {
                     pageJump(controller)
+                    //上报定点任务流程结束
+                    ReportDataHelper.reportTaskDto(
+                        TaskModel(endTarget = "定点导购",taskId = taskId),
+                        TaskStageEnum.FinishBusinessTask,
+                        UpdateReturn().taskDto()
+                    )
                 } else {
                     TaskNext.setToDo("1")
                     splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)

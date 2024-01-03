@@ -156,7 +156,6 @@ class DeliverMqttService : Service() {
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
             LogUtil.i("MQTT:送物订阅连接成功 ")
-            RobotStatus.sysTimeStamp.value = 1
             try {
                 mqttAndroidClient_deliver?.subscribe(
                     "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",

@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.helpers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.hardware.Camera
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.media.*
@@ -11,13 +10,11 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import chassis_msgs.DoorState
-import com.alibaba.fastjson.JSONObject
 import com.infisense.iruvc.utils.SynchronizedBitmap
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.camera.IRUVC
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.ResetTimeModel
-import com.sendi.deliveredrobot.model.ResetVerificationCodeAckModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.ClientManager
 import com.sendi.deliveredrobot.ros.DispatchService
@@ -27,10 +24,8 @@ import com.sendi.deliveredrobot.ros.dto.Client
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.service.DeliverMqttService
 import com.sendi.deliveredrobot.service.MqttService
-import com.sendi.deliveredrobot.service.ReportRobotStateService
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
-import jni.Usbcontorl
 import kotlinx.coroutines.*
 import sendi_sensor_msgs.InfraredManageResponse
 import java.io.BufferedReader
@@ -41,7 +36,6 @@ import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.*
-
 
 /**
  *   @author: heky
@@ -132,24 +126,7 @@ object CheckSelfHelper {
 //        if(BuildConfig.IS_REPORT){
 //            ReportRobotStateService.startService(MainActivity.instance)
 //        }
-        //设置底盘时间
-        withContext(Dispatchers.Main) {
-            Log.d("TAG", "checkHardware: 获取时间戳")
-            RobotStatus.sysTimeStamp.observe(owner) {
-                if (it?.toInt() == 1) {
-                    DeliverMqttService.publish(ResetTimeModel().toString())
-                }
-                if (it > 1) {
-                    var updated = false
-                    while (!updated) {
-                        updated = ROSHelper.updateCurrent(it)
-                        // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
-                    }
-                    // 在updated为true时执行下面的代码
-                    LogUtil.i("checkHardware: 底盘时间设置成功：$it")
-                }
-            }
-        }
+
 
         withContext(Dispatchers.Main) {
             seconds.observe(owner) {
@@ -198,7 +175,7 @@ object CheckSelfHelper {
             if (laserCheckComplete.value!! && powerCheckComplete.value!! &&
                 RobotStatus.stopButtonPressed.value == 0
             ) {
-                if (getFileContent((Universal.SelfCheck))[1] != '1') {
+                if (self[1] != '1') {
                     if (temp()) {
                         checkSelfComplete = true
                     }
@@ -207,9 +184,9 @@ object CheckSelfHelper {
                 }
             }
             LogUtil.i("=========LASER_SCAN=========${laserCheckComplete.value}")
-            LogUtil.d("读取自检文件内容（二进制）：" + getFileContent((Universal.SelfCheck)))
+            LogUtil.d("读取自检文件内容（二进制）：$self")
             LogUtil.d("自检内容依次为：1、红外(机器人导航)；2、红外(测温)；3、扬声器；4、麦克风；5、摄像头；6、副屏；7、急停按钮；8、电量；9、镭射")
-            LogUtil.d("转化自检文件内容（十进制）：" + getFileContent((Universal.SelfCheck)).toInt(2))
+            LogUtil.d("转化自检文件内容（十进制）：" + self.toInt(2))
             if (laserCheckComplete.value!! && tempFlag and 0x01 == 0) {
                 tempFlag = tempFlag or 0x01
                 progress++

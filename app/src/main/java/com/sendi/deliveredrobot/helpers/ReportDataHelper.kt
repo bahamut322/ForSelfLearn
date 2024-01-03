@@ -11,6 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 import kotlin.collections.ArrayList
 
 /**
@@ -102,7 +103,7 @@ object ReportDataHelper {
         }
         tempUpdateMap = tempArrayList.toFloatArray()
         when(type){
-            TYPE_GUIDE -> {
+            TYPE_GUIDE,TYPE_BUSINESS -> {
                 val taskDto = TaskDto()
                 with(taskDto){
                     taskId = taskModel.taskId

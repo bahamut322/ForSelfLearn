@@ -9,6 +9,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
@@ -25,6 +26,7 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakContinue
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
+import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.TaskNext
@@ -33,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Objects
 import kotlin.math.pow
 
 
@@ -263,6 +266,22 @@ class StartExplanViewModel : ViewModel() {
             }
         }
         return ""
+    }
+
+    /**
+     * 任务上报
+     */
+    fun getTask( enum: TaskStageEnum =TaskStageEnum.FinishChannelBroadcast ){
+        reportTaskDto(
+            Objects.requireNonNull(
+                Objects.requireNonNull(
+                    currentBill()
+                )?.currentTask()
+            )?.taskModel(),
+            enum,
+            UpdateReturn().taskDto()
+        )
+
     }
 
     /**
