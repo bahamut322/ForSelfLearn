@@ -288,8 +288,10 @@ class ConversationFragment : Fragment() {
                 totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                 binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
             }
-            if (conversation == defaultTalkingStr) {
-                talkingView = linearLayoutCompat
+            talkingView = if (conversation == defaultTalkingStr) {
+                linearLayoutCompat
+            }else{
+                null
             }
         }
     }
@@ -487,7 +489,7 @@ class ConversationFragment : Fragment() {
             addView(emptyView)
         }
         ReplyIntentHelper.replyIntentLiveData.value = null
-        talkingView = null
+//        talkingView = null
     }
 
     private suspend fun addAnswer2(conversation: String){
@@ -530,7 +532,7 @@ class ConversationFragment : Fragment() {
                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
             }
-            talkingView = null
+//            talkingView = null
         }
     }
     private suspend fun question(question: String, questionNumber: Long) {
