@@ -35,41 +35,43 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
         val part = MultipartBody.Part.createFormData("file", fileWav.name, fileBody)
         val call = retrofit?.create(ApiService::class.java)?.uploadFile(body, part)
         val startTime = System.currentTimeMillis()
-        call?.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val takeTime = (System.currentTimeMillis() - startTime) / 1000f
-                try {
-                    val s = response.body()?.string()
-                    if (!s.isNullOrEmpty()) {
+        val response = call?.execute()
+        val takeTime = (System.currentTimeMillis() - startTime) / 1000f
+        try {
+            val s = response?.body()?.string()
+            if (!s.isNullOrEmpty()) {
 //                        Log.i("AudioChannel", s)
-                        val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
-                        val textProcessed = audioTransTextModel.text_postprocessed?:""
-                        if (textProcessed.isEmpty()) {
-                            return
-                        }
-                        val resultList = HanziToPinyin.instance?.get(textProcessed)
-                        val stringBuilder = StringBuilder()
-                        resultList?.map {
-//                            Log.i("AudioChannel", it.toString())
-                            stringBuilder.append(it.target)
-                        }
-                        callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
-                    }
-                } catch (e: IOException) {
-//                        throw RuntimeException(e)
-                }finally {
-                    fileWav.delete()
-                    filePcm.delete()
+                val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
+                val textProcessed = audioTransTextModel.text_postprocessed?:""
+                if (textProcessed.isEmpty()) {
+                    return
                 }
+                val resultList = HanziToPinyin.instance?.get(textProcessed)
+                val stringBuilder = StringBuilder()
+                resultList?.map {
+//                            Log.i("AudioChannel", it.toString())
+                    stringBuilder.append(it.target)
+                }
+                callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
             }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.i("AudioChannel", "ASR耗时${(SystemClock.currentThreadTimeMillis() - startTime) / 1000}s")
-                Log.e("AudioChannel", t.message!!)
-                fileWav.delete()
-                filePcm.delete()
-            }
-        })
+        } catch (e: IOException) {
+//                        throw RuntimeException(e)
+        }finally {
+            fileWav.delete()
+            filePcm.delete()
+        }
+//        call?.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//
+//            }
+//
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                Log.i("AudioChannel", "ASR耗时${(SystemClock.currentThreadTimeMillis() - startTime) / 1000}s")
+//                Log.e("AudioChannel", t.message!!)
+//                fileWav.delete()
+//                filePcm.delete()
+//            }
+//        })
     }
 
 }

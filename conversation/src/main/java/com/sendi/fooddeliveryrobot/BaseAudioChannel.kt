@@ -42,7 +42,7 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
         synchronized(this){
             Log.i("AudioChannel", "init")
             initialized = true
-            time = "${System.currentTimeMillis()}"
+            time = "record"
             try {
                 // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
                 writer = FileOutputStream(
