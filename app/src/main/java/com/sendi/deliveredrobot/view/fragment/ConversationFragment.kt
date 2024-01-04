@@ -79,7 +79,7 @@ class ConversationFragment : Fragment() {
         }
     private var waitTalk = true
     val pattern =
-        "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?(#[\\S]+)?"
+        "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     val observable = Observer<ReplyIntentModel>{
         if (context == null) return@Observer
         if (it == null) return@Observer

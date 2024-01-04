@@ -76,9 +76,10 @@ class HomeFragment : Fragment(), IMainView {
 //            LogUtil.i("homefragment onDestinationChangedListener")
 //            voiceRecorder?.removeCallback()
 //        }
-        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
+        BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
+            LogUtil.i("听到--->$conversation")
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
-                Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
+                LogUtil.i("包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)
             }
         }

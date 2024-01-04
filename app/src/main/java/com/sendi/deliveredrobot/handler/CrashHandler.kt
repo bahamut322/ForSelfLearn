@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -157,7 +158,9 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
         // 把采集到的信息写入到本地文件
         LogUtil.e(info)
         // 打印错误
-        ToastUtil.show(info)
+//        if (BuildConfig.IS_DEBUG) {
+//            ToastUtil.show(info)
+//        }
     }
 
 }
