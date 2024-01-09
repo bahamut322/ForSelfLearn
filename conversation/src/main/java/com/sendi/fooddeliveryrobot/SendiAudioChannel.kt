@@ -39,8 +39,8 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
         val takeTime = (System.currentTimeMillis() - startTime) / 1000f
         try {
             val s = response?.body()?.string()
-            if (!s.isNullOrEmpty()) {
-//                        Log.i("AudioChannel", s)
+            if (!s.isNullOrEmpty() && "传输文件异常" != s) {
+//                Log.i("AudioChannel", s)
                 val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
                 val textProcessed = audioTransTextModel.text_postprocessed?:""
                 if (textProcessed.isEmpty()) {
@@ -55,7 +55,7 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
                 callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
             }
         } catch (e: IOException) {
-//                        throw RuntimeException(e)
+            throw RuntimeException(e)
         }finally {
             fileWav.delete()
             filePcm.delete()

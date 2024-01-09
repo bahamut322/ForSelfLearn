@@ -579,36 +579,6 @@ class ConversationFragment : Fragment() {
 
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
                                 addQuestionView(conversation, talkingView)
-//                                if (conversation.startsWith("带我去")) {
-//                                    withContext(Dispatchers.IO){
-//                                        val pointName = conversation.substring(conversation.indexOf("带我去") + 3)
-//                                        val point = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().queryPoint(pointName)
-//                                        if (point == null) {
-//                                            addAnswer2("没有找到【${pointName}】的位置")
-//                                            return@withContext
-//                                        }
-//                                        if (RobotStatus.batteryStateNumber.value == false) {
-//                                            addAnswer2("要先将小迪推到充电桩哦")
-//                                            return@withContext
-//                                        }
-//                                        guidePoint = point
-//                                        val answer = "是否要带领到【${pointName}】"
-//                                        addAnswer2(answer)
-//                                        SpeakHelper.speakWithoutStop(answer)
-//                                    }
-//                                }else if(yesWords.any {
-//                                        conversation.contains(it)
-//                                    }){
-//                                    //引领到
-//                                    withContext(Dispatchers.IO){
-//                                        if (guidePoint != null) {
-//                                            println("开始引领到【${guidePoint?.pointName?:""}】")
-//                                            val bill = GuideTaskBillFactory.createBill(TaskModel(location = guidePoint))
-//                                            BillManager.addAllAtIndex(bill)
-//                                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-//                                        }
-//                                    }
-//                                } else{
                                 withContext(Dispatchers.IO){
                                     var res = question2(conversation)
                                     if (res.isEmpty()) return@withContext
@@ -619,7 +589,6 @@ class ConversationFragment : Fragment() {
                                     res = res.replace(Regex(pattern),"")
                                     SpeakHelper.speakWithoutStop(res)
                                 }
-//                                }
                             }
                         }
                     }
