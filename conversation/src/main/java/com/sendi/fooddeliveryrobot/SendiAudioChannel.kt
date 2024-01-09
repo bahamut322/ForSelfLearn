@@ -55,7 +55,7 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
                 callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
             }
         } catch (e: IOException) {
-            throw RuntimeException(e)
+//            throw RuntimeException(e)
         }finally {
             fileWav.delete()
             filePcm.delete()
