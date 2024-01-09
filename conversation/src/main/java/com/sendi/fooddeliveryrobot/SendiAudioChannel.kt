@@ -4,6 +4,7 @@ import android.media.AudioRecord
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
+import com.google.gson.JsonSyntaxException
 import com.sendi.fooddeliveryrobot.util.HanziToPinyin
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -39,7 +40,7 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
         val takeTime = (System.currentTimeMillis() - startTime) / 1000f
         try {
             val s = response?.body()?.string()
-            if (!s.isNullOrEmpty() && "传输文件异常" != s) {
+            if (!s.isNullOrEmpty()) {
 //                Log.i("AudioChannel", s)
                 val audioTransTextModel = gson.fromJson(s, AudioTransTextModel::class.java)
                 val textProcessed = audioTransTextModel.text_postprocessed?:""
@@ -54,8 +55,10 @@ class SendiAudioChannel(audioRecord: AudioRecord): BaseAudioChannel(audioRecord)
                 }
                 callback?.invoke(textProcessed, stringBuilder.toString(),takeTime)
             }
-        } catch (e: IOException) {
+        } catch (e: JsonSyntaxException) {
 //            throw RuntimeException(e)
+            Log.e("AudioChannel", "解析错误")
+        } catch (e: IOException) {
         }finally {
             fileWav.delete()
             filePcm.delete()
