@@ -14,7 +14,7 @@ import com.sendi.deliveredrobot.model.ApplicationModel
 /**
  * @Author Swn
  * @Data 2023/12/6
- * @describe 轻应用列表适配器
+ * @describe 更多服务列表适配器
  */
 class ApplicationAdapter(var context: Context, var data: List<ApplicationModel>) : BaseAdapter() {
 

@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentDockingBinding
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -35,7 +36,7 @@ class DockingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         BaiduTTSHelper.getInstance().stop()
-        SpeakHelper.speak(resources.getString(R.string.start_docking))
+        SpeakHelper.speak(String.format(getString(R.string.start_docking), QuerySql.robotConfig().wakeUpWord))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -86,11 +86,12 @@ class AppContentFragment : Fragment() {
 
     private fun assignment() {
         val applications = listOf(
-            ApplicationModel(name = "消防安全", url = "http://www.qmxf119.org.cn/gmxf_list.html"),
             ApplicationModel(name = "党史学习", url = "http://www.12371.cn/dsxx/"),
             ApplicationModel(name = "党建动态", url = "https://www.gzdj.gov.cn/"),
+            ApplicationModel(name = "学习强国", url = "https://www.xuexi.cn/"),
+            ApplicationModel(name = "消防安全", url = "http://www.qmxf119.org.cn/gmxf_list.html"),
             ApplicationModel(name = "农讲所纪念馆", url = "https://www.gznjs.cn/"),
-            )
+        )
 
         // 打印列表中的每个ApplicationModel对象
         applications.forEach { application ->
@@ -113,14 +114,14 @@ class AppContentFragment : Fragment() {
 
     //刷新
     private fun updateDataAndRefreshList() {
-        RobotStatus.robotConfig?.observe(viewLifecycleOwner){
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.bubbleTv.text = String.format(getString(R.string.ask), it.wakeUpWord)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
+        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString, _ ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                 controller?.navigate(R.id.conversationFragment)

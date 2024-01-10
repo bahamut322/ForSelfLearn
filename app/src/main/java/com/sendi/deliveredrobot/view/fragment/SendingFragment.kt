@@ -78,9 +78,9 @@ class SendingFragment : Fragment() {
      * @describe 第二个定时器（用于循环播报语音）
      */
     private fun timer2Schedule() {
-        val welcome1 = getString(R.string.welcome_i_am_xiao_di)
+        val welcome1 = String.format(getString(R.string.welcome_i_am_xiao_di), RobotStatus.robotConfig?.value)
         val welcome2 = getString(R.string.i_am_going_to_work_if_you_need_my_serve)
-        val welcome3 = getString(R.string.i_hope_to_serve_you)
+        val welcome3 = String.format(getString(R.string.i_hope_to_serve_you), RobotStatus.robotConfig?.value)
 //        mainScope.launch {
 //            SpeakHelper.speak(welcome1)
 //            delay(4000)

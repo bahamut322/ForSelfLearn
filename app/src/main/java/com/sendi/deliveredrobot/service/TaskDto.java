@@ -52,6 +52,17 @@ public class TaskDto {
      */
     private String endTarget;
 
+    private String floor;
+
+
+    public String getFloor() {
+        return floor;
+    }
+
+    public void setFloor(String floor) {
+        this.floor = floor;
+    }
+
     /**
      * 里程数
      */

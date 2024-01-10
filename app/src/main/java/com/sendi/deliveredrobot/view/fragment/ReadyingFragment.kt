@@ -16,6 +16,7 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentGuidingBinding
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.topic.SafeStateTopic
@@ -29,7 +30,7 @@ class ReadyingFragment : Fragment() {
     private lateinit var binding: FragmentGuidingBinding
     private val viewModelBasicSetting by viewModels<BasicSettingViewModel>({ requireActivity() })
     private var timer: Timer? = null
-    private var timer2:Timer? = null
+    private var timer2: Timer? = null
     private lateinit var seconds: MutableLiveData<Int>
     private lateinit var mainScope: CoroutineScope
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +38,7 @@ class ReadyingFragment : Fragment() {
         gifGuiding = Glide.with(this).asGif().load(R.drawable.img_goback)
         gifStopGuide = Glide.with(this).asGif().load(R.drawable.img_goback)
     }
+
     override fun onStop() {
         super.onStop()
         SafeStateTopic.resetSafeStateListener()
@@ -50,7 +52,7 @@ class ReadyingFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_guiding, container, false)
     }
 
-    private lateinit var gifGuiding:RequestBuilder<GifDrawable>
+    private lateinit var gifGuiding: RequestBuilder<GifDrawable>
 
     private lateinit var gifStopGuide: RequestBuilder<GifDrawable>
 
@@ -76,8 +78,14 @@ class ReadyingFragment : Fragment() {
                 var pointName = bill?.endTarget()
                 pointName = pointName?.toList()?.joinToString(" ")
                 binding.RoomName.text = pointName
-                if (Universal.speakInt %2 != 0){
-                    BaiduTTSHelper.getInstance().speak(String.format(getString(R.string.hello_we_are_going_to_please_follow_me_1),pointName))
+                if (Universal.speakInt % 2 != 0) {
+                    BaiduTTSHelper.getInstance().speak(
+                        String.format(
+                            getString(R.string.hello_we_are_going_to_please_follow_me_1),
+                            QuerySql.robotConfig().wakeUpWord,
+                            pointName
+                        )
+                    )
                 }
             }
         }
@@ -253,10 +261,10 @@ class ReadyingFragment : Fragment() {
             if (it < 1) {
                 timer?.cancel()
                 mainScope.launch {
-                    if(ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)){
+                    if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
                         timer?.cancel()
 //                        binding.motionLayoutGuiding.transitionToState(R.id.state2)
-                    }else{
+                    } else {
                         ToastUtil.show("继续失败，请重试")
                     }
                 }
@@ -279,13 +287,13 @@ class ReadyingFragment : Fragment() {
      * @describe 第二个定时器（用于循环播报语音）
      */
     private fun timer2Schedule() {
-        val welcome1 = getString(R.string.welcome_i_am_xiao_di)
+        val welcome1 = String.format(getString(R.string.welcome_i_am_xiao_di), QuerySql.robotConfig().wakeUpWord)
         val welcome2 = getString(R.string.i_am_going_to_work_if_you_need_my_serve)
-        val welcome3 = getString(R.string.i_hope_to_serve_you)
+        val welcome3 = String.format(getString(R.string.i_hope_to_serve_you),  QuerySql.robotConfig().wakeUpWord)
         timer2!!.schedule(object : TimerTask() {
             override fun run() {
                 mainScope.launch(Dispatchers.IO) {
-                    if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED)return@launch
+                    if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return@launch
                     SpeakHelper.speakWithoutStop(welcome1)
 //                    delay(4000)
                     SpeakHelper.speakWithoutStop(welcome2)

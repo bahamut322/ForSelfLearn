@@ -112,11 +112,11 @@ class PlanSettingFragment : Fragment() {
                         Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
                         LogUtil.i("智能问答")
                     }
-                    //轻应用
+                    //更多服务
                     3 -> {
                         controller!!.navigate(R.id.appContentFragment)
-                        Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
-                        LogUtil.i("轻应用")
+                        Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
+                        LogUtil.i("更多服务")
                     }
                     5 ->{
                         controller!!.navigate(R.id.action_planSettingFragment_to_businessFragment)

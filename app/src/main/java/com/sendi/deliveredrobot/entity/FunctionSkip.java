@@ -15,7 +15,7 @@ public class FunctionSkip {
                 itemNum = 1;
             }else if(Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "智能问答 ")){
                 itemNum = 2;
-            }else if (Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "轻应用 ")){
+            }else if (Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "更多服务 ")){
                 itemNum = 3;
             }else if(Objects.equals(QuerySql.QueryBasic().getDefaultValue(), "业务办理 ")){
                 itemNum = 5;

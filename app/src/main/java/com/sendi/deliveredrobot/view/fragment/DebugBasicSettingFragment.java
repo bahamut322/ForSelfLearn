@@ -178,7 +178,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.leaderShip.setChecked(true);
         } else if ("智能讲解".equals(checkName)) {
             binding.explanation.setChecked(true);
-        } else if ("轻应用".equals(checkName)) {
+        } else if ("更多服务".equals(checkName)) {
             binding.application.setChecked(true);
         } else if ("业务办理".equals(checkName)){
             binding.business.setChecked(true);
@@ -203,7 +203,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 stringBuffer.append("智能讲解 ");
             }
             if (binding.application.isChecked()) {
-                stringBuffer.append("轻应用 ");
+                stringBuffer.append("更多服务 ");
             }
             if (binding.business.isChecked()){
                 stringBuffer.append("业务办理 ");

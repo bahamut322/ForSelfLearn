@@ -411,8 +411,8 @@ class FaceRecognition {
     //检测人脸随机播放
     private fun speakContent(): String {
         val list = listOf(
-            "您好，我是这里的多功能党建机器人，塘小鸭，有什么可以帮到您吗？",
-            "喊我“塘小鸭”，问我问题"
+            "您好，我是这里的多功能党建机器人，${QuerySql.robotConfig().wakeUpWord}，有什么可以帮到您吗？",
+            "喊我“${QuerySql.robotConfig().wakeUpWord}”，问我问题"
             )
         val randomIndex = Random().nextInt(list.size)
         return list[randomIndex]

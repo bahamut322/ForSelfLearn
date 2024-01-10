@@ -419,11 +419,11 @@ class SelfCheckFragment : Fragment() {
                 Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
                 LogUtil.i("自检->智能问答")
             }
-            //轻应用
+            //更多服务
             3 -> {
                 controller!!.navigate(R.id.appContentFragment)
-                Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
-                LogUtil.i("自检->轻应用")
+                Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
+                LogUtil.i("自检->更多服务")
             }
             //不只有一个选项
             4 -> {

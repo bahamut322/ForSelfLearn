@@ -587,10 +587,10 @@ class HomeFragment : Fragment(), IMainView {
                 }
             }
 
-            "轻应用" -> {
+            "更多服务" -> {
                 //跳转到测温模式
-                Toast.makeText(context, "轻应用", Toast.LENGTH_SHORT).show()
-                Log.d("TAG", "点击轻应用")
+                Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "点击更多服务")
                 controller?.navigate(R.id.appContentFragment)
 //                try {
 //                    val alipayScheme = "alipays://platformapi/startapp?appId=20000754"
@@ -657,7 +657,7 @@ class HomeFragment : Fragment(), IMainView {
             str = "COMMENTARY"
         } else if ("智能问答" == String) {
             str = "Q & A"
-        } else if ("轻应用" == String) {
+        } else if ("更多服务" == String) {
             str = "APPLICATION"
         } else if ("礼仪迎宾" == String) {
             str = "GRRRT GURSTS"
@@ -686,7 +686,7 @@ class HomeFragment : Fragment(), IMainView {
             color = R.drawable.item1
         } else if ("智能问答" == colorstr) {
             color = R.drawable.item4
-        } else if ("轻应用" == colorstr) {
+        } else if ("更多服务" == colorstr) {
             color = R.drawable.item3
         } else if ("礼仪迎宾" == colorstr) {
             color = R.drawable.item3
@@ -707,7 +707,7 @@ class HomeFragment : Fragment(), IMainView {
             image = R.drawable.explain_svg
         } else if ("智能问答" == Imagestr) {
             image = R.drawable.qa_svg
-        } else if ("轻应用" == Imagestr) {
+        } else if ("更多服务" == Imagestr) {
             image = R.drawable.application_svg
         } else if ("礼仪迎宾" == Imagestr) {
             image = R.drawable.welcome_svg

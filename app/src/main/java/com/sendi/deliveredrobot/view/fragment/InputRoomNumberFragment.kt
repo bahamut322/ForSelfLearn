@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import com.sendi.deliveredrobot.databinding.FragmentInputRoomNumberBinding
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -64,7 +65,7 @@ class InputRoomNumberFragment : Fragment() {
                 InputPasswordFromType.HOME_GUIDE,
                 InputPasswordFromType.GO_BACKING_GUIDE,
                 InputPasswordFromType.GUIDING_CHANGE_POINT -> {
-                    SpeakHelper.speak(getString(R.string.xiao_di_serve_you_please_input_room_number))
+                    String.format(getString(R.string.xiao_di_serve_you_please_input_room_number), QuerySql.robotConfig().wakeUpWord)
                 }
             }
         }

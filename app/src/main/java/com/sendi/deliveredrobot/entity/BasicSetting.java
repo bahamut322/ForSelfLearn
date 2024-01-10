@@ -10,7 +10,7 @@ import org.litepal.crud.LitePalSupport;
  */
 public class BasicSetting extends LitePalSupport {
 
-    private String defaultValue = "智能引领 智能讲解 轻应用 业务办理 礼仪迎宾 ";//首页功能显示
+    private String defaultValue = "智能引领 智能讲解 更多服务 业务办理 礼仪迎宾 ";//首页功能显示
     @Column(defaultValue = "1")
     private int id = 1;
     @Column(defaultValue = "女声")

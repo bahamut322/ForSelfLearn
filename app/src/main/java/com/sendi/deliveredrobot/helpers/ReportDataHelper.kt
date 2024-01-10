@@ -4,6 +4,7 @@ import android.util.Log
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.RosPointArrUtil
 import com.sendi.deliveredrobot.service.*
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +58,7 @@ object ReportDataHelper {
         with(taskDto) {
             taskId = taskModel?.taskId?:""
             target = taskModel?.location?.pointName?:""
+            floor = taskModel?.location?.floorName?: RobotStatus.originalLocation.toString()
             val pose = ROSHelper.getPose()
             val poseArray = floatArrayOf(pose?.x?.toFloat()?:-1f, pose?.y?.toFloat()?:-1f, pose?.theta?.toFloat()?:-1f)
             robotPose = poseArray
