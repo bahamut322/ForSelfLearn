@@ -114,6 +114,7 @@ object ReportDataHelper {
                     updateMap = tempUpdateMap
                     taskStage = TaskStageEnum.ALLStartTask.code
                     status = 1
+                    floor = taskModel.location?.floorName?: RobotStatus.originalLocation.toString()
                     time = System.currentTimeMillis()
                     gate = when(taskModel.location?.binMark){
                         AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
@@ -136,6 +137,7 @@ object ReportDataHelper {
                         updateMap = tempUpdateMap
                         taskStage = TaskStageEnum.ALLStartTask.code
                         status = 1
+                        floor = taskModel.location?.floorName?: RobotStatus.originalLocation.toString()
                         time = System.currentTimeMillis()
                         gate = when(taskModel.location?.binMark){
                             AbstractTask.viewModelBin1.value.binMarkBin1 -> 1
@@ -156,6 +158,7 @@ object ReportDataHelper {
                         target = taskModel.location?.pointName?:""
                         robotPose = poseArray
                         updateMap = tempUpdateMap
+                        floor = taskModel.location?.floorName?: RobotStatus.originalLocation.toString()
                         taskStage = TaskStageEnum.ALLStartTask.code
                         time = System.currentTimeMillis()
                         gate = when(taskModel.location?.binMark){
@@ -180,6 +183,7 @@ object ReportDataHelper {
                     robotPose = poseArray
                     status = 1
                     updateMap = tempUpdateMap
+                    floor = taskModel?.location?.floorName?: RobotStatus.originalLocation.toString()
                     taskStage = TaskStageEnum.ALLStartTask.code
                     time = System.currentTimeMillis()
                     gate = when(taskModel.remoteOrderModel?.from?.binMark){
@@ -198,6 +202,7 @@ object ReportDataHelper {
                     target = taskModel.location?.pointName?:""
                     robotPose = poseArray
                     updateMap = tempUpdateMap
+                    floor = taskModel.location?.floorName?: RobotStatus.originalLocation.toString()
                     taskStage = TaskStageEnum.ALLStartTask.code
                     status = 1
                     time = System.currentTimeMillis()
@@ -219,6 +224,7 @@ object ReportDataHelper {
                     updateMap = tempUpdateMap
                     taskStage = TaskStageEnum.ALLStartTask.code
                     status = 1
+                    floor = taskModel.location?.floorName?: RobotStatus.originalLocation.toString()
                     time = System.currentTimeMillis()
                     gate = when(taskModel.location?.binMark){
                         AbstractTask.viewModelBin1.value.binMarkBin1 -> 1

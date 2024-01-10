@@ -209,7 +209,7 @@ class HomeFragment : Fragment(), IMainView {
         RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner) {
             showFunction(true)
         }
-        LogUtil.i("当前待机时间：" + QuerySql.robotConfig().sleepTime)
+        LogUtil.d("当前待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {

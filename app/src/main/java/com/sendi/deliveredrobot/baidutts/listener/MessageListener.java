@@ -93,7 +93,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             if (utteranceId.equals("explanation")) {
                 //首先规避一下重复数
                 if (progress == previousProgress) {
-                    LogUtil.INSTANCE.i("生成了重复数");
+                    LogUtil.INSTANCE.d("生成了重复数");
                 } else if (Universal.ExplainSpeak.size() != 0) {
                     //当TTS的播放进度和列表第一项相等的时候(为了数统一，不然我也不会在播放进度和第一项长度相等的时候做处理，显得没事干)
                     if (progress == Universal.ExplainSpeak.get(0)) {
@@ -112,7 +112,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
                         }
                     }
                 }
-                LogUtil.INSTANCE.e(" BaiduTTS播放进度：" + progress
+                LogUtil.INSTANCE.d(" BaiduTTS播放进度：" + progress
                         + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
                         + " 当前朗读完的item的总算：" + Universal.taskNum
                         + " 播放目标进度：" + Universal.ExplainLength
@@ -121,7 +121,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             }
         }).start();
 
-        Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
+        Log.d(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
 
     }
 
