@@ -67,16 +67,16 @@ class GuideFragment : Fragment() {
         mainScope.launch(Dispatchers.Default) {
             queryFloorPoints = dao.queryAllPoints()
         }
-        val taskConsumer =
-            Consumer { task: String ->
-                // 执行任务的代码
-                if (BuildConfig.IS_SPEAK) {
-                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
-                }
-                LogUtil.i("Task: $task")
-            }
-        // 创建TaskQueue实例
-        Universal.taskQueue = TaskQueues(taskConsumer)
+//        val taskConsumer =
+//            Consumer { task: String ->
+//                // 执行任务的代码
+//                if (BuildConfig.IS_SPEAK) {
+//                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
+//                }
+//                LogUtil.i("Task: $task")
+//            }
+//        // 创建TaskQueue实例
+//        Universal.taskQueue = TaskQueues(taskConsumer)
     }
 
     override fun onCreateView(
@@ -97,7 +97,9 @@ class GuideFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         updateDataAndRefreshList()
         viewModel!!.restoreVideo(viewLifecycleOwner)
-        viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
+        BaiduTTSHelper.getInstance().speaks(QuerySql.selectGuideFouConfig().firstPrompt)
+
+//        viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
 //        UpdateReturn().method()
         controller = Navigation.findNavController(requireView())
         timer = Timer()

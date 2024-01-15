@@ -7,7 +7,7 @@ import org.litepal.crud.LitePalSupport
  * @Data 2023/11/7
  * @describe 导购目标点列表
  */
-data class ShoppingActionDB(
+data class Table_Shopping_Action(
     //导购子功能名称
     var name: String? = "",
     //导购子功能动作类型 1：定点 2：去某点
@@ -17,9 +17,9 @@ data class ShoppingActionDB(
     //等待时间
     var waitingTime: Int? = 20,
     //大屏配置
-    var bigScreenConfig: BigScreenConfigDB? = null,
+    var bigScreenConfig: Table_Big_Screen? = null,
     //小屏配置
-    var touchScreenConfig: TouchScreenConfigDB? = null,
+    var touchScreenConfig: Table_Touch_Screen? = null,
     //定点时的文本：当导购功能默认值为1的时候
     var standText: String? = "请跟随指示前往目标点",
     //到达时的文本:当导购功能默认值为2的时候

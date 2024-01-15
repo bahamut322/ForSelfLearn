@@ -74,9 +74,8 @@ class StandbyFragment : Fragment() {
             fastRecognition.suerFaceInit(
                 extractFeature = false,
                 surfaceView = binding.SurfaceView,
-                needSpeaking = false,
                 owner = this,
-                needIdentify = false
+                needEtiquette = false
             )
             FaceDataListener.setOnChangeListener {
                 try {

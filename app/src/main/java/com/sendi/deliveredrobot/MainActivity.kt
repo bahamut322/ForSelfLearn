@@ -4,13 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -18,13 +15,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
-import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
-import com.sendi.deliveredrobot.entity.BasicSetting
+import com.sendi.deliveredrobot.entity.Table_Advertising
+import com.sendi.deliveredrobot.entity.Table_Basic
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
@@ -77,11 +73,11 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         instance = this
         //创建LitePal数据库
         LitePal.getDatabase()
-        val basicSettings = findAll(BasicSetting::class.java)
-        val basicSetting = BasicSetting()
-        if (basicSettings.size == 0) {
-            basicSetting.id = 1
-            basicSetting.save()
+        val tableBasics = findAll(Table_Basic::class.java)
+        val tableBasic = Table_Basic()
+        if (tableBasics.size == 0) {
+            tableBasic.id = 1
+            tableBasic.save()
         }
 
         pushImage(fileNames)
@@ -445,7 +441,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         sdScreenStatus!!.observe(this) {
-            advertisingConfigDB = findFirst(AdvertisingConfigDB::class.java) //查询副屏第一条数据
+            advertisingConfigDB = findFirst(Table_Advertising::class.java) //查询副屏第一条数据
             if (sdScreenStatus!!.value == 0 && mPresentation != null ) {
                 doubleScreen = sdScreenStatus!!.value!!
                 if( advertisingConfigDB != null && advertisingConfigDB.type !=0) {

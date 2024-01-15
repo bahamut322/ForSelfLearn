@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -19,22 +18,17 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessingBinding
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
+import com.sendi.deliveredrobot.entity.Table_Shopping_Action
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueues
-import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskStageEnum
-import com.sendi.deliveredrobot.service.TaskTypeEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
@@ -48,7 +42,6 @@ import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Objects
 
 /**
  * @Author Swn
@@ -59,9 +52,8 @@ class BusinessIngFragment : Fragment() {
     private lateinit var binding: FragmentBusinessingBinding
     private var controller: NavController? = null
     private var viewModel: BusinessViewModel? = null
-    var pointName: String = RobotStatus.shoppingName
     private var baseViewModel: BaseViewModel? = null
-    private var actionData: ShoppingActionDB? = ShoppingActionDB()
+    private var actionData: Table_Shopping_Action? = Table_Shopping_Action()
     private val mediatorLiveData =
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
@@ -71,21 +63,6 @@ class BusinessIngFragment : Fragment() {
     private var layoutParamsVertical: ConstraintLayout.LayoutParams? = null
     private var layoutParamsHorizontal: ConstraintLayout.LayoutParams? = null
     private  var taskId = ""
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val taskConsumer =
-            Consumer { task: String ->
-                // 执行任务的代码
-                if (BuildConfig.IS_SPEAK) {
-                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
-                }
-                LogUtil.i("${actionData?.name} 的Task: $task")
-            }
-        // 创建TaskQueue实例
-        Universal.taskQueue = TaskQueues(taskConsumer)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -113,8 +90,8 @@ class BusinessIngFragment : Fragment() {
         status()
         actionData = QuerySql.SelectActionData(
             QuerySql.robotConfig().mapName,
-            pointName,
-            RobotStatus.shoppingType
+            Universal.shoppingName,
+            Universal.shoppingType
         )
         LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
 
@@ -147,7 +124,7 @@ class BusinessIngFragment : Fragment() {
                 actionData?.touchScreenConfig!!.touch_picType
             )
             //表情组（不可点击 单独处理）；tmd现在PM又变卦了，可以暂停了
-            if (actionData?.touchScreenConfig!!.touch_type == 4) {
+            if (actionData?.touchScreenConfig?.touch_type == 4) {
                 Glide.with(this)
                     .asGif()
                     .load(actionData?.touchScreenConfig!!.touch_walkPic)
@@ -164,15 +141,17 @@ class BusinessIngFragment : Fragment() {
                 RobotStatus.repeatedReading++
                 //添加任务
                 if (RobotStatus.repeatedReading % 2 == 0) {
-                    viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
+                    BaiduTTSHelper.getInstance().speaks(actionData?.moveText!!)
+//                    viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
                     binding.businessName.text =
-                        String.format(getString(R.string.business_going), actionData!!.name)
+                        String.format(getString(R.string.business_going),  Universal.shoppingName)
                     Universal.businessTask = actionData!!.name
                 }
             } else {
-                viewModel!!.splitTextByPunctuation(actionData?.standText)
+                BaiduTTSHelper.getInstance().speaks(actionData?.standText!!)
+//                viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
-                    String.format(getString(R.string.business_doing), actionData!!.name)
+                    String.format(getString(R.string.business_doing),  Universal.shoppingName)
                 //上报定点任务执行中
                 ReportDataHelper.reportTaskDto(
                     TaskModel(endTarget = "定点导购",taskId =taskId),
@@ -257,12 +236,12 @@ class BusinessIngFragment : Fragment() {
         Stat.setOnChangeListener {
             if (Stat.getFlage() == 2) {
                 //暂停
-                Universal.taskQueue.pause()
+//                Universal.taskQueue.pause()
                 MediaPlayerHelper.getInstance().pause()
                 BaiduTTSHelper.getInstance().pause()
             } else if (Stat.getFlage() == 3) {
                 //继续
-                Universal.taskQueue.resume()
+//                Universal.taskQueue.resume()
                 MediaPlayerHelper.getInstance().resume()
                 BaiduTTSHelper.getInstance().resume()
             }
@@ -277,8 +256,9 @@ class BusinessIngFragment : Fragment() {
             return
         }
         arrayPic()
-        viewModel!!.splitTextByPunctuation(arriveText!!)
-        if (arriveText.isEmpty() && viewModel!!.hasArrive) {
+        BaiduTTSHelper.getInstance().speaks(arriveText)
+//        viewModel!!.splitTextByPunctuation(arriveText!!)
+        if (arriveText!!.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
             Order.setFlage("0")
             viewModel!!.countDownTimer!!.startCountDown()
@@ -296,7 +276,7 @@ class BusinessIngFragment : Fragment() {
 
     private fun arrayPic() {
         //到点表情组
-        if (actionData?.touchScreenConfig!!.touch_type == 4) {
+        if (actionData?.touchScreenConfig?.touch_type == 4) {
             Glide.with(this)
                 .asGif()
                 .load(actionData?.touchScreenConfig!!.touch_arrivePic)
@@ -341,7 +321,8 @@ class BusinessIngFragment : Fragment() {
                     if (liveData1.value != 1) {//如果到点点击结束
                     } else {
                         //中断提示
-                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
+                        BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().interruptPrompt!!)
+//                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
                     }
                     viewModel!!.finishTask()
                 }

@@ -13,8 +13,8 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
+import com.sendi.deliveredrobot.entity.Table_Guide_Foundation
+import com.sendi.deliveredrobot.entity.Table_Shopping_Action
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -24,16 +24,13 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
-import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskStageEnum
-import com.sendi.deliveredrobot.service.TaskTypeEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.util.Objects
 
 /**
  * @Author Swn
@@ -46,40 +43,40 @@ class BusinessViewModel : ViewModel() {
     var hasArrive: Boolean = false //区分到达和未到达的任务
 
 
-    fun splitTextByPunctuation(text: String?): List<String> {
-//        RobotStatus.speakContinue!!.postValue(0)
-        Universal.taskNum = 0
-        BaiduTTSHelper.getInstance().stop()
-        Universal.ExplainSpeak = ArrayList()
-        RobotStatus.progress.postValue(0)
-        if (Universal.ExplainSpeak != null) {
-            Universal.ExplainSpeak.clear()
-        }
-        if (Universal.taskQueue != null) {
-            Universal.taskQueue.clear()
-        }
-        Universal.ExplainLength = text!!.length
-        LogUtil.i("总内容长度: ${text.length}")
-        val pattern = "(?<=[，；？！。,.;])".toRegex()
-        val splitText = text.split(pattern).filter { it.isNotEmpty() } // 过滤掉空字符串
-        for (i in splitText.indices) {
-            val subText = text.split(pattern)[i]
-            if (subText.length > 45) {
-                val subTextList = subText.chunked(45)
-                for (sub in subTextList) {
-                    Universal.ExplainSpeak.add(sub.length)
-                    Universal.taskQueue.enqueue(sub)
-                }
-            } else {
-                Universal.ExplainSpeak.add(subText.length)
-                Universal.taskQueue.enqueue(subText)
-            }
-            Universal.taskQueue.resume()
-            LogUtil.d("列表长度内容: ${Universal.ExplainSpeak}")
-            LogUtil.i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
-        }
-        return splitText
-    }
+//    fun splitTextByPunctuation(text: String?): List<String> {
+////        RobotStatus.speakContinue!!.postValue(0)
+//        Universal.taskNum = 0
+//        BaiduTTSHelper.getInstance().stop()
+//        Universal.ExplainSpeak = ArrayList()
+//        RobotStatus.progress.postValue(0)
+//        if (Universal.ExplainSpeak != null) {
+//            Universal.ExplainSpeak.clear()
+//        }
+//        if (Universal.taskQueue != null) {
+//            Universal.taskQueue.clear()
+//        }
+//        Universal.ExplainLength = text!!.length
+//        LogUtil.i("总内容长度: ${text.length}")
+//        val pattern = "(?<=[，；？！。,.;])".toRegex()
+//        val splitText = text.split(pattern).filter { it.isNotEmpty() } // 过滤掉空字符串
+//        for (i in splitText.indices) {
+//            val subText = text.split(pattern)[i]
+//            if (subText.length > 45) {
+//                val subTextList = subText.chunked(45)
+//                for (sub in subTextList) {
+//                    Universal.ExplainSpeak.add(sub.length)
+//                    Universal.taskQueue.enqueue(sub)
+//                }
+//            } else {
+//                Universal.ExplainSpeak.add(subText.length)
+//                Universal.taskQueue.enqueue(subText)
+//            }
+//            Universal.taskQueue.resume()
+//            LogUtil.d("列表长度内容: ${Universal.ExplainSpeak}")
+//            LogUtil.i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
+//        }
+//        return splitText
+//    }
 
     fun restoreVideo(owner: LifecycleOwner) {
         // 创建一个观察者
@@ -127,7 +124,8 @@ class BusinessViewModel : ViewModel() {
                     )
                 } else {
                     TaskNext.setToDo("1")
-                    splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)
+                    BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().completePrompt!!)
+//                    splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)
 //                    BillManager.currentBill()?.executeNextTask()
                 }
             }
@@ -148,7 +146,7 @@ class BusinessViewModel : ViewModel() {
         }
     }
 
-    fun secondBusinessScreenModel(mData: ShoppingActionDB?) {
+    fun secondBusinessScreenModel(mData: Table_Shopping_Action?) {
         var file = ""
         if (mData!!.bigScreenConfig?.videoFile != null) {
             file = mData.bigScreenConfig?.videoFile.toString()
@@ -175,7 +173,7 @@ class BusinessViewModel : ViewModel() {
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 
-    fun secondGuideScreenModel(mData: GuideFoundationConfigDB?) {
+    fun secondGuideScreenModel(mData: Table_Guide_Foundation?) {
         var file = ""
         if (mData!!.bigScreenConfig?.videoFile != null) {
             file = mData.bigScreenConfig?.videoFile.toString()

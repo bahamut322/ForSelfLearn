@@ -226,8 +226,8 @@ public class DebugBasicSettingFragment extends Fragment {
             }
             values.put("defaultvalue", stringBuffer.toString());
             values.put("robotmode", timbre);
-            String[] whereArgs = {QuerySql.QueryBasicId()+""};
-            UpDataSQL.update("basicsetting", values, "id = ?", whereArgs);
+            String[] whereArgs = {String.valueOf(QuerySql.QueryBasicId())};
+            UpDataSQL.update("table_basic", values, "id = ?", whereArgs);
 
         }
     }

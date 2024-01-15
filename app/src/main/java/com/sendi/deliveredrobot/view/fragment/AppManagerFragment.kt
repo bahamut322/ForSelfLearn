@@ -17,14 +17,12 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAppManagerBinding
-import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlin.math.abs
 

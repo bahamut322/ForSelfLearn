@@ -17,7 +17,6 @@ import com.sendi.deliveredrobot.model.FaceModel;
 import com.sendi.deliveredrobot.utils.ImgByteDealFunction;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

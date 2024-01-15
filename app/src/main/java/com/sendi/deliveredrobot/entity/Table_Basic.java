@@ -8,7 +8,7 @@ import org.litepal.crud.LitePalSupport;
  * @author swn
  * 基础设置的LitePal数据库
  */
-public class BasicSetting extends LitePalSupport {
+public class Table_Basic extends LitePalSupport {
 
     private String defaultValue = "智能引领 智能讲解 更多服务 业务办理 礼仪迎宾 ";//首页功能显示
     @Column(defaultValue = "1")

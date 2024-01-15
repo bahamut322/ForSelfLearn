@@ -10,11 +10,11 @@ import com.google.gson.JsonParser
 import com.sendi.deliveredrobot.ElevatorObject
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
-import com.sendi.deliveredrobot.entity.ExplainConfigDB
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
-import com.sendi.deliveredrobot.entity.ShoppingConfigDB
+import com.sendi.deliveredrobot.entity.Table_Advertising
+import com.sendi.deliveredrobot.entity.Table_Explain_Config
+import com.sendi.deliveredrobot.entity.Table_Reply_Gate
+import com.sendi.deliveredrobot.entity.Table_Robot_Config
+import com.sendi.deliveredrobot.entity.Table_Shopping_Config
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.UpDataSQL
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
@@ -142,19 +142,20 @@ object MqttMessageHandler {
                     LogUtil.d("obtain: 收到讲解配置信息")
                     val gson = Gson()
                     val explainConfig = gson.fromJson(message, ExplainConfig::class.java)
-                    deleteAll(ExplainConfigDB::class.java)
+                    deleteAll(Table_Explain_Config::class.java)
                     RobotStatus.explainConfig?.value = explainConfig
-                    val explainConfigDB = ExplainConfigDB()
-                    explainConfigDB.slogan = explainConfig.slogan
-                    explainConfigDB.stayTime = explainConfig.stayTime!!
-                    explainConfigDB.routeListText = explainConfig.routeListText
-                    explainConfigDB.routeListText = explainConfig.routeListText
-                    explainConfigDB.pointListText = explainConfig.pointListText
-                    explainConfigDB.startText = explainConfig.startText
-                    explainConfigDB.endText = explainConfig.endText
-                    explainConfigDB.interruptionText = explainConfig.interruptionText
-                    explainConfigDB.timeStamp = explainConfig.timeStamp!!
-                    if (explainConfigDB.save()) {
+                    val tableExplainConfig =
+                        Table_Explain_Config()
+                    tableExplainConfig.slogan = explainConfig.slogan
+                    tableExplainConfig.stayTime = explainConfig.stayTime!!
+                    tableExplainConfig.routeListText = explainConfig.routeListText
+                    tableExplainConfig.routeListText = explainConfig.routeListText
+                    tableExplainConfig.pointListText = explainConfig.pointListText
+                    tableExplainConfig.startText = explainConfig.startText
+                    tableExplainConfig.endText = explainConfig.endText
+                    tableExplainConfig.interruptionText = explainConfig.interruptionText
+                    tableExplainConfig.timeStamp = explainConfig.timeStamp!!
+                    if (tableExplainConfig.save()) {
                         // 数据保存成功
                         RobotStatus.newUpdata.postValue(2)
                         Log.d("TAG", "receive: 讲解配置数据保存成功")
@@ -169,17 +170,18 @@ object MqttMessageHandler {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
-                    deleteAll(AdvertisingConfigDB::class.java)
+                    deleteAll(Table_Advertising::class.java)
 //                    deleteFiles(File(Universal.advertisement))
 //                    advFile = null
                     RobotStatus.advertisingConfig?.value = advertisingConfig
                     ToastUtil.show("收到广告配置")
                     LogUtil.d("收到广告配置")
-                    val advertisingConfigDB = AdvertisingConfigDB()
+                    val tableAdvertising =
+                        Table_Advertising()
                     //创建文件的方法
                     createFolder()
-                    advertisingConfigDB.timeStamp = advertisingConfig.timeStamp
-                    advertisingConfigDB.type = advertisingConfig.argConfig!!.type!!
+                    tableAdvertising.timeStamp = advertisingConfig.timeStamp
+                    tableAdvertising.type = advertisingConfig.argConfig!!.type!!
                     if (advertisingConfig.argConfig.argPic != null) {
                         val advPics =
                             compareArrays(
@@ -194,22 +196,22 @@ object MqttMessageHandler {
                                 MyApplication.listener
                             )
                         }
-                        advertisingConfigDB.picType = advertisingConfig.argConfig.argPic.picType
-                        advertisingConfigDB.picPlayTime =
+                        tableAdvertising.picType = advertisingConfig.argConfig.argPic.picType
+                        tableAdvertising.picPlayTime =
                             advertisingConfig.argConfig.argPic.picPlayTime
                     }
                     if (advertisingConfig.argConfig.argFont != null) {
-                        advertisingConfigDB.fontContent =
+                        tableAdvertising.fontContent =
                             advertisingConfig.argConfig.argFont.fontContent
-                        advertisingConfigDB.fontColor =
+                        tableAdvertising.fontColor =
                             advertisingConfig.argConfig.argFont.fontColor
-                        advertisingConfigDB.fontSize =
+                        tableAdvertising.fontSize =
                             advertisingConfig.argConfig.argFont.fontSize
-                        advertisingConfigDB.fontLayout =
+                        tableAdvertising.fontLayout =
                             advertisingConfig.argConfig.argFont.fontLayout
-                        advertisingConfigDB.fontBackGround =
+                        tableAdvertising.fontBackGround =
                             advertisingConfig.argConfig.argFont.fontBackGround
-                        advertisingConfigDB.textPosition =
+                        tableAdvertising.textPosition =
                             advertisingConfig.argConfig.argFont.textPosition
                     }
                     if (advertisingConfig.argConfig.argVideo != null) {
@@ -226,9 +228,9 @@ object MqttMessageHandler {
                                 MyApplication.listener
                             )
                         }
-                        advertisingConfigDB.videoAudio =
+                        tableAdvertising.videoAudio =
                             advertisingConfig.argConfig.argVideo.videoAudio!!
-                        advertisingConfigDB.videolayout =
+                        tableAdvertising.videolayout =
                             advertisingConfig.argConfig.argVideo.videoLayOut!!
                     }
                     if (advertisingConfig.argConfig.argRadio != null) {
@@ -237,7 +239,7 @@ object MqttMessageHandler {
                     if (advertisingConfig.argConfig.argPicGroup != null) {
                         LogUtil.d("广告配置收到了argPicGroup,提示暂无此配置")
                     }
-                    if (advertisingConfigDB.save()) {
+                    if (tableAdvertising.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 广告配置数据保存成功")
                         RobotStatus.newUpdata.postValue(1)
@@ -266,8 +268,8 @@ object MqttMessageHandler {
                     ToastUtil.show("收到导购配置")
                     val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
                     RobotStatus.shoppingConfigList?.value = shoppingConfig
-                    deleteAll(ShoppingConfigDB::class.java)
-                    val shoppingConfigDB = ShoppingConfigDB()
+                    deleteAll(Table_Shopping_Config::class.java)
+                    val shoppingConfigDB = Table_Shopping_Config()
                     shoppingConfigDB.name = shoppingConfig.name
                     shoppingConfigDB.firstPrompt = shoppingConfig.firstPrompt
                     shoppingConfigDB.completePrompt = shoppingConfig.completePrompt
@@ -295,20 +297,21 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
                     RobotStatus.gatekeeper?.value = gatekeeper
-                    deleteAll(ReplyGateConfig::class.java)
+                    deleteAll(Table_Reply_Gate::class.java)
                     //提交到数据库
 //                    deleteFiles(File(Universal.Secondary))
                     //创建文件的方法
                     createFolder()
                     ToastUtil.show("收到新的门岗配置信息")
                     Log.d(ContentValues.TAG, "obtain: 收到新的门岗配置信息")
-                    val replyGateConfig = ReplyGateConfig()
-                    replyGateConfig.temperatureThreshold = gatekeeper.temperatureThreshold!!
-                    replyGateConfig.tipsTemperatureInfo = gatekeeper.tipsTemperatureInfo
-                    replyGateConfig.tipsTemperatureWarn = gatekeeper.tipsTemperatureWarn
-                    replyGateConfig.tipsMaskWarn = gatekeeper.tipsMaskWarn
-                    replyGateConfig.timeStamp = gatekeeper.timeStamp!!
-                    replyGateConfig.bigScreenType = gatekeeper.argConfig!!.type!!
+                    val tableReplyGate =
+                        Table_Reply_Gate()
+                    tableReplyGate.temperatureThreshold = gatekeeper.temperatureThreshold!!
+                    tableReplyGate.tipsTemperatureInfo = gatekeeper.tipsTemperatureInfo
+                    tableReplyGate.tipsTemperatureWarn = gatekeeper.tipsTemperatureWarn
+                    tableReplyGate.tipsMaskWarn = gatekeeper.tipsMaskWarn
+                    tableReplyGate.timeStamp = gatekeeper.timeStamp!!
+                    tableReplyGate.bigScreenType = gatekeeper.argConfig!!.type!!
                     if (gatekeeper.argConfig.screen == 1) {
                         if (gatekeeper.argConfig.argPic != null) {
                             println("收到：argPic")
@@ -324,23 +327,23 @@ object MqttMessageHandler {
                                     MyApplication.listener
                                 )
                             }
-                            replyGateConfig.picType = gatekeeper.argConfig.argPic.picType
-                            replyGateConfig.picPlayType =
+                            tableReplyGate.picType = gatekeeper.argConfig.argPic.picType
+                            tableReplyGate.picPlayType =
                                 gatekeeper.argConfig.argPic.picPlayType
-                            replyGateConfig.picPlayTime =
+                            tableReplyGate.picPlayTime =
                                 gatekeeper.argConfig.argPic.picPlayTime
                         }
                         if (gatekeeper.argConfig.argFont != null) {
                             println("收到：argFont")
-                            replyGateConfig.fontContent =
+                            tableReplyGate.fontContent =
                                 gatekeeper.argConfig.argFont.fontContent
-                            replyGateConfig.fontColor = gatekeeper.argConfig.argFont.fontColor
-                            replyGateConfig.fontSize = gatekeeper.argConfig.argFont.fontSize
-                            replyGateConfig.fontLayout =
+                            tableReplyGate.fontColor = gatekeeper.argConfig.argFont.fontColor
+                            tableReplyGate.fontSize = gatekeeper.argConfig.argFont.fontSize
+                            tableReplyGate.fontLayout =
                                 gatekeeper.argConfig.argFont.fontLayout
-                            replyGateConfig.fontBackGround =
+                            tableReplyGate.fontBackGround =
                                 gatekeeper.argConfig.argFont.fontBackGround
-                            replyGateConfig.textPosition =
+                            tableReplyGate.textPosition =
                                 gatekeeper.argConfig.argFont.textPosition
                         }
                         if (gatekeeper.argConfig.argVideo != null) {
@@ -357,9 +360,9 @@ object MqttMessageHandler {
                                     MyApplication.listener
                                 )
                             }
-                            replyGateConfig.videoAudio =
+                            tableReplyGate.videoAudio =
                                 gatekeeper.argConfig.argVideo.videoAudio!!
-                            replyGateConfig.videolayout =
+                            tableReplyGate.videolayout =
                                 gatekeeper.argConfig.argVideo.videoLayOut!!
                         }
                         if (gatekeeper.argConfig.argRadio != null) {
@@ -369,7 +372,7 @@ object MqttMessageHandler {
                             println("收到 argPicGroup")
                         }
                     }
-                    if (replyGateConfig.save()) {
+                    if (tableReplyGate.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 机器人门岗配置数据保存成功")
                         updateConfig()
@@ -387,7 +390,7 @@ object MqttMessageHandler {
                     Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
                     RobotStatus.robotConfig?.value = robotConfig
-                    val currentConfig: RobotConfigSql? = robotConfig()
+                    val currentConfig: Table_Robot_Config? = robotConfig()
                     if (currentConfig != null) {
                         mapNameChanged = currentConfig.mapName != robotConfig.mapName
                         waitingPointChanged =
@@ -395,18 +398,19 @@ object MqttMessageHandler {
                         chargePointChanged =
                             currentConfig.chargePointName != robotConfig.chargePointName
                     }
-                    deleteAll(RobotConfigSql::class.java)
+                    deleteAll(Table_Robot_Config::class.java)
                     //提交数据到数据库
 //                    deleteFiles(File(Universal.Standby))
                     //创建文件的方法
                     createFolder()
 
-                    val robotConfigSql = RobotConfigSql()
+                    val tableRobotConfig =
+                        Table_Robot_Config()
                     //更新数据——基础设置
                     val values = ContentValues()
                     values.put("robotmode", UpdateReturn().audioName(robotConfig.audioType!!))
                     val whereArgs = arrayOf(QuerySql.QueryBasicId().toString() + "")
-                    UpDataSQL.update("basicsetting", values, "id = ?", whereArgs)
+                    UpDataSQL.update("table_basic", values, "id = ?", whereArgs)
                     //单独处理女声
                     if (robotConfig.audioType == 0) {
                         UpdateReturn().randomVoice(
@@ -421,16 +425,17 @@ object MqttMessageHandler {
                     }
                     //音色——放到基础设置统一管理
 //                    robotConfigSql.audioType = robotConfig.audioType!!
-                    robotConfigSql.wakeUpWord = robotConfig.wakeUpWord
-                    robotConfigSql.sleep = robotConfig.sleep!!
-                    robotConfigSql.sleepTime = robotConfig.sleepTime!!
-                    robotConfigSql.wakeUpList = robotConfig.wakeUpList!!
-                    robotConfigSql.sleepType = robotConfig.argConfig!!.type!!
-                    robotConfigSql.mapName = robotConfig.mapName
-                    robotConfigSql.timeStamp = robotConfig.timeStamp!!
-                    robotConfigSql.password = robotConfig.password
-                    robotConfigSql.waitingPointName = robotConfig.waitingPointName
-                    robotConfigSql.chargePointName = robotConfig.chargePointName
+                    tableRobotConfig.wakeUpWord = robotConfig.wakeUpWord
+                    tableRobotConfig.sleep = robotConfig.sleep!!
+                    tableRobotConfig.sleepTime = robotConfig.sleepTime!!
+                    tableRobotConfig.wakeUpList = robotConfig.wakeUpList!!
+                    tableRobotConfig.sleepType = robotConfig.argConfig!!.type!!
+                    tableRobotConfig.mapName = robotConfig.mapName
+                    tableRobotConfig.timeStamp = robotConfig.timeStamp!!
+                    tableRobotConfig.password = robotConfig.password
+                    tableRobotConfig.waitingPointName = robotConfig.waitingPointName
+                    tableRobotConfig.chargePointName = robotConfig.chargePointName
+                    tableRobotConfig.slogan = robotConfig.slogan
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
@@ -449,7 +454,7 @@ object MqttMessageHandler {
                                 )
                             }
 
-                            robotConfigSql.picType = robotConfig.argConfig.argPic.picType
+                            tableRobotConfig.picType = robotConfig.argConfig.argPic.picType
                         }
                         if (robotConfig.argConfig.argFont != null) {
                             println("收到：小屏幕无argFont")
@@ -492,7 +497,7 @@ object MqttMessageHandler {
                         }
 
                     }
-                    if (robotConfigSql.save()) {
+                    if (tableRobotConfig.save()) {
                         Log.d("TAG", "receive: 配置数据保存成功")
                         if (mapNameChanged || waitingPointChanged || chargePointChanged) {
                             updateConfig(false)
@@ -590,7 +595,11 @@ object MqttMessageHandler {
                         ReplyIntentHelper.replyIntent(message)
                     }
                 }
-
+                "replyGreetConfig" ->{
+                    if (RobotStatus.batteryStateNumber.value == false) return
+                    LogUtil.d("收到迎宾配置")
+                    InteractionMqtt().replyGreet(message)
+                }
                 else -> {}
             }
         }

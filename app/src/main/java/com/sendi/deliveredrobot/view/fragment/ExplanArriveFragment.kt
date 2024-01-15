@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentExplanArriveBinding
 import com.sendi.deliveredrobot.databinding.FragmentGuideArriveBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
@@ -68,7 +69,8 @@ class ExplanArriveFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
         mainScope = MainScope()
-        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
+        BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().endText)
+//        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
         binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget() ?: ""
         binding.motionLayoutGuideArrive.apply {
             transitionToState(R.id.state2)

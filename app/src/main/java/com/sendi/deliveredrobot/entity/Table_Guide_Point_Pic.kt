@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.entity
 
-import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.R
 import org.litepal.crud.LitePalSupport
 
 /**
@@ -9,7 +7,7 @@ import org.litepal.crud.LitePalSupport
  * @Data 2023/11/13
  * @describe 引领点的图片
  */
-data class GuidePointPicDB(
+data class Table_Guide_Point_Pic(
     var mapTimeStamp : Long? = 0,
     var mapName : String? = "",
     var pointName : String? = "",

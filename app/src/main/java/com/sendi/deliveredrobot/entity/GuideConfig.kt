@@ -8,5 +8,5 @@ package com.sendi.deliveredrobot.entity
 data class GuideConfig(
     var mapTimeStamp : Long? = 0,
     var mapName : String? = "",
-    var pointList : List<GuidePointPicDB?>? = null
+    var pointList : List<Table_Guide_Point_Pic?>? = null
 )

@@ -72,10 +72,6 @@ class HomeFragment : Fragment(), IMainView {
         mPresenter?.startTipsTimer()
         super.onResume()
         LogUtil.i("homefragment onResume")
-//        controller?.addOnDestinationChangedListener { controller, destination, arguments ->
-//            LogUtil.i("homefragment onDestinationChangedListener")
-//            voiceRecorder?.removeCallback()
-//        }
         BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
             LogUtil.i("听到--->$conversation")
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
@@ -209,6 +205,7 @@ class HomeFragment : Fragment(), IMainView {
         RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner) {
             showFunction(true)
         }
+        binding.sloganName.text = QuerySql.robotConfig().slogan
         LogUtil.d("当前待机时间：" + QuerySql.robotConfig().sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
@@ -223,9 +220,8 @@ class HomeFragment : Fragment(), IMainView {
             fastRecognition.suerFaceInit(
                 extractFeature = queryBasic.identifyVip,
                 surfaceView = binding.SurfaceView,
-                needSpeaking = true,
                 owner = this,
-                needIdentify = queryBasic.identifyVip,
+                needEtiquette = queryBasic.etiquette,
             )
             val backgroundRes =
                 if (queryBasic.defaultValue != "") R.drawable.guests_open_bg else R.drawable.once_guests_bg
@@ -558,6 +554,7 @@ class HomeFragment : Fragment(), IMainView {
         }
         RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
+            binding.sloganName.text = it.slogan
         }
     }
 
@@ -566,7 +563,6 @@ class HomeFragment : Fragment(), IMainView {
      */
     private fun itemOnclickListen(Onclick: String?) {
         when (Onclick) {
-//            "礼仪迎宾" -> Toast.makeText(context, "礼仪迎宾", Toast.LENGTH_SHORT).show()
             "智能引领" -> {
                 if (RobotStatus.batteryStateNumber.value == false) {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
@@ -592,19 +588,6 @@ class HomeFragment : Fragment(), IMainView {
                 Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
                 Log.d("TAG", "点击更多服务")
                 controller?.navigate(R.id.appContentFragment)
-//                try {
-//                    val alipayScheme = "alipays://platformapi/startapp?appId=20000754"
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(alipayScheme))
-//                    // 启动模式
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                    // 跳转
-//                    startActivity(intent)
-//
-//                } catch (e: ActivityNotFoundException) {
-//                    //没支付宝
-//                    Toast.makeText(context, "未检测到支付宝，请安装支付宝后重试", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
@@ -625,9 +608,9 @@ class HomeFragment : Fragment(), IMainView {
                     DialogHelper.briefingDialog.show()
                 } else {
                     thread {
-                        val bill = GoToReadyPointBillFactory.createBill(
+                        val bill = GoUsherPointBillFactory.createBill(
                             TaskModel(
-                                location = dao.queryReadyPoint()
+                                location = dao.selectGreetPoint(QuerySql.selectGreetConfig().greetPoint)
                             )
                         )
                         BillManager.addAllAtIndex(bill)

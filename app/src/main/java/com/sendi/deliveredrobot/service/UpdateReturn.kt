@@ -1,9 +1,7 @@
 package com.sendi.deliveredrobot.service
 
 import android.text.TextUtils
-import android.util.Log
 import chassis_msgs.VersionGetResponse
-import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.baidu.tts.client.SpeechSynthesizer
 import com.google.gson.Gson
@@ -12,10 +10,10 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
-import com.sendi.deliveredrobot.entity.MapRevise
+import com.sendi.deliveredrobot.entity.Table_map_revise
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
+import com.sendi.deliveredrobot.entity.Table_Reply_Gate
+import com.sendi.deliveredrobot.entity.Table_Robot_Config
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -29,7 +27,6 @@ import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
-import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -51,7 +48,6 @@ import java.util.Objects
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
-import kotlin.concurrent.thread
 
 
 class UpdateReturn {
@@ -66,12 +62,13 @@ class UpdateReturn {
     private val gson = Gson()
 
     fun method(boolean: Boolean = true) {
-        val replyGateConfigData: List<ReplyGateConfig> =
-            LitePal.findAll(ReplyGateConfig::class.java)
-        for (replyGateConfigDatum in replyGateConfigData) {
+        val tableReplyGateData: List<Table_Reply_Gate> =
+            LitePal.findAll(Table_Reply_Gate::class.java)
+        for (replyGateConfigDatum in tableReplyGateData) {
             timeStampReplyGateConfig = replyGateConfigDatum.timeStamp
         }
-        val robotConfigData: List<RobotConfigSql> = LitePal.findAll(RobotConfigSql::class.java)
+        val robotConfigData: List<Table_Robot_Config> = LitePal.findAll(
+            Table_Robot_Config::class.java)
         for (robotConfigDatum in robotConfigData) {
             timeStampRobotConfigSql = robotConfigDatum.timeStamp
         }
@@ -121,14 +118,14 @@ class UpdateReturn {
                         }
                         //添加数据
                         //查询地图修改的时间戳
-                        val isExist = where("mapName = ?", key).count(MapRevise::class.java) > 0
+                        val isExist = where("mapName = ?", key).count(Table_map_revise::class.java) > 0
                         if (!isExist) {
                             val sendMapPoint = SendMapPoint(0, key, sendFloor)
                             mapPoint.add(sendMapPoint)
                         } else {
-                            val tipsList: List<MapRevise> = where(
+                            val tipsList: List<Table_map_revise> = where(
                                 "mapName = ?", key
-                            ).find(MapRevise::class.java)
+                            ).find(Table_map_revise::class.java)
                             val sendMapPoint = SendMapPoint(tipsList[0].time, key, sendFloor)
                             mapPoint.add(sendMapPoint)
                         }
@@ -273,7 +270,7 @@ class UpdateReturn {
                 MyApplication.instance
             )
         ).getDebug()
-        val config: RobotConfigSql = QuerySql.robotConfig()
+        val config: Table_Robot_Config = QuerySql.robotConfig()
         if (config.mapName != "") {
             val mapId = debugDao.selectMapId(QuerySql.robotConfig().mapName)
             //查询待命点
@@ -349,9 +346,9 @@ class UpdateReturn {
 
     fun assignment() {
         //门岗配置
-        val replyGateConfigData: List<ReplyGateConfig> =
-            LitePal.findAll(ReplyGateConfig::class.java)
-        for (replyGateConfigDatas in replyGateConfigData) {
+        val tableReplyGateData: List<Table_Reply_Gate> =
+            LitePal.findAll(Table_Reply_Gate::class.java)
+        for (replyGateConfigDatas in tableReplyGateData) {
             Universal.picTypeNum = replyGateConfigDatas.picType
             Universal.picPlayTime = replyGateConfigDatas.picPlayTime
             Universal.videoAudio = replyGateConfigDatas.videoAudio

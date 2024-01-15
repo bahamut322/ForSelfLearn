@@ -331,7 +331,6 @@ class SelfCheckFragment : Fragment() {
 //            LogUtil.d("SelfCheck 获取到分数:$score")
 //        }
 //        if (score > scoreMin) {
-        BaseVoiceRecorder.getInstance()?.startRecording()
         selectFunction()
 //        } else {
 //            MainScope().launch {
@@ -399,6 +398,7 @@ class SelfCheckFragment : Fragment() {
 
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
+        BaseVoiceRecorder.getInstance()?.startRecording()
         Looper.prepare()
         UpdateReturn().deleteDirectory(Universal.AppVersion)
         when (FunctionSkip.selectFunction()) {

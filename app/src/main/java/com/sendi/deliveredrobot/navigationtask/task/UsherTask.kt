@@ -24,7 +24,7 @@ class UsherTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstract
         MyApplication.instance?.sendBroadcast(Intent().apply {
             action = ACTION_NAVIGATE
             //TODO 记得修改
-//            putExtra(NAVIGATE_ID, R.id.usherFragment)
+            putExtra(NAVIGATE_ID, R.id.greetFragment)
         })
     }
 }

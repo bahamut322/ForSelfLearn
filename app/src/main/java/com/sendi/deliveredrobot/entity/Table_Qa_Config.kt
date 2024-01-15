@@ -7,6 +7,6 @@ import org.litepal.crud.LitePalSupport
  * @Data 2023/11/15
  * @describe 问答配置
  */
-data class QaConfigDB(
+data class Table_Qa_Config(
     var qaJson : String? = ""
 ): LitePalSupport()

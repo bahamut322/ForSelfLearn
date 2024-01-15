@@ -1,15 +1,12 @@
 package com.sendi.deliveredrobot.helpers
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.sendi.deliveredrobot.entity.QaConfigDB
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
+import com.sendi.deliveredrobot.entity.Table_Qa_Config
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.ReplyQaConfigModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 
@@ -23,8 +20,8 @@ object ReplyQaConfigHelper {
     private var ITEM_COUNTS = 0
     fun replyQaConfig(json: String) {
         Log.d("TAG", "replyQaConfig: $json")
-        LitePal.deleteAll(QaConfigDB::class.java)
-        val qaConfigDB = QaConfigDB()
+        LitePal.deleteAll(Table_Qa_Config::class.java)
+        val qaConfigDB = Table_Qa_Config()
         qaConfigDB.qaJson = json
         qaConfigDB.save()
     }

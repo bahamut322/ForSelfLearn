@@ -1,9 +1,5 @@
 package com.sendi.deliveredrobot.model
 
-import com.sendi.deliveredrobot.entity.BigScreenConfigDB
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
-import com.sendi.deliveredrobot.entity.TouchScreenConfigDB
-
 /**
  * @Author Swn
  * @Data 2023/11/7

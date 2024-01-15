@@ -56,12 +56,7 @@ class StartExplanViewModel : ViewModel() {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
-//            BillManager.currentBill()!!.earlyFinish()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-//            Universal.Model = "结束讲解"
-//            ready.postValue(0)
-
-//            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             RobotStatus.ArrayPointExplan.postValue(0)
         }
@@ -135,10 +130,7 @@ class StartExplanViewModel : ViewModel() {
             onFinish = {
                 progress.postValue(0)
                 TaskNext.setToDo("1")
-                // 倒计时结束，执行操作
-//                currentBill()?.executeNextTask()
                 ready.postValue(0)
-//                Universal.Model = "结束一段讲解"
             }
         )
     }
@@ -368,39 +360,6 @@ class StartExplanViewModel : ViewModel() {
             startIndex = endIndex
         }
         return result
-    }
-    fun splitTextByPunctuation(text: String): List<String> {
-        speakContinue!!.postValue(0)
-        Universal.taskNum = 0
-        BaiduTTSHelper.getInstance().stop()
-        Universal.ExplainSpeak = ArrayList()
-        if (Universal.ExplainSpeak != null) {
-            Universal.ExplainSpeak.clear()
-        }
-        if (Universal.taskQueue != null) {
-            Universal.taskQueue.clear()
-        }
-        Universal.ExplainLength = text.length
-        LogUtil.i("总内容长度: ${text.length}")
-        val pattern = "(?<=[，；？！。,.;])".toRegex()
-        val splitText = text.split(pattern).filter { it.isNotEmpty() } // 过滤掉空字符串
-        for (i in splitText.indices) {
-            val subText = text.split(pattern)[i]
-            if (subText.length > 45) {
-                val subTextList = subText.chunked(45)
-                for (sub in subTextList) {
-                    Universal.ExplainSpeak.add(sub.length)
-                    Universal.taskQueue.enqueue(sub)
-                }
-            } else {
-                Universal.ExplainSpeak.add(subText.length)
-                Universal.taskQueue.enqueue(subText)
-            }
-            Universal.taskQueue.resume()
-            LogUtil.d("列表长度内容: ${Universal.ExplainSpeak}")
-            LogUtil.i("分割内容：${splitText[i]} 内容长度：${splitText[i].length}")
-        }
-        return splitText
     }
 }
 

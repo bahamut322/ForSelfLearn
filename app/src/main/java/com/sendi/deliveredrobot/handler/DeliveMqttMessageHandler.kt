@@ -1,26 +1,16 @@
 package com.sendi.deliveredrobot.handler
 
-import android.content.ContentValues
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.ViewModelLazy
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sendi.deliveredrobot.*
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
-import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
-import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
 import com.sendi.deliveredrobot.model.*
-import com.sendi.deliveredrobot.model.log.RobotLog
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.DeliverMqttService
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
@@ -28,13 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.litepal.LitePal
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.util.*
 import kotlin.concurrent.thread
 

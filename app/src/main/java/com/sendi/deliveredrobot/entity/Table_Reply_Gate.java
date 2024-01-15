@@ -2,7 +2,7 @@ package com.sendi.deliveredrobot.entity;
 
 import org.litepal.crud.LitePalSupport;
 
-public class ReplyGateConfig  extends LitePalSupport {
+public class Table_Reply_Gate extends LitePalSupport {
 
     /**
      * 1 `robotId` (32) '机器人ID',

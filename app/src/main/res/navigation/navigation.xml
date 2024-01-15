@@ -736,4 +736,14 @@
         android:name="com.sendi.deliveredrobot.view.fragment.AppContentFragment"
         android:label="fragment_app_content"
         tools:layout="@layout/fragment_app_content" />
+
+    <fragment android:id="@+id/greetFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GreetFragment"
+        android:label="fragment_app_content"
+        tools:layout="@layout/fragment_greet"/>
+
+    <fragment android:id="@+id/goingGreetFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.GoingGreetFragment"
+        android:label="fragment_app_content"
+        tools:layout="@layout/fragment_going_greet"/>
 </navigation>

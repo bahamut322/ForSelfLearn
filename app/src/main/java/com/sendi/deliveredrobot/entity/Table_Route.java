@@ -4,7 +4,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
 //路线列表
-public class RouteDB extends LitePalSupport {
+public class Table_Route extends LitePalSupport {
 
     private int id;
 
@@ -18,7 +18,7 @@ public class RouteDB extends LitePalSupport {
 
     private Long timeStamp;//配置时间戳
 
-    private List<PointConfigVODB> mapPointName;
+    private List<Table_Point_Config> mapPointName;
 
 
     public int getId() {
@@ -69,11 +69,11 @@ public class RouteDB extends LitePalSupport {
         this.timeStamp = timeStamp;
     }
 
-    public List<PointConfigVODB> getMapPointName() {
+    public List<Table_Point_Config> getMapPointName() {
         return mapPointName;
     }
 
-    public void setMapPointName(List<PointConfigVODB> mapPointName) {
+    public void setMapPointName(List<Table_Point_Config> mapPointName) {
         this.mapPointName = mapPointName;
     }
 }

@@ -270,6 +270,37 @@ WHERE
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     fun queryPointName(name: String): QueryPointEntity?
 
+    /**
+     * 根据点名查询迎宾点
+     */
+    @Query(
+        """
+SELECT
+  relationship_point.root_map_id as root_map_id,
+  relationship_lift.floor_name as floor_name,
+	map_point.id AS point_id,
+	map_sub.id AS sub_map_id,
+	map_route.id AS route_id,
+	map_route.path AS route_path,
+	map_sub.path AS sub_path,
+	map_point.x AS x,
+	map_point.y AS y,
+	map_point.w AS w,
+	map_point.name AS point_name,
+	map_point.direction AS point_direction,
+    map_point.type AS type
+FROM
+	relationship_point
+	INNER JOIN map_sub ON relationship_point.sub_map_id = map_sub.id
+	INNER JOIN map_point ON relationship_point.point_id = map_point.id
+	INNER JOIN map_route ON relationship_point.route_id = map_route.id
+	INNER JOIN relationship_lift ON relationship_lift.sub_map_id = relationship_point.sub_map_id
+WHERE
+	relationship_point.root_map_id = (SELECT root_map_id FROM map_config) AND map_point.name = :name
+    AND map_point.type IN (${PointType.USHER_POINT})
+    """
+    )
+    fun selectGreetPoint(name: String): QueryPointEntity?
 
     /**
      * @describe 根据楼层编码查询电梯点

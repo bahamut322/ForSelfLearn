@@ -76,7 +76,7 @@ class GoBackFragment : Fragment() {
             if (QuerySql.SelectActionData(
                     QuerySql.robotConfig().mapName,
                     Universal.businessTask,
-                    RobotStatus.shoppingType
+                    Universal.shoppingType
                 ).touchScreenConfig?.touch_type == 4 && Universal.businessTask.isNullOrEmpty()
             ) {
                 binding.goBackTv.visibility = View.GONE
@@ -87,7 +87,7 @@ class GoBackFragment : Fragment() {
                             QuerySql.SelectActionData(
                                 QuerySql.robotConfig().mapName,
                                 Universal.businessTask,
-                                RobotStatus.shoppingType
+                                Universal.shoppingType
                             ).touchScreenConfig?.touch_overTaskPic
                         )
                         .placeholder(R.drawable.ic_warming) // 设置默认图片

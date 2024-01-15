@@ -109,15 +109,15 @@ public class StartExplainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("", "onCreate页面进入");
         explantionNameModel = new ExplantionNameModel();
-        Consumer<String> taskConsumer = task -> {
-            // 执行任务的代码
-            if (BuildConfig.IS_SPEAK) {
-                BaiduTTSHelper.getInstance().speaks(task, "explanation");
-            }
-            LogUtil.INSTANCE.i("Task: " + task);
-        };
-        // 创建TaskQueue实例
-        Universal.taskQueue = new TaskQueues<>(taskConsumer);
+//        Consumer<String> taskConsumer = task -> {
+//            // 执行任务的代码
+//            if (BuildConfig.IS_SPEAK) {
+//                BaiduTTSHelper.getInstance().speaks(task, "explanation");
+//            }
+//            LogUtil.INSTANCE.i("Task: " + task);
+//        };
+//        // 创建TaskQueue实例
+//        Universal.taskQueue = new TaskQueues<>(taskConsumer);
 
     }
 
@@ -132,12 +132,12 @@ public class StartExplainFragment extends Fragment {
         Stat.setOnChangeListener(() -> {
             if (Stat.getFlage() == 2) {
                 //暂停
-                Universal.taskQueue.pause();
+//                Universal.taskQueue.pause();
                 MediaPlayerHelper.getInstance().pause();
                 BaiduTTSHelper.getInstance().pause();
             } else if (Stat.getFlage() == 3) {
                 //继续
-                Universal.taskQueue.resume();
+//                Universal.taskQueue.resume();
                 MediaPlayerHelper.getInstance().resume();
                 BaiduTTSHelper.getInstance().resume();
             }
@@ -191,15 +191,16 @@ public class StartExplainFragment extends Fragment {
                     Universal.progress = 0;
                     BaiduTTSHelper.getInstance().stop();
                     //删除讲解队列
-                    if (Universal.taskQueue != null) {
-                        Universal.taskQueue.clear();
-                    }
+//                    if (Universal.taskQueue != null) {
+//                        Universal.taskQueue.clear();
+//                    }
 
                     MediaPlayerHelper.getInstance().stop();
                     RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                     binding.acceptstationTv.stopPlay();
 
-                    viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
+                    BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().getInterruptionText());
+//                    viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
                     viewModel.finishTask();
                 });
 
@@ -221,9 +222,9 @@ public class StartExplainFragment extends Fragment {
             if (isButtonClickable) {
                 isButtonClickable = false;
                 DialogHelper.loadingDialog.show();
-                if (Universal.taskQueue != null) {
-                    Universal.taskQueue.clear();
-                }
+//                if (Universal.taskQueue != null) {
+//                    Universal.taskQueue.clear();
+//                }
                 RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
@@ -462,15 +463,6 @@ public class StartExplainFragment extends Fragment {
                             }catch (Exception ignored){}
                         }
                     }
-                    if (Universal.taskQueue.isTaskQueueCompleted()) {
-                        //要执行的任务代码
-                        try {
-                            viewModel.getTask(TaskStageEnum.FinishChannelBroadcast);
-                        } catch (Exception e) {
-                            Log.d("TAG", "onBindViewHolder: " + e);
-                        }
-                        Log.d("TAG", "onBindViewHolder: 任务完成");
-                    }
 
 
                     if (Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext() != null && !Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext().isEmpty()) {
@@ -501,6 +493,7 @@ public class StartExplainFragment extends Fragment {
                             if (integer == Universal.ExplainLength) {
                                 //恢复视频声音
                                 Order.setFlage("0");
+                                viewModel.getTask(TaskStageEnum.FinishChannelBroadcast);
                             }
                             if (integer1 == 1 && integer == Universal.ExplainLength && !array) {
                                 LogUtil.INSTANCE.i("途径播报结束（文本）");
@@ -617,7 +610,8 @@ public class StartExplainFragment extends Fragment {
                         Log.d("TAG", "doInBackground: 开始播报");
                         // 在后台线程中执行耗时操作，例如数据预加载
                         if (mDatas.get(position).getWalktext() != null && !mDatas.get(position).getWalktext().isEmpty()) {
-                            viewModel.splitTextByPunctuation(mDatas.get(position).getWalktext());
+                            BaiduTTSHelper.getInstance().speaks(mDatas.get(position).getWalktext());
+//                            viewModel.splitTextByPunctuation(mDatas.get(position).getWalktext());
                         }
                         return null;
                     }
@@ -717,7 +711,9 @@ public class StartExplainFragment extends Fragment {
                     LogUtil.INSTANCE.i("当前页数: " + beforePage);
                     //将第一页的内容再次等分成BaiduTTS可以朗读的范围
 //                Universal.taskNum = viewModel.splitString(textEqually.get(beforePage), Universal.BaiduSpeakLength).size();
-                    viewModel.splitTextByPunctuation(mData.get(position).getExplanationtext());
+                    BaiduTTSHelper.getInstance().speaks(mData.get(position).getExplanationtext());
+
+//                    viewModel.splitTextByPunctuation(mData.get(position).getExplanationtext());
 
                     RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                         if (nextTaskToDo) {
@@ -741,14 +737,14 @@ public class StartExplainFragment extends Fragment {
                                 nextTaskToDo = true;
                             }
                         }
-                        if (beforePage == (page.get() - 1) && TaskQueues.isCompleted() && integer == Universal.ExplainLength) {
+                        if (beforePage == (page.get() - 1)  && integer == Universal.ExplainLength) {
                             LogUtil.INSTANCE.d("Tips: 讲解内容完成,进入倒计时");
                             viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
                             binding.acceptstationTv.stopPlay();
                             Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-                            if (Universal.taskQueue != null) {
-                                Universal.taskQueue.clear();
-                            }
+//                            if (Universal.taskQueue != null) {
+//                                Universal.taskQueue.clear();
+//                            }
                             //恢复视频声音
                             Order.setFlage("0");
 //                            isMethodExecuted = false;
@@ -804,16 +800,17 @@ public class StartExplainFragment extends Fragment {
 //                isMethodExecuted = false;
                 Universal.ExplainLength = -1;
                 //删除讲解队列
-                if (Universal.taskQueue != null) {
-                    Universal.taskQueue.clear();
-                }
+//                if (Universal.taskQueue != null) {
+//                    Universal.taskQueue.clear();
+//                }
                 RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 viewModel.finishTask();
                 binding.acceptstationTv.stopPlay();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
-                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
+                BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().getInterruptionText());
+//                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
             });
             finishTaskDialog.NoExit.setOnClickListener(v1 -> finishTaskDialog.dismiss());
 
@@ -821,9 +818,9 @@ public class StartExplainFragment extends Fragment {
         processClickDialog.nextBtn.setOnClickListener(v -> {
             //删除讲解队列
 //            Universal.Model = "切换下一个点";
-            if (Universal.taskQueue != null) {
-                Universal.taskQueue.clear();
-            }
+//            if (Universal.taskQueue != null) {
+//                Universal.taskQueue.clear();
+//            }
             beforePage = -1;
             RobotStatus.INSTANCE.getSpeakNumber().postValue("");
             MediaPlayerHelper.getInstance().stop();
@@ -860,9 +857,9 @@ public class StartExplainFragment extends Fragment {
             changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(viewModel.inForListData()).get(position).getName());
             changingOverDialog.Sure.setOnClickListener(v -> {
-                if (Universal.taskQueue != null) {
-                    Universal.taskQueue.clear();
-                }
+//                if (Universal.taskQueue != null) {
+//                    Universal.taskQueue.clear();
+//                }
                 BaiduTTSHelper.getInstance().stop();
                 Universal.taskNum = 0;
                 beforePage = -1;

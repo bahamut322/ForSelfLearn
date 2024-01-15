@@ -7,20 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
+import com.sendi.deliveredrobot.entity.Table_Shopping_Action
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
@@ -31,7 +29,6 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskStageEnum
@@ -56,7 +53,7 @@ class BusinessFragment : Fragment() {
 
     private lateinit var binding: FragmentBusinessBinding
     private var controller: NavController? = null
-    private var shoppingActionList: List<ShoppingActionDB> = ArrayList()
+    private var shoppingActionList: List<Table_Shopping_Action> = ArrayList()
     val mainScope = MainScope()
     val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.instance!!).getDao()
     private var viewModel: BusinessViewModel?  = null
@@ -69,16 +66,6 @@ class BusinessFragment : Fragment() {
             shoppingActionList = QuerySql.SelectShoppingAction(QuerySql.robotConfig().mapName)
             LogUtil.d("列表长度："+shoppingActionList.size)
         }
-        val taskConsumer =
-            Consumer { task: String ->
-                // 执行任务的代码
-                if (BuildConfig.IS_SPEAK) {
-                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
-                }
-                LogUtil.i("Task: $task")
-            }
-        // 创建TaskQueue实例
-        Universal.taskQueue = TaskQueues(taskConsumer)
     }
 
     override fun onCreateView(
@@ -101,7 +88,8 @@ class BusinessFragment : Fragment() {
         ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
         updateDataAndRefreshList()
         //进入页面播报
-        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
+        BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().firstPrompt!!)
+//        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE
             binding.llReturn.visibility = View.VISIBLE
@@ -145,11 +133,11 @@ class BusinessFragment : Fragment() {
                     DialogHelper.briefingDialog.show()
                 }else {
                     LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")
-
-                    RobotStatus.shoppingName = shoppingActionList[position].pointName!!
+                    Log.d("TAG", "onViewCreated1: "+Universal.shoppingName)
                     BaiduTTSHelper.getInstance().stop()
                     if (shoppingActionList[position].actionType == 1) {
-                        RobotStatus.shoppingType = 1
+                        Universal.shoppingName = shoppingActionList[position].name
+                        Universal.shoppingType = 1
                         LogUtil.d("定点")
                         val taskId = TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.BUSINESS)
                         val args: Bundle = Bundle().apply {
@@ -164,11 +152,12 @@ class BusinessFragment : Fragment() {
                             UpdateReturn().taskDto()
                         )
                     } else {
-                        LogUtil.d("去某点${RobotStatus.shoppingName}")
-                        RobotStatus.shoppingType = 2
+                        Universal.shoppingName = shoppingActionList[position].name
+                        LogUtil.d("去某点${shoppingActionList[position].pointName}")
+                        Universal.shoppingType = 2
                         thread {
                             val endPoint =
-                                dao.queryPoint(RobotStatus.shoppingName)
+                                dao.queryPoint(shoppingActionList[position].pointName.toString())
                             Log.d("TAG", "onViewCreated: " + endPoint!!.pointDirection)
                             val taskModel = TaskModel(location = endPoint)
                             val bill = BusinessTaskBillFactory.createBill(taskModel = taskModel)

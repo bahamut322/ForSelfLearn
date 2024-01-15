@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.entity;
 import org.litepal.crud.LitePalSupport;
 
 //讲解主屏配置
-public class TouchScreenConfigDB extends LitePalSupport {
+public class Table_Touch_Screen extends LitePalSupport {
     //配置类型
     private int touch_type = 0;
     //图片布局

@@ -32,8 +32,6 @@ object RobotStatus {
     var currentLocation: QueryPointEntity? = null //记录当前所在楼层
     var liftCurrentLocation: QueryPointEntity? = null //记录电梯所在楼层
     var expectLocation: QueryPointEntity? = null //想去的楼层
-    var shoppingName : String = ""
-    var shoppingType : Int = 0
 
     // 适配器状态 1-接入电源线 0-电源线拔出
     val adapterState: MutableLiveData<Byte> = MutableLiveData(-1)
@@ -71,6 +69,7 @@ object RobotStatus {
     val PassWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
+    var replyGreet : MutableLiveData<ReplyGreetConfigModel>? = MutableLiveData<ReplyGreetConfigModel>()//X8机器人迎宾配置
     var shoppingConfigList : MutableLiveData<ShoppingGuideConfing>? = MutableLiveData<ShoppingGuideConfing>()//导购配置
     var shoppingActionList : MutableLiveData<ActionsList>? = MutableLiveData<ActionsList>()//导购配置
     var guidePointList : MutableLiveData<GuidePointList>? = MutableLiveData<GuidePointList>()//引领配置

@@ -3,28 +3,28 @@
     <!--数据库名称-->
     <dbname value="multifunction" />
     <!--数据库版本-->
-    <version value="8" />
+    <version value="9" />
     <!--指定路径-->
     <storage value="/database" />
     <!--映射模型-->
     <list>
         <!--添加实体类，此处必须映射完整路径-->
-        <mapping class="com.sendi.deliveredrobot.entity.BasicSetting" />
-        <mapping class="com.sendi.deliveredrobot.entity.RobotConfigSql" />
-        <mapping class="com.sendi.deliveredrobot.entity.ReplyGateConfig" />
-        <mapping class="com.sendi.deliveredrobot.entity.FaceTips" />
-        <mapping class="com.sendi.deliveredrobot.entity.MapRevise" />
-        <mapping class="com.sendi.deliveredrobot.entity.TouchScreenConfigDB" />
-        <mapping class="com.sendi.deliveredrobot.entity.BigScreenConfigDB" />
-        <mapping class="com.sendi.deliveredrobot.entity.AdvertisingConfigDB" />
-        <mapping class="com.sendi.deliveredrobot.entity.PointConfigVODB" />
-        <mapping class="com.sendi.deliveredrobot.entity.ExplainConfigDB" />
-        <mapping class="com.sendi.deliveredrobot.entity.RouteDB" />
-        <mapping class="com.sendi.deliveredrobot.entity.ShoppingConfigDB"/>
-        <mapping class="com.sendi.deliveredrobot.entity.ShoppingActionDB"/>
-<!--        <mapping class="com.sendi.deliveredrobot.entity.GuideConfigDB"/>-->
-        <mapping class="com.sendi.deliveredrobot.entity.GuidePointPicDB"/>
-        <mapping class="com.sendi.deliveredrobot.entity.GuideFoundationConfigDB"/>
-        <mapping class="com.sendi.deliveredrobot.entity.QaConfigDB"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Basic" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Robot_Config" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Reply_Gate" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_map_revise" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Touch_Screen" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Big_Screen" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Advertising" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Point_Config" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Explain_Config" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Route" />
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Shopping_Config"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Shopping_Action"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Guide_Point_Pic"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Guide_Foundation"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Qa_Config"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Face"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Greet_Config"/>
     </list>
 </litepal>

@@ -3,9 +3,6 @@ package com.sendi.deliveredrobot.view.widget;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,14 +17,11 @@ import android.widget.Toast;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.sendi.deliveredrobot.R;
-import com.sendi.deliveredrobot.entity.FaceTips;
-import com.sendi.deliveredrobot.entity.RouteDB;
+import com.sendi.deliveredrobot.entity.Table_Face;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.interfaces.FaceDataListener;
 
 import org.litepal.LitePal;
-
-import java.io.File;
 
 /**
  * @Author Swn
@@ -65,21 +59,21 @@ public class IdentifyDialog extends Dialog {
         Tips.setText(name);
         Bitmap bitmap = BitmapFactory.decodeFile(name);
         submitBtn.setOnClickListener(v -> {
-            faceRecognition.faceHttp(true, bitmap, false, owner, false);
+            faceRecognition.faceHttp(true, bitmap, owner, false);
             DialogHelper.loadingDialog.show();
             Toast.makeText(context, editText.getText(), Toast.LENGTH_LONG).show();
         });
         FaceDataListener.setOnChangeListener(() -> {
             anInt++;
             if (anInt < 5) {
-                faceRecognition.faceHttp(true, bitmap, false, owner, false);
+                faceRecognition.faceHttp(true, bitmap, owner, false);
             } else {
                 if (FaceDataListener.getFaceModels() != null && FaceDataListener.getFaceModels().size() == 1) {
-                    FaceTips faceTips = new FaceTips();
+                    Table_Face faceTips = new Table_Face();
                     String name = String.valueOf(editText.getText());
                     // 检查数据库中是否存在该名称
 
-                    boolean isExist = LitePal.where("name = ?", name).count(FaceTips.class)> 0 ;
+                    boolean isExist = LitePal.where("name = ?", name).count(Table_Face.class)> 0 ;
                     if (!isExist) {
                         // 如果名称不存在，则可以添加新记录
                         faceTips.setName(name);

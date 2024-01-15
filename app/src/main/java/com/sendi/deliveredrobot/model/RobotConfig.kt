@@ -16,6 +16,7 @@ import java.util.*
  * mapName：当前选择地图名称
  * password：机器人密码
  * argConfig：配置类实体
+ * slogan: 机器人标语
  */
 data class RobotConfig(
 //val robotId : String? = RobotStatus.SERIAL_NUMBER,
@@ -34,5 +35,6 @@ data class RobotConfig(
     val chargePointName: String? = "",
 //待命点
     val waitingPointName: String? = "",
-    val argConfig: TopLevelConfig?
+    val argConfig: TopLevelConfig?,
+    val slogan : String = "欢迎使用多功能服务机器人"
 )

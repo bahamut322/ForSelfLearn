@@ -6,7 +6,7 @@ import org.litepal.crud.LitePalSupport;
  * @author swn
  * @describe 讲解配置(讲解途中的内容)
  */
-public class ExplainConfigDB extends LitePalSupport {
+public class Table_Explain_Config extends LitePalSupport {
     private String slogan; //标语
     private int stayTime;
     private String routeListText;

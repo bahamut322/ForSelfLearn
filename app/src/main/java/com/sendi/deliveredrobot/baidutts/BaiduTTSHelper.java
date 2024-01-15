@@ -13,6 +13,8 @@ import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.baidutts.control.InitConfig;
 import com.sendi.deliveredrobot.baidutts.control.MySyntherizer;
 import com.sendi.deliveredrobot.baidutts.listener.MessageListener;
+import com.sendi.deliveredrobot.baidutts.listener.PunctuationTextSplitter;
+import com.sendi.deliveredrobot.baidutts.listener.TextSplitter;
 import com.sendi.deliveredrobot.baidutts.util.Auth;
 import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
@@ -25,6 +27,7 @@ import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BaiduTTSHelper {
@@ -49,6 +52,8 @@ public class BaiduTTSHelper {
     // assets目录下bd_etts_common_speech_as_mand_eng_high_am_vXXXX.dat 为度丫丫模型文件;
     // 在线合成sdk下面的参数不生效
     protected String offlineVoice = OfflineResource.VOICE_DUYY;
+
+    private TextSplitter textSplitter  =  new PunctuationTextSplitter();
 
     protected MySyntherizer synthesizer;
 
@@ -198,12 +203,18 @@ public class BaiduTTSHelper {
         synthesizer.pause();
     }
 
-    public void speaks(String text, String utteranceId) {
+    /**
+     *
+     * @param text 长语音朗读
+     */
+    public void speaks(String text) {
         Order.setFlage("1");
         MediaPlayerHelper.getInstance().pause();
+        List<String> textList = textSplitter.splitTextByPunctuation(text);
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
-        synthesizer.speak(text, utteranceId);
-
+        for ( int i = 0 ; i < textList.size() ; i++) {
+            synthesizer.speak(textList.get(i), "explanation");
+        }
     }
 
     public void setParam(Map<String, String> params, String voiceType){

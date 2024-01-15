@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -20,18 +19,16 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessingBinding
-import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB
+import com.sendi.deliveredrobot.entity.Table_Guide_Foundation
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
@@ -55,9 +52,8 @@ class GuidingFragment : Fragment() {
     private lateinit var mainScope: CoroutineScope
     private var controller: NavController? = null
     private var viewModel: BusinessViewModel? = null
-    var pointName: String = RobotStatus.shoppingName
     private var baseViewModel: BaseViewModel? = null
-    private var actionData: GuideFoundationConfigDB? = GuideFoundationConfigDB()
+    private var actionData: Table_Guide_Foundation? = Table_Guide_Foundation()
     private val mediatorLiveData =
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
@@ -66,22 +62,6 @@ class GuidingFragment : Fragment() {
     private val liveData2 = RobotStatus.progress
     private var layoutParamsVertical: ConstraintLayout.LayoutParams? = null
     private var layoutParamsHorizontal: ConstraintLayout.LayoutParams? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val taskConsumer =
-            Consumer { task: String ->
-                // 执行任务的代码
-                if (BuildConfig.IS_SPEAK) {
-                    BaiduTTSHelper.getInstance().speaks(task, "explanation")
-                }
-                LogUtil.i("的Task: $task")
-            }
-        // 创建TaskQueue实例
-        Universal.taskQueue = TaskQueues(taskConsumer)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -152,7 +132,8 @@ class GuidingFragment : Fragment() {
             delay(1000L) // 延迟1秒
             RobotStatus.repeatedReading++
             if (RobotStatus.repeatedReading % 2 == 0) {
-                viewModel!!.splitTextByPunctuation(actionData?.movePrompt!!)
+                BaiduTTSHelper.getInstance().speaks(actionData?.movePrompt!!)
+//                viewModel!!.splitTextByPunctuation(actionData?.movePrompt!!)
             }
 
         }
@@ -227,7 +208,7 @@ class GuidingFragment : Fragment() {
             return
         }
         //到点表情组
-        if (actionData?.touchScreenConfig!!.touch_type == 4) {
+        if (actionData?.touchScreenConfig?.touch_type == 4) {
             Glide.with(this)
                 .asGif()
                 .load(actionData?.touchScreenConfig!!.touch_arrivePic)
@@ -237,7 +218,8 @@ class GuidingFragment : Fragment() {
             binding.motionLayoutGuideArrive.visibility = View.VISIBLE
         }
         RobotStatus.progress.postValue(0)
-        viewModel!!.splitTextByPunctuation(arriveText!!)
+        BaiduTTSHelper.getInstance().speaks(arriveText!!)
+//        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
             BillManager.currentBill()?.executeNextTask()
@@ -276,7 +258,9 @@ class GuidingFragment : Fragment() {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //中断提示
-            viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().interruptPrompt!!)
+            BaiduTTSHelper.getInstance().speaks(QuerySql.selectGuideFouConfig().interruptPrompt!!)
+
+//            viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().interruptPrompt!!)
             //返回
             viewModel!!.finishTask()
         }

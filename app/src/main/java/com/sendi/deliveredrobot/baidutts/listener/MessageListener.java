@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class MessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
     private static final String TAG = "MessageListener";
-
+    TTSProgressHandler progressHandler = new TTSProgressHandlerImpl();
     private static int progressSpeak = -1;
 
     /**
@@ -89,37 +89,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onSpeechProgressChanged(String utteranceId, int progress) {
 
         //耗时计算的方法，丢到子线程去做咯，面的卡线程
-        new Thread(() -> {
-            if (utteranceId.equals("explanation")) {
-                //首先规避一下重复数
-                if (progress == previousProgress) {
-                    LogUtil.INSTANCE.d("生成了重复数");
-                } else if (Universal.ExplainSpeak.size() != 0) {
-                    //当TTS的播放进度和列表第一项相等的时候(为了数统一，不然我也不会在播放进度和第一项长度相等的时候做处理，显得没事干)
-                    if (progress == Universal.ExplainSpeak.get(0)) {
-                        //将每次的第一项累加在一起
-                        Universal.taskNum += Universal.ExplainSpeak.get(0);
-                        Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
-                        //为了简单(主要是懒，懒得维护队列)，移除第一项，将后面的子项往前移动变成第一项
-                        //在将数据赋值给观察者
-                        RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum);
-                        Universal.ExplainSpeak.remove(0);
-                    } else {
-                        //这里是统计零散的数据长度。计算方法就是：每次累加的子项+TTS当前播放长度=总播放长度
-                        if (progress != Universal.ExplainSpeak.get(0)) {
-                            Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
-                            RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum + progress);
-                        }
-                    }
-                }
-                LogUtil.INSTANCE.d(" BaiduTTS播放进度：" + progress
-                        + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
-                        + " 当前朗读完的item的总算：" + Universal.taskNum
-                        + " 播放目标进度：" + Universal.ExplainLength
-                );
-                previousProgress = progress; // 更新前一次的 progress，避重
-            }
-        }).start();
+        new Thread(() -> progressHandler.handleProgressUpdate(utteranceId, progress)).start();
 
         Log.d(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
 

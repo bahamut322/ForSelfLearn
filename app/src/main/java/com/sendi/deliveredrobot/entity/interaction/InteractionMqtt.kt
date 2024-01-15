@@ -3,22 +3,25 @@ package com.sendi.deliveredrobot.entity.interaction
 import android.content.ContentValues
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.entity.AdvertisingConfigDB
-import com.sendi.deliveredrobot.entity.BigScreenConfigDB
 import com.sendi.deliveredrobot.entity.GuideConfig
-import com.sendi.deliveredrobot.entity.GuideFoundationConfigDB
-import com.sendi.deliveredrobot.entity.GuidePointPicDB
-import com.sendi.deliveredrobot.entity.PointConfigVODB
-import com.sendi.deliveredrobot.entity.RouteDB
-import com.sendi.deliveredrobot.entity.ShoppingActionDB
-import com.sendi.deliveredrobot.entity.TouchScreenConfigDB
+import com.sendi.deliveredrobot.entity.Table_Big_Screen
+import com.sendi.deliveredrobot.entity.Table_Face
+import com.sendi.deliveredrobot.entity.Table_Greet_Config
+import com.sendi.deliveredrobot.entity.Table_Guide_Foundation
+import com.sendi.deliveredrobot.entity.Table_Guide_Point_Pic
+import com.sendi.deliveredrobot.entity.Table_Point_Config
+import com.sendi.deliveredrobot.entity.Table_Route
+import com.sendi.deliveredrobot.entity.Table_Shopping_Action
+import com.sendi.deliveredrobot.entity.Table_Touch_Screen
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.DeleteSql
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.MqttMessageHandler
 import com.sendi.deliveredrobot.model.ActionsList
 import com.sendi.deliveredrobot.model.GuidePointList
+import com.sendi.deliveredrobot.model.ReplyGreetConfigModel
 import com.sendi.deliveredrobot.model.RouteConfig
 import com.sendi.deliveredrobot.model.guideFoundationModel
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
@@ -41,7 +44,7 @@ class InteractionMqtt {
 
     fun ActionShoppingType(message: String) {
         val gson = Gson()
-        var shoppingActionDB: ShoppingActionDB
+        var shoppingActionDB: Table_Shopping_Action
         var map: LinkedHashMap<String, Long>
         val shoppingConfig = gson.fromJson(message, ActionsList::class.java)
         RobotStatus.shoppingActionList?.value = shoppingConfig
@@ -50,7 +53,7 @@ class InteractionMqtt {
         val iterator = actionList?.iterator()
         //开始通过迭代器遍历导购点
         while (iterator!!.hasNext()) {
-            shoppingActionDB = ShoppingActionDB()
+            shoppingActionDB = Table_Shopping_Action()
             val action = iterator.next()
             //删除某个点
             if (action.timeStamp!! <= 0) {
@@ -70,7 +73,7 @@ class InteractionMqtt {
                 continue
             }
             map = LinkedHashMap()
-            if (QuerySql.SelectShoppingAction(action.rootMapName) !=null) {
+            if (QuerySql.SelectShoppingAction(action.rootMapName) != null) {
                 //将数据添加到LinkHashMap
                 for (actionHash in QuerySql.SelectShoppingAction(action.rootMapName)) {
                     Log.d("", "ActionShoppingType: HashMap添加数据")
@@ -109,24 +112,26 @@ class InteractionMqtt {
             shoppingActionDB.rootMapName = action.rootMapName
             //大屏幕配置
             if (action.bigScreenConfig!!.screen == 1) {
-                val bigScreenConfigDB = BigScreenConfigDB()
+                val tableBigScreen =
+                    Table_Big_Screen()
                 //配置类型
-                bigScreenConfigDB.type =
+                tableBigScreen.type =
                     action.bigScreenConfig!!.type!!
                 if (action.bigScreenConfig!!.argPic != null) {
                     //图片布局
-                    bigScreenConfigDB.picType =
+                    tableBigScreen.picType =
                         action.bigScreenConfig!!.argPic?.picType!!
                     //轮播时间
-                    bigScreenConfigDB.picPlayTime =
+                    tableBigScreen.picPlayTime =
                         action.bigScreenConfig!!.argPic!!.picPlayTime
                     //图片
                     MqttMessageHandler.openFile(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/")
-                    val picfile =MqttMessageHandler.compareArrays(
+                    val picfile = MqttMessageHandler.compareArrays(
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
-                        action.bigScreenConfig!!.argPic!!.pics )
+                        action.bigScreenConfig!!.argPic!!.pics
+                    )
                     //创建对应文件夹。以路线名字命名(存放大屏幕)
-                    bigScreenConfigDB.imageFile =
+                    tableBigScreen.imageFile =
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/"
                     Thread {
                         for (i in picfile!!.indices) {
@@ -141,37 +146,38 @@ class InteractionMqtt {
                 }
                 if (action.bigScreenConfig!!.argFont != null) {
                     //文字
-                    bigScreenConfigDB.fontContent =
+                    tableBigScreen.fontContent =
                         action.bigScreenConfig!!.argFont?.fontContent
                     //文字颜色
-                    bigScreenConfigDB.fontColor =
+                    tableBigScreen.fontColor =
                         action.bigScreenConfig!!.argFont?.fontColor
                     //文字大小 1-大，2-中，3-小,
-                    bigScreenConfigDB.fontSize =
+                    tableBigScreen.fontSize =
                         action.bigScreenConfig!!.argFont?.fontSize!!
                     //文字方向 1-横向，2-纵向
-                    bigScreenConfigDB.fontLayout =
+                    tableBigScreen.fontLayout =
                         action.bigScreenConfig!!.argFont?.fontLayout!!
                     //背景颜色
-                    bigScreenConfigDB.fontBackGround =
+                    tableBigScreen.fontBackGround =
                         action.bigScreenConfig!!.argFont?.fontBackGround
                     //文字显示位置  0-居中 1-居上 2-居下
-                    bigScreenConfigDB.textPosition =
+                    tableBigScreen.textPosition =
                         action.bigScreenConfig!!.argFont?.textPosition!!
                 }
                 if (action.bigScreenConfig!!.argVideo != null) {
                     //视频是否播放声音
-                    bigScreenConfigDB.videoAudio =
+                    tableBigScreen.videoAudio =
                         action.bigScreenConfig!!.argVideo?.videoAudio!!
-                    bigScreenConfigDB.videolayout =
+                    tableBigScreen.videolayout =
                         action.bigScreenConfig!!.argVideo?.videoLayOut!!
                     //视频储存位置
                     //创建对应文件夹。以路线名字命名(存放大屏幕)
                     MqttMessageHandler.openFile(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/")
-                    val picfile =MqttMessageHandler.compareArrays(
+                    val picfile = MqttMessageHandler.compareArrays(
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
-                        action.bigScreenConfig!!.argVideo?.videos!! )
-                    bigScreenConfigDB.videoFile =
+                        action.bigScreenConfig!!.argVideo?.videos!!
+                    )
+                    tableBigScreen.videoFile =
                         Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/"
                     Thread {
                         for (i in picfile!!.indices) {
@@ -184,30 +190,32 @@ class InteractionMqtt {
                         }
                     }.start()
                 }
-                bigScreenConfigDB.save()
-                shoppingActionDB.bigScreenConfig = bigScreenConfigDB
+                tableBigScreen.save()
+                shoppingActionDB.bigScreenConfig = tableBigScreen
             }
 
             if (action.touchScreenConfig!!.screen == 0) {
                 //创建对应文件夹。以路线名字命名(存放主屏幕)
                 MqttMessageHandler.openFile(Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/")
-                val touchScreenConfigDB = TouchScreenConfigDB()
+                val tableTouchScreen =
+                    Table_Touch_Screen()
                 //配置类型
-                touchScreenConfigDB.touch_type =
+                tableTouchScreen.touch_type =
                     action.touchScreenConfig!!.type!!
                 if (action.touchScreenConfig!!.argPic != null) {
                     //图片布局
-                    touchScreenConfigDB.touch_picType =
+                    tableTouchScreen.touch_picType =
                         action.touchScreenConfig!!.argPic?.picType!!
                     //轮播时间
-                    touchScreenConfigDB.touch_picPlayTime =
+                    tableTouchScreen.touch_picPlayTime =
                         action.touchScreenConfig!!.argPic?.picPlayTime!!
                     //图片路径
                     if (action.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
-                        val picfile =MqttMessageHandler.compareArrays(
+                        val picfile = MqttMessageHandler.compareArrays(
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/",
-                            action.touchScreenConfig!!.argPic?.pics!! )
-                        touchScreenConfigDB.touch_imageFile =
+                            action.touchScreenConfig!!.argPic?.pics!!
+                        )
+                        tableTouchScreen.touch_imageFile =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/"
                         Thread {
                             for (i in picfile!!.indices) {
@@ -223,28 +231,28 @@ class InteractionMqtt {
                 }
                 if (action.touchScreenConfig!!.argFont != null) {
                     //文字
-                    touchScreenConfigDB.touch_fontContent =
+                    tableTouchScreen.touch_fontContent =
                         action.touchScreenConfig!!.argFont!!.fontContent
                     //文字颜色
-                    touchScreenConfigDB.touch_fontColor =
+                    tableTouchScreen.touch_fontColor =
                         action.touchScreenConfig!!.argFont!!.fontColor
                     //文字大小 1-大，2-中，3-小,
-                    touchScreenConfigDB.touch_fontSize =
+                    tableTouchScreen.touch_fontSize =
                         action.touchScreenConfig!!.argFont!!.fontSize
                     //文字方向 1-横向，2-纵向
-                    touchScreenConfigDB.touch_fontLayout =
+                    tableTouchScreen.touch_fontLayout =
                         action.touchScreenConfig!!.argFont!!.fontLayout
                     //背景颜色
-                    touchScreenConfigDB.touch_fontBackGround =
+                    tableTouchScreen.touch_fontBackGround =
                         action.touchScreenConfig!!.argFont!!.fontBackGround
                     //文字显示位置  0-居中 1-居上 2-居下
-                    touchScreenConfigDB.touch_textPosition =
+                    tableTouchScreen.touch_textPosition =
                         action.touchScreenConfig!!.argFont!!.textPosition
                 }
                 if (action.touchScreenConfig!!.argPicGroup != null) {
                     //行走中
                     if (action.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
-                        touchScreenConfigDB.touch_walkPic =
+                        tableTouchScreen.touch_walkPic =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
                                 action.touchScreenConfig!!.argPicGroup!!.walkPic!!
                             )
@@ -257,11 +265,11 @@ class InteractionMqtt {
                             )
                         }.start()
                     } else {
-                        touchScreenConfigDB.touch_walkPic = Universal.gifDefault
+                        tableTouchScreen.touch_walkPic = Universal.gifDefault
                     }
                     //被阻挡
                     if (action.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
-                        touchScreenConfigDB.touch_blockPic =
+                        tableTouchScreen.touch_blockPic =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
                                 action.touchScreenConfig!!.argPicGroup!!.blockPic!!
                             )
@@ -274,12 +282,12 @@ class InteractionMqtt {
                             )
                         }.start()
                     } else {
-                        touchScreenConfigDB.touch_blockPic =
+                        tableTouchScreen.touch_blockPic =
                             Universal.gifDefault
                     }
                     //到点
                     if (action.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
-                        touchScreenConfigDB.touch_arrivePic =
+                        tableTouchScreen.touch_arrivePic =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
                                 action.touchScreenConfig!!.argPicGroup!!.arrivePic!!
                             )
@@ -292,12 +300,12 @@ class InteractionMqtt {
                             )
                         }.start()
                     } else {
-                        touchScreenConfigDB.touch_arrivePic =
+                        tableTouchScreen.touch_arrivePic =
                             Universal.gifDefault
                     }
                     //返回
                     if (action.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
-                        touchScreenConfigDB.touch_overTaskPic =
+                        tableTouchScreen.touch_overTaskPic =
                             Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
                                 action.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
                             )
@@ -310,14 +318,14 @@ class InteractionMqtt {
                             )
                         }.start()
                     } else {
-                        touchScreenConfigDB.touch_overTaskPic =
+                        tableTouchScreen.touch_overTaskPic =
                             Universal.gifDefault
                     }
                 }
-                touchScreenConfigDB.save()
-                shoppingActionDB.touchScreenConfig = touchScreenConfigDB
+                tableTouchScreen.save()
+                shoppingActionDB.touchScreenConfig = tableTouchScreen
             }
-            if(shoppingActionDB.save()){
+            if (shoppingActionDB.save()) {
                 RobotStatus.newUpdata.postValue(2)
             }
         }
@@ -331,12 +339,12 @@ class InteractionMqtt {
         RobotStatus.routeConfig?.value = routeConfig
         //所有图片存储的总路径
         LogUtil.d("收到讲解路线配置")
-        val routeDB = RouteDB()
+        val tableRoute = Table_Route()
         //存储图片的数据库
         val routeList = routeConfig.routeList// 路线列表对象
         val isExist =
             LitePal.where("routename = ?", routeList!![0].routeName)
-                .count(RouteDB::class.java) > 0
+                .count(Table_Route::class.java) > 0
 //                    if (isExist) {
 //                        for (route in 0 until routeList.size) {
         if (QuerySql.queryTime(routeList[0].routeName) != routeList[0].timeStamp && isExist) {
@@ -352,22 +360,22 @@ class InteractionMqtt {
             val pointConfigVoDB_id = QuerySql.pointConfigVoDB_id(routeList[0].routeName)
 
             val deleteTouchScreen = LitePal.deleteAll(
-                TouchScreenConfigDB::class.java,
-                "pointconfigvodb_id = ?",
+                Table_Touch_Screen::class.java,
+                "table_point_config_id = ?",
                 pointConfigVoDB_id.toString()
             )
             val deleteBigScreen = LitePal.deleteAll(
-                BigScreenConfigDB::class.java,
-                "pointconfigvodb_id = ?",
+                Table_Big_Screen::class.java,
+                "table_point_config_id = ?",
                 pointConfigVoDB_id.toString()
             )
             val deletePointConfig = LitePal.deleteAll(
-                PointConfigVODB::class.java,
-                "routedb_id = ?",
+                Table_Point_Config::class.java,
+                "table_route_id = ?",
                 routeDBID.toString()
             )
-            val deleteRouteDB =
-                LitePal.deleteAll(RouteDB::class.java, "routename = ?", routeList[0].routeName)
+            val deleteTableRoute =
+                LitePal.deleteAll(Table_Route::class.java, "routename = ?", routeList[0].routeName)
             if (deleteTouchScreen > 0) {
                 Log.e("TAG", "TouchScreenConfigDB数据删除成功")
             }
@@ -377,7 +385,7 @@ class InteractionMqtt {
             if (deletePointConfig > 0) {
                 Log.e("TAG", "PointConfigVODB数据删除成功")
             }
-            if (deleteRouteDB > 0) {
+            if (deleteTableRoute > 0) {
                 Log.e("TAG", "RouteDB数据删除成功")
             }
         }
@@ -393,19 +401,22 @@ class InteractionMqtt {
                 MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/")
                 val pointIterator = route.pointConfigVOList.iterator()
                 //路线名字
-                routeDB.routeName = route.routeName
+                tableRoute.routeName = route.routeName
                 //总图名字
-                routeDB.rootMapName = route.rootMapName
+                tableRoute.rootMapName = route.rootMapName
                 //简介
-                routeDB.introduction = route.introduction
+                tableRoute.introduction = route.introduction
                 //配置时间戳
-                routeDB.timeStamp = route.timeStamp
+                tableRoute.timeStamp = route.timeStamp
                 //路线背景图
                 if (route.backgroundPic?.isNotEmpty() == true) {
                     MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/")
                     MqttMessageHandler.selectImagePath(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch")
-                    val backPic = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch", route.backgroundPic)
-                    routeDB.backgroundPic =
+                    val backPic = MqttMessageHandler.compareArrays(
+                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch",
+                        route.backgroundPic
+                    )
+                    tableRoute.backgroundPic =
                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + route.backgroundPic.substring(
                             route.backgroundPic.lastIndexOf("/") + 1
                         ) //路线背景图
@@ -423,26 +434,30 @@ class InteractionMqtt {
                     }
 
                 }
-                var pointItem: List<PointConfigVODB>
+                var pointItem: List<Table_Point_Config>
                 while (pointIterator.hasNext()) {
                     val point = pointIterator.next()
                     pointItem = ArrayList()
-                    val pointConfigVODB = PointConfigVODB()
+                    val tablePointConfig =
+                        Table_Point_Config()
                     //点名
-                    pointConfigVODB.name = point.name
+                    tablePointConfig.name = point.name
                     //途径播报内容-播报语(200)
-                    pointConfigVODB.walkText = point.walkText
+                    tablePointConfig.walkText = point.walkText
                     //讲解播报内容-播报语(200)
-                    pointConfigVODB.explanationText = point.explanation
+                    tablePointConfig.explanationText = point.explanation
                     //排序
-                    pointConfigVODB.scope = point.scope!!
+                    tablePointConfig.scope = point.scope!!
                     //途径音频.mp3
                     if (point.walkVoice?.isNotEmpty() == true) {
-                        pointConfigVODB.walkVoice =
+                        tablePointConfig.walkVoice =
                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.walkVoice).substring(
                                 (point.walkVoice).lastIndexOf("/") + 1
                             )
-                        val walkMp3 = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/", point.walkVoice)
+                        val walkMp3 = MqttMessageHandler.compareArrays(
+                            Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/",
+                            point.walkVoice
+                        )
 
                         if (walkMp3?.isNotEmpty() == true) {
                             Thread {
@@ -459,14 +474,17 @@ class InteractionMqtt {
                     }
                     //到达讲解.mp3
                     if (point.explanationVoice?.isNotEmpty() == true) {
-                        pointConfigVODB.explanationVoice =
+                        tablePointConfig.explanationVoice =
                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/" + (point.explanationVoice).substring(
                                 (point.explanationVoice).lastIndexOf("/") + 1
                             )
 
 
                         val explanationMp3 =
-                            MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/", point.explanationVoice)
+                            MqttMessageHandler.compareArrays(
+                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3/",
+                                point.explanationVoice
+                            )
                         if (explanationMp3?.isNotEmpty() == true) {
                             Thread {
                                 for (i in explanationMp3.indices) {
@@ -482,23 +500,27 @@ class InteractionMqtt {
                     }
                     //大屏配置
                     if (point.bigScreenConfig!!.screen == 1) {
-                        val bigScreenConfigDB = BigScreenConfigDB()
+                        val tableBigScreen =
+                            Table_Big_Screen()
                         //配置类型
-                        bigScreenConfigDB.type =
+                        tableBigScreen.type =
                             point.bigScreenConfig.type!!
                         if (point.bigScreenConfig.argPic != null) {
                             //图片布局
-                            bigScreenConfigDB.picType =
+                            tableBigScreen.picType =
                                 point.bigScreenConfig.argPic.picType
                             //轮播时间
-                            bigScreenConfigDB.picPlayTime =
+                            tableBigScreen.picPlayTime =
                                 point.bigScreenConfig.argPic.picPlayTime
                             //图片
                             MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
-                            val bigPic = MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name, point.bigScreenConfig.argPic.pics)
+                            val bigPic = MqttMessageHandler.compareArrays(
+                                Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
+                                point.bigScreenConfig.argPic.pics
+                            )
 
                             //创建对应文件夹。以路线名字命名(存放大屏幕)
-                            bigScreenConfigDB.imageFile =
+                            tableBigScreen.imageFile =
                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
 //                                            val bigPicFile =
 //                                                UpdateReturn().splitStr(point.bigScreenConfig.argPic.pics)
@@ -517,36 +539,39 @@ class InteractionMqtt {
                         }
                         if (point.bigScreenConfig.argFont != null) {
                             //文字
-                            bigScreenConfigDB.fontContent =
+                            tableBigScreen.fontContent =
                                 point.bigScreenConfig.argFont.fontContent
                             //文字颜色
-                            bigScreenConfigDB.fontColor =
+                            tableBigScreen.fontColor =
                                 point.bigScreenConfig.argFont.fontColor
                             //文字大小 1-大，2-中，3-小,
-                            bigScreenConfigDB.fontSize =
+                            tableBigScreen.fontSize =
                                 point.bigScreenConfig.argFont.fontSize
                             //文字方向 1-横向，2-纵向
-                            bigScreenConfigDB.fontLayout =
+                            tableBigScreen.fontLayout =
                                 point.bigScreenConfig.argFont.fontLayout
                             //背景颜色
-                            bigScreenConfigDB.fontBackGround =
+                            tableBigScreen.fontBackGround =
                                 point.bigScreenConfig.argFont.fontBackGround
                             //文字显示位置  0-居中 1-居上 2-居下
-                            bigScreenConfigDB.textPosition =
+                            tableBigScreen.textPosition =
                                 point.bigScreenConfig.argFont.textPosition
                         }
                         if (point.bigScreenConfig.argVideo != null) {
                             //视频是否播放声音
-                            bigScreenConfigDB.videoAudio =
+                            tableBigScreen.videoAudio =
                                 point.bigScreenConfig.argVideo.videoAudio!!
-                            bigScreenConfigDB.videolayout =
+                            tableBigScreen.videolayout =
                                 point.bigScreenConfig.argVideo.videoLayOut!!
                             //视频储存位置
                             //创建对应文件夹。以路线名字命名(存放大屏幕)
                             MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name)
                             val argVideoName =
-                                MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name, point.bigScreenConfig.argVideo.videos)
-                            bigScreenConfigDB.videoFile =
+                                MqttMessageHandler.compareArrays(
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
+                                    point.bigScreenConfig.argVideo.videos
+                                )
+                            tableBigScreen.videoFile =
                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name
                             if (argVideoName?.isNotEmpty() == true) {
                                 Thread {
@@ -561,30 +586,34 @@ class InteractionMqtt {
                                 }.start()
                             }
                         }
-                        bigScreenConfigDB.save()
-                        pointConfigVODB.bigScreenConfigDB = bigScreenConfigDB
+                        tableBigScreen.save()
+                        tablePointConfig.bigScreenConfigDB = tableBigScreen
                     }
                     //小屏
                     if (point.touchScreenConfig!!.screen == 0) {
                         //创建对应文件夹。以路线名字命名(存放主屏幕)
                         MqttMessageHandler.openFile(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name + "/")
-                        val touchScreenConfigDB = TouchScreenConfigDB()
+                        val tableTouchScreen =
+                            Table_Touch_Screen()
                         //配置类型
-                        touchScreenConfigDB.touch_type =
+                        tableTouchScreen.touch_type =
                             point.touchScreenConfig.type!!
                         if (point.touchScreenConfig.argPic != null) {
                             //图片布局
-                            touchScreenConfigDB.touch_picType =
+                            tableTouchScreen.touch_picType =
                                 point.touchScreenConfig.argPic.picType
                             //轮播时间
-                            touchScreenConfigDB.touch_picPlayTime =
+                            tableTouchScreen.touch_picPlayTime =
                                 point.touchScreenConfig.argPic.picPlayTime
                             //图片路径
                             if (point.touchScreenConfig.argPic.pics.isNotEmpty()) {
                                 val touchFileName =
-                                    MqttMessageHandler.compareArrays(Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name, point.touchScreenConfig.argPic.pics)
+                                    MqttMessageHandler.compareArrays(
+                                        Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name,
+                                        point.touchScreenConfig.argPic.pics
+                                    )
 
-                                touchScreenConfigDB.touch_imageFile =
+                                tableTouchScreen.touch_imageFile =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name + "/"
 
                                 if (touchFileName?.isNotEmpty() == true) {
@@ -603,28 +632,28 @@ class InteractionMqtt {
                         }
                         if (point.touchScreenConfig.argFont != null) {
                             //文字
-                            touchScreenConfigDB.touch_fontContent =
+                            tableTouchScreen.touch_fontContent =
                                 point.touchScreenConfig.argFont.fontContent
                             //文字颜色
-                            touchScreenConfigDB.touch_fontColor =
+                            tableTouchScreen.touch_fontColor =
                                 point.touchScreenConfig.argFont.fontColor
                             //文字大小 1-大，2-中，3-小,
-                            touchScreenConfigDB.touch_fontSize =
+                            tableTouchScreen.touch_fontSize =
                                 point.touchScreenConfig.argFont.fontSize
                             //文字方向 1-横向，2-纵向
-                            touchScreenConfigDB.touch_fontLayout =
+                            tableTouchScreen.touch_fontLayout =
                                 point.touchScreenConfig.argFont.fontLayout
                             //背景颜色
-                            touchScreenConfigDB.touch_fontBackGround =
+                            tableTouchScreen.touch_fontBackGround =
                                 point.touchScreenConfig.argFont.fontBackGround
                             //文字显示位置  0-居中 1-居上 2-居下
-                            touchScreenConfigDB.touch_textPosition =
+                            tableTouchScreen.touch_textPosition =
                                 point.touchScreenConfig.argFont.textPosition
                         }
                         if (point.touchScreenConfig.argPicGroup != null) {
                             //行走中
                             if (point.touchScreenConfig.argPicGroup.walkPic != "") {
-                                touchScreenConfigDB.touch_walkPic =
+                                tableTouchScreen.touch_walkPic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
                                         point.touchScreenConfig.argPicGroup.walkPic!!
                                     )
@@ -637,11 +666,11 @@ class InteractionMqtt {
                                     )
                                 }.start()
                             } else {
-                                touchScreenConfigDB.touch_walkPic = Universal.gifDefault
+                                tableTouchScreen.touch_walkPic = Universal.gifDefault
                             }
                             //被阻挡
                             if (point.touchScreenConfig.argPicGroup.blockPic != "") {
-                                touchScreenConfigDB.touch_blockPic =
+                                tableTouchScreen.touch_blockPic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
                                         point.touchScreenConfig.argPicGroup.blockPic!!
                                     )
@@ -654,12 +683,12 @@ class InteractionMqtt {
                                     )
                                 }.start()
                             } else {
-                                touchScreenConfigDB.touch_blockPic =
+                                tableTouchScreen.touch_blockPic =
                                     Universal.gifDefault
                             }
                             //到点
                             if (point.touchScreenConfig.argPicGroup.arrivePic != "") {
-                                touchScreenConfigDB.touch_arrivePic =
+                                tableTouchScreen.touch_arrivePic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
                                         point.touchScreenConfig.argPicGroup.arrivePic!!
                                     )
@@ -672,12 +701,12 @@ class InteractionMqtt {
                                     )
                                 }.start()
                             } else {
-                                touchScreenConfigDB.touch_arrivePic =
+                                tableTouchScreen.touch_arrivePic =
                                     Universal.gifDefault
                             }
                             //返回
                             if (point.touchScreenConfig.argPicGroup.overTaskPic != "") {
-                                touchScreenConfigDB.touch_overTaskPic =
+                                tableTouchScreen.touch_overTaskPic =
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
                                         point.touchScreenConfig.argPicGroup.overTaskPic!!
                                     )
@@ -690,17 +719,17 @@ class InteractionMqtt {
                                     )
                                 }.start()
                             } else {
-                                touchScreenConfigDB.touch_overTaskPic =
+                                tableTouchScreen.touch_overTaskPic =
                                     Universal.gifDefault
                             }
                         }
-                        touchScreenConfigDB.save()
-                        pointConfigVODB.touchScreenConfigDB = touchScreenConfigDB
+                        tableTouchScreen.save()
+                        tablePointConfig.touchScreenConfigDB = tableTouchScreen
                     }
-                    pointConfigVODB.save()
-                    pointItem.add(pointConfigVODB)
-                    routeDB.mapPointName = pointItem
-                    if (routeDB.save()) {
+                    tablePointConfig.save()
+                    pointItem.add(tablePointConfig)
+                    tableRoute.mapPointName = pointItem
+                    if (tableRoute.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 讲解点数据保存成功")
                         RobotStatus.newUpdata.postValue(2)
@@ -712,27 +741,28 @@ class InteractionMqtt {
             }
         }
     }
-    fun guidePointConfig(message: String ){
+
+    fun guidePointConfig(message: String) {
         val gson = Gson()
         var guidPointTime: LinkedHashMap<String, Long>
-        var guideConfigDB : GuideConfig
+        var guideConfigDB: GuideConfig
         val guideConfig = gson.fromJson(message, GuidePointList::class.java)
         RobotStatus.guidePointList?.value = guideConfig
         Log.d("TAG", "收到引领配置")
         val mapsList = guideConfig.maps
         val mapIterator = mapsList?.iterator()
 
-        while (mapIterator!!.hasNext()){
+        while (mapIterator!!.hasNext()) {
             guideConfigDB = GuideConfig()
             val maps = mapIterator.next()
 
 
-            var pointList : List<GuidePointPicDB>
+            var pointList: List<Table_Guide_Point_Pic>
             val pointIterator = maps?.pointList!!.iterator()
-            while (pointIterator.hasNext()){
+            while (pointIterator.hasNext()) {
                 val points = pointIterator.next()
                 pointList = ArrayList()
-                val guidePointPicDB = GuidePointPicDB()
+                val guidePointPicDB = Table_Guide_Point_Pic()
 
                 //查询时间戳是否相同
                 guidPointTime = LinkedHashMap()
@@ -741,7 +771,7 @@ class InteractionMqtt {
                     // 处理空结果集的情况，例如记录日志、显示错误消息或者返回
                     Log.e("TAG", "查询结果为空")
 
-                }else {
+                } else {
                     for (timeHash in guideList) {
                         Log.d("", "ActionShoppingType: HashMap添加数据")
                         guidPointTime[timeHash.pointName!!] = timeHash.pointTimeStamp!!
@@ -760,11 +790,17 @@ class InteractionMqtt {
                         )
                     } else if (points.pointTimeStamp == timestamp) {
                         val values = ContentValues()
-                        values.put("maptimestamp",maps.mapTimeStamp )
-                        updateAll(GuidePointPicDB::class.java, values, "pointname = ? and mapname = ?",points.pointName,maps.mapName)
+                        values.put("maptimestamp", maps.mapTimeStamp)
+                        updateAll(
+                            Table_Guide_Point_Pic::class.java,
+                            values,
+                            "pointname = ? and mapname = ?",
+                            points.pointName,
+                            maps.mapName
+                        )
                         RobotStatus.newUpdata.postValue(2)
                         continue
-                    }else if (points.pointTimeStamp!! <= 0){
+                    } else if (points.pointTimeStamp!! <= 0) {
                         Log.e("TAG", "ActionShoppingType: 引领数据删除")
                         // 删除map中的数据
                         guidPointTime.remove(points.pointName)
@@ -780,38 +816,42 @@ class InteractionMqtt {
                 }
 
                 //创建文件夹
-                MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/"+points!!.pointName+"/")
+                MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/" + points!!.pointName + "/")
                 guidePointPicDB.pointName = points.pointName
-                guidePointPicDB.guidePicUrl = Universal.robotFile+"GuidePic/"+points.pointName+"/"+"test.${fileName(points.guidePicUrl!!)}"
+                guidePointPicDB.guidePicUrl =
+                    Universal.robotFile + "GuidePic/" + points.pointName + "/" + "test.${
+                        fileName(points.guidePicUrl!!)
+                    }"
                 guidePointPicDB.pointTimeStamp = points.pointTimeStamp
                 guidePointPicDB.mapTimeStamp = maps.mapTimeStamp
                 guidePointPicDB.mapName = maps.mapName
                 pointList.add(guidePointPicDB)
                 thread {
                     DownloadBill.getInstance().addTask(
-                        Universal.pathDownload +points.guidePicUrl ,
-                        Universal.robotFile+"GuidePic/"+points.pointName+"/",
+                        Universal.pathDownload + points.guidePicUrl,
+                        Universal.robotFile + "GuidePic/" + points.pointName + "/",
                         "test.${fileName(points.guidePicUrl!!)}",
                         MyApplication.listener
                     )
                 }
                 guideConfigDB.pointList = pointList
 
-                if (guidePointPicDB.save()){
+                if (guidePointPicDB.save()) {
                     RobotStatus.newUpdata.postValue(2)
                 }
             }
         }
     }
-    fun guideFoundation(message: String){
+
+    fun guideFoundation(message: String) {
         val gson = Gson()
         val guideFoundation = gson.fromJson(message, guideFoundationModel::class.java)
         RobotStatus.guideFoundationConfig?.value = guideFoundation
 
-        LitePal.deleteAll(GuideFoundationConfigDB::class.java)
+        LitePal.deleteAll(Table_Guide_Foundation::class.java)
         MqttMessageHandler.deleteFiles(File(Universal.robotFile + "GuidePic/foundation"))
 
-        val guideFoundationConfigDB = GuideFoundationConfigDB()
+        val guideFoundationConfigDB = Table_Guide_Foundation()
         guideFoundationConfigDB.arrivePrompt = guideFoundation.arrivePrompt
         guideFoundationConfigDB.movePrompt = guideFoundation.movePrompt
         guideFoundationConfigDB.firstPrompt = guideFoundation.firstPrompt
@@ -820,25 +860,27 @@ class InteractionMqtt {
 
         //大屏幕
         if (guideFoundation.bigScreenConfig!!.screen == 1) {
-            val bigScreenConfigDB = BigScreenConfigDB()
+            val tableBigScreen =
+                Table_Big_Screen()
             //配置类型
-            bigScreenConfigDB.type =
+            tableBigScreen.type =
                 guideFoundation.bigScreenConfig!!.type!!
             if (guideFoundation.bigScreenConfig!!.argPic != null) {
                 //图片布局
-                bigScreenConfigDB.picType =
+                tableBigScreen.picType =
                     guideFoundation.bigScreenConfig!!.argPic?.picType!!
                 //轮播时间
-                bigScreenConfigDB.picPlayTime =
+                tableBigScreen.picPlayTime =
                     guideFoundation.bigScreenConfig!!.argPic!!.picPlayTime
                 //图片
                 MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/big/")
 
-                val picfile =MqttMessageHandler.compareArrays(
+                val picfile = MqttMessageHandler.compareArrays(
                     Universal.robotFile + "GuidePic/foundation/big/",
-                    guideFoundation.bigScreenConfig!!.argPic!!.pics )
+                    guideFoundation.bigScreenConfig!!.argPic!!.pics
+                )
                 //创建对应文件夹。以路线名字命名(存放大屏幕)
-                bigScreenConfigDB.imageFile =
+                tableBigScreen.imageFile =
                     Universal.robotFile + "GuidePic/foundation/big/"
                 Thread {
                     for (i in picfile!!.indices) {
@@ -853,39 +895,40 @@ class InteractionMqtt {
             }
             if (guideFoundation.bigScreenConfig!!.argFont != null) {
                 //文字
-                bigScreenConfigDB.fontContent =
+                tableBigScreen.fontContent =
                     guideFoundation.bigScreenConfig!!.argFont?.fontContent
                 //文字颜色
-                bigScreenConfigDB.fontColor =
+                tableBigScreen.fontColor =
                     guideFoundation.bigScreenConfig!!.argFont?.fontColor
                 //文字大小 1-大，2-中，3-小,
-                bigScreenConfigDB.fontSize =
+                tableBigScreen.fontSize =
                     guideFoundation.bigScreenConfig!!.argFont?.fontSize!!
                 //文字方向 1-横向，2-纵向
-                bigScreenConfigDB.fontLayout =
+                tableBigScreen.fontLayout =
                     guideFoundation.bigScreenConfig!!.argFont?.fontLayout!!
                 //背景颜色
-                bigScreenConfigDB.fontBackGround =
+                tableBigScreen.fontBackGround =
                     guideFoundation.bigScreenConfig!!.argFont?.fontBackGround
                 //文字显示位置  0-居中 1-居上 2-居下
-                bigScreenConfigDB.textPosition =
+                tableBigScreen.textPosition =
                     guideFoundation.bigScreenConfig!!.argFont?.textPosition!!
             }
             if (guideFoundation.bigScreenConfig!!.argVideo != null) {
                 //视频是否播放声音
-                bigScreenConfigDB.videoAudio =
+                tableBigScreen.videoAudio =
                     guideFoundation.bigScreenConfig!!.argVideo?.videoAudio!!
-                bigScreenConfigDB.videolayout =
+                tableBigScreen.videolayout =
                     guideFoundation.bigScreenConfig!!.argVideo?.videoLayOut!!
                 //视频储存位置
                 //创建对应文件夹。以路线名字命名(存放大屏幕)
-                MqttMessageHandler.openFile(Universal.robotFile+"GuidePic/foundation/big/")
+                MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/big/")
 
-                val picfile =MqttMessageHandler.compareArrays(
+                val picfile = MqttMessageHandler.compareArrays(
                     Universal.robotFile + "GuidePic/foundation/big/",
-                    guideFoundation.bigScreenConfig!!.argVideo?.videos!! )
-                bigScreenConfigDB.videoFile =
-                    Universal.robotFile +"GuidePic/foundation/big/"
+                    guideFoundation.bigScreenConfig!!.argVideo?.videos!!
+                )
+                tableBigScreen.videoFile =
+                    Universal.robotFile + "GuidePic/foundation/big/"
                 Thread {
                     for (i in picfile!!.indices) {
                         DownloadBill.getInstance().addTask(
@@ -897,29 +940,31 @@ class InteractionMqtt {
                     }
                 }.start()
             }
-            bigScreenConfigDB.save()
-            guideFoundationConfigDB.bigScreenConfig = bigScreenConfigDB
+            tableBigScreen.save()
+            guideFoundationConfigDB.bigScreenConfig = tableBigScreen
         }
         if (guideFoundation.touchScreenConfig!!.screen == 0) {
             //创建对应文件夹。以路线名字命名(存放主屏幕)
             MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/foundation/touch/")
-            val touchScreenConfigDB = TouchScreenConfigDB()
+            val tableTouchScreen =
+                Table_Touch_Screen()
             //配置类型
-            touchScreenConfigDB.touch_type =
+            tableTouchScreen.touch_type =
                 guideFoundation.touchScreenConfig!!.type!!
             if (guideFoundation.touchScreenConfig!!.argPic != null) {
                 //图片布局
-                touchScreenConfigDB.touch_picType =
+                tableTouchScreen.touch_picType =
                     guideFoundation.touchScreenConfig!!.argPic?.picType!!
                 //轮播时间
-                touchScreenConfigDB.touch_picPlayTime =
+                tableTouchScreen.touch_picPlayTime =
                     guideFoundation.touchScreenConfig!!.argPic?.picPlayTime!!
                 //图片路径
                 if (guideFoundation.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
-                    val picfile =MqttMessageHandler.compareArrays(
+                    val picfile = MqttMessageHandler.compareArrays(
                         Universal.robotFile + "GuidePic/foundation/touch/",
-                        guideFoundation.touchScreenConfig!!.argPic?.pics!!)
-                    touchScreenConfigDB.touch_imageFile =
+                        guideFoundation.touchScreenConfig!!.argPic?.pics!!
+                    )
+                    tableTouchScreen.touch_imageFile =
                         Universal.robotFile + "GuidePic/foundation/touch/"
                     Thread {
                         for (i in picfile!!.indices) {
@@ -935,29 +980,29 @@ class InteractionMqtt {
             }
             if (guideFoundation.touchScreenConfig!!.argFont != null) {
                 //文字
-                touchScreenConfigDB.touch_fontContent =
+                tableTouchScreen.touch_fontContent =
                     guideFoundation.touchScreenConfig!!.argFont!!.fontContent
                 //文字颜色
-                touchScreenConfigDB.touch_fontColor =
+                tableTouchScreen.touch_fontColor =
                     guideFoundation.touchScreenConfig!!.argFont!!.fontColor
                 //文字大小 1-大，2-中，3-小,
-                touchScreenConfigDB.touch_fontSize =
+                tableTouchScreen.touch_fontSize =
                     guideFoundation.touchScreenConfig!!.argFont!!.fontSize
                 //文字方向 1-横向，2-纵向
-                touchScreenConfigDB.touch_fontLayout =
+                tableTouchScreen.touch_fontLayout =
                     guideFoundation.touchScreenConfig!!.argFont!!.fontLayout
                 //背景颜色
-                touchScreenConfigDB.touch_fontBackGround =
+                tableTouchScreen.touch_fontBackGround =
                     guideFoundation.touchScreenConfig!!.argFont!!.fontBackGround
                 //文字显示位置  0-居中 1-居上 2-居下
-                touchScreenConfigDB.touch_textPosition =
+                tableTouchScreen.touch_textPosition =
                     guideFoundation.touchScreenConfig!!.argFont!!.textPosition
             }
             if (guideFoundation.touchScreenConfig!!.argPicGroup != null) {
                 //行走中
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
-                    touchScreenConfigDB.touch_walkPic =
-                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                    tableTouchScreen.touch_walkPic =
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!
                         )
                     Thread {
@@ -969,12 +1014,12 @@ class InteractionMqtt {
                         )
                     }.start()
                 } else {
-                    touchScreenConfigDB.touch_walkPic = Universal.gifDefault
+                    tableTouchScreen.touch_walkPic = Universal.gifDefault
                 }
                 //被阻挡
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
-                    touchScreenConfigDB.touch_blockPic =
-                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                    tableTouchScreen.touch_blockPic =
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!
                         )
                     Thread {
@@ -986,31 +1031,31 @@ class InteractionMqtt {
                         )
                     }.start()
                 } else {
-                    touchScreenConfigDB.touch_blockPic =
+                    tableTouchScreen.touch_blockPic =
                         Universal.gifDefault
                 }
                 //到点
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
-                    touchScreenConfigDB.touch_arrivePic =
-                        Universal.robotFile + "GuidePic/foundation/group/"+ MqttMessageHandler.FileName(
+                    tableTouchScreen.touch_arrivePic =
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
-                            Universal.robotFile +"GuidePic/foundation/group/",
+                            Universal.robotFile + "GuidePic/foundation/group/",
                             MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
                             MyApplication.listener
                         )
                     }.start()
                 } else {
-                    touchScreenConfigDB.touch_arrivePic =
+                    tableTouchScreen.touch_arrivePic =
                         Universal.gifDefault
                 }
                 //返回
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
-                    touchScreenConfigDB.touch_overTaskPic =
-                        Universal.robotFile +"GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                    tableTouchScreen.touch_overTaskPic =
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
                         )
                     Thread {
@@ -1022,14 +1067,270 @@ class InteractionMqtt {
                         )
                     }.start()
                 } else {
-                    touchScreenConfigDB.touch_overTaskPic =
+                    tableTouchScreen.touch_overTaskPic =
                         Universal.gifDefault
                 }
             }
-            touchScreenConfigDB.save()
-            guideFoundationConfigDB.touchScreenConfig = touchScreenConfigDB
+            tableTouchScreen.save()
+            guideFoundationConfigDB.touchScreenConfig = tableTouchScreen
         }
-        if (guideFoundationConfigDB.save()){
+        if (guideFoundationConfigDB.save()) {
+            RobotStatus.newUpdata.postValue(2)
+        }
+    }
+
+    fun replyGreet(message: String) {
+        val gson = Gson()
+        val replyGreetGson = gson.fromJson(message, ReplyGreetConfigModel::class.java)
+        RobotStatus.replyGreet?.value = replyGreetGson
+
+        LitePal.deleteAll(Table_Greet_Config::class.java)
+
+        val replyTableGreetConfig =
+            Table_Greet_Config()
+        replyTableGreetConfig.greetPoint = replyGreetGson.greetPoint
+        replyTableGreetConfig.firstPrompt = replyGreetGson.firstPrompt
+        replyTableGreetConfig.strangerPrompt = replyGreetGson.strangerPrompt
+        replyTableGreetConfig.vipPrompt = replyGreetGson.vipPrompt
+        replyTableGreetConfig.exitPrompt = replyGreetGson.exitPrompt
+        replyTableGreetConfig.timeStamp = replyGreetGson.timeStamp
+        //大屏幕配置
+        if (replyGreetGson.bigScreenConfig!!.screen == 1) {
+            val tableBigScreen =
+                Table_Big_Screen()
+            //配置类型
+            tableBigScreen.type =
+                replyGreetGson.bigScreenConfig!!.type!!
+            if (replyGreetGson.bigScreenConfig!!.argPic != null) {
+                //图片布局
+                tableBigScreen.picType =
+                    replyGreetGson.bigScreenConfig!!.argPic?.picType!!
+                //轮播时间
+                tableBigScreen.picPlayTime =
+                    replyGreetGson.bigScreenConfig!!.argPic!!.picPlayTime
+                //图片
+                MqttMessageHandler.openFile(Universal.robotFile + "replyGreet/big/")
+
+                val picfile = MqttMessageHandler.compareArrays(
+                    Universal.robotFile + "replyGreet/big/",
+                    replyGreetGson.bigScreenConfig!!.argPic!!.pics
+                )
+                //创建对应文件夹。以路线名字命名(存放大屏幕)
+                tableBigScreen.imageFile =
+                    Universal.robotFile + "replyGreet/big/"
+                Thread {
+                    for (i in picfile!!.indices) {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + picfile[i],
+                            Universal.robotFile + "replyGreet/big/",
+                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MyApplication.listener
+                        )
+                    }
+                }.start()
+            }
+            if (replyGreetGson.bigScreenConfig!!.argFont != null) {
+                //文字
+                tableBigScreen.fontContent =
+                    replyGreetGson.bigScreenConfig!!.argFont?.fontContent
+                //文字颜色
+                tableBigScreen.fontColor =
+                    replyGreetGson.bigScreenConfig!!.argFont?.fontColor
+                //文字大小 1-大，2-中，3-小,
+                tableBigScreen.fontSize =
+                    replyGreetGson.bigScreenConfig!!.argFont?.fontSize!!
+                //文字方向 1-横向，2-纵向
+                tableBigScreen.fontLayout =
+                    replyGreetGson.bigScreenConfig!!.argFont?.fontLayout!!
+                //背景颜色
+                tableBigScreen.fontBackGround =
+                    replyGreetGson.bigScreenConfig!!.argFont?.fontBackGround
+                //文字显示位置  0-居中 1-居上 2-居下
+                tableBigScreen.textPosition =
+                    replyGreetGson.bigScreenConfig!!.argFont?.textPosition!!
+            }
+            if (replyGreetGson.bigScreenConfig!!.argVideo != null) {
+                //视频是否播放声音
+                tableBigScreen.videoAudio =
+                    replyGreetGson.bigScreenConfig!!.argVideo?.videoAudio!!
+                tableBigScreen.videolayout =
+                    replyGreetGson.bigScreenConfig!!.argVideo?.videoLayOut!!
+                //视频储存位置
+                //创建对应文件夹。以路线名字命名(存放大屏幕)
+                MqttMessageHandler.openFile(Universal.robotFile + "replyGreet/big/")
+
+                val picfile = MqttMessageHandler.compareArrays(
+                    Universal.robotFile + "replyGreet/big/",
+                    replyGreetGson.bigScreenConfig!!.argVideo?.videos!!
+                )
+                tableBigScreen.videoFile =
+                    Universal.robotFile + "replyGreet/big/"
+                Thread {
+                    for (i in picfile!!.indices) {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + picfile[i],
+                            Universal.robotFile + "replyGreet/big/",
+                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MyApplication.listener
+                        )
+                    }
+                }.start()
+            }
+            tableBigScreen.save()
+            replyTableGreetConfig.bigScreenConfig = tableBigScreen
+        }
+        //小屏幕配置
+        if (replyGreetGson.touchScreenConfig!!.screen == 0) {
+            //创建对应文件夹。以路线名字命名(存放主屏幕)
+            MqttMessageHandler.openFile(Universal.robotFile + "replyGreet/touch/")
+            val tableTouchScreen =
+                Table_Touch_Screen()
+            //配置类型
+            tableTouchScreen.touch_type =
+                replyGreetGson.touchScreenConfig!!.type!!
+            if (replyGreetGson.touchScreenConfig!!.argPic != null) {
+                //图片布局
+                tableTouchScreen.touch_picType =
+                    replyGreetGson.touchScreenConfig!!.argPic?.picType!!
+                //轮播时间
+                tableTouchScreen.touch_picPlayTime =
+                    replyGreetGson.touchScreenConfig!!.argPic?.picPlayTime!!
+                //图片路径
+                if (replyGreetGson.touchScreenConfig!!.argPic?.pics!!.isNotEmpty()) {
+                    val picfile = MqttMessageHandler.compareArrays(
+                        Universal.robotFile + "replyGreet/touch/",
+                        replyGreetGson.touchScreenConfig!!.argPic?.pics!!
+                    )
+                    tableTouchScreen.touch_imageFile =
+                        Universal.robotFile + "replyGreet/touch/"
+                    Thread {
+                        for (i in picfile!!.indices) {
+                            DownloadBill.getInstance().addTask(
+                                Universal.pathDownload + picfile[i],
+                                Universal.robotFile + "replyGreet/touch/",
+                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MyApplication.listener
+                            )
+                        }
+                    }.start()
+                }
+            }
+            if (replyGreetGson.touchScreenConfig!!.argFont != null) {
+                //文字
+                tableTouchScreen.touch_fontContent =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.fontContent
+                //文字颜色
+                tableTouchScreen.touch_fontColor =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.fontColor
+                //文字大小 1-大，2-中，3-小,
+                tableTouchScreen.touch_fontSize =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.fontSize
+                //文字方向 1-横向，2-纵向
+                tableTouchScreen.touch_fontLayout =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.fontLayout
+                //背景颜色
+                tableTouchScreen.touch_fontBackGround =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.fontBackGround
+                //文字显示位置  0-居中 1-居上 2-居下
+                tableTouchScreen.touch_textPosition =
+                    replyGreetGson.touchScreenConfig!!.argFont!!.textPosition
+            }
+            if (replyGreetGson.touchScreenConfig!!.argPicGroup != null) {
+                //行走中
+                if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
+                    tableTouchScreen.touch_walkPic =
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                            replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic,
+                            Universal.robotFile + "replyGreet/group/",
+                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    tableTouchScreen.touch_walkPic = Universal.gifDefault
+                }
+                //被阻挡
+                if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
+                    tableTouchScreen.touch_blockPic =
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                            replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!,
+                            Universal.robotFile + "replyGreet/group/",
+                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    tableTouchScreen.touch_blockPic =
+                        Universal.gifDefault
+                }
+                //到点
+                if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
+                    tableTouchScreen.touch_arrivePic =
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                            replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
+                            Universal.robotFile + "replyGreet/group/",
+                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    tableTouchScreen.touch_arrivePic =
+                        Universal.gifDefault
+                }
+                //返回
+                if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
+                    tableTouchScreen.touch_overTaskPic =
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                            replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
+                        )
+                    Thread {
+                        DownloadBill.getInstance().addTask(
+                            replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!,
+                            Universal.robotFile + "replyGreet/group/",
+                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
+                            MyApplication.listener
+                        )
+                    }.start()
+                } else {
+                    tableTouchScreen.touch_overTaskPic =
+                        Universal.gifDefault
+                }
+            }
+            tableTouchScreen.save()
+            replyTableGreetConfig.touchScreenConfig = tableTouchScreen
+        }
+        if (replyGreetGson.faceFeats!!.isNotEmpty()) {
+            val faceFeatsList = replyGreetGson.faceFeats // 人脸信息
+            val faceIterator = faceFeatsList?.iterator()
+            val faceFeats = ArrayList<Table_Face>() // 在循环外部初始化列表
+            // 迭代器开始遍历
+            while (faceIterator!!.hasNext()) {
+                val faceFeatsNext = faceIterator.next()
+                val tableFace = Table_Face()
+                tableFace.face_id = faceFeatsNext!!.face_id
+                tableFace.name = faceFeatsNext.name
+                tableFace.sexual = faceFeatsNext.sexual
+                tableFace.save()
+                faceFeats.add(tableFace) // 向列表中添加对象
+            }
+
+            replyTableGreetConfig.faceFeats = faceFeats // 设置所有对象的列表
+        }
+
+        // 如果输出存储成功
+        if (replyTableGreetConfig.save()) {
             RobotStatus.newUpdata.postValue(2)
         }
     }

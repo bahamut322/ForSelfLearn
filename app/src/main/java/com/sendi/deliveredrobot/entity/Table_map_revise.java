@@ -2,7 +2,7 @@ package com.sendi.deliveredrobot.entity;
 
 import org.litepal.crud.LitePalSupport;
 
-public class MapRevise extends LitePalSupport {
+public class Table_map_revise extends LitePalSupport {
     private int id;
     private String mapName;
     private long time;

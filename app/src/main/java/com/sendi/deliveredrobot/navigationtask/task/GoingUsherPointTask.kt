@@ -35,8 +35,7 @@ class GoingUsherPointTask(
         if(result == 1){
             MyApplication.instance!!.sendBroadcast(Intent().apply {
                 action = ACTION_NAVIGATE
-                //TODO 别忘记修改了哦
-//                putExtra(NAVIGATE_ID, R.id.goUsherPointFragment)
+                putExtra(NAVIGATE_ID, R.id.goingGreetFragment)
             })
         }
         DialogHelper.loadingDialog.dismiss()

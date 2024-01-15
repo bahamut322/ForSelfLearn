@@ -4,10 +4,11 @@ import org.litepal.crud.LitePalSupport;
 
 /**
  * @author swn
- * @describe 讲解配置大屏
+ * @describe 广告配置数据库
  */
-public class BigScreenConfigDB extends LitePalSupport {
-
+public class Table_Advertising extends LitePalSupport {
+    //时间戳
+    private Long timeStamp;
     //配置类型
     private int type;
     //图片布局
@@ -28,11 +29,6 @@ public class BigScreenConfigDB extends LitePalSupport {
     private int textPosition;
     //视频是否播放声音
     private int videoAudio;
-    //视频储存位置
-    private String videoFile;
-    //图片存储名字
-    private String imageFile;
-
     private int videolayout;
 
     public int getVideolayout() {
@@ -49,6 +45,14 @@ public class BigScreenConfigDB extends LitePalSupport {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public Long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public int getPicType() {
@@ -121,21 +125,5 @@ public class BigScreenConfigDB extends LitePalSupport {
 
     public void setVideoAudio(int videoAudio) {
         this.videoAudio = videoAudio;
-    }
-
-    public String getVideoFile() {
-        return videoFile;
-    }
-
-    public void setVideoFile(String videoFile) {
-        this.videoFile = videoFile;
-    }
-
-    public String getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
     }
 }

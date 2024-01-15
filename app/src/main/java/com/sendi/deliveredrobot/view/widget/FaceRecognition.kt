@@ -37,8 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.reflect.Type
 import com.google.gson.Gson
-import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.entity.FaceTips
+import com.sendi.deliveredrobot.entity.Table_Face
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.Similarity
 import java.util.Random
@@ -56,7 +55,7 @@ class FaceRecognition {
     private var manager = instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var speakNum = 0
     private var canSendData = true
-    private lateinit var doubleString: List<FaceTips>
+    private lateinit var doubleString: List<Table_Face>
     private val isProcessing = AtomicBoolean(false)
 
     /**
@@ -64,9 +63,8 @@ class FaceRecognition {
      * @param surfaceView 视频控件
      * @param width 图片宽
      * @param height 图片高
-     * @param needSpeaking BaiduTTS播报
      * @param owner LifecycleOwner
-     * @param needIdentify 开启人脸识别
+     * @param needEtiquette 开启人脸检测
      */
     @OptIn(DelicateCoroutinesApi::class)
     fun suerFaceInit(
@@ -74,9 +72,8 @@ class FaceRecognition {
         surfaceView: SurfaceView?,
         width: Int = 800,
         height: Int = 600,
-        needSpeaking: Boolean = false,
         owner: LifecycleOwner,
-        needIdentify: Boolean = false
+        needEtiquette: Boolean = false
     ) {
 
         var cameraIds = arrayOfNulls<String>(0)
@@ -138,7 +135,7 @@ class FaceRecognition {
                     GlobalScope.launch(Dispatchers.IO) {
                         if (canSendData) {
                             canSendData = false
-                            faceHttp(extractFeature, bm, needSpeaking, owner, needIdentify)
+                            faceHttp(extractFeature, bm, owner,needEtiquette)
                             FaceDataListener.setFaceBit(bm)
                         }
                     }
@@ -164,16 +161,15 @@ class FaceRecognition {
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
      * @param bitmap 要识别的的bitmap
-     * @param needSpeaking BaiduTTS播报
      * @param owner LifecycleOwner
+     * @param needEtiquette 是否开启人脸检测
      */
     @OptIn(DelicateCoroutinesApi::class)
     fun faceHttp(
         extractFeature: Boolean = false,
         bitmap: Bitmap,
-        needSpeaking: Boolean = false,
         owner: LifecycleOwner,
-        needIdentify: Boolean = false
+        needEtiquette: Boolean = false
     ) {
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -203,16 +199,16 @@ class FaceRecognition {
                     // Update data
                     if (faceModelList.isNotEmpty()) {
                         Log.d(TAG, "人脸检测解析数据：${faceModelList}")
-                        if (needSpeaking && !needIdentify) {
+                        if (needEtiquette && !extractFeature) {
                             checkFace(owner)
                         }
-                        if (needIdentify) {
+                        if (extractFeature) {
                             val allFeatures = faceModelList.map { it.feat }
-                            faceIdentify(allFeatures, owner)
+                            faceIdentify(allFeatures, owner,needEtiquette)
                         }
                     }
                     //需要人脸识别，但是人脸数据返回为空的时候可以继续发送数据
-                    if (needIdentify && faceModelList.isEmpty()) {
+                    if (extractFeature && faceModelList.isEmpty()) {
                         canSendData = true
                     }
                 }
@@ -231,7 +227,7 @@ class FaceRecognition {
 
                 override fun onFinished() {
                     // 请求完成，无论成功或失败都会调用
-                    if (!needIdentify) {
+                    if (!extractFeature) {
                         canSendData = true
                     }
                     Log.d(TAG, "人脸检测请求完成: ")
@@ -277,7 +273,7 @@ class FaceRecognition {
     @OptIn(DelicateCoroutinesApi::class)
     private fun checkFace(
         owner: LifecycleOwner,
-        speak: String = speakContent()
+        speak: String = QuerySql.selectGreetConfig().strangerPrompt
     ) {
         if (speakNum <= 0 && !isProcessing.get()) {
             speakNum = 1
@@ -298,7 +294,7 @@ class FaceRecognition {
 
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun faceIdentify(faces: List<List<Double>?>, owner: LifecycleOwner) {
+    fun faceIdentify(faces: List<List<Double>?>, owner: LifecycleOwner,needEtiquette : Boolean = false) {
         GlobalScope.launch(Dispatchers.IO) {
             val jsonParams = JSONObject()
             // 添加参数到JSON对象
@@ -319,7 +315,7 @@ class FaceRecognition {
                         val gson = Gson()
                         // 确保这里使用的是正确的数据类
                         val similarityResponse = gson.fromJson(result, Similarity::class.java)
-                        main(similarityResponse, owner)
+                        main(similarityResponse, owner,needEtiquette)
                     }
                 }
 
@@ -344,7 +340,7 @@ class FaceRecognition {
     }
 
 
-    fun main(similarityResponse: Similarity, owner: LifecycleOwner) {
+    fun main(similarityResponse: Similarity, owner: LifecycleOwner,needEtiquette : Boolean = false) {
         if (similarityResponse.similarity.isNotEmpty()) {
             val chunkSize = doubleString.size // 指定子列表的大小
 
@@ -369,16 +365,15 @@ class FaceRecognition {
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
                     owner,
-                   "尊敬的 ${ correspondingValues}，欢迎光临，我是${QuerySql.robotConfig().wakeUpWord}，有什么可以帮到您吗？"
-                )
+                    QuerySql.selectGreetConfig().vipPrompt.replace("%人脸姓名%",correspondingValues).replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord))
             } else {
                 println("人脸库：没有查到此人")
-                if (QuerySql.QueryBasic().etiquette) {
+                if (needEtiquette) {
                     checkFace(owner)
                 }
             }
         } else {
-            if (QuerySql.QueryBasic().etiquette) {
+            if (needEtiquette) {
                 checkFace(owner)
             }
         }
@@ -388,7 +383,7 @@ class FaceRecognition {
     /**
      * 将数据库中的人脸特征String转二位数组
      */
-    private fun faceList(doubleString: List<FaceTips>): MutableList<List<Double>> {
+    private fun faceList(doubleString: List<Table_Face>): MutableList<List<Double>> {
         // 假设这是你的 JSON 字符串列表
         val jsonStringList = doubleString.map { it.sexual }
         // 创建 Gson 实例

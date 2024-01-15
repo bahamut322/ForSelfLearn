@@ -23,7 +23,7 @@ import com.sendi.deliveredrobot.adapter.RouteFoldAdapter
 import com.sendi.deliveredrobot.adapter.SelLaserAdapter
 import com.sendi.deliveredrobot.adapter.base.i.OnItemClickListener2
 import com.sendi.deliveredrobot.databinding.FragmentCreateGeneralViewBinding
-import com.sendi.deliveredrobot.entity.MapRevise
+import com.sendi.deliveredrobot.entity.Table_map_revise
 import com.sendi.deliveredrobot.model.AllMapRelationshipModel
 import com.sendi.deliveredrobot.model.FoldSelMapModel
 import com.sendi.deliveredrobot.model.SelectPointModel
@@ -35,15 +35,12 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.CreateGeneralViewViewModel
-import javassist.bytecode.stackmap.TypeData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal.where
 import java.util.*
-import java.util.logging.Logger
-import kotlin.math.log
 
 
 /**
@@ -634,22 +631,23 @@ class CreateGeneralViewFragment : Fragment() {
 
 
                         Log.d("修改过的总图", "名字: ${generalViewName},修改时间: ${Date().time}")
-                        val isExist = where("mapName = ?", generalViewName).count(MapRevise::class.java) > 0
+                        val isExist = where("mapName = ?", generalViewName).count(Table_map_revise::class.java) > 0
                         if (!isExist){
-                            var newMapRevise = MapRevise()
-                            newMapRevise.mapName = generalViewName;
-                            newMapRevise.time = Date().time
-                            newMapRevise.save()
+                            var newTablemaprevise =
+                                Table_map_revise()
+                            newTablemaprevise.mapName = generalViewName;
+                            newTablemaprevise.time = Date().time
+                            newTablemaprevise.save()
                         } else {
-                            var mapRevise: MapRevise = where("mapName = ?", generalViewName)
-                                .findFirst(MapRevise::class.java)
-                            LogUtil.d("原数据: $mapRevise")
-                            mapRevise.time = Date().time //更新isMale字段为false
+                            var tablemaprevise: Table_map_revise = where("mapName = ?", generalViewName)
+                                .findFirst(Table_map_revise::class.java)
+                            LogUtil.d("原数据: $tablemaprevise")
+                            tablemaprevise.time = Date().time //更新isMale字段为false
 //                            val isUpdateSucc: Boolean = mapRevise.save() //改成用save()保存字段
 //                            LogUtil.d("更新time是否成功：$isUpdateSucc")
 //                            mapRevise = where("mapName = ?", "mapRevise")
 //                                .findFirst(MapRevise::class.java)
-                            LogUtil.d("新数据: $mapRevise")
+                            LogUtil.d("新数据: $tablemaprevise")
 //                            mapRevise.save()
                         }
 

@@ -6,15 +6,15 @@ import org.litepal.crud.LitePalSupport;
  *  @author swn
  *  @describe 讲解配置(讲解中目标点内容)
  */
-public class PointConfigVODB extends LitePalSupport {
+public class Table_Point_Config extends LitePalSupport {
     private String name;//点名
     private String walkText;//途径播报内容-播报语(200)
     private String explanationText;//讲解播报内容-播报语(200)
     private String walkVoice;//途径音频.mp3
     private String explanationVoice;//讲解音频.mp3
     private int scope;//排序
-    private BigScreenConfigDB bigScreenConfigDB;//讲解大屏配置
-    private TouchScreenConfigDB touchScreenConfigDB;//主屏幕讲解配置
+    private Table_Big_Screen bigScreenConfigDB;//讲解大屏配置
+    private Table_Touch_Screen touchScreenConfigDB;//主屏幕讲解配置
 
     public String getName() {
         return name;
@@ -64,19 +64,19 @@ public class PointConfigVODB extends LitePalSupport {
         this.scope = scope;
     }
 
-    public BigScreenConfigDB getBigScreenConfigDB() {
+    public Table_Big_Screen getBigScreenConfigDB() {
         return bigScreenConfigDB;
     }
 
-    public void setBigScreenConfigDB(BigScreenConfigDB bigScreenConfigDB) {
+    public void setBigScreenConfigDB(Table_Big_Screen bigScreenConfigDB) {
         this.bigScreenConfigDB = bigScreenConfigDB;
     }
 
-    public TouchScreenConfigDB getTouchScreenConfigDB() {
+    public Table_Touch_Screen getTouchScreenConfigDB() {
         return touchScreenConfigDB;
     }
 
-    public void setTouchScreenConfigDB(TouchScreenConfigDB touchScreenConfigDB) {
+    public void setTouchScreenConfigDB(Table_Touch_Screen touchScreenConfigDB) {
         this.touchScreenConfigDB = touchScreenConfigDB;
     }
 }

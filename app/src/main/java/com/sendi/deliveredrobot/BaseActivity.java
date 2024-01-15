@@ -25,20 +25,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.sendi.deliveredrobot.entity.AdvertisingConfigDB;
+import com.sendi.deliveredrobot.entity.Table_Advertising;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
-import com.sendi.deliveredrobot.helpers.DialogHelper;
-import com.sendi.deliveredrobot.interfaces.DownLoadListener;
-import com.sendi.deliveredrobot.navigationtask.DownloadBill;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.room.dao.DebugDao;
-import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap;
 
-import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.LogUtil;
-import com.sendi.deliveredrobot.utils.ToastUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.AdvanceView;
 import com.sendi.deliveredrobot.view.widget.Order;
@@ -74,7 +67,7 @@ public class BaseActivity extends AppCompatActivity {
     public int flag = 0;    //用于双屏显示： 0.none 1. media—router 2.display-manager
     public static final String TAG = "BaseActivity";
     private BaseViewModel baseViewModel;
-    AdvertisingConfigDB advertisingConfigDB;
+    Table_Advertising advertisingConfigDB;
     ConstraintLayout.LayoutParams layoutParamsVertical;
     ConstraintLayout.LayoutParams layoutParamsHorizontal;
     //onResume和onPause一般用来进行对presentation中的内容进行额外的处理

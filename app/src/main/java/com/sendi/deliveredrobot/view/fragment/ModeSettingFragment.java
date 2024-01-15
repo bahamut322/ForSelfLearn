@@ -337,7 +337,7 @@ public class ModeSettingFragment extends Fragment {
             }
             values.put("patrolcontent",stringBuffer.toString());
             String[] whereArgs = {QuerySql.QueryBasicId()+""};
-            UpDataSQL.update("basicsetting", values, "id = ?", whereArgs);
+            UpDataSQL.update("table_basic", values, "id = ?", whereArgs);
         }
     }
 

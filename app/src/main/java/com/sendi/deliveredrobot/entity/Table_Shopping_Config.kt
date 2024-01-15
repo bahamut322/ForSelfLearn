@@ -7,7 +7,7 @@ import org.litepal.crud.LitePalSupport
  * @Data 2023/11/7
  * @describe
  */
-data class ShoppingConfigDB(
+data class Table_Shopping_Config(
     //功能名称
     var name: String? = "业务办理",
     //首次点击提示

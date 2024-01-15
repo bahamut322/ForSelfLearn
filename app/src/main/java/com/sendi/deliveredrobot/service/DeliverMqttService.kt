@@ -8,29 +8,14 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.os.Message
-import android.util.Log
 import androidx.annotation.RequiresApi
-import com.alibaba.fastjson.JSONObject
 import com.sendi.deliveredrobot.BuildConfig
-import com.sendi.deliveredrobot.entity.ReplyGateConfig
-import com.sendi.deliveredrobot.entity.RobotConfigSql
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.DeliveMqttMessageHandler
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.ros.debug.MapTargetPointServiceImpl
 import com.sendi.deliveredrobot.utils.LogUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
-import org.litepal.LitePal
-import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.Locale.getDefault
-import java.util.TimeZone.getDefault
 
 
 /**

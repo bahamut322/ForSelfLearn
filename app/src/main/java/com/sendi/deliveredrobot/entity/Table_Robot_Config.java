@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.entity;
 import org.litepal.crud.LitePalSupport;
 
 //机器人默认配置数据库
-public class RobotConfigSql extends LitePalSupport {
+public class Table_Robot_Config extends LitePalSupport {
     //注释原因：在基础设置统一管理
 //    private int audioType;//声音类型
     private String wakeUpWord = "小迪小迪";//唤醒词
@@ -17,6 +17,7 @@ public class RobotConfigSql extends LitePalSupport {
     private String password = "8888";//密码
     private String chargePointName;//充电桩点名称
     private String waitingPointName;//待命点名称
+    private String slogan = "欢迎使用多功能服务机器人";//机器人标语
 
     public String getChargePointName() {
         return chargePointName;
@@ -113,4 +114,13 @@ public class RobotConfigSql extends LitePalSupport {
     public void setPicType(int picType) {
         this.picType = picType;
     }
+
+    public String getSlogan() {
+        return slogan;
+    }
+
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
 }

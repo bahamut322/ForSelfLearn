@@ -23,7 +23,7 @@
             android:layout_marginTop="17dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView59" />
+            app:layout_constraintTop_toBottomOf="@+id/slogan_name" />
 
         <ImageView
             android:id="@+id/imageViewSetting"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
 
         <TextView
-            android:id="@+id/textView59"
+            android:id="@+id/slogan_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_140"

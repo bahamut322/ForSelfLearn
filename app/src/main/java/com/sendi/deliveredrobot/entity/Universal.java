@@ -131,5 +131,7 @@ public class Universal {
     public static Boolean Finish = false;
     //用来处理按下点击暂停。并且急停之后，再松开，会顶着暂停页面走
     public static boolean explainUnSpeak = false;
+    public static String shoppingName = "";
+    public static int shoppingType = 0;
 }
 
