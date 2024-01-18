@@ -10,6 +10,7 @@ public class Table_Face extends LitePalSupport {
     private int face_id;
     @Column(nullable = false, defaultValue = "unKnow")
     private String name;
+    @Column(nullable = false, defaultValue = "unKnow")
     private String faceFeat;
 
     public int getFace_id() {

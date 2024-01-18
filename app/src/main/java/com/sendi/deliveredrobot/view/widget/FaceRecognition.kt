@@ -55,7 +55,7 @@ class FaceRecognition {
     private var manager = instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var speakNum = 0
     private var canSendData = true
-    private lateinit var doubleString: List<Table_Face>
+    private  var doubleString: ArrayList<Table_Face> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
 
     /**
