@@ -54,8 +54,8 @@ public class FaceImageDialog extends Dialog {
         mShowPathLv.setAdapter(adapter);
         mShowPathLv.setOnItemClickListener((parent, view, position, id) -> {
             dismiss();
-//            IdentifyDialog identifyDialog = new IdentifyDialog(context,getImagePathFromSD().get(position),owner);
-//            identifyDialog.show();
+            IdentifyDialog identifyDialog = new IdentifyDialog(context,getImagePathFromSD().get(position),owner);
+            identifyDialog.show();
         });
     }
 
