@@ -153,7 +153,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.businessBigModel?.postValue(
+        RobotStatus.SecondModel?.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,
@@ -180,7 +180,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.businessBigModel?.postValue(
+        RobotStatus.SecondModel?.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,

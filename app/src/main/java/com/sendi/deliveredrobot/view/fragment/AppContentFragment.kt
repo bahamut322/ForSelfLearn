@@ -100,16 +100,16 @@ class AppContentFragment : Fragment() {
         }
         binding.applicationGv.adapter = context?.let { ApplicationAdapter(it, applications) }
 
-        binding.applicationGv.onItemClickListener =   AdapterView.OnItemClickListener{
-                _, _, position, _ ->
-            LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
-            val args: Bundle = Bundle().apply {
-                // 设置 Bundle 对象参数数据
-                this.putString("ManagerUrl", applications[position].url)
-                this.putString("name",applications[position].name)
+        binding.applicationGv.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
+                val args: Bundle = Bundle().apply {
+                    // 设置 Bundle 对象参数数据
+                    this.putString("ManagerUrl", applications[position].url)
+                    this.putString("name", applications[position].name)
+                }
+                controller?.navigate(R.id.appManagerFragment, args)
             }
-            controller?.navigate(R.id.appManagerFragment, args)
-        }
     }
 
     //刷新

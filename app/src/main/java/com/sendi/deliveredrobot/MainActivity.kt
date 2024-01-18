@@ -441,141 +441,89 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             }
         }
         sdScreenStatus!!.observe(this) {
-            advertisingConfigDB = findFirst(Table_Advertising::class.java) //查询副屏第一条数据
-            if (sdScreenStatus!!.value == 0 && mPresentation != null ) {
-                doubleScreen = sdScreenStatus!!.value!!
-                if( advertisingConfigDB != null && advertisingConfigDB.type !=0) {
-                    layoutThis(
-                        advertisingConfigDB.picPlayTime,
-                        Universal.advertisement,
-                        advertisingConfigDB.type,
-                        advertisingConfigDB.textPosition,
-                        advertisingConfigDB.fontLayout,
-                        advertisingConfigDB.fontContent,
-                        advertisingConfigDB.fontBackGround,
-                        advertisingConfigDB.fontColor,
-                        advertisingConfigDB.fontSize,
-                        advertisingConfigDB.picType,
-                        advertisingConfigDB.videolayout,
-                        advertisingConfigDB.videoAudio,
-                        true
-                    )
-                }else{
-                    default(Universal.advDefault,true)
-                }
-            }
-            if (sdScreenStatus!!.value == 1 && mPresentation != null) {
-                doubleScreen = sdScreenStatus!!.value!!
-                if ( Universal.bigScreenType !=0) {
-                    layoutThis(
-                        Universal.picPlayTime,
-                        Universal.Secondary,
-                        Universal.bigScreenType,
-                        Universal.textPosition,
-                        Universal.fontLayout,
-                        Universal.fontContent,
-                        Universal.fontBackGround,
-                        Universal.fontColor,
-                        Universal.fontSize,
-                        Universal.picTypeNum,
-                        Universal.TempVideoLayout,
-                        Universal.AllvideoAudio,
-                        false
-                    )
-                }else{
-                    default(Universal.usherDefault,false)
-                }
-            }
-            if (sdScreenStatus!!.value == 2 && mPresentation != null) {
-                doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.SecondModel!!.value?.type !=0) {
-                    layoutThis(
-                        RobotStatus.SecondModel!!.value?.picPlayTime!!,
-                        RobotStatus.SecondModel!!.value?.file,
-                        RobotStatus.SecondModel!!.value?.type!!,
-                        RobotStatus.SecondModel!!.value?.textPosition!!,
-                        RobotStatus.SecondModel!!.value?.fontLayout!!,
-                        RobotStatus.SecondModel!!.value?.fontContent,
-                        RobotStatus.SecondModel!!.value?.fontBackGround,
-                        RobotStatus.SecondModel!!.value?.fontColor,
-                        RobotStatus.SecondModel!!.value?.fontSize!!,
-                        RobotStatus.SecondModel!!.value?.picType!!,
-                        RobotStatus.SecondModel!!.value?.videolayout!!,
-                        RobotStatus.SecondModel!!.value?.videoAudio!!
-                        ,false
-                    )
-                }else{
-                    default(Universal.explainDefault,false)
-                }
-            }
-
-            if (sdScreenStatus!!.value == 4 && mPresentation != null) {
-                doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.businessBigModel!!.value?.type !=0) {
-                    layoutThis(
-                        RobotStatus.businessBigModel!!.value?.picPlayTime!!,
-                        RobotStatus.businessBigModel!!.value?.file,
-                        RobotStatus.businessBigModel!!.value?.type!!,
-                        RobotStatus.businessBigModel!!.value?.textPosition!!,
-                        RobotStatus.businessBigModel!!.value?.fontLayout!!,
-                        RobotStatus.businessBigModel!!.value?.fontContent,
-                        RobotStatus.businessBigModel!!.value?.fontBackGround,
-                        RobotStatus.businessBigModel!!.value?.fontColor,
-                        RobotStatus.businessBigModel!!.value?.fontSize!!,
-                        RobotStatus.businessBigModel!!.value?.picType!!,
-                        RobotStatus.businessBigModel!!.value?.videolayout!!,
-                        RobotStatus.businessBigModel!!.value?.videoAudio!!,
-                        false
-                    )
-                }else{
-                    default(Universal.businessDefault,false)
-                }
-            }
-
-            if (sdScreenStatus!!.value == 3 && mPresentation != null) {
-                doubleScreen = sdScreenStatus!!.value!!
-                if (RobotStatus.businessBigModel!!.value?.type !=0) {
-                    layoutThis(
-                        RobotStatus.businessBigModel!!.value?.picPlayTime!!,
-                        RobotStatus.businessBigModel!!.value?.file,
-                        RobotStatus.businessBigModel!!.value?.type!!,
-                        RobotStatus.businessBigModel!!.value?.textPosition!!,
-                        RobotStatus.businessBigModel!!.value?.fontLayout!!,
-                        RobotStatus.businessBigModel!!.value?.fontContent,
-                        RobotStatus.businessBigModel!!.value?.fontBackGround,
-                        RobotStatus.businessBigModel!!.value?.fontColor,
-                        RobotStatus.businessBigModel!!.value?.fontSize!!,
-                        RobotStatus.businessBigModel!!.value?.picType!!,
-                        RobotStatus.businessBigModel!!.value?.videolayout!!,
-                        RobotStatus.businessBigModel!!.value?.videoAudio!!,
-                        false
-                    )
-                }else{
-                    default(Universal.guideDefault,false)
-                }
-            }
-
-        }
-        RobotStatus.SecondModel!!.observe(this) {
+            val status = sdScreenStatus!!.value
             if (mPresentation != null) {
-                layoutThis(
-                    it?.picPlayTime ?: 30,
-                    it?.file ?: "",
-                    it?.type ?: 0,
-                    it?.textPosition ?: 0,
-                    it?.fontLayout?: 0,
-                    it?.fontContent,
-                    it?.fontBackGround,
-                    it?.fontColor,
-                    it?.fontSize?: 0,
-                    it?.picType?: 0,
-                    it?.videolayout?: 0,
-                    it?.videoAudio?: 0,
-                    false
-                )
+                doubleScreen = status!!
+                when (status) {
+                    0 -> {
+                        val config = findFirst(Table_Advertising::class.java)
+                        if (config != null && config.type != 0) {
+                            layoutThis(
+                                config.picPlayTime,
+                                Universal.advertisement,
+                                config.type,
+                                config.textPosition,
+                                config.fontLayout,
+                                config.fontContent,
+                                config.fontBackGround,
+                                config.fontColor,
+                                config.fontSize,
+                                config.picType,
+                                config.videolayout,
+                                config.videoAudio,
+                                true
+                            )
+                        } else {
+                            default(Universal.advDefault, true)
+                        }
+                    }
+                    1 -> {
+                        if (Universal.bigScreenType != 0) {
+                            layoutThis(
+                                Universal.picPlayTime,
+                                Universal.Secondary,
+                                Universal.bigScreenType,
+                                Universal.textPosition,
+                                Universal.fontLayout,
+                                Universal.fontContent,
+                                Universal.fontBackGround,
+                                Universal.fontColor,
+                                Universal.fontSize,
+                                Universal.picTypeNum,
+                                Universal.TempVideoLayout,
+                                Universal.AllvideoAudio,
+                                false
+                            )
+                        } else {
+                            default(Universal.usherDefault, false)
+                        }
+                    }
+                    2, 3, 4, 5 -> {
+                        val secondModel = RobotStatus.SecondModel!!.value
+                        if (secondModel?.type != 0) {
+                            layoutThis(
+                                secondModel?.picPlayTime!!,
+                                secondModel.file,
+                                secondModel.type!!,
+                                secondModel.textPosition!!,
+                                secondModel.fontLayout!!,
+                                secondModel.fontContent,
+                                secondModel.fontBackGround,
+                                secondModel.fontColor,
+                                secondModel.fontSize!!,
+                                secondModel.picType!!,
+                                secondModel.videolayout!!,
+                                secondModel.videoAudio!!,
+                                false
+                            )
+                        } else {
+                            val defaultType = when (status) {
+                                2 -> Universal.explainDefault
+                                3 -> Universal.guideDefault
+                                4 -> Universal.businessDefault
+                                else -> Universal.advDefault
+                            }
+                            default(defaultType, false)
+                        }
+                    }
+                    else -> {
+                        // Handle any other unexpected status values if necessary
+                    }
+                }
             }
         }
-        RobotStatus.businessBigModel!!.observe(this) {
+
+        RobotStatus.SecondModel!!.observe(this) {
             if (mPresentation != null) {
                 layoutThis(
                     it?.picPlayTime ?: 30,

@@ -36,5 +36,5 @@ data class RobotConfig(
 //待命点
     val waitingPointName: String? = "",
     val argConfig: TopLevelConfig?,
-    val slogan : String = "欢迎使用多功能服务机器人"
+    val slogan : String? = "欢迎使用多功能服务机器人"
 )

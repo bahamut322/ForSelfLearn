@@ -22,6 +22,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessingBinding
 import com.sendi.deliveredrobot.entity.Table_Shopping_Action
+import com.sendi.deliveredrobot.entity.TouchScreenShow
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
@@ -60,9 +61,7 @@ class BusinessIngFragment : Fragment() {
     private var finishTaskDialog: FinishTaskDialog? = null
     private val liveData1 = RobotStatus.ArrayPointExplan
     private val liveData2 = RobotStatus.progress
-    private var layoutParamsVertical: ConstraintLayout.LayoutParams? = null
-    private var layoutParamsHorizontal: ConstraintLayout.LayoutParams? = null
-    private  var taskId = ""
+    private var taskId = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +92,7 @@ class BusinessIngFragment : Fragment() {
             Universal.shoppingName,
             Universal.shoppingType
         )
-        LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
+        LogUtil.d("数据内容：${JSONObject.toJSONString(actionData)}")
 
 
         TaskArray.setOnChangeListener {
@@ -111,7 +110,11 @@ class BusinessIngFragment : Fragment() {
         //小屏显示
         try {
             //正常图片&文字
-            layoutThis(
+            TouchScreenShow().layoutThis(
+                binding.bgCon,
+                binding.verticalTV,
+                binding.horizontalTV,
+                binding.pointImage,
                 actionData?.touchScreenConfig!!.touch_picPlayTime,
                 actionData?.touchScreenConfig!!.touch_imageFile ?: "",
                 actionData?.touchScreenConfig!!.touch_type,
@@ -144,17 +147,17 @@ class BusinessIngFragment : Fragment() {
                     BaiduTTSHelper.getInstance().speaks(actionData?.moveText!!)
 //                    viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
                     binding.businessName.text =
-                        String.format(getString(R.string.business_going),  Universal.shoppingName)
+                        String.format(getString(R.string.business_going), Universal.shoppingName)
                     Universal.businessTask = actionData!!.name
                 }
             } else {
                 BaiduTTSHelper.getInstance().speaks(actionData?.standText!!)
 //                viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
-                    String.format(getString(R.string.business_doing),  Universal.shoppingName)
+                    String.format(getString(R.string.business_doing), Universal.shoppingName)
                 //上报定点任务执行中
                 ReportDataHelper.reportTaskDto(
-                    TaskModel(endTarget = "定点导购",taskId =taskId),
+                    TaskModel(endTarget = "定点导购", taskId = taskId),
                     TaskStageEnum.BusinessIngTask,
                     UpdateReturn().taskDto()
                 )
@@ -309,7 +312,7 @@ class BusinessIngFragment : Fragment() {
             viewModel!!.countDownTimer!!.cancel()
             //中断导购上报
             ReportDataHelper.reportTaskDto(
-                TaskModel(endTarget = "定点导购",taskId =taskId),
+                TaskModel(endTarget = "定点导购", taskId = taskId),
                 TaskStageEnum.EarlyFinishBusinessTask,
                 UpdateReturn().taskDto()
             )
@@ -333,7 +336,7 @@ class BusinessIngFragment : Fragment() {
                     finishTaskDialog?.dismiss()
                     //导购结束上报
                     ReportDataHelper.reportTaskDto(
-                        TaskModel(endTarget = "定点导购",taskId = taskId),
+                        TaskModel(endTarget = "定点导购", taskId = taskId),
                         TaskStageEnum.FinishBusinessTask,
                         UpdateReturn().taskDto()
                     )
@@ -344,245 +347,6 @@ class BusinessIngFragment : Fragment() {
         finishTaskDialog?.NoExit?.setOnClickListener {
             viewModel!!.countDownTimer!!.resume()
             finishTaskDialog?.dismiss()
-        }
-    }
-
-    /**
-     * @param picPlayTime    轮播时间
-     * @param file           路径
-     * @param type           类型： 1-图片 2-视频 6-文字 7-图片+文字
-     * @param textPosition   文字x位置
-     * @param fontLayout     文字方向：1-横向，2-纵向
-     * @param fontContent    文字
-     * @param fontBackGround 背景颜色
-     * @param fontColor      文字颜色
-     * @param fontSize       文字大小：1-大，2-中，3-小,
-     * @param picType        图片样式
-     */
-    private fun layoutThis(
-        picPlayTime: Int?,
-        file: String?,
-        type: Int?,
-        textPosition: Int?,
-        fontLayout: Int?,
-        fontContent: String?,
-        fontBackGround: String?,
-        fontColor: String?,
-        fontSize: Int?,
-        picType: Int?
-    ) {
-        when (type) {
-            1, 2 -> {
-                //读取文件
-                getFilesAllName(file, picType!!, picPlayTime!!)
-                binding.verticalTV.visibility = View.GONE
-                binding.horizontalTV.visibility = View.GONE
-                binding.pointImage.visibility = View.VISIBLE
-            }
-
-            6 -> {
-                binding.pointImage.visibility = View.GONE
-                layoutParamsVertical =
-                    binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
-                layoutParamsHorizontal =
-                    binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
-                when (textPosition) {
-                    0 -> {
-//                        binding.horizontalTV.gravity = Gravity.CENTER //居中
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-
-                    1 -> {
-//                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParamsHorizontal!!.bottomToBottom =
-                            ConstraintLayout.LayoutParams.UNSET
-                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
-                        layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParamsVertical
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-
-                    2 -> {
-//                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
-                        layoutParamsHorizontal!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
-                        layoutParamsVertical!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParamsVertical
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-                }
-            }
-
-            7 -> {
-                //读取文件
-                getFilesAllName(file, picType!!, picPlayTime!!)
-                layoutParamsVertical =
-                    binding.verticalTV.layoutParams as ConstraintLayout.LayoutParams
-                layoutParamsHorizontal =
-                    binding.horizontalTV.layoutParams as ConstraintLayout.LayoutParams
-                when (textPosition) {
-                    0 -> {
-                        binding.horizontalTV.gravity = Gravity.CENTER //居中
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-
-                    1 -> {
-//                        binding.horizontalTV.gravity = Gravity.TOP //居上
-                        layoutParamsHorizontal!!.bottomToBottom =
-                            ConstraintLayout.LayoutParams.UNSET
-                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
-                        layoutParamsVertical!!.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParamsVertical
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-
-                    2 -> {
-//                        binding.horizontalTV.gravity = Gravity.BOTTOM //居下
-                        layoutParamsHorizontal!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.horizontalTV.layoutParams = layoutParamsHorizontal
-                        layoutParamsVertical!!.topToTop = ConstraintLayout.LayoutParams.UNSET
-                        binding.verticalTV.layoutParams = layoutParamsVertical
-                        textLayoutThis(
-                            fontLayout!!,
-                            fontContent!!,
-                            fontBackGround!!,
-                            fontColor!!,
-                            fontSize!!
-                        )
-                    }
-                }
-                binding.pointImage.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    /**
-     * @param fontLayout     文字方向：1-横向，2-纵向
-     * @param fontContent    文字
-     * @param fontBackGround 背景颜色
-     * @param fontColor      文字颜色
-     * @param fontSize       文字大小：1-大，2-中，3-小,
-     */
-    private fun textLayoutThis(
-        fontLayout: Int,
-        fontContent: String,
-        fontBackGround: String,
-        fontColor: String,
-        fontSize: Int
-    ) {
-
-        //横向
-        if (fontLayout == 1) {
-            //隐藏纵向文字，显示横向文字
-            binding.verticalTV.visibility = View.GONE
-            binding.horizontalTV.visibility = View.VISIBLE
-            //显示内容
-            binding.horizontalTV.text = baseViewModel!!.getLength(fontContent)
-            //背景颜色&图片
-            binding.bgCon.setBackgroundColor(Color.parseColor(fontBackGround + ""))
-            //文字颜色
-            binding.horizontalTV.setTextColor(Color.parseColor(fontColor + ""))
-            //字体大小
-            when (fontSize) {
-                1 -> {
-                    binding.horizontalTV.textSize = 30F
-                }
-
-                2 -> {
-                    binding.horizontalTV.textSize = 20F
-                }
-
-                3 -> {
-                    binding.horizontalTV.textSize = 10F
-                }
-            }
-        } else {
-            //纵向
-            //隐藏横向文字，显示纵向文字
-            binding.verticalTV.visibility = View.VISIBLE
-            binding.horizontalTV.visibility = View.GONE
-            //显示内容
-            binding.verticalTV.text = fontContent
-            //背景颜色
-            binding.bgCon.setBackgroundColor(Color.parseColor(fontBackGround + ""))
-            //文字颜色
-            binding.verticalTV.textColor = Color.parseColor(fontColor + "")
-            //字体大小
-            when (fontSize) {
-                1 -> {
-                    binding.verticalTV.textSize = 30
-                }
-
-                2 -> {
-                    binding.verticalTV.textSize = 20
-                }
-
-                3 -> {
-                    binding.verticalTV.textSize = 10
-                }
-            }
-        }
-    }
-
-    private fun getFilesAllName(path: String?, picType: Int, picPlayTime: Int) {
-        try {
-            val file = File(path!!)
-            if (file.isFile) {
-                // This is a file
-                val fileList: MutableList<Advance> = ArrayList()
-                if (BaseViewModel.checkIsImageFile(file.path)) {
-                    fileList.add(Advance(file.path, "2", picType, picPlayTime)) // image
-                } else {
-                    fileList.add(Advance(file.path, "1", 1, picPlayTime)) // video
-                }
-                binding.pointImage.setData(fileList)
-            } else if (file.isDirectory) {
-                // This is a directory
-                val files = file.listFiles()
-                if (files != null) {
-                    val fileList: MutableList<Advance> = ArrayList()
-                    for (value in files) {
-                        if (BaseViewModel.checkIsImageFile(value.path)) {
-                            fileList.add(Advance(value.path, "2", picType, picPlayTime)) // image
-                        } else {
-                            fileList.add(Advance(value.path, "1", 1, picPlayTime)) // video
-                        }
-                    }
-                    binding.pointImage.setData(fileList)
-                }
-            }
-        } catch (e: Exception) {
-            Log.d("TAG", "轮播数据读取异常: $e")
         }
     }
 }

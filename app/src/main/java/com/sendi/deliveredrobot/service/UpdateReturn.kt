@@ -68,7 +68,8 @@ class UpdateReturn {
             timeStampReplyGateConfig = replyGateConfigDatum.timeStamp
         }
         val robotConfigData: List<Table_Robot_Config> = LitePal.findAll(
-            Table_Robot_Config::class.java)
+            Table_Robot_Config::class.java
+        )
         for (robotConfigDatum in robotConfigData) {
             timeStampRobotConfigSql = robotConfigDatum.timeStamp
         }
@@ -118,7 +119,8 @@ class UpdateReturn {
                         }
                         //添加数据
                         //查询地图修改的时间戳
-                        val isExist = where("mapName = ?", key).count(Table_map_revise::class.java) > 0
+                        val isExist =
+                            where("mapName = ?", key).count(Table_map_revise::class.java) > 0
                         if (!isExist) {
                             val sendMapPoint = SendMapPoint(0, key, sendFloor)
                             mapPoint.add(sendMapPoint)
@@ -145,21 +147,23 @@ class UpdateReturn {
 
                 val jsonObject = JSONObject()//时间戳
                 try {
-                jsonObject["type"] = "queryConfigTime"
-                jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
-                jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
-                jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
-                jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
-                jsonObject["routes"] =
-                    QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
-                // 将baseTimeStamp和actions添加到shoppingGuide对象中
-                shoppingGuide["baseTimeStamp"] = baseTimeStamp
-                shoppingGuide["actions"] = actions
-                // 创建一个包含shoppingGuide的更大的JSONObject
-                jsonObject["shoppingGuide"] = shoppingGuide
-                jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp ?: 0
-                jsonObject["guide"] = QuerySql.sendGuideConfig()
-                }catch (_:Exception){}
+                    jsonObject["type"] = "queryConfigTime"
+                    jsonObject["robotTimeStamp"] = timeStampRobotConfigSql
+                    jsonObject["gateTimeStamp"] = timeStampReplyGateConfig
+                    jsonObject["explanationTimeStamp"] = QuerySql.QueryExplainConfig().timeStamp
+                    jsonObject["greetTimeStamp"] = QuerySql.selectGreetConfig().timeStamp
+                    jsonObject["advertTimeStamp"] = QuerySql.advTimeStamp()
+                    jsonObject["routes"] =
+                        QuerySql.QueryRoutesSendMessage(queryAllMapPointsDao.queryCurrentMapName())
+                    // 将baseTimeStamp和actions添加到shoppingGuide对象中
+                    shoppingGuide["baseTimeStamp"] = baseTimeStamp
+                    shoppingGuide["actions"] = actions
+                    // 创建一个包含shoppingGuide的更大的JSONObject
+                    jsonObject["shoppingGuide"] = shoppingGuide
+                    jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp ?: 0
+                    jsonObject["guide"] = QuerySql.sendGuideConfig()
+                } catch (_: Exception) {
+                }
 
                 CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)
                 //上报版本
@@ -336,7 +340,7 @@ class UpdateReturn {
                     )
                 }
             }
-            if (chargePoint != null ) {
+            if (chargePoint != null) {
                 sendMapData()
             }
             DialogHelper.loadingDialog.dismiss()

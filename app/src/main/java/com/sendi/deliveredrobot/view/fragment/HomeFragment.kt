@@ -554,7 +554,7 @@ class HomeFragment : Fragment(), IMainView {
         }
         RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
-            binding.sloganName.text = it.slogan
+            binding.sloganName.text = it.slogan ?: getString(R.string.Welcome_used)
         }
     }
 

@@ -109,15 +109,6 @@ public class StartExplainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("", "onCreate页面进入");
         explantionNameModel = new ExplantionNameModel();
-//        Consumer<String> taskConsumer = task -> {
-//            // 执行任务的代码
-//            if (BuildConfig.IS_SPEAK) {
-//                BaiduTTSHelper.getInstance().speaks(task, "explanation");
-//            }
-//            LogUtil.INSTANCE.i("Task: " + task);
-//        };
-//        // 创建TaskQueue实例
-//        Universal.taskQueue = new TaskQueues<>(taskConsumer);
 
     }
 
@@ -190,17 +181,12 @@ public class StartExplainFragment extends Fragment {
                     Universal.taskNum = 0;
                     Universal.progress = 0;
                     BaiduTTSHelper.getInstance().stop();
-                    //删除讲解队列
-//                    if (Universal.taskQueue != null) {
-//                        Universal.taskQueue.clear();
-//                    }
 
                     MediaPlayerHelper.getInstance().stop();
                     RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                     binding.acceptstationTv.stopPlay();
 
                     BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().getInterruptionText());
-//                    viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
                     viewModel.finishTask();
                 });
 
@@ -710,10 +696,8 @@ public class StartExplainFragment extends Fragment {
                     binding.acceptstationTv.setText(textEqually.get(beforePage));
                     LogUtil.INSTANCE.i("当前页数: " + beforePage);
                     //将第一页的内容再次等分成BaiduTTS可以朗读的范围
-//                Universal.taskNum = viewModel.splitString(textEqually.get(beforePage), Universal.BaiduSpeakLength).size();
                     BaiduTTSHelper.getInstance().speaks(mData.get(position).getExplanationtext());
 
-//                    viewModel.splitTextByPunctuation(mData.get(position).getExplanationtext());
 
                     RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                         if (nextTaskToDo) {
@@ -857,18 +841,13 @@ public class StartExplainFragment extends Fragment {
             changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(viewModel.inForListData()).get(position).getName());
             changingOverDialog.Sure.setOnClickListener(v -> {
-//                if (Universal.taskQueue != null) {
-//                    Universal.taskQueue.clear();
-//                }
                 BaiduTTSHelper.getInstance().stop();
                 Universal.taskNum = 0;
                 beforePage = -1;
-//                isMethodExecuted = false;
                 Universal.progress = 0;
                 MediaPlayerHelper.getInstance().stop();
                 binding.acceptstationTv.stopPlay();
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(null);
-//                RobotStatus.INSTANCE.getProgress().postValue(0);
                 binding.acceptstationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
                 changingOverDialog.dismiss();

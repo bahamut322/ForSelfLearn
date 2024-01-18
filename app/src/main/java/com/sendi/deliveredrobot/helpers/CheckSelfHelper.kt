@@ -412,12 +412,7 @@ object CheckSelfHelper {
 
         // 检查目录是否存在
         if (!directory.exists() || !directory.isDirectory) {
-            // 如果目录不存在或不是目录，写入默认值并返回
-            FileOutputStream(directory).use { fos ->
-                BufferedWriter(OutputStreamWriter(fos)).use { writer ->
-                    writer.write(defaultContent)
-                }
-            }
+            //不存在就返回默认值
             return defaultContent
         }
         val stringBuilder = StringBuilder()
