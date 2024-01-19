@@ -1,5 +1,11 @@
 package com.sendi.deliveredrobot.entity;
 
+import com.sendi.deliveredrobot.model.ExpressionConfiguration;
+import com.sendi.deliveredrobot.model.PictureConfiguration;
+import com.sendi.deliveredrobot.model.TextConfiguration;
+import com.sendi.deliveredrobot.model.TopLevelConfig;
+import com.sendi.deliveredrobot.model.VideoConfiguration;
+
 import org.litepal.crud.LitePalSupport;
 
 /**
@@ -137,5 +143,38 @@ public class Table_Big_Screen extends LitePalSupport {
 
     public void setImageFile(String imageFile) {
         this.imageFile = imageFile;
+    }
+
+
+    public static Table_Big_Screen create(TopLevelConfig topLevelConfig){
+        PictureConfiguration argPic = topLevelConfig.getArgPic();
+        TextConfiguration argFont = topLevelConfig.getArgFont();
+        VideoConfiguration argVideo = topLevelConfig.getArgVideo();
+        ExpressionConfiguration argPicGroup = topLevelConfig.getArgPicGroup();
+        String argRadio = topLevelConfig.getArgRadio();
+
+        Table_Big_Screen table_big_screen = new Table_Big_Screen();
+        table_big_screen.setType(topLevelConfig.getType() != null?topLevelConfig.getType() : -1);
+
+        if (argPic != null) {
+            table_big_screen.setPicType(argPic.getPicType());
+            table_big_screen.setPicPlayTime(argPic.getPicPlayTime());
+            table_big_screen.setImageFile(argPic.getPics());
+        }
+        if (argFont != null) {
+            table_big_screen.setFontContent(argFont.getFontContent());
+            table_big_screen.setFontColor(argFont.getFontColor());
+            table_big_screen.setFontSize(argFont.getFontSize());
+            table_big_screen.setFontLayout(argFont.getFontLayout());
+            table_big_screen.setFontBackGround(argFont.getFontBackGround());
+            table_big_screen.setTextPosition(argFont.getTextPosition());
+        }
+        if(argVideo != null){
+            table_big_screen.setVideoAudio(argVideo.getVideoAudio());
+            table_big_screen.setVideoFile(argVideo.getVideos());
+            table_big_screen.videolayout = argVideo.getVideoLayOut();
+        }
+
+        return table_big_screen;
     }
 }

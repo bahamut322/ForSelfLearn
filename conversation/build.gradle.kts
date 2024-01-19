@@ -5,13 +5,13 @@ plugins {
 
 android {
 //    namespace = "com.sendi.fooddeliveryrobot"
-    compileSdk = 33
+    compileSdk = 30
     ndkVersion = "22.1.7171670"
 
     defaultConfig {
 //        applicationId = "com.sendi.fooddeliveryrobot"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0"
 

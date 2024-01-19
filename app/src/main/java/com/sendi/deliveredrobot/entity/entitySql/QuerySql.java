@@ -2,6 +2,8 @@ package com.sendi.deliveredrobot.entity.entitySql;
 
 import android.database.Cursor;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.sendi.deliveredrobot.entity.Table_Big_Screen;
 
 import com.sendi.deliveredrobot.entity.Table_Face;
@@ -12,6 +14,7 @@ import com.sendi.deliveredrobot.entity.Table_Shopping_Action;
 import com.sendi.deliveredrobot.entity.Table_Shopping_Config;
 import com.sendi.deliveredrobot.entity.Table_Touch_Screen;
 import com.sendi.deliveredrobot.model.ADVModel;
+import com.sendi.deliveredrobot.model.ApplicationModel;
 import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
 import com.sendi.deliveredrobot.model.GuideConfigList;
@@ -782,6 +785,39 @@ public class QuerySql {
         }
         return greetConfig;
 
+    }
+
+    public static JsonArray queryAppletIdList() {
+        JsonArray jsonArray = new JsonArray();
+        String sql = "SELECT appletid,timestamp FROM table_applet_config";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("id", cursor.getInt(cursor.getColumnIndex("appletid")));
+                jsonObject.addProperty("timeStamp", cursor.getLong(cursor.getColumnIndex("timestamp")));
+                jsonArray.add(jsonObject);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return jsonArray;
+    }
+
+    public static List<ApplicationModel> queryApplicationModelList(){
+        ArrayList<ApplicationModel> list = new ArrayList<>();
+        String sql = "SELECT icon,url,name FROM table_applet_config";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String icon = cursor.getString(cursor.getColumnIndex("icon"));
+                String url = cursor.getString(cursor.getColumnIndex("url"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                ApplicationModel model = new ApplicationModel(name,url,icon);
+                list.add(model);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
     }
 
     /**

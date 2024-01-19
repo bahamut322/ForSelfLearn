@@ -16,12 +16,18 @@ import com.sendi.deliveredrobot.adapter.ApplicationAdapter
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.ApplicationModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class AppContentFragment : Fragment() {
@@ -85,31 +91,35 @@ class AppContentFragment : Fragment() {
 
 
     private fun assignment() {
-        val applications = listOf(
-            ApplicationModel(name = "党史学习", url = "http://www.12371.cn/dsxx/"),
-            ApplicationModel(name = "党建动态", url = "https://www.gzdj.gov.cn/"),
-            ApplicationModel(name = "学习强国", url = "https://www.xuexi.cn/"),
-            ApplicationModel(name = "消防安全", url = "http://www.qmxf119.org.cn/gmxf_list.html"),
-            ApplicationModel(name = "农讲所纪念馆", url = "https://www.gznjs.cn/"),
-        )
-
-        // 打印列表中的每个ApplicationModel对象
-        applications.forEach { application ->
-            println("Name: ${application.name}, URL: ${application.url}")
-            //初始化适配器
-        }
-        binding.applicationGv.adapter = context?.let { ApplicationAdapter(it, applications) }
-
-        binding.applicationGv.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-                LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
-                val args: Bundle = Bundle().apply {
-                    // 设置 Bundle 对象参数数据
-                    this.putString("ManagerUrl", applications[position].url)
-                    this.putString("name", applications[position].name)
+//        val applications = listOf(
+//            ApplicationModel(name = "党史学习", url = "http://www.12371.cn/dsxx/"),
+//            ApplicationModel(name = "党建动态", url = "https://www.gzdj.gov.cn/"),
+//            ApplicationModel(name = "学习强国", url = "https://www.xuexi.cn/"),
+//            ApplicationModel(name = "消防安全", url = "http://www.qmxf119.org.cn/gmxf_list.html"),
+//            ApplicationModel(name = "农讲所纪念馆", url = "https://www.gznjs.cn/"),
+//        )
+        CoroutineScope(Dispatchers.Default).launch {
+            val applications = ReplyAppletConfigHelper.queryApplicationModelList()
+            withContext(Dispatchers.Main){
+                // 打印列表中的每个ApplicationModel对象
+                applications.forEach { application ->
+                    println("Name: ${application.name}, URL: ${application.url}")
+                    //初始化适配器
                 }
-                controller?.navigate(R.id.appManagerFragment, args)
+                binding.applicationGv.adapter = context?.let { ApplicationAdapter(it, applications) }
+
+                binding.applicationGv.onItemClickListener =
+                    AdapterView.OnItemClickListener { _, _, position, _ ->
+                        LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
+                        val args: Bundle = Bundle().apply {
+                            // 设置 Bundle 对象参数数据
+                            this.putString("ManagerUrl", applications[position].url)
+                            this.putString("name", applications[position].name)
+                        }
+                        controller?.navigate(R.id.appManagerFragment, args)
+                    }
             }
+        }
     }
 
     //刷新
