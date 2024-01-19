@@ -105,6 +105,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             LogUtil.i("mainactivity onDestinationChangedListener")
+            BaseVoiceRecorder.getInstance()?.clearCache()
             BaseVoiceRecorder.getInstance()?.removeCallback()
         }
         navigationReceiver = NavigationReceiver()

@@ -42,6 +42,7 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
         synchronized(this){
             Log.i("AudioChannel", "init")
             initialized = true
+//            time = "${System.currentTimeMillis()}"
             time = "record"
             try {
                 // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
@@ -62,7 +63,7 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
             try {
                 writer?.close()
             } catch (e: IOException) {
-                e.printStackTrace()
+                Log.e("AudioChannel", "stopWrite error: ${e.message}")
             }
             PcmToWavUtil(
                 audioRecord?.sampleRate?:44100, audioRecord?.channelConfiguration?:AudioFormat.CHANNEL_IN_MONO,
@@ -113,10 +114,10 @@ abstract class BaseAudioChannel(audioRecord: AudioRecord) {
         }
     }
 
-    fun initRecord(byteArray: ByteArray){
+    fun initRecord(){
         if (!initialized) {
             init()
-            writeRecord(byteArray)
+//            writeRecord(byteArray)
         }
     }
 }

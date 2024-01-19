@@ -554,7 +554,8 @@ class ConversationFragment : Fragment() {
 
     private fun initVoiceRecord(){
         val voiceRecorder = BaseVoiceRecorder.getInstance()
-        voiceRecorder?.clearCache()
+//        voiceRecorder?.clearCache()
+        LogUtil.i("conversation 设置recordCallback")
         voiceRecorder?.recordCallback = { conversation, pinyinString ,takeTime->
             LogUtil.i("ASR耗时${takeTime}s")
             if (pinyinString.contains("TUICHU")) {

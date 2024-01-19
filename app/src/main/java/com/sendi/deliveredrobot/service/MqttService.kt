@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -110,7 +111,9 @@ class MqttService : Service() {
     private fun doClientConnection() {
         if (!mqttAndroidClient!!.isConnected && isConnectIsNormal) {
             try {
-                mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
+                thread {
+                    mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
+                }
             } catch (e: MqttException) {
                 e.printStackTrace()
             }
