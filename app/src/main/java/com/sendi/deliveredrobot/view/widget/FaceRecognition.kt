@@ -40,6 +40,7 @@ import com.google.gson.Gson
 import com.sendi.deliveredrobot.entity.Table_Face
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.Similarity
+import kotlinx.coroutines.Job
 import java.util.Random
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -57,6 +58,7 @@ class FaceRecognition {
     private var canSendData = true
     private  var doubleString: ArrayList<Table_Face> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
+    private val jobs = mutableListOf<Job>()
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -132,13 +134,13 @@ class FaceRecognition {
                 val bm = decodeByteArrayToBitmap(data, width, height)
                 if (bm != null) {
                     // 将耗时操作放在后台线程中
-                    GlobalScope.launch(Dispatchers.IO) {
+                    jobs.add(GlobalScope.launch(Dispatchers.IO) {
                         if (canSendData) {
                             canSendData = false
                             faceHttp(extractFeature, bm, owner,needEtiquette)
                             FaceDataListener.setFaceBit(bm)
                         }
-                    }
+                    })
                 }
             }
         }
@@ -171,7 +173,7 @@ class FaceRecognition {
         owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-        GlobalScope.launch(Dispatchers.IO) {
+        jobs.add(GlobalScope.launch(Dispatchers.IO) {
 
             val jsonParams = JSONObject()
             val base64 = bitmapToBase64(bitmap)
@@ -233,7 +235,7 @@ class FaceRecognition {
                     Log.d(TAG, "人脸检测请求完成: ")
                 }
             })
-        }
+        })
     }
 
     /**
@@ -283,11 +285,11 @@ class FaceRecognition {
         identifyFace!!.observe(owner) { value ->
             if (value == 1 && isProcessing.compareAndSet(false, true)) {
                 // 在协程内部调用挂起函数
-                GlobalScope.launch(Dispatchers.Main) {
+                jobs.add(GlobalScope.launch(Dispatchers.Main) {
                     delay(5000)
                     speakNum = 0  // 将speakNum设置为0
                     isProcessing.set(false) // 处理完成，重置标志
-                }
+                })
             }
         }
     }
@@ -295,7 +297,7 @@ class FaceRecognition {
 
     @OptIn(DelicateCoroutinesApi::class)
     fun faceIdentify(faces: List<List<Double>?>, owner: LifecycleOwner,needEtiquette : Boolean = false) {
-        GlobalScope.launch(Dispatchers.IO) {
+        jobs.add(GlobalScope.launch(Dispatchers.IO) {
             val jsonParams = JSONObject()
             // 添加参数到JSON对象
             jsonParams["feat"] = faces
@@ -336,7 +338,7 @@ class FaceRecognition {
                     Log.d(TAG, "人脸识别请求完成: ")
                 }
             })
-        }
+        })
     }
 
 
@@ -415,6 +417,9 @@ class FaceRecognition {
 
     fun onDestroy() {
         if (null != c) {
+            jobs.forEach {
+                it.cancel()
+            }
 //            BaiduTTSHelper.getInstance().stop()
             c!!.setPreviewCallback(null)
             c!!.stopPreview()

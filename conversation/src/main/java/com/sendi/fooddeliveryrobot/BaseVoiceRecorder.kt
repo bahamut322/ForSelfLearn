@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.util.Log
 import java.util.Stack
 import kotlin.concurrent.thread
 
@@ -31,7 +32,7 @@ abstract class BaseVoiceRecorder {
         fvad = FvadWrapper()
         fvad?.setMode(3)
         fvad?.setSampleRate(16000)
-        minBufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+        minBufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT)
         println("permission granted")
         //双通道应该传的值
         val channelConfig = AudioFormat.CHANNEL_IN_STEREO
@@ -42,7 +43,7 @@ abstract class BaseVoiceRecorder {
 //            AudioFormat.ENCODING_PCM_16BIT, minBufferSize
 //        )
         audioRecorder = AudioRecord(
-            MediaRecorder.AudioSource.VOICE_COMMUNICATION,
+            MediaRecorder.AudioSource.MIC,
             sampleRate, channelConfig,
             AudioFormat.ENCODING_PCM_16BIT, minBufferSize
         ).apply {
@@ -55,7 +56,7 @@ abstract class BaseVoiceRecorder {
 
     @SuppressLint("MissingPermission")
     fun startRecording() {
-        println("startRecording")
+        Log.i("AudioChannel", "startRecording")
         thread {
             audioRecorder?.startRecording()
             isRecording = true
@@ -64,6 +65,7 @@ abstract class BaseVoiceRecorder {
             val trueStack = Stack<Boolean>()
             val falseStack = Stack<Boolean>()
             while (isRecording) {
+                Log.i("AudioChannel", "isRecording")
                 val result = audioRecorder?.read(audioBuffer, 0, minBufferSize) ?: 0
                 if (result == AudioRecord.ERROR_INVALID_OPERATION || result == AudioRecord.ERROR_BAD_VALUE) {
                     continue
@@ -77,19 +79,16 @@ abstract class BaseVoiceRecorder {
                         shortArray[index / 2] = (audioBuffer[index - 1].toInt() and 0xff or (audioBuffer[index].toInt() shl 8)).toShort()
                     }
                 }
-                if (!ttsIsPlaying && baseAudioChannel?.initialized == true && recordCallback != null) {
-                    baseAudioChannel?.writeRecord(audioBuffer)
-                }
                 if (recordCallback != null) {
                     when (fvad?.process(shortArray) ?: -1) {
                         0 -> {
+                            Log.i("AudioChannel", "人声 no")
                             talkingCallback?.invoke(false)
                             if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
                                 val totalSize = trueStack.size * 0.7 + falseStack.size
                                 if (trueStack.size > 0) {
                                     val percentFalseTotal = (falseStack.size * 1f) / totalSize
-//                                    if (percentFalseTotal > 0.5f) {
                                     if(falseStack.size > 20){
                                         println("trueSize:${trueStack.size}")
                                         println("falseSize:${falseStack.size}")
@@ -104,22 +103,26 @@ abstract class BaseVoiceRecorder {
                             }
                         }
                         1 -> {
-//                        Log.i("VoiceRecorder", "人声 yes")
+                            Log.i("AudioChannel", "人声 yes")
                             talkingCallback?.invoke(true)
                             trueStack.push(true)
                             falseStack.clear()
-                            if (baseAudioChannel?.initialized == false && recordCallback != null) {
+                            if (!ttsIsPlaying && baseAudioChannel?.initialized == false && recordCallback != null) {
                                 recordStatusCallback?.invoke(true)
-                                baseAudioChannel?.initRecord(audioBuffer)
+                                baseAudioChannel?.initRecord()
                             }
 
                         }
                         else -> {
-                            println("talking 未知")
+                            Log.i("AudioChannel", "人声 yes")
                         }
                     }
                 }
+                if (!ttsIsPlaying && baseAudioChannel?.initialized == true && recordCallback != null) {
+                    baseAudioChannel?.writeRecord(audioBuffer)
+                }
             }
+            Log.i("AudioChannel", "stopRecording")
         }
 
     }
