@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.view.marginTop
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -18,14 +19,13 @@ import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
-import com.sendi.deliveredrobot.model.ApplicationModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.UiUtils
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -84,8 +84,6 @@ class AppContentFragment : Fragment() {
         binding.bubbleTv.setOnClickListener {
             controller?.navigate(R.id.conversationFragment)
         }
-
-        binding.applicationGv.setMaxHeight(520)
         assignment()
     }
 
@@ -106,18 +104,36 @@ class AppContentFragment : Fragment() {
                     println("Name: ${application.name}, URL: ${application.url}")
                     //初始化适配器
                 }
-                binding.applicationGv.adapter = context?.let { ApplicationAdapter(it, applications) }
-
-                binding.applicationGv.onItemClickListener =
-                    AdapterView.OnItemClickListener { _, _, position, _ ->
-                        LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
-                        val args: Bundle = Bundle().apply {
-                            // 设置 Bundle 对象参数数据
-                            this.putString("ManagerUrl", applications[position].url)
-                            this.putString("name", applications[position].name)
+                binding.applicationGv.apply {
+                    val tempNumCounts =  when(applications.size > 4){
+                        true -> {
+                            setPadding(0,UiUtils.dip2px(requireContext(), 168f),0,0)
+                            4
                         }
-                        controller?.navigate(R.id.appManagerFragment, args)
+                        false -> {
+                            setPadding(0,UiUtils.dip2px(requireContext(), 248f),0,0)
+                            applications.size
+                        }
                     }
+                    numColumns = tempNumCounts
+                    val spacing: Int = requestedHorizontalSpacing
+                    layoutParams.apply{
+                        width = (UiUtils.dip2px(requireContext(), 240f) * tempNumCounts) + spacing * (tempNumCounts - 1)
+
+                    }
+                    adapter = context?.let { ApplicationAdapter(it, applications) }
+                    onItemClickListener =
+                        AdapterView.OnItemClickListener { _, _, position, _ ->
+                            LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
+                            val args: Bundle = Bundle().apply {
+                                // 设置 Bundle 对象参数数据
+                                this.putString("ManagerUrl", applications[position].url)
+                                this.putString("name", applications[position].name)
+                            }
+                            controller?.navigate(R.id.appManagerFragment, args)
+                        }
+
+                }
             }
         }
     }

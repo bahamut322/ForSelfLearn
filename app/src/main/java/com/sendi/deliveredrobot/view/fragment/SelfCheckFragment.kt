@@ -88,28 +88,28 @@ class SelfCheckFragment : Fragment() {
                 basicSettingViewModel.basicConfig = basicConfig
                 //-------------------自检---------------------
                 var mStartProgressBar = 0
-                var resCheck = 0
-                try {
-                    activity?.let {
-                        resCheck = CheckSelfHelper.checkHardware(
-                            90,
-                            it,
-                            object : OnCheckChangeListener {
-                                override fun onCheckProgress(progress: Int) {
-                                    LogUtil.i("progress: $progress")
-//                                    MainScope().launch(Dispatchers.Main) {
-//                                        setAnimation(
-//                                            binding.selfCheckPb,
-//                                            mStartProgressBar,
-//                                            progress * 10
-//                                        )
-//                                    }
-                                    mStartProgressBar = progress * 10
-                                }
-                            }
-                        )
-                    }
-                }catch (_:Exception){}
+                var resCheck = 0x1FF
+//                try {
+//                    activity?.let {
+//                        resCheck = CheckSelfHelper.checkHardware(
+//                            90,
+//                            it,
+//                            object : OnCheckChangeListener {
+//                                override fun onCheckProgress(progress: Int) {
+//                                    LogUtil.i("progress: $progress")
+////                                    MainScope().launch(Dispatchers.Main) {
+////                                        setAnimation(
+////                                            binding.selfCheckPb,
+////                                            mStartProgressBar,
+////                                            progress * 10
+////                                        )
+////                                    }
+//                                    mStartProgressBar = progress * 10
+//                                }
+//                            }
+//                        )
+//                    }
+//                }catch (_:Exception){}
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")
@@ -199,21 +199,21 @@ class SelfCheckFragment : Fragment() {
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
                     DeliverMqttService.publish(ResetTimeModel().toString())
-                    withContext(Dispatchers.Main) {
-                        Log.d("TAG", "checkHardware: 获取时间戳")
-                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
-                            if (it > 1) {
-                                SystemClock.setCurrentTimeMillis(it)
-                                var updated = false
-                                while (!updated) {
-                                    updated = ROSHelper.updateCurrent(it)
-                                    // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
-                                }
-                                // 在updated为true时执行下面的代码
-                                LogUtil.i("checkHardware: 底盘时间设置成功：$it")
-                            }
-                        }
-                    }
+//                    withContext(Dispatchers.Main) {
+//                        Log.d("TAG", "checkHardware: 获取时间戳")
+//                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
+//                            if (it > 1) {
+//                                SystemClock.setCurrentTimeMillis(it)
+//                                var updated = false
+//                                while (!updated) {
+//                                    updated = ROSHelper.updateCurrent(it)
+//                                    // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
+//                                }
+//                                // 在updated为true时执行下面的代码
+//                                LogUtil.i("checkHardware: 底盘时间设置成功：$it")
+//                            }
+//                        }
+//                    }
                     UpdateReturn().assignment()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id

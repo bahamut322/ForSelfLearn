@@ -136,5 +136,8 @@
     <color name="color_5A55B2">#5A55B2</color>
     <color name="color_878CF8">#878CF8</color>
     <color name="color_260C7B">#260C7B</color>
+    <color name="color_E5FFFFFF">#E5FFFFFF</color>
+    <color name="color_FF00EEFF">#FF00EEFF</color>
+    <color name="color_1A00EEFF">#1A00EEFF</color>
 
 </resources>
