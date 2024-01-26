@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.model
 /**
  * @author swn
  * @describe 顶层配置类
- * screen：配置屏幕
+ * screen：配置屏幕 0：小屏 1：大屏
  * type：配置类型
  * argPic：图片配置参数
  * argFont：文字配置参数
