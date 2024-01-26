@@ -218,7 +218,6 @@ class HomeFragment : Fragment(), IMainView {
         if (queryBasic.etiquette || queryBasic.identifyVip) {
             fastRecognition.suerFaceInit(
                 extractFeature = queryBasic.identifyVip,
-                surfaceView = binding.SurfaceView,
                 owner = this,
                 needEtiquette = queryBasic.etiquette,
             )
