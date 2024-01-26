@@ -13,6 +13,7 @@ import com.sendi.deliveredrobot.databinding.FragmentGoingGreetBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import com.sendi.deliveredrobot.viewmodel.GreetViewModel
 
@@ -49,7 +50,8 @@ class GoingGreetFragment : Fragment() {
             pointName = pointName.toList().joinToString(" ")
             binding.goingPoint.text = String.format(getString(R.string.business_going), pointName)
         }
-        BaiduTTSHelper.getInstance().speaks(QuerySql.selectGreetConfig().firstPrompt.replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord))
+
+        BaiduTTSHelper.getInstance().speaks( UpdateReturn().replaceText(QuerySql.selectGreetConfig().firstPrompt))
 
         viewModel!!.greetBigScreenModel(QuerySql.selectGreetConfig()?.bigScreenConfig)
     }

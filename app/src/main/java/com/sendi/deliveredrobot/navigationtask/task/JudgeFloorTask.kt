@@ -56,6 +56,20 @@ class JudgeFloorTask(taskModel: TaskModel, private val type: Int, needReportData
                 )
                 // 不同层
                 when (type) {
+                    TYPE_EXPLAN -> {
+                        add(
+                            AdvanceGuidingTask(
+                                3,
+                                TaskModel(
+                                    location = liftOutSide,
+                                    endTarget = taskModel?.endTarget?:"",
+                                    taskId = tempTaskId,
+                                    bill= taskModel?.bill
+                                ),
+                                R.id.guidingFragment
+                            )
+                        )
+                    }
                     TYPE_GUIDE -> {
                         add(
                             AdvanceGuidingTask(

@@ -69,9 +69,9 @@ class HomeFragment : Fragment(), IMainView {
     private val queryBasic = QuerySql.QueryBasic()
 
     override fun onResume() {
-        mPresenter?.startTipsTimer()
         super.onResume()
         LogUtil.i("homefragment onResume")
+        mPresenter?.startTipsTimer()
         BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
             LogUtil.i("听到--->$conversation")
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
@@ -94,12 +94,13 @@ class HomeFragment : Fragment(), IMainView {
 
     override fun onPause() {
         //有其他操作时结束计时
+        fastRecognition.onDestroy()
         mPresenter?.endTipsTimer()
         super.onPause()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mPresenter = MainPresenter(this)
+        mPresenter = MainPresenter(this@HomeFragment)
         super.onCreate(savedInstanceState)
     }
 
@@ -191,8 +192,6 @@ class HomeFragment : Fragment(), IMainView {
         super.onStop()
         mainScope.cancel()
         remindDialog?.dismiss()
-        //释放人脸识别资源
-        fastRecognition.onDestroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -219,7 +218,6 @@ class HomeFragment : Fragment(), IMainView {
         if (queryBasic.etiquette || queryBasic.identifyVip) {
             fastRecognition.suerFaceInit(
                 extractFeature = queryBasic.identifyVip,
-                surfaceView = binding.SurfaceView,
                 owner = this,
                 needEtiquette = queryBasic.etiquette,
             )

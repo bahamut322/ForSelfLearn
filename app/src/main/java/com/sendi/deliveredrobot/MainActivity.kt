@@ -24,6 +24,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -99,7 +100,8 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         //-----------------设置页面跳转receiver-------------------
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            LogUtil.i("mainactivity onDestinationChangedListener")
+            LogUtil.i("mainactivity onDestinationChangedListener:${destination.label}")
+            ReplyIntentHelper.clearCache()
             BaseVoiceRecorder.getInstance()?.clearCache()
             BaseVoiceRecorder.getInstance()?.removeCallback()
         }

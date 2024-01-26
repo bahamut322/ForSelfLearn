@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.helpers
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.sendi.deliveredrobot.model.ReplyIntentModel
+import com.sendi.deliveredrobot.utils.LogUtil
 
 /**
  * @author heky
@@ -17,5 +18,9 @@ object ReplyIntentHelper {
         if (replyIntentModel != null) {
             replyIntentLiveData.value = replyIntentModel
         }
+    }
+
+    fun clearCache(){
+        replyIntentLiveData.postValue(null)
     }
 }

@@ -37,10 +37,15 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.reflect.Type
 import com.google.gson.Gson
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.Table_Face
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.Similarity
+import com.sendi.deliveredrobot.service.UpdateReturn
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import java.util.Random
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -56,9 +61,12 @@ class FaceRecognition {
     private var manager = instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var speakNum = 0
     private var canSendData = true
-    private  var doubleString: ArrayList<Table_Face> = ArrayList()
+    private val jsonParams = JSONObject()
+    private var doubleString: ArrayList<Table_Face> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
     private val jobs = mutableListOf<Job>()
+    private val faceScope = CoroutineScope(Dispatchers.Default + Job())
+    private val channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -71,15 +79,13 @@ class FaceRecognition {
     @OptIn(DelicateCoroutinesApi::class)
     fun suerFaceInit(
         extractFeature: Boolean = false,
-        surfaceView: SurfaceView?,
         width: Int = 800,
         height: Int = 600,
         owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-
-        var cameraIds = arrayOfNulls<String>(0)
         doubleString = QuerySql.faceMessage()
+        var cameraIds = arrayOfNulls<String>(0)
         try {
             cameraIds = manager.cameraIdList
         } catch (e: CameraAccessException) {
@@ -94,53 +100,38 @@ class FaceRecognition {
             }
         }
         c?.setDisplayOrientation(0) //预览图与手机方向一致
-
-        val surfaceHolder = surfaceView!!.holder
-        //启动预览，到这里就能正常预览
-        surfaceHolder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                try {
-                    c?.setPreviewDisplay(surfaceHolder)
-                    val parameters = c?.parameters
-                    try {
-                        //图片分辨率
-                        parameters?.setPictureSize(width, height)
-                        //预览分辨率
-                        parameters?.setPreviewSize(width, height)
-                        c?.parameters = parameters
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-                c?.startPreview() //开始预览
-            }
-
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
-                Log.i(TAG, "surfaceChanged: $width $height")
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {}
-        })
+        val parameters: Camera.Parameters? = c?.parameters?.apply {
+            setPictureSize(width, height)
+            setPreviewSize(width, height)
+        }
+        try {
+            c?.parameters = parameters
+        } catch (_: Exception) {
+        }
+        c?.startPreview()
+        //对于 YUV_420_SP（NV21）格式，公式为：width * height * 3 / 2
+        val buffer = ByteArray((width * height * 3 / 2))
+        c?.addCallbackBuffer(buffer)
         //获取摄像实时数据
-        c?.setPreviewCallback { data: ByteArray?, _: Camera? ->
-            if (data!!.isNotEmpty()) {
-                val bm = decodeByteArrayToBitmap(data, width, height)
-                if (bm != null) {
-                    // 将耗时操作放在后台线程中
-                    jobs.add(GlobalScope.launch(Dispatchers.IO) {
-                        if (canSendData) {
-                            canSendData = false
-                            faceHttp(extractFeature, bm, owner,needEtiquette)
-                            FaceDataListener.setFaceBit(bm)
-                        }
-                    })
+        c?.setPreviewCallbackWithBuffer { data: ByteArray, _: Camera? ->
+            if (data.isNotEmpty() && canSendData) {
+                canSendData = false
+                channel.trySend(data).isSuccess // 将数据发送到Channel
+            }
+            c?.addCallbackBuffer(buffer)
+        }
+        // 启动一个单独的协程来处理数据
+        faceScope.launch {
+            for (data in channel) { // 从Channel中接收数据
+                try {
+                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
+                    val bm = decodeByteArrayToBitmap(data, width, height)
+                    if (bm != null) {
+                        faceHttp(extractFeature, bm, owner, needEtiquette)
+                        FaceDataListener.setFaceBit(bm)
+                        bm.recycle()
+                    }
+                } catch (_: Exception) {
                 }
             }
         }
@@ -175,8 +166,9 @@ class FaceRecognition {
     ) {
         jobs.add(GlobalScope.launch(Dispatchers.IO) {
 
-            val jsonParams = JSONObject()
             val base64 = bitmapToBase64(bitmap)
+            bitmap.recycle()
+            System.gc()
             // 添加参数到JSON对象
             jsonParams["img"] = base64 // 后续需要修改base64
             jsonParams["extract"] = extractFeature
@@ -206,7 +198,7 @@ class FaceRecognition {
                         }
                         if (extractFeature) {
                             val allFeatures = faceModelList.map { it.feat }
-                            faceIdentify(allFeatures, owner,needEtiquette)
+                            faceIdentify(allFeatures, owner, needEtiquette)
                         }
                     }
                     //需要人脸识别，但是人脸数据返回为空的时候可以继续发送数据
@@ -265,6 +257,7 @@ class FaceRecognition {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
+            bitmap.recycle()
         }
         return result
     }
@@ -285,18 +278,23 @@ class FaceRecognition {
         identifyFace!!.observe(owner) { value ->
             if (value == 1 && isProcessing.compareAndSet(false, true)) {
                 // 在协程内部调用挂起函数
-                jobs.add(GlobalScope.launch(Dispatchers.Main) {
+                CoroutineScope(Dispatchers.Default).launch {
                     delay(5000)
                     speakNum = 0  // 将speakNum设置为0
                     isProcessing.set(false) // 处理完成，重置标志
-                })
+                    this@launch.cancel()
+                }
             }
         }
     }
 
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun faceIdentify(faces: List<List<Double>?>, owner: LifecycleOwner,needEtiquette : Boolean = false) {
+    fun faceIdentify(
+        faces: List<List<Double>?>,
+        owner: LifecycleOwner,
+        needEtiquette: Boolean = false
+    ) {
         jobs.add(GlobalScope.launch(Dispatchers.IO) {
             val jsonParams = JSONObject()
             // 添加参数到JSON对象
@@ -317,7 +315,7 @@ class FaceRecognition {
                         val gson = Gson()
                         // 确保这里使用的是正确的数据类
                         val similarityResponse = gson.fromJson(result, Similarity::class.java)
-                        main(similarityResponse, owner,needEtiquette)
+                        main(similarityResponse, owner, needEtiquette)
                     }
                 }
 
@@ -342,7 +340,11 @@ class FaceRecognition {
     }
 
 
-    fun main(similarityResponse: Similarity, owner: LifecycleOwner,needEtiquette : Boolean = false) {
+    fun main(
+        similarityResponse: Similarity,
+        owner: LifecycleOwner,
+        needEtiquette: Boolean = false
+    ) {
         if (similarityResponse.similarity.isNotEmpty()) {
             val chunkSize = doubleString.size // 指定子列表的大小
 
@@ -367,7 +369,8 @@ class FaceRecognition {
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
                     owner,
-                    QuerySql.selectGreetConfig().vipPrompt.replace("%人脸姓名%",correspondingValues).replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord))
+                    UpdateReturn().replaceText(QuerySql.selectGreetConfig().vipPrompt)
+                )
             } else {
                 println("人脸库：没有查到此人")
                 if (needEtiquette) {
@@ -410,20 +413,22 @@ class FaceRecognition {
         val list = listOf(
             "您好，我是这里的多功能党建机器人，${QuerySql.robotConfig().wakeUpWord}，有什么可以帮到您吗？",
             "喊我“${QuerySql.robotConfig().wakeUpWord}”，问我问题"
-            )
+        )
         val randomIndex = Random().nextInt(list.size)
         return list[randomIndex]
     }
 
     fun onDestroy() {
         if (null != c) {
-            jobs.forEach {
-                it.cancel()
-            }
-//            BaiduTTSHelper.getInstance().stop()
-            c!!.setPreviewCallback(null)
-            c!!.stopPreview()
-            c!!.release()
+            // 取消所有协程任务
+            faceScope.cancel()
+            channel.close()
+            // 停止预览
+            c?.stopPreview()
+            // 移除预览回调
+            c?.setPreviewCallbackWithBuffer(null)
+            // 释放相机资源
+            c?.release()
             c = null
         }
     }

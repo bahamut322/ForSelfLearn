@@ -112,9 +112,9 @@ class BusinessIngFragment : Fragment() {
             //正常图片&文字
             TouchScreenShow().layoutThis(
                 binding.bgCon,
-                binding.verticalTV,
-                binding.horizontalTV,
-                binding.pointImage,
+                binding.include.verticalTV,
+                binding.include.horizontalTV,
+                binding.include.pointImage,
                 actionData?.touchScreenConfig!!.touch_picPlayTime,
                 actionData?.touchScreenConfig!!.touch_imageFile ?: "",
                 actionData?.touchScreenConfig!!.touch_type,
