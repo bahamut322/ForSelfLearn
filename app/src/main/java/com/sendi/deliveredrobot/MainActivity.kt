@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -422,19 +423,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
 
 
     private fun screenRenew() {
-        var doubleScreen = 0
         //监听观察者更新副屏内容
         newUpdata.observe(this) {
             if (newUpdata.value == 1) {
-                newUpdata.postValue(0)
-                if (doubleScreen == 0) {
-                    sdScreenStatus!!.postValue(0)
-                } else if (doubleScreen == 1) {
-                    sdScreenStatus!!.postValue(1)
-                } else if (doubleScreen == 2) {
-                    sdScreenStatus!!.postValue(2)
-                }else if (doubleScreen == 4){
-                    sdScreenStatus!!.postValue(4)
+                newUpdata.postValue(null)
+                if(sdScreenStatus?.value != 3){
+                    sdScreenStatus?.postValue(sdScreenStatus?.value)
                 }
             }
             if (newUpdata.value ==3) {
@@ -444,7 +438,6 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         sdScreenStatus!!.observe(this) {
             val status = sdScreenStatus!!.value
             if (mPresentation != null) {
-                doubleScreen = status!!
                 when (status) {
                     0 -> {
                         val config = findFirst(Table_Advertising::class.java)
