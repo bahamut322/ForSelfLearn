@@ -321,16 +321,16 @@ class StartExplanViewModel : ViewModel() {
     }
 
     fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
-        var file : String = ""
+        var file = ""
         if (mData[position]!!.big_videofile !=null){
             file = mData[position]!!.big_videofile.toString()
         }else if (mData[position]!!.big_imagefile !=null){
             file = mData[position]!!.big_imagefile.toString()
         }
-        SecondModel?.postValue(
+        SecondModel.postValue(
             SecondModel(
                 picPlayTime = mData[position]?.big_picplaytime ,
-                file = file ?:"",
+                file = file,
                 type = mData[position]?.big_type?: 0,
                 textPosition = mData[position]?.big_textposition,
                 fontLayout = mData[position]?.big_fontlayout,
@@ -343,7 +343,7 @@ class StartExplanViewModel : ViewModel() {
                 videoAudio = mData[position]?.big_videoaudio
             )
         )
-        sdScreenStatus!!.postValue(2)
+        sdScreenStatus.postValue(2)
         LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
 

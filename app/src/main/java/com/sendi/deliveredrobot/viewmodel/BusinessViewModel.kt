@@ -153,7 +153,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.SecondModel?.postValue(
+        RobotStatus.SecondModel.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,
@@ -169,7 +169,7 @@ class BusinessViewModel : ViewModel() {
                 videoAudio = mData.bigScreenConfig?.videoAudio
             )
         )
-        RobotStatus.sdScreenStatus!!.postValue(4)
+        RobotStatus.sdScreenStatus.postValue(4)
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 
@@ -180,7 +180,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.SecondModel?.postValue(
+        RobotStatus.SecondModel.postValue(
             SecondModel(
                 picPlayTime = mData.bigScreenConfig?.picPlayTime,
                 file = file,
@@ -196,7 +196,7 @@ class BusinessViewModel : ViewModel() {
                 videoAudio = mData.bigScreenConfig?.videoAudio
             )
         )
-        RobotStatus.sdScreenStatus!!.postValue(3)
+        RobotStatus.sdScreenStatus.postValue(3)
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 

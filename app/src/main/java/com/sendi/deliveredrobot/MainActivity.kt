@@ -8,7 +8,6 @@ import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -20,18 +19,14 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
-import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Table_Basic
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
-import com.sendi.deliveredrobot.model.DefaultModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.receiver.NavigationReceiver
 import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
@@ -46,7 +41,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.findAll
-import org.litepal.LitePal.findFirst
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -283,7 +277,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             with(binding.imageViewWifiStatus) {
                 visibility = View.VISIBLE
                 when {
-                    connectWifi.level() <= -100 -> this.setBackgroundResource(com.sendi.deliveredrobot.R.drawable.ic_wifi_level_0)
+                    connectWifi.level() <= -100 -> this.setBackgroundResource(R.drawable.ic_wifi_level_0)
                     connectWifi.level() in -99..-88 || connectWifi.level() in -87..-66 || connectWifi.level() in -65 until 55 -> setBackgroundResource(
                         R.drawable.ic_wifi_level_1
                     )
@@ -424,100 +418,24 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
 
     private fun screenRenew() {
         //监听观察者更新副屏内容
-        newUpdata.observe(this) {
-            if (newUpdata.value == 1) {
-                newUpdata.postValue(null)
-                if(sdScreenStatus?.value != 3){
-                    sdScreenStatus?.postValue(sdScreenStatus?.value)
+        RobotStatus.newUpdata.observe(this) {
+            if (it == 1) {
+                RobotStatus.newUpdata.postValue(null)
+                if(RobotStatus.sdScreenStatus.value != 3){
+                    SecondScreenManageHelper.refreshSecondScreen(this, RobotStatus.sdScreenStatus.value)
                 }
             }
-            if (newUpdata.value ==3) {
-                default(Universal.advDefault,true)
+            if (it ==3) {
+                SecondScreenManageHelper.refreshSecondScreen(this, null)
             }
         }
-        sdScreenStatus!!.observe(this) {
-            val status = sdScreenStatus!!.value
+        RobotStatus.sdScreenStatus.observe(this) {
             if (mPresentation != null) {
-                when (status) {
-                    0 -> {
-                        val config = findFirst(Table_Advertising::class.java)
-                        if (config != null && config.type != 0) {
-                            layoutThis(
-                                config.picPlayTime,
-                                Universal.advertisement,
-                                config.type,
-                                config.textPosition,
-                                config.fontLayout,
-                                config.fontContent,
-                                config.fontBackGround,
-                                config.fontColor,
-                                config.fontSize,
-                                config.picType,
-                                config.videolayout,
-                                config.videoAudio,
-                                true
-                            )
-                        } else {
-                            default(Universal.advDefault, true)
-                        }
-                    }
-                    1 -> {
-                        if (Universal.bigScreenType != 0) {
-                            layoutThis(
-                                Universal.picPlayTime,
-                                Universal.Secondary,
-                                Universal.bigScreenType,
-                                Universal.textPosition,
-                                Universal.fontLayout,
-                                Universal.fontContent,
-                                Universal.fontBackGround,
-                                Universal.fontColor,
-                                Universal.fontSize,
-                                Universal.picTypeNum,
-                                Universal.TempVideoLayout,
-                                Universal.AllvideoAudio,
-                                false
-                            )
-                        } else {
-                            default(Universal.usherDefault, false)
-                        }
-                    }
-                    2, 3, 4, 5 -> {
-                        val secondModel = RobotStatus.SecondModel!!.value
-                        if (secondModel?.type != 0) {
-                            layoutThis(
-                                secondModel?.picPlayTime!!,
-                                secondModel.file,
-                                secondModel.type!!,
-                                secondModel.textPosition!!,
-                                secondModel.fontLayout!!,
-                                secondModel.fontContent,
-                                secondModel.fontBackGround,
-                                secondModel.fontColor,
-                                secondModel.fontSize!!,
-                                secondModel.picType!!,
-                                secondModel.videolayout!!,
-                                secondModel.videoAudio!!,
-                                false
-                            )
-                        } else {
-                            val defaultType = when (status) {
-                                2 -> Universal.explainDefault
-                                3 -> Universal.guideDefault
-                                4 -> Universal.businessDefault
-                                else -> Universal.advDefault
-                            }
-                            default(defaultType, false)
-                        }
-                    }
-                    else -> {
-                        // Handle any other unexpected status values if necessary
-                    }
-                }
+                SecondScreenManageHelper.refreshSecondScreen(this, it)
             }
         }
 
-        RobotStatus.SecondModel!!.observe(this) {
+        RobotStatus.SecondModel.observe(this) {
             if (mPresentation != null) {
                 layoutThis(
                     it?.picPlayTime ?: 30,
@@ -536,24 +454,5 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 )
             }
         }
-    }
-    //默认+下载时大屏幕的样式
-    private fun default( picFile : String,boolean: Boolean){
-        val defaultModel = DefaultModel(file = picFile, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
-        layoutThis(
-            defaultModel.picPlayTime!!,
-            defaultModel.file,
-            defaultModel.type!!,
-            defaultModel.textPosition!!,
-            defaultModel.fontLayout!!,
-            defaultModel.fontContent,
-            defaultModel.fontBackGround,
-            defaultModel.fontColor,
-            defaultModel.fontSize!!,
-            defaultModel.picType!!,
-            defaultModel.videolayout!!,
-            defaultModel.videoAudio!!,
-            boolean
-        )
     }
 }

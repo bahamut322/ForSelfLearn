@@ -20,7 +20,7 @@ class GreetViewModel : ViewModel() {
         } else if (mData?.imageFile != null) {
             file = mData.imageFile.toString()
         }
-        RobotStatus.SecondModel?.postValue(
+        RobotStatus.SecondModel.postValue(
             SecondModel(
                 picPlayTime = mData?.picPlayTime,
                 file = file,
@@ -36,7 +36,7 @@ class GreetViewModel : ViewModel() {
                 videoAudio = mData?.videoAudio
             )
         )
-        RobotStatus.sdScreenStatus!!.postValue(5)
+        RobotStatus.sdScreenStatus.postValue(5)
         LogUtil.i("图片位置：${mData?.imageFile.toString()}")
     }
 }

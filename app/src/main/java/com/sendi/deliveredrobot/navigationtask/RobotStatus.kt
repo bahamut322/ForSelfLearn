@@ -83,10 +83,10 @@ object RobotStatus {
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
-    var sdScreenStatus : MutableLiveData<Int>? = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾
+    var sdScreenStatus : MutableLiveData<Int> = MutableLiveData() // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择的item
     var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
-    var SecondModel : MutableLiveData<SecondModel?>? = MutableLiveData()//讲解模式存储的副屏中的显示数据
+    var SecondModel : MutableLiveData<SecondModel?> = MutableLiveData()//讲解模式存储的副屏中的显示数据
     var targetName : MutableLiveData<String?>? = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
