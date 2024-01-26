@@ -205,7 +205,7 @@ object CheckSelfHelper {
                 mOnCheckChangeListener.onCheckProgress(progress)
                 LogUtil.i("急停按钮检测通过")
             }
-            if (RobotStatus.mPresentation.value == 1 && tempFlag and 0x08 == 0) {
+            if (tempFlag and 0x08 == 0) {
                 tempFlag = tempFlag or 0x08
                 progress++
                 mOnCheckChangeListener.onCheckProgress(progress)
@@ -407,7 +407,7 @@ object CheckSelfHelper {
     }
 
     //读取自检文件、如果没有读取到则按默认的项自检
-    private fun getFileContent(directoryPath: String, defaultContent: String = "110000000"): String {
+    private fun getFileContent(directoryPath: String, defaultContent: String = "111111111"): String {
         val directory = File(directoryPath)
 
         // 检查目录是否存在
