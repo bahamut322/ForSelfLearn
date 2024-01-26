@@ -38,6 +38,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
@@ -181,6 +182,7 @@ class UpdateReturn {
                     }
                 }
             }
+            this@launch.cancel()
         }
     }
 
@@ -188,6 +190,7 @@ class UpdateReturn {
         MainScope().launch {
             Universal.explainUnSpeak = false
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+            this@launch.cancel()
         }
     }
 
@@ -195,12 +198,14 @@ class UpdateReturn {
         MainScope().launch {
             Universal.explainUnSpeak = true
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+            this@launch.cancel()
         }
     }
 
     fun stop() {
         MainScope().launch {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+            this@launch.cancel()
         }
     }
 
@@ -257,6 +262,7 @@ class UpdateReturn {
                 maps = maps
             )
             MqttService.publish(uploadMapDataModel.toString(), true)
+            this@launch.cancel()
         }
     }
 
@@ -474,10 +480,16 @@ class UpdateReturn {
     fun splitStr(str: String): Array<String?> {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
-
+    /**
+     * 根据标识位替换文字
+     */
+    fun replaceText(text : String,name : String = "") : String{
+        return text.replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord).replace("%人脸姓名%",name)
+    }
     fun settingMap(batteryState: Boolean = false) {
         mainScope.launch(Dispatchers.Default) {
             UpdateReturn().mapSetting(batteryState)
+            this@launch.cancel()
         }
     }
 

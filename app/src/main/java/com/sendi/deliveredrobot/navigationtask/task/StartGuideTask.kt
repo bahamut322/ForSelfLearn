@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
+import kotlinx.coroutines.launch
 
 /**
  * @describe 引领任务开始
@@ -34,6 +35,8 @@ class StartGuideTask(taskModel: TaskModel) : AbstractTask(taskModel) {
         RobotStatus.currentStatus = TYPE_GUIDE
         IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
-        taskModel?.bill?.executeNextTask()
+        mainScope.launch {
+            taskModel?.bill?.executeNextTask()
+        }
     }
 }

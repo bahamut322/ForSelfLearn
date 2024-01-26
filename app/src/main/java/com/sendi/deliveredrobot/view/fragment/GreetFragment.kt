@@ -1,22 +1,25 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentGreetBinding
-import com.sendi.deliveredrobot.entity.TouchScreenShow
 import com.sendi.deliveredrobot.entity.Table_Greet_Config
+import com.sendi.deliveredrobot.entity.TouchScreenShow
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
+import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
+import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 
 /**
  * @Author Swn
@@ -28,6 +31,8 @@ class GreetFragment : Fragment() {
     private lateinit var binding: FragmentGreetBinding
     private val fastRecognition: FaceRecognition = FaceRecognition()
     private var actionData : Table_Greet_Config? = Table_Greet_Config()
+    private var processClickDialog: ProcessClickDialog? = null
+    private var finishTaskDialog: FinishTaskDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,22 +48,19 @@ class GreetFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding  = DataBindingUtil.bind(view)!!
 
+        processClickDialog = ProcessClickDialog(requireActivity())
+        finishTaskDialog = FinishTaskDialog(requireActivity())
+        processClickDialog?.setCountdownTime(20)//打断任务时间
+
         actionData = QuerySql.selectGreetConfig()
 
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.ExplainLength || Universal.ExplainLength != -1) {
                 fastRecognition.suerFaceInit(
                     extractFeature = true,
-                    surfaceView = binding.SurfaceView,
                     owner = this,
                     needEtiquette = true,
                 )
-            }
-        }
-        binding.end.apply {
-            setOnClickListener {
-                BillManager.currentBill()?.executeNextTask()
-                BaiduTTSHelper.getInstance().speaks(QuerySql.selectGreetConfig().exitPrompt.replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord))
             }
         }
 
@@ -66,9 +68,9 @@ class GreetFragment : Fragment() {
             //正常图片&文字
             TouchScreenShow().layoutThis(
                 binding.bgCon,
-                binding.verticalTV,
-                binding.horizontalTV,
-                binding.pointImage,
+                binding.include.verticalTV,
+                binding.include.horizontalTV,
+                binding.include.pointImage,
                 actionData?.touchScreenConfig!!.touch_picPlayTime,
                 actionData?.touchScreenConfig!!.touch_imageFile ?: "",
                 actionData?.touchScreenConfig!!.touch_type,
@@ -88,12 +90,36 @@ class GreetFragment : Fragment() {
                     .placeholder(R.drawable.ic_warming) // 设置默认图片
                     .into(binding.argPic)
             }
-        } catch (_: Exception) {
-
+        } catch (_: Exception) {}
+        binding.bgCon.setOnClickListener {
+            processClickDialog?.show()
+            pause()
         }
-
     }
 
+    private fun pause() {
+        processClickDialog?.otherBtn?.visibility = View.GONE //切换其他任务
+        processClickDialog?.nextBtn?.visibility = View.GONE //下一个任务
+        processClickDialog?.finishBtn?.text = "结束迎宾"
+        processClickDialog?.continueBtn?.text = "继续迎宾"
+        processClickDialog?.finishBtn?.setOnClickListener {
+            secondRecognition()
+        }
+    }
+
+    //二次确认
+    private fun secondRecognition() {
+        finishTaskDialog?.show()
+        finishTaskDialog?.YesExit?.setOnClickListener {
+            processClickDialog?.dismiss()
+            finishTaskDialog?.dismiss()
+            //返回
+            BillManager.currentBill()?.executeNextTask()
+            BaiduTTSHelper.getInstance().speaks(UpdateReturn().replaceText(QuerySql.selectGreetConfig().exitPrompt))
+
+        }
+        finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+    }
     override fun onStop() {
         //释放人脸识别资源
         fastRecognition.onDestroy()

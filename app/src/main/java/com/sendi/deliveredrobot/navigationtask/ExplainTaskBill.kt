@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.navigationtask
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
+import com.sendi.deliveredrobot.TYPE_EXPLAN
 import com.sendi.deliveredrobot.TYPE_GUIDE
 import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -87,7 +88,7 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         taskId = taskId(),
                         bill = this@ExplainTaskBill
                     ),
-                    type = TYPE_GUIDE
+                    type = TYPE_EXPLAN
                 )
             )
             // step 10：到目的地task

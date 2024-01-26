@@ -18,6 +18,7 @@ import okhttp3.internal.notify
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -71,6 +72,7 @@ class CloudMqttService : Service() {
         mMqttConnectOptions?.isCleanSession = true //设置是否清除缓存
         mMqttConnectOptions?.connectionTimeout = 10 //设置超时时间，单位：秒
         mMqttConnectOptions?.keepAliveInterval = 20 //设置心跳包发送间隔，单位：秒
+        mMqttConnectOptions?.isAutomaticReconnect = true //设置是否自动重连
         mMqttConnectOptions?.userName = USERNAME //设置用户名
         mMqttConnectOptions?.password = PASSWORD.toCharArray() //设置密码
         // last will message
@@ -107,11 +109,15 @@ class CloudMqttService : Service() {
     CloudMqttService.publish(JSONObject.toJSONString(jsonObject), true)连接MQTT服务器
      */
     private fun doClientConnection() {
+        LogUtil.i("MQTT:doClientConnection")
         if (!mqttAndroidClient!!.isConnected && isConnectIsNormal) {
             try {
-                mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
+                thread {
+                    mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
+                }
             } catch (e: MqttException) {
                 e.printStackTrace()
+
             }
         }
     }/*没有可用网络的时候，延迟3秒再尝试重连*/
@@ -130,10 +136,11 @@ class CloudMqttService : Service() {
                 true
             } else {
                 LogUtil.i("MQTT:没有可用网络")
-                /*没有可用网络的时候，延迟3秒再尝试重连*/Handler().postDelayed(
-                    { doClientConnection() },
-                    3000
-                )
+                /*没有可用网络的时候，延迟3秒再尝试重连*/
+//                Handler().postDelayed(
+//                    { doClientConnection() },
+//                    3000
+//                )
                 false
             }
         }
@@ -141,24 +148,24 @@ class CloudMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
-            LogUtil.i("MQTT:X8连接成功 ")
-            RobotStatus.mqttConnected = true
-            Thread {
-                UpdateReturn().assignment()
-                try {
-                    var mqttToken: IMqttToken?
-                    do{
-                        mqttToken = mqttAndroidClient?.subscribe(
-                            "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
-//                    "$RESPONSE_TOPIC/#",
-                            2
-                        ) //订阅主题，参数：主题、服务质量
-                    }while(mqttToken?.isComplete == true)
-                    LogUtil.i("MQTT:X8订阅成功 ")
-                } catch (e: MqttException) {
-                    e.printStackTrace()
-                }
-            }.start()
+//            LogUtil.i("MQTT:X8连接成功 ")
+//            RobotStatus.mqttConnected = true
+//            Thread {
+//                UpdateReturn().assignment()
+//                try {
+//                    var mqttToken: IMqttToken?
+//                    do {
+//                        mqttToken = mqttAndroidClient?.subscribe(
+//                            "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+////                    "$RESPONSE_TOPIC/#",
+//                            2
+//                        ) //订阅主题，参数：主题、服务质量
+//                    } while (mqttToken?.isComplete == true)
+//                    LogUtil.i("MQTT:X8订阅成功 ")
+//                } catch (e: MqttException) {
+//                    e.printStackTrace()
+//                }
+//            }.start()
 
         }
 
@@ -166,12 +173,12 @@ class CloudMqttService : Service() {
             arg1.printStackTrace()
             LogUtil.i("MQTT:X8连接失败 ")
             RobotStatus.mqttConnected = false
-            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
+//            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }
     }
 
     //订阅主题的回调
-    private val mqttCallback: MqttCallback = object : MqttCallback {
+    private val mqttCallback: MqttCallback = object : MqttCallbackExtended {
         @Throws(Exception::class)
         override fun messageArrived(topic: String, message: MqttMessage) {
             if (topic == "${RESPONSE_TOPIC}/${RobotStatus.SERIAL_NUMBER}") {
@@ -184,9 +191,30 @@ class CloudMqttService : Service() {
 //            LogUtil.i("MQTT:发送完成：${arg0.message}")
         }
 
+        override fun connectComplete(reconnect: Boolean, serverURI: String?) {
+            LogUtil.i("MQTT:X8连接完成")
+            RobotStatus.mqttConnected = true
+            Thread {
+                UpdateReturn().assignment()
+                try {
+                    var mqttToken: IMqttToken?
+                    do {
+                        mqttToken = mqttAndroidClient?.subscribe(
+                            "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+//                    "$RESPONSE_TOPIC/#",
+                            2
+                        ) //订阅主题，参数：主题、服务质量
+                    } while (mqttToken?.isComplete == true)
+                    LogUtil.i("MQTT:X8订阅成功 ")
+                } catch (e: MqttException) {
+                    e.printStackTrace()
+                }
+            }.start()
+        }
+
         override fun connectionLost(arg0: Throwable) {
             LogUtil.i("MQTT:连接断开 ")
-            doClientConnection() //连接断开，重连
+//            doClientConnection() //连接断开，重连
         }
     }
 
@@ -202,8 +230,8 @@ class CloudMqttService : Service() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var mqttAndroidClient: MqttAndroidClient? = null
-        const val  PUBLISH_TOPIC = "/sendi/robot/x8/server/android" //发布主题
-        const val  RESPONSE_TOPIC = "/sendi/robot/x8/client/android" //响应主题
+        const val PUBLISH_TOPIC = "/sendi/robot/x8/server/android" //发布主题
+        const val RESPONSE_TOPIC = "/sendi/robot/x8/client/android" //响应主题
 //        const val PUBLISH_TOPIC_DELIVER = "/sendi/robot/delivery/server/android" //发布主题
 //        const val RESPONSE_TOPIC_DELIVER = "/sendi/robot/delivery/client/android" //响应主题
 

@@ -69,6 +69,7 @@ class DeliverMqttService : Service() {
         mMqttConnectOptions_deliver?.isCleanSession = true //设置是否清除缓存
         mMqttConnectOptions_deliver?.connectionTimeout = 10 //设置超时时间，单位：秒
         mMqttConnectOptions_deliver?.keepAliveInterval = 20 //设置心跳包发送间隔，单位：秒
+        mMqttConnectOptions_deliver?.isAutomaticReconnect = true
         mMqttConnectOptions_deliver?.userName = USERNAME //设置用户名
         mMqttConnectOptions_deliver?.password = PASSWORD.toCharArray() //设置密码
 
@@ -129,10 +130,10 @@ class DeliverMqttService : Service() {
                 true
             } else {
                 LogUtil.i("MQTT:没有可用网络")
-                /*没有可用网络的时候，延迟3秒再尝试重连*/Handler().postDelayed(
-                    { doClientConnection() },
-                    3000
-                )
+//                /*没有可用网络的时候，延迟3秒再尝试重连*/Handler().postDelayed(
+//                    { doClientConnection() },
+//                    3000
+//                )
                 false
             }
         }
@@ -140,29 +141,29 @@ class DeliverMqttService : Service() {
     //MQTT是否连接成功的监听
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
-            LogUtil.i("MQTT:送物订阅连接成功 ")
-            try {
-                mqttAndroidClient_deliver?.subscribe(
-                    "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
-//                    "$RESPONSE_TOPIC/#",
-                    2
-                ) //订阅主题，参数：主题、服务质量
-                RobotStatus.mqttConnected = true
-            } catch (e: MqttException) {
-                e.printStackTrace()
-            }
+//            LogUtil.i("MQTT:送物订阅连接成功 ")
+//            try {
+//                mqttAndroidClient_deliver?.subscribe(
+//                    "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
+////                    "$RESPONSE_TOPIC/#",
+//                    2
+//                ) //订阅主题，参数：主题、服务质量
+//                RobotStatus.mqttConnected = true
+//            } catch (e: MqttException) {
+//                e.printStackTrace()
+//            }
         }
 
         override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
             arg1.printStackTrace()
             LogUtil.i("MQTT:送物订阅连接失败 ")
             RobotStatus.mqttConnected = false
-            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
+//            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
         }
     }
 
     //订阅主题的回调
-    private val mqttCallback_devliver: MqttCallback = object : MqttCallback {
+    private val mqttCallback_devliver: MqttCallback = object : MqttCallbackExtended {
         @Throws(Exception::class)
         override fun messageArrived(topic_deliver: String, message_deliver: MqttMessage) {
             if (topic_deliver == "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}") {
@@ -175,9 +176,23 @@ class DeliverMqttService : Service() {
 //            LogUtil.i("MQTT:发送完成：${arg0.message}")
         }
 
+        override fun connectComplete(reconnect: Boolean, serverURI: String?) {
+            LogUtil.i("MQTT:送物连接完成")
+            try {
+                mqttAndroidClient_deliver?.subscribe(
+                    "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
+//                    "$RESPONSE_TOPIC/#",
+                    2
+                ) //订阅主题，参数：主题、服务质量
+                RobotStatus.mqttConnected = true
+            } catch (e: MqttException) {
+                e.printStackTrace()
+            }
+        }
+
         override fun connectionLost(arg0: Throwable) {
             LogUtil.i("MQTT:连接断开 ")
-            doClientConnection() //连接断开，重连
+//            doClientConnection() //连接断开，重连
         }
     }
 

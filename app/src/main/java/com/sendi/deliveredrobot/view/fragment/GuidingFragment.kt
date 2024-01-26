@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.Order
@@ -34,6 +35,8 @@ import com.sendi.deliveredrobot.view.widget.Stat
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,7 +47,7 @@ import kotlinx.coroutines.launch
  */
 class GuidingFragment : Fragment() {
     private lateinit var binding: FragmentBusinessingBinding
-    private lateinit var mainScope: CoroutineScope
+    private var mainScope = CoroutineScope(Dispatchers.Default + Job())
     private var controller: NavController? = null
     private var viewModel: BusinessViewModel? = null
     private var baseViewModel: BaseViewModel? = null
@@ -75,20 +78,21 @@ class GuidingFragment : Fragment() {
         processClickDialog = ProcessClickDialog(requireActivity())
         finishTaskDialog = FinishTaskDialog(requireActivity())
         processClickDialog?.setCountdownTime(20)//打断任务时间
-//        mainScope.launch {
+
         val bill = BillManager.currentBill()
         if (bill is GuideTaskBill) {
             // 设置标志位为true，表示已经进入过该方法
             Universal.speakInt++
-            var pointName = bill?.endTarget()
-            pointName = pointName?.toList()?.joinToString(" ")
+            var pointName = bill.endTarget()
+            pointName = pointName.toList().joinToString(" ")
             binding.bottomAlarmTextViewArrive.text = pointName
             binding.businessName.text = String.format(getString(R.string.business_going), pointName)
         }
-//        }
+
         status()
+
         actionData = QuerySql.selectGuideFouConfig()
-        LogUtil.e("数据内容：${JSONObject.toJSONString(actionData)}")
+        LogUtil.i("数据内容：${JSONObject.toJSONString(actionData)}")
 
         controller = Navigation.findNavController(requireView())
         //副屏显示
@@ -98,9 +102,9 @@ class GuidingFragment : Fragment() {
             //正常图片&文字
             TouchScreenShow().layoutThis(
                 binding.bgCon,
-                binding.verticalTV,
-                binding.horizontalTV,
-                binding.pointImage,
+                binding.include.verticalTV,
+                binding.include.horizontalTV,
+                binding.include.pointImage,
                 actionData?.touchScreenConfig!!.touch_picPlayTime,
                 actionData?.touchScreenConfig!!.touch_imageFile ?: "",
                 actionData?.touchScreenConfig!!.touch_type,
@@ -113,7 +117,7 @@ class GuidingFragment : Fragment() {
                 actionData?.touchScreenConfig!!.touch_picType
             )
             //表情组（不可点击 单独处理）；tmd现在PM又变卦了，可以暂停了
-            if (actionData?.touchScreenConfig!!.touch_type == 4) {
+            if (actionData?.touchScreenConfig?.touch_type == 4) {
                 Glide.with(this)
                     .asGif()
                     .load(actionData?.touchScreenConfig!!.touch_walkPic)
@@ -123,14 +127,11 @@ class GuidingFragment : Fragment() {
         } catch (_: Exception) {
         }
 
-
-
         lifecycleScope.launch {
             delay(1000L) // 延迟1秒
             RobotStatus.repeatedReading++
-            if (RobotStatus.repeatedReading % 2 == 0) {
+            if (RobotStatus.repeatedReading % 2 == 0 && actionData?.movePrompt!!.isNotEmpty()) {
                 BaiduTTSHelper.getInstance().speaks(actionData?.movePrompt!!)
-//                viewModel!!.splitTextByPunctuation(actionData?.movePrompt!!)
             }
 
         }
@@ -160,7 +161,7 @@ class GuidingFragment : Fragment() {
                 RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
-            }else  if (value2 == Universal.ExplainLength && value1 != 1){
+            } else if (value2 == Universal.ExplainLength && value1 != 1) {
                 LogUtil.i("未到点，但播报任务完毕")
                 Order.setFlage("0")
             }
@@ -168,8 +169,8 @@ class GuidingFragment : Fragment() {
 
         //暂停
         binding.argPic.setOnClickListener {
-                processClickDialog?.show()
-                pause()
+            processClickDialog?.show()
+            pause()
         }
     }
 
@@ -204,6 +205,7 @@ class GuidingFragment : Fragment() {
         if (!viewModel!!.hasArrive) {
             return
         }
+        mediatorLiveData.value = Pair(0, 0)
         //到点表情组
         if (actionData?.touchScreenConfig?.touch_type == 4) {
             Glide.with(this)
@@ -211,7 +213,7 @@ class GuidingFragment : Fragment() {
                 .load(actionData?.touchScreenConfig!!.touch_arrivePic)
                 .placeholder(R.drawable.ic_warming) // 设置默认图片
                 .into(binding.argPic)
-        }else{
+        } else {
             binding.motionLayoutGuideArrive.visibility = View.VISIBLE
         }
         RobotStatus.progress.postValue(0)
@@ -219,7 +221,9 @@ class GuidingFragment : Fragment() {
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
-            BillManager.currentBill()?.executeNextTask()
+            mainScope.launch {
+                BillManager.currentBill()?.executeNextTask()
+            }
             RobotStatus.progress.postValue(0)
             Order.setFlage("0")
             RobotStatus.ready.postValue(0)
@@ -228,7 +232,9 @@ class GuidingFragment : Fragment() {
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.ExplainLength && viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕_返回")
-                BillManager.currentBill()?.executeNextTask()
+                mainScope.launch {
+                    BillManager.currentBill()?.executeNextTask()
+                }
                 RobotStatus.progress.postValue(0)
                 Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
@@ -255,9 +261,9 @@ class GuidingFragment : Fragment() {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //中断提示
-            BaiduTTSHelper.getInstance().speaks(QuerySql.selectGuideFouConfig().interruptPrompt!!)
-
-//            viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().interruptPrompt!!)
+            if (QuerySql.selectGuideFouConfig().interruptPrompt!!.isNotEmpty()) {
+                BaiduTTSHelper.getInstance().speaks(UpdateReturn().replaceText(QuerySql.selectGuideFouConfig().interruptPrompt!!))
+            }
             //返回
             viewModel!!.finishTask()
         }

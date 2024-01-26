@@ -261,7 +261,7 @@ public class BaseActivity extends AppCompatActivity {
         if (mPresentation == null && presentationDisplay != null) {
             Log.i(TAG, "Showing presentation on display: " + presentationDisplay);
             mPresentation = new MyPresentation(getApplicationContext(), presentationDisplay);
-            if (mPresentation != null) {
+            if (presentationDisplay != null) {
                 RobotStatus.INSTANCE.getMPresentation().postValue(1);
             }
             //  mPresentation.setOnDismissListener(mOnDismissListener);

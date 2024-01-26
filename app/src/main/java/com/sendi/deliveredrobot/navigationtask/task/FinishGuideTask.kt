@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
+import kotlinx.coroutines.launch
 
 /**
  * @describe:结束引领（某一段，并非从起点到终点）

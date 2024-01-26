@@ -73,7 +73,6 @@ class StandbyFragment : Fragment() {
             println("字符串中包含数字2,检测到人脸")
             fastRecognition.suerFaceInit(
                 extractFeature = false,
-                surfaceView = binding.SurfaceView,
                 owner = this,
                 needEtiquette = false
             )

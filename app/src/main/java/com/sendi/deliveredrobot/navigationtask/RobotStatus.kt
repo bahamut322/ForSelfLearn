@@ -79,7 +79,7 @@ object RobotStatus {
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
     var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()//1:配置下载完成 ；2：数据存储到数据库，不代表配置下载完成 3:下载配置中提醒副屏幕变更成默认图片
-    var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFace : MutableLiveData<Int>? = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别

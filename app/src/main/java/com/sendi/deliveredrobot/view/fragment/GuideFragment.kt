@@ -127,12 +127,14 @@ class GuideFragment : Fragment() {
                 } else {
                     BaiduTTSHelper.getInstance().stop()
                     LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
-                    val endPoint = queryFloorPoints[position]
-                    Log.d("TAG", "onViewCreated: " + endPoint.pointDirection)
-                    val taskModel = TaskModel(location = endPoint)
-                    val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
-                    BillManager.addAllAtIndex(bill, 0)
-                    BillManager.currentBill()?.executeNextTask()
+                    mainScope.launch {
+                        val endPoint = queryFloorPoints[position]
+                        Log.d("TAG", "onViewCreated: " + endPoint.pointDirection)
+                        val taskModel = TaskModel(location = endPoint)
+                        val bill = GuideTaskBillFactory.createBill(taskModel = taskModel)
+                        BillManager.addAllAtIndex(bill, 0)
+                        BillManager.currentBill()?.executeNextTask()
+                    }
                 }
             }
         binding.llReturn.setOnClickListener {
@@ -195,6 +197,7 @@ class GuideFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        LogUtil.i("guide 设置recordCallback")
         BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
             if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                 Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")

@@ -18,7 +18,6 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
-import kotlin.concurrent.thread
 
 
 /**
@@ -72,6 +71,7 @@ class MqttService : Service() {
         mMqttConnectOptions?.isCleanSession = true //设置是否清除缓存
         mMqttConnectOptions?.connectionTimeout = 10 //设置超时时间，单位：秒
         mMqttConnectOptions?.keepAliveInterval = 20 //设置心跳包发送间隔，单位：秒
+        mMqttConnectOptions?.isAutomaticReconnect = true
         mMqttConnectOptions?.userName = USERNAME //设置用户名
         mMqttConnectOptions?.password = PASSWORD.toCharArray() //设置密码
 
@@ -111,9 +111,7 @@ class MqttService : Service() {
     private fun doClientConnection() {
         if (!mqttAndroidClient!!.isConnected && isConnectIsNormal) {
             try {
-                thread {
-                    mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
-                }
+                mqttAndroidClient?.connect(mMqttConnectOptions, null, iMqttActionListener)
             } catch (e: MqttException) {
                 e.printStackTrace()
             }
@@ -134,10 +132,10 @@ class MqttService : Service() {
                 true
             } else {
                 LogUtil.i("MQTT:没有可用网络")
-                /*没有可用网络的时候，延迟3秒再尝试重连*/Handler().postDelayed(
-                    { doClientConnection() },
-                    3000
-                )
+//                /*没有可用网络的时候，延迟3秒再尝试重连*/Handler().postDelayed(
+//                    { doClientConnection() },
+//                    3000
+//                )
                 false
             }
         }
@@ -146,6 +144,43 @@ class MqttService : Service() {
     private val iMqttActionListener: IMqttActionListener = object : IMqttActionListener {
         override fun onSuccess(arg0: IMqttToken) {
 //            UpdateReturn().method()
+//            Thread { UpdateReturn().assignment() }.start()
+//            LogUtil.i("MQTT:通用订阅连接成功 ")
+//            try {
+//                mqttAndroidClient?.subscribe(
+//                    "$RESPONSE_TOPIC/${RobotStatus.SERIAL_NUMBER}",
+////                    "$RESPONSE_TOPIC/#",
+//                    2
+//                ) //订阅主题，参数：主题、服务质量
+//                RobotStatus.mqttConnected = true
+//            } catch (e: MqttException) {
+//                e.printStackTrace()
+//            }
+        }
+
+        override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
+            arg1.printStackTrace()
+            LogUtil.i("MQTT:通用订阅连接失败 ")
+            RobotStatus.mqttConnected = false
+//            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
+        }
+    }
+
+    //订阅主题的回调
+    private val mqttCallback: MqttCallback = object : MqttCallbackExtended {
+        @Throws(Exception::class)
+        override fun messageArrived(topic: String, message: MqttMessage) {
+            if (topic == "${RESPONSE_TOPIC}/${RobotStatus.SERIAL_NUMBER}") {
+                MqttMessageHandler.receive(message)
+                LogUtil.i("{MQTT:$topic}收到消息:" + String(message.payload))
+            }
+        }
+
+        override fun deliveryComplete(arg0: IMqttDeliveryToken) {
+//            LogUtil.i("MQTT:发送完成：${arg0.message}")
+        }
+
+        override fun connectComplete(reconnect: Boolean, serverURI: String?) {
             Thread { UpdateReturn().assignment() }.start()
             LogUtil.i("MQTT:通用订阅连接成功 ")
             try {
@@ -160,31 +195,9 @@ class MqttService : Service() {
             }
         }
 
-        override fun onFailure(arg0: IMqttToken, arg1: Throwable) {
-            arg1.printStackTrace()
-            LogUtil.i("MQTT:通用订阅连接失败 ")
-            RobotStatus.mqttConnected = false
-            doClientConnection() //连接失败，重连（可关闭服务器进行模拟）
-        }
-    }
-
-    //订阅主题的回调
-    private val mqttCallback: MqttCallback = object : MqttCallback {
-        @Throws(Exception::class)
-        override fun messageArrived(topic: String, message: MqttMessage) {
-            if (topic == "${RESPONSE_TOPIC}/${RobotStatus.SERIAL_NUMBER}") {
-                MqttMessageHandler.receive(message)
-                LogUtil.i("{MQTT:$topic}收到消息:" + String(message.payload))
-            }
-        }
-
-        override fun deliveryComplete(arg0: IMqttDeliveryToken) {
-//            LogUtil.i("MQTT:发送完成：${arg0.message}")
-        }
-
         override fun connectionLost(arg0: Throwable) {
             LogUtil.i("MQTT:连接断开 ")
-            doClientConnection() //连接断开，重连
+//            doClientConnection() //连接断开，重连
         }
     }
 
