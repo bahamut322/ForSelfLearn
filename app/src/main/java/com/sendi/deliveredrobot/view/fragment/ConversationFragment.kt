@@ -1,12 +1,10 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +16,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -31,32 +28,27 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.POP_BACK_STACK
 import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
-import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
-import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.SpanUtils
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
+import com.sendi.fooddeliveryrobot.GetVFFileToTextModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.Timer
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -73,24 +65,56 @@ class ConversationFragment : Fragment() {
     private var totalHeight: Int = 0
     private var talkingView: LinearLayoutCompat? = null
     private val defaultTalkingStr = "...."
+    private val hashMap = ConcurrentHashMap<String, ReplyIntentModel>()
     private var talkingStr = defaultTalkingStr
         set(value) {
             field = ".".repeat(value.length % 4 + 1)
         }
     private var waitTalk = true
-    val pattern =
+    private val pattern =
         "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     val observable = Observer<ReplyIntentModel>{
         if (context == null) return@Observer
         if (it == null) return@Observer
         //addConversationView
-        addAnswerView(it)
-        val answer = it.questionAnswer
-        if (answer.isNullOrEmpty()) return@Observer
-        SpeakHelper.speakWithoutStop(answer)
+        when(BaseVoiceRecorder.VOICE_RECORD_TYPE){
+            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                addAnswerView(it)
+                val answer = it.questionAnswer
+                if (answer.isNullOrEmpty()) return@Observer
+                SpeakHelper.speakWithoutStop(answer)
+            }
+            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                val replyIntentModel = hashMap["${it.questionNumber}"]
+                when (replyIntentModel == null) {
+                    true -> {
+                        //如果艾小越没有返回，则缓存答案，等待艾小越返回后判断用哪个答案
+                        hashMap["${it.questionNumber ?: -1}"] = it
+                        LogUtil.i("艾小越没有返回")
+                    }
+                    false -> {
+                        //如果艾小越已经返回，则判断用哪个答案
+                        LogUtil.i("艾小越有返回")
+                        val finalReplyIntentModel = findFinalAnswer(it, replyIntentModel)
+                        if (finalReplyIntentModel == null) {
+                            hashMap.remove("${it.questionNumber ?: -1}")
+                        }else{
+                            mainScope.launch(Dispatchers.Main) {
+                                addAnswerView(finalReplyIntentModel)
+                            }
+                            hashMap.remove("${finalReplyIntentModel.questionNumber}")
+                            val answer = finalReplyIntentModel.questionAnswer
+                            if (answer.isNullOrEmpty()) return@Observer
+                            SpeakHelper.speakWithoutStop(answer)
+                        }
+
+                    }
+                }
+
+            }
+        }
+
     }
-    var guidePoint: QueryPointEntity? = null
-    val yesWords = arrayOf("是的","对","对的","好","好的","嗯","嗯嗯","恩","恩恩","可以","可以的","行","行的","行行","行行行","行行行行","行行行行行","行行行行行行","行行行行行行行","行行行行行行行行","行行行行行行行行行")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -172,14 +196,31 @@ class ConversationFragment : Fragment() {
                                 addQuestionView(defaultTalkingStr)
                                 addQuestionView(text,talkingView)
                                 withContext(Dispatchers.IO){
-                                    var res = question2(text)
-                                    if (res.isEmpty()) return@withContext
-                                    addAnswer2(res)
-                                    if (res.contains("我猜您可能对以下内容感兴趣")) {
-                                        res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                    val currentTimeMillis = System.currentTimeMillis()
+                                    question(text, currentTimeMillis)
+                                    val getVFFileToTextModel = question2(text, currentTimeMillis)
+                                    val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
+                                    val finalAnswer = when (axyAnswer.code) {
+                                        200 -> axyAnswer //axy有答案
+                                        204 -> hashMap[axyAnswer.questionNumber?:"-1"] //axy无答案
+                                        else -> null
                                     }
-                                    res = res.replace(Regex(pattern),"")
-                                    SpeakHelper.speakWithoutStop(res)
+                                    if (finalAnswer != null) {
+                                        addAnswerView(finalAnswer)
+                                        if (hashMap["${finalAnswer.questionNumber}"] == null) {
+                                            hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                        }else{
+                                            hashMap.remove("${finalAnswer.questionNumber}")
+                                        }
+                                        var speakAnswer:String? = axyAnswer.questionAnswer
+                                        if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
+                                            speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
+                                        }
+                                        speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
+                                        SpeakHelper.speakWithoutStop(speakAnswer)
+                                    }else{
+                                        hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
+                                    }
                                 }
                             }
                         }
@@ -488,7 +529,7 @@ class ConversationFragment : Fragment() {
             addView(linearLayoutCompat)
             addView(emptyView)
         }
-        ReplyIntentHelper.replyIntentLiveData.value = null
+        ReplyIntentHelper.replyIntentLiveData.postValue(null)
 //        talkingView = null
     }
 
@@ -547,9 +588,9 @@ class ConversationFragment : Fragment() {
         }
     }
 
-    private suspend fun question2(conversation: String): String = suspendCoroutine {
+    private suspend fun question2(conversation: String, questionNumber: Long): GetVFFileToTextModel? = suspendCoroutine {
         LogUtil.i("提问--->$conversation")
-        it.resume(GenerateReplyToX8Utils.generateReplyToX8(conversation))
+        it.resume(GenerateReplyToX8Utils.generateReplyToX8(conversation, questionID ="$questionNumber"))
     }
 
     private fun initVoiceRecord(){
@@ -581,14 +622,35 @@ class ConversationFragment : Fragment() {
                             BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
                                 addQuestionView(conversation, talkingView)
                                 withContext(Dispatchers.IO){
-                                    var res = question2(conversation)
-                                    if (res.isEmpty()) return@withContext
-                                    addAnswer2(res)
-                                    if (res.contains("我猜您可能对以下内容感兴趣")) {
-                                        res = res.substringBefore("我猜您可能对以下内容感兴趣")
+                                    val currentTimeMillis = System.currentTimeMillis()
+                                    question(conversation, currentTimeMillis)
+                                    val getVFFileToTextModel = question2(conversation, currentTimeMillis)
+                                    val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
+                                    LogUtil.i("number-->${axyAnswer.questionNumber}")
+                                    val finalAnswer = when (axyAnswer.code) {
+                                        200 -> axyAnswer //axy有答案
+                                        204 -> hashMap["${axyAnswer.questionNumber?:-1}"] //axy无答案
+                                        else -> null
                                     }
-                                    res = res.replace(Regex(pattern),"")
-                                    SpeakHelper.speakWithoutStop(res)
+                                    LogUtil.i("finalAnswer-->${finalAnswer.toString()}")
+                                    if (finalAnswer != null) {
+                                        mainScope.launch(Dispatchers.Main) {
+                                            addAnswerView(finalAnswer)
+                                        }
+                                        if (hashMap["${finalAnswer.questionNumber}"] == null) {
+                                            hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                        }else{
+                                            hashMap.remove("${finalAnswer.questionNumber}")
+                                        }
+                                        var speakAnswer:String? = axyAnswer.questionAnswer
+                                        if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
+                                            speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
+                                        }
+                                        speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
+                                        SpeakHelper.speakWithoutStop(speakAnswer)
+                                    }else{
+                                        hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
+                                    }
                                 }
                             }
                         }
@@ -635,6 +697,20 @@ class ConversationFragment : Fragment() {
                     //结束录音
                 }
             }
+        }
+    }
+
+    private fun judgeExistAnswer(replyIntentModel: ReplyIntentModel): Boolean{
+        return when(replyIntentModel.code) {
+                200 -> true
+                204 -> false
+                else -> false
+            }
+    }
+    private fun findFinalAnswer(sdAnswer:ReplyIntentModel, axyAnswer:ReplyIntentModel):ReplyIntentModel?{
+        return when(judgeExistAnswer(axyAnswer)){
+            false -> sdAnswer
+            true -> null
         }
     }
 

@@ -1,11 +1,13 @@
 package com.sendi.deliveredrobot.utils
 
-import android.os.SystemClock
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
+import com.sendi.deliveredrobot.model.ReplyIntentModel
 import com.sendi.fooddeliveryrobot.GetVFFileToTextModel
+import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -19,11 +21,12 @@ object GenerateReplyToX8Utils {
         consultationType: Int = 0,
         customerWechat: String = "",
         wxid: String = "X8",
-        consultationTime: String = "${System.currentTimeMillis() / 1000}"
-    ): String {
+        consultationTime: String = "${System.currentTimeMillis() / 1000}",
+        questionID: String = "0"
+    ): GetVFFileToTextModel? {
         val client = OkHttpClient.Builder()
-            .connectTimeout(2, TimeUnit.MINUTES)
-            .writeTimeout(5, TimeUnit.MINUTES)
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
             .build()
         val mediaType = "application/json".toMediaTypeOrNull()
         val getVFFileToTextModel = JsonObject().apply {
@@ -34,23 +37,55 @@ object GenerateReplyToX8Utils {
             addProperty("consultationTime", consultationTime)
         }
         val requestBody = getVFFileToTextModel.toString().toRequestBody(mediaType)
+        val url = HttpUrl.Builder()
+            .scheme("http")
+            .host("103.215.44.36")
+            .addPathSegments("wechatWork/automaticResponse/generateReplyToX8")
+            .addQueryParameter("questionID", questionID)
+            .build()
         val request = Request.Builder()
-            .url("http://app.yuexiu.gov.cn/wechatWork/automaticResponse/generateReplyToX8")
+//            .url("http://app.yuexiu.gov.cn/wechatWork/automaticResponse/generateReplyToX8")
+            .url(url)
             .post(requestBody)
             .addHeader("Content-Type", "application/json")
             .build()
-        try {
+        return try {
             val startTime = System.currentTimeMillis()
             val response = client.newCall(request).execute()
-            Log.i("AudioChannel", "generateReplyToX8耗时${(System.currentTimeMillis() - startTime) / 1000f}s")
             LogUtil.i("generateReplyToX8耗时${(System.currentTimeMillis() - startTime) / 1000f}s")
-            val data = response.body?.string()?:""
-//            LogUtil.i(data)
-            val getVFFileToTextModel = gson.fromJson(data, GetVFFileToTextModel::class.java)
-            return getVFFileToTextModel?.data ?: "网络超时，请稍后重试..."
+            val data = response.body?.string() ?: ""
+            LogUtil.i(data)
+            gson.fromJson(data, GetVFFileToTextModel::class.java)
         } catch (e: IOException) {
             LogUtil.e(e.toString())
+            null
+        } catch (e: JsonSyntaxException) {
+            LogUtil.e(e.toString())
+            null
         }
-        return "网络错误,请稍后重试..."
+    }
+
+    fun getReplyInfoModel(getVFFileToTextModel: GetVFFileToTextModel?): ReplyIntentModel{
+        try {
+            return ReplyIntentModel(
+                images = null,
+                questionAnswer = getVFFileToTextModel?.data?.reply,
+                questionNumber = getVFFileToTextModel?.data?.id?.toLong(),
+                code = getVFFileToTextModel?.code,
+                type = null,
+                videos = null,
+                frames = null
+            )
+        }catch (e:Exception){
+            return ReplyIntentModel(
+                images = null,
+                questionAnswer = null,
+                questionNumber = null,
+                code = null,
+                type = null,
+                videos = null,
+                frames = null
+            )
+        }
     }
 }

@@ -129,7 +129,7 @@ class FaceRecognition {
             override fun surfaceDestroyed(holder: SurfaceHolder) {}
         })
         //获取摄像实时数据
-        c!!.setPreviewCallback { data: ByteArray?, _: Camera? ->
+        c?.setPreviewCallback { data: ByteArray?, _: Camera? ->
             if (data!!.isNotEmpty()) {
                 val bm = decodeByteArrayToBitmap(data, width, height)
                 if (bm != null) {

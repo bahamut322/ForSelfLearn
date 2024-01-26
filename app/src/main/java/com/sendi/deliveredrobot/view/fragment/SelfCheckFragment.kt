@@ -88,28 +88,28 @@ class SelfCheckFragment : Fragment() {
                 basicSettingViewModel.basicConfig = basicConfig
                 //-------------------自检---------------------
                 var mStartProgressBar = 0
-                var resCheck = 0x1FF
-//                try {
-//                    activity?.let {
-//                        resCheck = CheckSelfHelper.checkHardware(
-//                            90,
-//                            it,
-//                            object : OnCheckChangeListener {
-//                                override fun onCheckProgress(progress: Int) {
-//                                    LogUtil.i("progress: $progress")
-////                                    MainScope().launch(Dispatchers.Main) {
-////                                        setAnimation(
-////                                            binding.selfCheckPb,
-////                                            mStartProgressBar,
-////                                            progress * 10
-////                                        )
-////                                    }
-//                                    mStartProgressBar = progress * 10
-//                                }
-//                            }
-//                        )
-//                    }
-//                }catch (_:Exception){}
+                var resCheck = 0
+                try {
+                    activity?.let {
+                        resCheck = CheckSelfHelper.checkHardware(
+                            90,
+                            it,
+                            object : OnCheckChangeListener {
+                                override fun onCheckProgress(progress: Int) {
+                                    LogUtil.i("progress: $progress")
+//                                    MainScope().launch(Dispatchers.Main) {
+//                                        setAnimation(
+//                                            binding.selfCheckPb,
+//                                            mStartProgressBar,
+//                                            progress * 10
+//                                        )
+//                                    }
+                                    mStartProgressBar = progress * 10
+                                }
+                            }
+                        )
+                    }
+                }catch (_:Exception){}
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")

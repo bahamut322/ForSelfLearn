@@ -7,5 +7,6 @@ data class ReplyIntentModel(
     val questionNumber: Long?,
     val type: String?,
     val videos: List<String>?,
-    val frames: List<String>?
+    val frames: List<String>?,
+    var code:Int?
 )
