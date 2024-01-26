@@ -61,8 +61,8 @@ class RobotUpDataDialog(
     @SuppressLint("SetTextI18n")
     private fun setDate(){
         DownLoadListener.setOnChangeListener {
-            progress.progress = DownLoadListener.getProgress()
-            taskNum.text = "当前任务进度：${DownLoadListener.getProgress()}% /剩余任务：${DownloadBill.getInstance().taskCount}"
+            progress.progress = it
+            taskNum.text = "当前任务进度：${it}% /剩余任务：${DownloadBill.getInstance().taskCount}"
         }
     }
 

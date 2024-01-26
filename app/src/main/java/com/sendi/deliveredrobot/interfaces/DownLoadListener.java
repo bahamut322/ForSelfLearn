@@ -8,7 +8,7 @@ package com.sendi.deliveredrobot.interfaces;
  */
 public class DownLoadListener {
     public interface OnChangeListener {    // 创建interface类
-        void onChange();    // 值改变
+        void onChange(int progress);    // 值改变
     }
 
     private static DownLoadListener.OnChangeListener onChangeListener;    // 声明interface接口
@@ -17,17 +17,9 @@ public class DownLoadListener {
         onChangeListener = onChange;
     }
 
-    private static int progress;
-
-    public static int getProgress() {
-        return progress;
-    }
-
-
     public static void setProgress(int progress) {
-        DownLoadListener.progress = progress;
         if (onChangeListener!=null) {
-            onChangeListener.onChange();
+            onChangeListener.onChange(progress);
         }
     }
 
