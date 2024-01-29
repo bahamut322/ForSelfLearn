@@ -36,6 +36,7 @@ import com.sendi.deliveredrobot.camera.IRUVC;
 import com.sendi.deliveredrobot.databinding.ActivityCameraPreviewBinding;
 import com.sendi.deliveredrobot.entity.Abnormal;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper;
 import com.sendi.deliveredrobot.interfaces.FaceDataListener;
 import com.sendi.deliveredrobot.model.FaceModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
@@ -97,7 +98,8 @@ public class CameraPreviewFragment extends Fragment {
         new TimeThread().start(); //启动新的线程
 //        initViews();
         //副屏状态
-        RobotStatus.INSTANCE.getSdScreenStatus().postValue(1);
+//        RobotStatus.INSTANCE.getSdScreenStatus().postValue(1);
+        SecondScreenManageHelper.INSTANCE.refreshSecondScreen(1, null);
         features = new float[1][512];
         //红外显示的方法
         initEvents();

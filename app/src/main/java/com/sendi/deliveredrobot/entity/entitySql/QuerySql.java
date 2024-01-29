@@ -22,6 +22,7 @@ import com.sendi.deliveredrobot.model.GuideSendModel;
 import com.sendi.deliveredrobot.model.MapConfig;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.RouteMapList;
+import com.sendi.deliveredrobot.model.SecondModel;
 import com.sendi.deliveredrobot.model.SendRoutesModel;
 import com.sendi.deliveredrobot.model.SendShoppingActionModel;
 
@@ -805,14 +806,47 @@ public class QuerySql {
 
     public static List<ApplicationModel> queryApplicationModelList(){
         ArrayList<ApplicationModel> list = new ArrayList<>();
-        String sql = "SELECT icon,url,name FROM table_applet_config";
+        String sql = "SELECT * FROM table_applet_config\n" +
+                "LEFT JOIN table_big_screen ON table_applet_config.id = table_big_screen.table_applet_config_id";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String icon = cursor.getString(cursor.getColumnIndex("icon"));
                 String url = cursor.getString(cursor.getColumnIndex("url"));
                 String name = cursor.getString(cursor.getColumnIndex("name"));
-                ApplicationModel model = new ApplicationModel(name,url,icon);
+                String fontBackground = cursor.getString(cursor.getColumnIndex("fontbackground"));
+                int picPlayTime = cursor.getInt(cursor.getColumnIndex("picplaytime"));
+                int fontLayout = cursor.getInt(cursor.getColumnIndex("fontlayout"));
+                String imageFile = cursor.getString(cursor.getColumnIndex("imagefile"));
+                int fontSize = cursor.getInt(cursor.getColumnIndex("fontsize"));
+                int type = cursor.getInt(cursor.getColumnIndex("type"));
+                String videoFile = cursor.getString(cursor.getColumnIndex("videofile"));
+                int textPosition = cursor.getInt(cursor.getColumnIndex("textposition"));
+                int videoLayout = cursor.getInt(cursor.getColumnIndex("videolayout"));
+                String fontContent = cursor.getString(cursor.getColumnIndex("fontcontent"));
+                int picType = cursor.getInt(cursor.getColumnIndex("pictype"));
+                int videoAudio = cursor.getInt(cursor.getColumnIndex("videoaudio"));
+                String fontColor = cursor.getString(cursor.getColumnIndex("fontcolor"));
+                ApplicationModel model = new ApplicationModel(
+                        name,
+                        url,
+                        icon,
+                        new SecondModel(
+                          picPlayTime,
+                          videoFile != null ? videoFile: imageFile,
+                          type,
+                          textPosition,
+                          fontLayout,
+                          fontContent,
+                          fontBackground,
+                          fontColor,
+                          fontSize,
+                          picType,
+                          videoLayout,
+                          videoAudio,
+                          false
+                        )
+                );
                 list.add(model);
             } while (cursor.moveToNext());
             cursor.close();

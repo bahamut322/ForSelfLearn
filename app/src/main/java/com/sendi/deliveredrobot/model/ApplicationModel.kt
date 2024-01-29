@@ -6,8 +6,9 @@ package com.sendi.deliveredrobot.model
  * @describe 更多服务Model
  */
  data class ApplicationModel (
-     var name : String? = "",
-     var url : String? = "",
-     var icon: String? = ""
+    var name : String? = "",
+    var url : String? = "",
+    var icon: String? = "",
+    var secondModel :SecondModel? = null
  )
 

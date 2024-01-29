@@ -424,17 +424,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         RobotStatus.newUpdata.observe(this) {
             if (it == 1) {
                 RobotStatus.newUpdata.postValue(null)
-                if(RobotStatus.sdScreenStatus.value != 3){
-                    SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus.value)
+                if(RobotStatus.sdScreenStatus != 3){
+                    SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
                 }
             }
             if (it == 3) {
                 SecondScreenManageHelper.refreshSecondScreen( null)
-            }
-        }
-        RobotStatus.sdScreenStatus.observe(this) {
-            if (mPresentation != null) {
-                SecondScreenManageHelper.refreshSecondScreen(it)
             }
         }
     }

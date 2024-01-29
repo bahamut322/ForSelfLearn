@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -131,6 +132,8 @@ class AppContentFragment : Fragment() {
                                 this.putString("name", applications[position].name)
                             }
                             controller?.navigate(R.id.appManagerFragment, args)
+                            //刷新大屏
+                            SecondScreenManageHelper.refreshSecondScreen(6, applications[position].secondModel)
                         }
 
                 }

@@ -199,7 +199,8 @@ class HomeFragment : Fragment(), IMainView {
         super.onViewCreated(view, savedInstanceState)
         AppUtils.checkPermission(activity, 0)
         fromeSettingDialog = FromeSettingDialog(context)
-        RobotStatus.sdScreenStatus.postValue(0)
+//        RobotStatus.sdScreenStatus.postValue(0)
+        SecondScreenManageHelper.refreshSecondScreen(0)
         controller = Navigation.findNavController(requireView())
         RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner) {
             showFunction(true)

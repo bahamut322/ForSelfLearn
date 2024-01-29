@@ -7,6 +7,7 @@ import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.DefaultModel
 import com.sendi.deliveredrobot.model.SecondModel
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import org.litepal.LitePal
 import kotlin.properties.Delegates
 
@@ -44,6 +45,7 @@ object SecondScreenManageHelper {
     }
 
     fun refreshSecondScreen(state: Int?, tempSecondModel: SecondModel? = null) {
+        RobotStatus.sdScreenStatus = state
         when (state) {
             0 -> {
                 val config = LitePal.findFirst(Table_Advertising::class.java)
@@ -90,7 +92,7 @@ object SecondScreenManageHelper {
                 }
             }
 
-            2, 3, 4, 5 -> {
+            2, 3, 4, 5, 6 -> {
                 val finalSecondModel = tempSecondModel ?: secondModel
                 if (finalSecondModel?.type != 0) {
                     secondModel = finalSecondModel
