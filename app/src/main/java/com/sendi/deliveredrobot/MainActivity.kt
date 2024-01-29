@@ -53,7 +53,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private lateinit var binding: ActivityMainBinding
     private val dateViewModel by viewModels<DateViewModel>()
     private val fileNames =
-        arrayOf("advdefault.jpg", "explandefault.jpg", "guidedefault.jpg", "usherdefault.jpg","default_explain.gif","businessdefault.jpg")
+        arrayOf("advdefault.jpg", "explandefault.jpg", "guidedefault.jpg", "usherdefault.jpg","default_explain.gif","businessdefault.jpg","default_greet.jpg")
     @SuppressLint("SimpleDateFormat")
     private val sdf2 = SimpleDateFormat("HH:mm")
     private lateinit var navigationReceiver: NavigationReceiver

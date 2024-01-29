@@ -26,10 +26,6 @@ public class Universal {
     public static int cameraWidth = 256;//160;//256;
     //红外摄像头的分辨率Height
     public static int cameraHeight = 384;//240;//384;
-    //RGB摄像头的分辨率Width
-    public static int RGBWidth = 640;
-    //RGB摄像头的分辨率Height
-    public static int RGBHeight = 480;
     //测温视频
     public static int TempVideoLayout = 480;
     //APP更新下载目录
@@ -46,6 +42,8 @@ public class Universal {
     public static String guideDefault = "/storage/emulated/0/ResProvider/default/guidedefault.jpg";
     //导购默认
     public static String businessDefault = "/storage/emulated/0/ResProvider/default/businessdefault.jpg";
+    //迎宾默认图
+    public static String greetDefault = "/storage/emulated/0/ResProvider/default/default_greet.jpg";
     //存放待机视频/图片/GIF的目录
     @SuppressLint("SdCardPath")
     public static String Standby = "/mnt/sdcard/X8ROBOT/AppStandby/";
@@ -62,12 +60,15 @@ public class Universal {
     //机器人主要存放的路径
     @SuppressLint("SdCardPath")
     public static String robotFile = "/mnt/sdcard/X8ROBOT/";
+    //百度语音长语音指定id
+    public static String speakTextId = "explanation";
     //引领返回是否播放表情标志位
     public static boolean guideTask = false;
     //导购返回是否播放表情标志位
     public static String businessTask = null;
-
+    //人脸检测URL
     public static String POST_FAST = "http://192.168.73.204:5005/get_feat";
+    //人脸识别URL
     public static String POST_IDENTIFY = "http://192.168.73.204:5005/get_similarity";
 
 

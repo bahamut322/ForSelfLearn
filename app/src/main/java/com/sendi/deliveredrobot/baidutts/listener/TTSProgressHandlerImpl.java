@@ -17,7 +17,7 @@ public class TTSProgressHandlerImpl implements TTSProgressHandler {
 
     @Override
     public void handleProgressUpdate(String utteranceId, int progress) {
-        if (utteranceId.equals("explanation")) {
+        if (utteranceId.equals(Universal.speakTextId)) {
             //首先规避一下重复数
             if (progress == previousProgress) {
                 LogUtil.INSTANCE.d("生成了重复数");

@@ -93,12 +93,7 @@
             android:textSize="@dimen/sp_20"
             app:layout_constraintStart_toStartOf="@+id/textViewDayOfWeek"
             app:layout_constraintTop_toBottomOf="@+id/textViewDayOfWeek" />
-        <SurfaceView
-            android:id="@+id/SurfaceView"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            app:layout_constraintStart_toStartOf="@+id/imageView8"
-            app:layout_constraintTop_toTopOf="@+id/imageView8" />
+
         <ImageView
             android:id="@+id/imageView8"
             android:layout_width="@dimen/dp_40"

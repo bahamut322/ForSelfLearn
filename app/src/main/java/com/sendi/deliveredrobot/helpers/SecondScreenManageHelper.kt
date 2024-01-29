@@ -99,6 +99,7 @@ object SecondScreenManageHelper {
                         2 -> Universal.explainDefault
                         3 -> Universal.guideDefault
                         4 -> Universal.businessDefault
+                        5 -> Universal.greetDefault
                         else -> Universal.advDefault
                     }
                     default(defaultType, false)
