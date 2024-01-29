@@ -69,7 +69,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onSpeechStart(String utteranceId) {
         sendMessage("播放开始回调, 序列号:" + utteranceId);
         new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
-        if (utteranceId == "explanation") {
+        if (utteranceId == Universal.speakTextId) {
             return;
         }
         RobotStatus.INSTANCE.getIdentifyFace().postValue(0);

@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -56,8 +57,8 @@ class GuidingFragment : Fragment() {
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
-    private val liveData1 = RobotStatus.ArrayPointExplan
-    private val liveData2 = RobotStatus.progress
+    private val arrayPoint = RobotStatus.ArrayPointExplan
+    private val progress = RobotStatus.progress
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,31 +138,31 @@ class GuidingFragment : Fragment() {
         }
 
 
-        mediatorLiveData.addSource(liveData1) {
+        mediatorLiveData.addSource(arrayPoint) {
             updateMediatorValue()
         }
 
-        mediatorLiveData.addSource(liveData2) {
+        mediatorLiveData.addSource(progress) {
             updateMediatorValue()
         }
 
 
-        mediatorLiveData.observe(viewLifecycleOwner) { (value1, value2) ->
-            if (value2 == Universal.ExplainLength && value1 == 1 && !viewModel!!.hasArrive) {
+        mediatorLiveData.observe(viewLifecycleOwner) { (arrayPointObserver, progressObserver) ->
+            if (progressObserver == Universal.ExplainLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
                 Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
-            } else if (actionData?.movePrompt.isNullOrEmpty() && value1 == 1 && !viewModel!!.hasArrive) {
+            } else if (actionData?.movePrompt.isNullOrEmpty() && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
                 Order.setFlage("0")
                 RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
-            } else if (value2 == Universal.ExplainLength && value1 != 1) {
+            } else if (progressObserver == Universal.ExplainLength && arrayPointObserver != 1) {
                 LogUtil.i("未到点，但播报任务完毕")
                 Order.setFlage("0")
             }
@@ -191,10 +192,10 @@ class GuidingFragment : Fragment() {
     }
 
     private fun updateMediatorValue() {
-        val value1 = liveData1.value
-        val value2 = liveData2.value
-        if (value1 != null && value2 != null) {
-            mediatorLiveData.value = Pair(value1, value2)
+        val arrayPointObserver = arrayPoint.value
+        val progressObserver = progress.value
+        if (arrayPointObserver != null && progressObserver != null) {
+            mediatorLiveData.value = Pair(arrayPointObserver, progressObserver)
         }
     }
 
@@ -268,5 +269,10 @@ class GuidingFragment : Fragment() {
             viewModel!!.finishTask()
         }
         finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 }

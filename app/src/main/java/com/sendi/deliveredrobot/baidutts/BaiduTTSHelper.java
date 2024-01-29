@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.baidutts.listener.TextSplitter;
 import com.sendi.deliveredrobot.baidutts.util.Auth;
 import com.sendi.deliveredrobot.baidutts.util.IOfflineResourceConst;
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource;
+import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
@@ -213,7 +214,7 @@ public class BaiduTTSHelper {
         List<String> textList = textSplitter.splitTextByPunctuation(text);
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
         for ( int i = 0 ; i < textList.size() ; i++) {
-            synthesizer.speak(textList.get(i), "explanation");
+            synthesizer.speak(textList.get(i), Universal.speakTextId);
         }
     }
 

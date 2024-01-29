@@ -89,7 +89,7 @@ class StandbyFragment : Fragment() {
         }
         if (contains3) {
             println("字符串中包含数字3,唤醒词")
-            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
+            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString, _ ->
                 if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
                     Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
                     controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
@@ -115,12 +115,10 @@ class StandbyFragment : Fragment() {
                     }
                 }
                 binding.Standby.setData(imagePaths) // 将数据传入到控件中显示
-            } else {
-                (imagePaths as ArrayList<Advance>).add(Advance(Universal.gifDefault, "2", 0, 3))
-                binding.Standby.setData(imagePaths) // 将数据传入到控件中显示
             }
         } else {
-            LogUtil.e("待机时传入无效路径")
+            (imagePaths as ArrayList<Advance>).add(Advance(Universal.gifDefault, "2", 0, 3))
+            binding.Standby.setData(imagePaths) // 将数据传入到控件中显示
         }
     }
 

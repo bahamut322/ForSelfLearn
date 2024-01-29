@@ -169,7 +169,7 @@ class BusinessViewModel : ViewModel() {
                 videoAudio = mData.bigScreenConfig?.videoAudio
             )
         )
-        RobotStatus.sdScreenStatus!!.postValue(4)
+//        RobotStatus.sdScreenStatus!!.postValue(4)
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 

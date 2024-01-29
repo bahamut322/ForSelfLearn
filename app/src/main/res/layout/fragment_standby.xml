@@ -24,12 +24,6 @@
             app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
-        <SurfaceView
-            android:id="@+id/SurfaceView"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            app:layout_constraintStart_toStartOf="@+id/Standby"
-            app:layout_constraintTop_toTopOf="@+id/Standby"/>
 
         <ImageView
             android:id="@+id/imageButton"

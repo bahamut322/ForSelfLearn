@@ -59,8 +59,8 @@ class BusinessIngFragment : Fragment() {
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
-    private val liveData1 = RobotStatus.ArrayPointExplan
-    private val liveData2 = RobotStatus.progress
+    private val arrayPoint = RobotStatus.ArrayPointExplan
+    private val progress = RobotStatus.progress
     private var taskId = ""
 
     override fun onCreateView(
@@ -167,17 +167,17 @@ class BusinessIngFragment : Fragment() {
         binding.bottomAlarmTextViewArrive.text = actionData!!.name
 
         // 添加第一个源（到点）
-        mediatorLiveData.addSource(liveData1) { value1 ->
-            val value2 = liveData2.value
-            if (value1 != null && value2 != null) {
-                mediatorLiveData.value = Pair(value1, value2)
+        mediatorLiveData.addSource(arrayPoint) { arrayPoint ->
+            val value2 = progress.value
+            if (arrayPoint != null && value2 != null) {
+                mediatorLiveData.value = Pair(arrayPoint, value2)
             }
         }
         // 添加第二个源（进度）
-        mediatorLiveData.addSource(liveData2) { value2 ->
-            val value1 = liveData1.value
-            if (value1 != null && value2 != null) {
-                mediatorLiveData.value = Pair(value1, value2)
+        mediatorLiveData.addSource(progress) { progress ->
+            val value1 = arrayPoint.value
+            if (value1 != null && progress != null) {
+                mediatorLiveData.value = Pair(value1, progress)
             }
         }
         viewModel!!.downTimer(
@@ -186,23 +186,23 @@ class BusinessIngFragment : Fragment() {
             controller!!,
             taskId
         )
-        mediatorLiveData.observe(viewLifecycleOwner) { (value1, value2) ->
+        mediatorLiveData.observe(viewLifecycleOwner) { (arrayPoint, progress) ->
             //非定点任务
             when (actionData?.actionType) {
                 2 -> {
-                    if (value2 == Universal.ExplainLength && value1 == 1 && !viewModel!!.hasArrive) {
+                    if (progress == Universal.ExplainLength && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
                         Order.setFlage("0")
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
-                    } else if (actionData?.moveText.isNullOrEmpty() && value1 == 1 && !viewModel!!.hasArrive) {
+                    } else if (actionData?.moveText.isNullOrEmpty() && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
                         Order.setFlage("0")
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
-                    } else if (value2 == Universal.ExplainLength && value1 != 1) {
+                    } else if (progress == Universal.ExplainLength && arrayPoint != 1) {
                         LogUtil.i("未到点，但播报任务完毕")
                         Order.setFlage("0")
                     }
@@ -321,7 +321,7 @@ class BusinessIngFragment : Fragment() {
                 2 -> {
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
-                    if (liveData1.value != 1) {//如果到点点击结束
+                    if (arrayPoint.value != 1) {//如果到点点击结束
                     } else {
                         //中断提示
                         BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().interruptPrompt!!)
