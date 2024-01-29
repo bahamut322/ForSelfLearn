@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.entity.Table_Big_Screen
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -20,23 +21,21 @@ class GreetViewModel : ViewModel() {
         } else if (mData?.imageFile != null) {
             file = mData.imageFile.toString()
         }
-        RobotStatus.SecondModel.postValue(
-            SecondModel(
-                picPlayTime = mData?.picPlayTime,
-                file = file,
-                type = mData?.type ?: 0,
-                textPosition = mData?.textPosition,
-                fontLayout = mData?.fontLayout,
-                fontContent = mData?.fontContent.toString(),
-                fontBackGround = mData?.fontBackGround.toString(),
-                fontColor = mData?.fontColor,
-                fontSize = mData?.fontSize,
-                picType = mData?.picType,
-                videolayout = mData?.videolayout,
-                videoAudio = mData?.videoAudio
-            )
-        )
-        RobotStatus.sdScreenStatus.postValue(5)
+        SecondScreenManageHelper.refreshSecondScreen(5,SecondModel(
+            picPlayTime = mData?.picPlayTime,
+            file = file,
+            type = mData?.type ?: 0,
+            textPosition = mData?.textPosition,
+            fontLayout = mData?.fontLayout,
+            fontContent = mData?.fontContent.toString(),
+            fontBackGround = mData?.fontBackGround.toString(),
+            fontColor = mData?.fontColor,
+            fontSize = mData?.fontSize,
+            picType = mData?.picType,
+            videolayout = mData?.videolayout,
+            videoAudio = mData?.videoAudio,
+            false
+        ))
         LogUtil.i("图片位置：${mData?.imageFile.toString()}")
     }
 }

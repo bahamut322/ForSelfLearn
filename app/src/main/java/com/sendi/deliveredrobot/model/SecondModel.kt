@@ -12,5 +12,6 @@ data class SecondModel(
     var fontSize: Int? = 0,
     var picType: Int? = 1,
     var videolayout : Int? = 0,
-    var videoAudio : Int? = 1
+    var videoAudio : Int? = 1,
+    var adv : Boolean
 )

@@ -17,10 +17,10 @@ data class Table_Applet_Config(
     constructor():this(null,null,null,null,null,null,null,null)
 
     companion object{
-        fun create(applet: Applet): Table_Applet_Config {
+        fun create(applet: Applet, storagePath: String = "${Universal.robotFile}applet/"): Table_Applet_Config {
             return Table_Applet_Config(
                 -1,
-                Table_Big_Screen.create(applet.bigScreenConfig),
+                Table_Big_Screen.create(applet.bigScreenConfig, "${storagePath}${applet.appletId}/"),
                 applet.icon,
                 applet.appletId,
                 applet.name,

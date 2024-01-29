@@ -1,12 +1,20 @@
 package com.sendi.deliveredrobot.entity;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.sendi.deliveredrobot.MyApplication;
+import com.sendi.deliveredrobot.handler.MqttMessageHandler;
 import com.sendi.deliveredrobot.model.ExpressionConfiguration;
 import com.sendi.deliveredrobot.model.PictureConfiguration;
 import com.sendi.deliveredrobot.model.TextConfiguration;
 import com.sendi.deliveredrobot.model.TopLevelConfig;
 import com.sendi.deliveredrobot.model.VideoConfiguration;
+import com.sendi.deliveredrobot.navigationtask.DownloadBill;
 
 import org.litepal.crud.LitePalSupport;
+
+import java.util.List;
 
 /**
  * @author swn
@@ -145,8 +153,7 @@ public class Table_Big_Screen extends LitePalSupport {
         this.imageFile = imageFile;
     }
 
-
-    public static Table_Big_Screen create(TopLevelConfig topLevelConfig){
+    public static Table_Big_Screen create(TopLevelConfig topLevelConfig, String storagePath){
         PictureConfiguration argPic = topLevelConfig.getArgPic();
         TextConfiguration argFont = topLevelConfig.getArgFont();
         VideoConfiguration argVideo = topLevelConfig.getArgVideo();
@@ -159,7 +166,9 @@ public class Table_Big_Screen extends LitePalSupport {
         if (argPic != null) {
             table_big_screen.setPicType(argPic.getPicType());
             table_big_screen.setPicPlayTime(argPic.getPicPlayTime());
-            table_big_screen.setImageFile(argPic.getPics());
+            String picStoragePath = storagePath + "/big/";
+            downFiles(picStoragePath, argPic.getPics());
+            table_big_screen.setImageFile(storagePath);
         }
         if (argFont != null) {
             table_big_screen.setFontContent(argFont.getFontContent());
@@ -172,9 +181,28 @@ public class Table_Big_Screen extends LitePalSupport {
         if(argVideo != null){
             table_big_screen.setVideoAudio(argVideo.getVideoAudio());
             table_big_screen.setVideoFile(argVideo.getVideos());
+            String picStoragePath = storagePath + "/big/";
+            downFiles(picStoragePath, argVideo.getVideos());
             table_big_screen.videolayout = argVideo.getVideoLayOut();
         }
 
         return table_big_screen;
+    }
+
+    private static void downFiles(String storagePath, String files){
+        MqttMessageHandler.INSTANCE.openFile(storagePath);
+        List<String> fileList = MqttMessageHandler.INSTANCE.compareArrays(storagePath, files);
+        if (fileList != null) {
+            new Thread(() -> {
+                for (int i = 0; i < fileList.size(); i++) {
+                    DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + fileList.get(i),
+                            storagePath,
+                            MqttMessageHandler.INSTANCE.FileName(fileList.get(i)),
+                            MyApplication.Companion.getListener()
+                    );
+                }
+            }).start();
+        }
     }
 }

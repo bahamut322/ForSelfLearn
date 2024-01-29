@@ -19,6 +19,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -153,23 +154,22 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.SecondModel.postValue(
-            SecondModel(
-                picPlayTime = mData.bigScreenConfig?.picPlayTime,
-                file = file,
-                type = mData.bigScreenConfig?.type ?: 0,
-                textPosition = mData.bigScreenConfig?.textPosition,
-                fontLayout = mData.bigScreenConfig?.fontLayout,
-                fontContent = mData.bigScreenConfig?.fontContent.toString(),
-                fontBackGround = mData.bigScreenConfig?.fontBackGround.toString(),
-                fontColor = mData.bigScreenConfig?.fontColor,
-                fontSize = mData.bigScreenConfig?.fontSize,
-                picType = mData.bigScreenConfig?.picType,
-                videolayout = mData.bigScreenConfig?.videolayout,
-                videoAudio = mData.bigScreenConfig?.videoAudio
-            )
-        )
-        RobotStatus.sdScreenStatus.postValue(4)
+        SecondScreenManageHelper.refreshSecondScreen(4,SecondModel(
+            picPlayTime = mData.bigScreenConfig?.picPlayTime,
+            file = file,
+            type = mData.bigScreenConfig?.type ?: 0,
+            textPosition = mData.bigScreenConfig?.textPosition,
+            fontLayout = mData.bigScreenConfig?.fontLayout,
+            fontContent = mData.bigScreenConfig?.fontContent.toString(),
+            fontBackGround = mData.bigScreenConfig?.fontBackGround.toString(),
+            fontColor = mData.bigScreenConfig?.fontColor,
+            fontSize = mData.bigScreenConfig?.fontSize,
+            picType = mData.bigScreenConfig?.picType,
+            videolayout = mData.bigScreenConfig?.videolayout,
+            videoAudio = mData.bigScreenConfig?.videoAudio,
+            false
+        ))
+
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 
@@ -180,23 +180,21 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        RobotStatus.SecondModel.postValue(
-            SecondModel(
-                picPlayTime = mData.bigScreenConfig?.picPlayTime,
-                file = file,
-                type = mData.bigScreenConfig?.type ?: 0,
-                textPosition = mData.bigScreenConfig?.textPosition,
-                fontLayout = mData.bigScreenConfig?.fontLayout,
-                fontContent = mData.bigScreenConfig?.fontContent.toString(),
-                fontBackGround = mData.bigScreenConfig?.fontBackGround.toString(),
-                fontColor = mData.bigScreenConfig?.fontColor,
-                fontSize = mData.bigScreenConfig?.fontSize,
-                picType = mData.bigScreenConfig?.picType,
-                videolayout = mData.bigScreenConfig?.videolayout,
-                videoAudio = mData.bigScreenConfig?.videoAudio
-            )
-        )
-        RobotStatus.sdScreenStatus.postValue(3)
+        SecondScreenManageHelper.refreshSecondScreen(3, SecondModel(
+            picPlayTime = mData.bigScreenConfig?.picPlayTime,
+            file = file,
+            type = mData.bigScreenConfig?.type ?: 0,
+            textPosition = mData.bigScreenConfig?.textPosition,
+            fontLayout = mData.bigScreenConfig?.fontLayout,
+            fontContent = mData.bigScreenConfig?.fontContent.toString(),
+            fontBackGround = mData.bigScreenConfig?.fontBackGround.toString(),
+            fontColor = mData.bigScreenConfig?.fontColor,
+            fontSize = mData.bigScreenConfig?.fontSize,
+            picType = mData.bigScreenConfig?.picType,
+            videolayout = mData.bigScreenConfig?.videolayout,
+            videoAudio = mData.bigScreenConfig?.videoAudio,
+            false
+        ))
         LogUtil.i("图片位置：${mData.bigScreenConfig?.imageFile.toString()}")
     }
 

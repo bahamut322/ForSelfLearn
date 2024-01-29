@@ -10,6 +10,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
@@ -17,12 +18,9 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.SecondModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakContinue
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
@@ -327,23 +325,21 @@ class StartExplanViewModel : ViewModel() {
         }else if (mData[position]!!.big_imagefile !=null){
             file = mData[position]!!.big_imagefile.toString()
         }
-        SecondModel.postValue(
-            SecondModel(
-                picPlayTime = mData[position]?.big_picplaytime ,
-                file = file,
-                type = mData[position]?.big_type?: 0,
-                textPosition = mData[position]?.big_textposition,
-                fontLayout = mData[position]?.big_fontlayout,
-                fontContent = mData[position]?.big_fontcontent?.toString(),
-                fontBackGround = mData[position]?.big_fontbackground?.toString(),
-                fontColor = mData[position]?.big_fontcolor?.toString(),
-                fontSize = mData[position]?.big_fontsize,
-                picType = mData[position]?.big_pictype,
-                videolayout = mData[position]?.videolayout,
-                videoAudio = mData[position]?.big_videoaudio
-            )
-        )
-        sdScreenStatus.postValue(2)
+        SecondScreenManageHelper.refreshSecondScreen(2, SecondModel(
+            picPlayTime = mData[position]?.big_picplaytime ,
+            file = file,
+            type = mData[position]?.big_type?: 0,
+            textPosition = mData[position]?.big_textposition,
+            fontLayout = mData[position]?.big_fontlayout,
+            fontContent = mData[position]?.big_fontcontent?.toString(),
+            fontBackGround = mData[position]?.big_fontbackground?.toString(),
+            fontColor = mData[position]?.big_fontcolor?.toString(),
+            fontSize = mData[position]?.big_fontsize,
+            picType = mData[position]?.big_pictype,
+            videolayout = mData[position]?.videolayout,
+            videoAudio = mData[position]?.big_videoaudio,
+            false
+        ))
         LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
     }
 

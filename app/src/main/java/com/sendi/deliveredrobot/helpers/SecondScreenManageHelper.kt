@@ -1,12 +1,14 @@
 package com.sendi.deliveredrobot.helpers
 
+import android.annotation.SuppressLint
 import com.sendi.deliveredrobot.BaseActivity
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.DefaultModel
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.model.SecondModel
 import org.litepal.LitePal
+import kotlin.properties.Delegates
 
 /**
  * @author heky
@@ -14,12 +16,39 @@ import org.litepal.LitePal
  * @description 副屏管理类helper
  */
 object SecondScreenManageHelper {
-    fun refreshSecondScreen(context: BaseActivity, state: Int?){
+    @SuppressLint("StaticFieldLeak")
+    var context: BaseActivity? = null
+
+    fun init(context: BaseActivity) {
+        this.context = context
+    }
+
+    private var secondModel: SecondModel? by Delegates.observable(null) { _, _, newValue ->
+        if (context?.mPresentation != null) {
+            context?.layoutThis(
+                newValue?.picPlayTime ?: 30,
+                newValue?.file ?: "",
+                newValue?.type ?: 0,
+                newValue?.textPosition ?: 0,
+                newValue?.fontLayout ?: 0,
+                newValue?.fontContent,
+                newValue?.fontBackGround,
+                newValue?.fontColor,
+                newValue?.fontSize ?: 0,
+                newValue?.picType ?: 0,
+                newValue?.videolayout ?: 0,
+                newValue?.videoAudio ?: 0,
+                false
+            )
+        }
+    }
+
+    fun refreshSecondScreen(state: Int?, tempSecondModel: SecondModel? = null) {
         when (state) {
             0 -> {
                 val config = LitePal.findFirst(Table_Advertising::class.java)
                 if (config != null && config.type != 0) {
-                    context.layoutThis(
+                    secondModel = SecondModel(
                         config.picPlayTime,
                         Universal.advertisement,
                         config.type,
@@ -35,12 +64,13 @@ object SecondScreenManageHelper {
                         true
                     )
                 } else {
-                    default(context, Universal.advDefault, true)
+                    default(Universal.advDefault, true)
                 }
             }
+
             1 -> {
                 if (Universal.bigScreenType != 0) {
-                    context.layoutThis(
+                    secondModel = SecondModel(
                         Universal.picPlayTime,
                         Universal.Secondary,
                         Universal.bigScreenType,
@@ -56,27 +86,14 @@ object SecondScreenManageHelper {
                         false
                     )
                 } else {
-                    default(context, Universal.usherDefault, false)
+                    default(Universal.usherDefault, false)
                 }
             }
+
             2, 3, 4, 5 -> {
-                val secondModel = RobotStatus.SecondModel!!.value
-                if (secondModel?.type != 0) {
-                    context.layoutThis(
-                        secondModel?.picPlayTime!!,
-                        secondModel.file,
-                        secondModel.type!!,
-                        secondModel.textPosition!!,
-                        secondModel.fontLayout!!,
-                        secondModel.fontContent,
-                        secondModel.fontBackGround,
-                        secondModel.fontColor,
-                        secondModel.fontSize!!,
-                        secondModel.picType!!,
-                        secondModel.videolayout!!,
-                        secondModel.videoAudio!!,
-                        false
-                    )
+                val finalSecondModel = tempSecondModel ?: secondModel
+                if (finalSecondModel?.type != 0) {
+                    secondModel = finalSecondModel
                 } else {
                     val defaultType = when (state) {
                         2 -> Universal.explainDefault
@@ -84,19 +101,33 @@ object SecondScreenManageHelper {
                         4 -> Universal.businessDefault
                         else -> Universal.advDefault
                     }
-                    default(context, defaultType, false)
+                    default(defaultType, false)
                 }
             }
+
             else -> {
-                default(context, Universal.advDefault, true)
+                default(Universal.advDefault, true)
             }
         }
     }
 
     //默认+下载时大屏幕的样式
-    private fun default(context:BaseActivity ,picFile: String,boolean: Boolean){
-        val defaultModel = DefaultModel(file = picFile, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
-        context.layoutThis(
+    private fun default(picFile: String, boolean: Boolean) {
+        val defaultModel = DefaultModel(
+            file = picFile,
+            picPlayTime = 4,
+            type = 1,
+            textPosition = 0,
+            fontLayout = 0,
+            fontContent = "",
+            fontBackGround = (R.color.white).toString(),
+            fontColor = (R.color.white).toString(),
+            fontSize = 1,
+            picType = 1,
+            videolayout = 0,
+            videoAudio = 0
+        )
+        secondModel = SecondModel(
             defaultModel.picPlayTime!!,
             defaultModel.file,
             defaultModel.type!!,
@@ -112,5 +143,4 @@ object SecondScreenManageHelper {
             boolean
         )
     }
-
 }

@@ -419,41 +419,22 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
 
 
     private fun screenRenew() {
+        SecondScreenManageHelper.init(this)
         //监听观察者更新副屏内容
         RobotStatus.newUpdata.observe(this) {
             if (it == 1) {
                 RobotStatus.newUpdata.postValue(null)
                 if(RobotStatus.sdScreenStatus.value != 3){
-                    SecondScreenManageHelper.refreshSecondScreen(this, RobotStatus.sdScreenStatus.value)
+                    SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus.value)
                 }
             }
-            if (it ==3) {
-                SecondScreenManageHelper.refreshSecondScreen(this, null)
+            if (it == 3) {
+                SecondScreenManageHelper.refreshSecondScreen( null)
             }
         }
         RobotStatus.sdScreenStatus.observe(this) {
             if (mPresentation != null) {
-                SecondScreenManageHelper.refreshSecondScreen(this, it)
-            }
-        }
-
-        RobotStatus.SecondModel.observe(this) {
-            if (mPresentation != null) {
-                layoutThis(
-                    it?.picPlayTime ?: 30,
-                    it?.file ?: "",
-                    it?.type ?: 0,
-                    it?.textPosition ?: 0,
-                    it?.fontLayout?: 0,
-                    it?.fontContent,
-                    it?.fontBackGround,
-                    it?.fontColor,
-                    it?.fontSize?: 0,
-                    it?.picType?: 0,
-                    it?.videolayout?: 0,
-                    it?.videoAudio?: 0,
-                    false
-                )
+                SecondScreenManageHelper.refreshSecondScreen(it)
             }
         }
     }
