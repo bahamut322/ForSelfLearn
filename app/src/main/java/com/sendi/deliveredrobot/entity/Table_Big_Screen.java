@@ -1,8 +1,5 @@
 package com.sendi.deliveredrobot.entity;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.handler.MqttMessageHandler;
 import com.sendi.deliveredrobot.model.ExpressionConfiguration;
@@ -166,9 +163,9 @@ public class Table_Big_Screen extends LitePalSupport {
         if (argPic != null) {
             table_big_screen.setPicType(argPic.getPicType());
             table_big_screen.setPicPlayTime(argPic.getPicPlayTime());
-            String picStoragePath = storagePath + "/big/";
+            String picStoragePath = storagePath + "big/";
             downFiles(picStoragePath, argPic.getPics());
-            table_big_screen.setImageFile(storagePath);
+            table_big_screen.setImageFile(picStoragePath);
         }
         if (argFont != null) {
             table_big_screen.setFontContent(argFont.getFontContent());
@@ -181,8 +178,9 @@ public class Table_Big_Screen extends LitePalSupport {
         if(argVideo != null){
             table_big_screen.setVideoAudio(argVideo.getVideoAudio());
             table_big_screen.setVideoFile(argVideo.getVideos());
-            String picStoragePath = storagePath + "/big/";
-            downFiles(picStoragePath, argVideo.getVideos());
+            String videoStoragePath = storagePath + "big/";
+            downFiles(videoStoragePath, argVideo.getVideos());
+            table_big_screen.setVideoFile(videoStoragePath);
             table_big_screen.videolayout = argVideo.getVideoLayOut();
         }
 

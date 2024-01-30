@@ -33,6 +33,13 @@ import kotlinx.coroutines.withContext
 
 class AppContentFragment : Fragment() {
 
+    companion object{
+        const val MAX_GRID_LENGTH = 4
+        const val APPLET_TYPE_URL = 1
+        const val APPLET_TYPE_APK = 2
+        const val APPLET_TYPE_RICH_TEXT = 3
+    }
+
     private lateinit var binding: FragmentAppContentBinding
     private var controller: NavController? = null
 
@@ -106,10 +113,10 @@ class AppContentFragment : Fragment() {
                     //初始化适配器
                 }
                 binding.applicationGv.apply {
-                    val tempNumCounts =  when(applications.size > 4){
+                    val tempNumCounts =  when(applications.size > MAX_GRID_LENGTH){
                         true -> {
                             setPadding(0,UiUtils.dip2px(requireContext(), 168f),0,0)
-                            4
+                            MAX_GRID_LENGTH
                         }
                         false -> {
                             setPadding(0,UiUtils.dip2px(requireContext(), 248f),0,0)
@@ -126,14 +133,32 @@ class AppContentFragment : Fragment() {
                     onItemClickListener =
                         AdapterView.OnItemClickListener { _, _, position, _ ->
                             LogUtil.i("点击了第：${position}项,点击名字：${applications[position].name},链接：${applications[position].url}")
-                            val args: Bundle = Bundle().apply {
-                                // 设置 Bundle 对象参数数据
-                                this.putString("ManagerUrl", applications[position].url)
-                                this.putString("name", applications[position].name)
+                            val clickItem = applications[position]
+                            when (clickItem.appletType) {
+                                APPLET_TYPE_URL -> {
+                                    Bundle().apply {
+                                        // 设置 Bundle 对象参数数据
+                                        this.putString(AppManagerFragment.URL, applications[position].url)
+                                        this.putString(AppManagerFragment.NAME, applications[position].name)
+                                        this.putInt(AppManagerFragment.TYPE, applications[position].appletType?:-1)
+                                        controller?.navigate(R.id.appManagerFragment, this)
+                                    }
+                                }
+                                APPLET_TYPE_APK -> {}
+                                APPLET_TYPE_RICH_TEXT -> {
+                                    Bundle().apply {
+                                        // 设置 Bundle 对象参数数据
+                                        this.putString(AppManagerFragment.URL, applications[position].url)
+                                        this.putString(AppManagerFragment.NAME, applications[position].name)
+                                        this.putInt(AppManagerFragment.TYPE, applications[position].appletType?:-1)
+                                        controller?.navigate(R.id.appManagerFragment, this)
+                                    }
+                                }
+                                else -> {}
                             }
-                            controller?.navigate(R.id.appManagerFragment, args)
+
                             //刷新大屏
-                            SecondScreenManageHelper.refreshSecondScreen(6, applications[position].secondModel)
+                            SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_APPLET, applications[position].secondModel)
                         }
 
                 }

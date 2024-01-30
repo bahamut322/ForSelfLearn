@@ -9,6 +9,7 @@ package com.sendi.deliveredrobot.model
     var name : String? = "",
     var url : String? = "",
     var icon: String? = "",
+    var appletType: Int?,
     var secondModel :SecondModel? = null
  )
 

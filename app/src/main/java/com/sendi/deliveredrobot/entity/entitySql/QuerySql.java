@@ -806,31 +806,51 @@ public class QuerySql {
 
     public static List<ApplicationModel> queryApplicationModelList(){
         ArrayList<ApplicationModel> list = new ArrayList<>();
-        String sql = "SELECT * FROM table_applet_config\n" +
-                "LEFT JOIN table_big_screen ON table_applet_config.id = table_big_screen.table_applet_config_id";
+        String sql = "SELECT\n" +
+                "ac.icon as ac_icon,\n" +
+                "ac.name as ac_name,\n" +
+                "ac.type as ac_type,\n" +
+                "ac.url as ac_url,\n" +
+                "bs.fontbackground as bs_fontbackground,\n" +
+                "bs.picplaytime as bs_picplaytime,\n" +
+                "bs.fontlayout as bs_fontlayout,\n" +
+                "bs.imagefile as bs_imagefile,\n" +
+                "bs.fontsize as bs_fontsize,\n" +
+                "bs.type as bs_type,\n" +
+                "bs.videofile as bs_videofile,\n" +
+                "bs.textposition as bs_textposition,\n" +
+                "bs.videolayout as bs_videolayout,\n" +
+                "bs.fontcontent as bs_fontcontent,\n" +
+                "bs.pictype as bs_pictype,\n" +
+                "bs.videoaudio as bs_videoaudio,\n" +
+                "bs.fontcolor as bs_fontcolor\n" +
+                "FROM table_applet_config as ac\n" +
+                "LEFT JOIN table_big_screen as bs ON ac.id = bs.table_applet_config_id;";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String icon = cursor.getString(cursor.getColumnIndex("icon"));
-                String url = cursor.getString(cursor.getColumnIndex("url"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                String fontBackground = cursor.getString(cursor.getColumnIndex("fontbackground"));
-                int picPlayTime = cursor.getInt(cursor.getColumnIndex("picplaytime"));
-                int fontLayout = cursor.getInt(cursor.getColumnIndex("fontlayout"));
-                String imageFile = cursor.getString(cursor.getColumnIndex("imagefile"));
-                int fontSize = cursor.getInt(cursor.getColumnIndex("fontsize"));
-                int type = cursor.getInt(cursor.getColumnIndex("type"));
-                String videoFile = cursor.getString(cursor.getColumnIndex("videofile"));
-                int textPosition = cursor.getInt(cursor.getColumnIndex("textposition"));
-                int videoLayout = cursor.getInt(cursor.getColumnIndex("videolayout"));
-                String fontContent = cursor.getString(cursor.getColumnIndex("fontcontent"));
-                int picType = cursor.getInt(cursor.getColumnIndex("pictype"));
-                int videoAudio = cursor.getInt(cursor.getColumnIndex("videoaudio"));
-                String fontColor = cursor.getString(cursor.getColumnIndex("fontcolor"));
+                String icon = cursor.getString(cursor.getColumnIndex("ac_icon"));
+                String url = cursor.getString(cursor.getColumnIndex("ac_url"));
+                String name = cursor.getString(cursor.getColumnIndex("ac_name"));
+                int appletType = cursor.getInt(cursor.getColumnIndex("ac_type"));
+                String fontBackground = cursor.getString(cursor.getColumnIndex("bs_fontbackground"));
+                int picPlayTime = cursor.getInt(cursor.getColumnIndex("bs_picplaytime"));
+                int fontLayout = cursor.getInt(cursor.getColumnIndex("bs_fontlayout"));
+                String imageFile = cursor.getString(cursor.getColumnIndex("bs_imagefile"));
+                int fontSize = cursor.getInt(cursor.getColumnIndex("bs_fontsize"));
+                int type = cursor.getInt(cursor.getColumnIndex("bs_type"));
+                String videoFile = cursor.getString(cursor.getColumnIndex("bs_videofile"));
+                int textPosition = cursor.getInt(cursor.getColumnIndex("bs_textposition"));
+                int videoLayout = cursor.getInt(cursor.getColumnIndex("bs_videolayout"));
+                String fontContent = cursor.getString(cursor.getColumnIndex("bs_fontcontent"));
+                int picType = cursor.getInt(cursor.getColumnIndex("bs_pictype"));
+                int videoAudio = cursor.getInt(cursor.getColumnIndex("bs_videoaudio"));
+                String fontColor = cursor.getString(cursor.getColumnIndex("bs_fontcolor"));
                 ApplicationModel model = new ApplicationModel(
                         name,
                         url,
                         icon,
+                        appletType,
                         new SecondModel(
                           picPlayTime,
                           videoFile != null ? videoFile: imageFile,

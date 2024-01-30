@@ -424,7 +424,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         RobotStatus.newUpdata.observe(this) {
             if (it == 1) {
                 RobotStatus.newUpdata.postValue(null)
-                if(RobotStatus.sdScreenStatus != 3){
+                if(RobotStatus.sdScreenStatus != SecondScreenManageHelper.STATE_GUIDE){
                     SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
                 }
             }

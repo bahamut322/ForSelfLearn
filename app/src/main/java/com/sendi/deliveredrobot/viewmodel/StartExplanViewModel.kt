@@ -325,7 +325,7 @@ class StartExplanViewModel : ViewModel() {
         }else if (mData[position]!!.big_imagefile !=null){
             file = mData[position]!!.big_imagefile.toString()
         }
-        SecondScreenManageHelper.refreshSecondScreen(2, SecondModel(
+        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
             picPlayTime = mData[position]?.big_picplaytime ,
             file = file,
             type = mData[position]?.big_type?: 0,

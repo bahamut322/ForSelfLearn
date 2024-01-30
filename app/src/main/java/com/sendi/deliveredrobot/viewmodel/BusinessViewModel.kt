@@ -154,7 +154,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        SecondScreenManageHelper.refreshSecondScreen(4,SecondModel(
+        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_BUSINESS,SecondModel(
             picPlayTime = mData.bigScreenConfig?.picPlayTime,
             file = file,
             type = mData.bigScreenConfig?.type ?: 0,
@@ -180,7 +180,7 @@ class BusinessViewModel : ViewModel() {
         } else if (mData.bigScreenConfig?.imageFile != null) {
             file = mData.bigScreenConfig?.imageFile.toString()
         }
-        SecondScreenManageHelper.refreshSecondScreen(3, SecondModel(
+        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_GUIDE, SecondModel(
             picPlayTime = mData.bigScreenConfig?.picPlayTime,
             file = file,
             type = mData.bigScreenConfig?.type ?: 0,

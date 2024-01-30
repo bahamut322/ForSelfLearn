@@ -2,7 +2,6 @@ package com.sendi.deliveredrobot.helpers
 
 import android.annotation.SuppressLint
 import com.sendi.deliveredrobot.BaseActivity
-import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.DefaultModel
@@ -17,6 +16,15 @@ import kotlin.properties.Delegates
  * @description 副屏管理类helper
  */
 object SecondScreenManageHelper {
+    // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾 6:轻应用
+    const val STATE_IDLE = 0
+    const val STATE_TEMPERATURE = 1
+    const val STATE_EXPLAIN = 2
+    const val STATE_GUIDE = 3
+    const val STATE_BUSINESS = 4
+    const val STATE_GREET = 5
+    const val STATE_APPLET = 6
+
     @SuppressLint("StaticFieldLeak")
     var context: BaseActivity? = null
 
@@ -47,7 +55,7 @@ object SecondScreenManageHelper {
     fun refreshSecondScreen(state: Int?, tempSecondModel: SecondModel? = null) {
         RobotStatus.sdScreenStatus = state
         when (state) {
-            0 -> {
+            STATE_IDLE -> {
                 val config = LitePal.findFirst(Table_Advertising::class.java)
                 if (config != null && config.type != 0) {
                     secondModel = SecondModel(
@@ -70,7 +78,7 @@ object SecondScreenManageHelper {
                 }
             }
 
-            1 -> {
+            STATE_TEMPERATURE -> {
                 if (Universal.bigScreenType != 0) {
                     secondModel = SecondModel(
                         Universal.picPlayTime,
@@ -92,16 +100,20 @@ object SecondScreenManageHelper {
                 }
             }
 
-            2, 3, 4, 5, 6 -> {
+            STATE_EXPLAIN,
+            STATE_GUIDE,
+            STATE_BUSINESS,
+            STATE_GREET,
+            STATE_APPLET -> {
                 val finalSecondModel = tempSecondModel ?: secondModel
                 if (finalSecondModel?.type != 0) {
                     secondModel = finalSecondModel
                 } else {
                     val defaultType = when (state) {
-                        2 -> Universal.explainDefault
-                        3 -> Universal.guideDefault
-                        4 -> Universal.businessDefault
-                        5 -> Universal.greetDefault
+                        STATE_EXPLAIN -> Universal.explainDefault
+                        STATE_GUIDE -> Universal.guideDefault
+                        STATE_BUSINESS -> Universal.businessDefault
+                        STATE_GREET -> Universal.greetDefault
                         else -> Universal.advDefault
                     }
                     default(defaultType, false)
@@ -115,20 +127,9 @@ object SecondScreenManageHelper {
     }
 
     //默认+下载时大屏幕的样式
-    private fun default(picFile: String, boolean: Boolean) {
+    private fun default(picFile: String, adv: Boolean) {
         val defaultModel = DefaultModel(
-            file = picFile,
-            picPlayTime = 4,
-            type = 1,
-            textPosition = 0,
-            fontLayout = 0,
-            fontContent = "",
-            fontBackGround = (R.color.white).toString(),
-            fontColor = (R.color.white).toString(),
-            fontSize = 1,
-            picType = 1,
-            videolayout = 0,
-            videoAudio = 0
+            file = picFile
         )
         secondModel = SecondModel(
             defaultModel.picPlayTime!!,
@@ -143,7 +144,7 @@ object SecondScreenManageHelper {
             defaultModel.picType!!,
             defaultModel.videolayout!!,
             defaultModel.videoAudio!!,
-            boolean
+            adv
         )
     }
 }

@@ -21,7 +21,7 @@ class GreetViewModel : ViewModel() {
         } else if (mData?.imageFile != null) {
             file = mData.imageFile.toString()
         }
-        SecondScreenManageHelper.refreshSecondScreen(5,SecondModel(
+        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_GREET,SecondModel(
             picPlayTime = mData?.picPlayTime,
             file = file,
             type = mData?.type ?: 0,
