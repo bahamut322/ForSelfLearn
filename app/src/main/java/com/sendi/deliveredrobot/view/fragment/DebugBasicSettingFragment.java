@@ -1,8 +1,10 @@
 package com.sendi.deliveredrobot.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,8 @@ import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
+
+import java.util.Arrays;
 
 public class DebugBasicSettingFragment extends Fragment {
     String TAG = "TAGDebugBasicSettingFragment";
@@ -84,13 +88,13 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.EtiquetteWelcome.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
-        binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression",BooleanToInt(b)));
-        binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent",BooleanToInt(b)));
+        binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression", BooleanToInt(b)));
+        binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent", BooleanToInt(b)));
         binding.cbEtiquette.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (viewModel.isNumCharOne(4)){
-                Toast.makeText(getContext(),"未检测到RGB摄像头，人脸识别开启无效",Toast.LENGTH_LONG).show();
-            }else {
-                values.put("etiquette",BooleanToInt(b));
+            if (viewModel.isNumCharOne(4)) {
+                Toast.makeText(getContext(), "未检测到RGB摄像头，人脸识别开启无效", Toast.LENGTH_LONG).show();
+            } else {
+                values.put("etiquette", BooleanToInt(b));
             }
         });
 
@@ -98,23 +102,23 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.explain.setOnSeekBarChangeListener(current -> {
             explainNum = binding.explain.getCurInt();
             Log.d(TAG, "设置讲解语速: " + explainNum);
-            values.put("speechspeed",explainNum);
-            viewModel.timbres(explainNum+"");
+            values.put("speechspeed", explainNum);
+            viewModel.timbres(explainNum + "");
         });
 
         //机器人语音
         binding.seekbarMusic.setOnSeekBarChangeListener(current -> {
             robotAudio = (int) binding.seekbarMusic.getCur();
-            LogUtil.INSTANCE.d( "设置机器人语音：" + robotAudio);
-            values.put("voicevolume",robotAudio);
+            LogUtil.INSTANCE.d("设置机器人语音：" + robotAudio);
+            values.put("voicevolume", robotAudio);
         });
 
         //音频音量
         binding.seekbarVoice.setOnSeekBarChangeListener(current -> {
             videoAudio = (int) binding.seekbarVoice.getCur();
-            new AudioMngHelper(MyApplication.context).setVoice100((int)binding.seekbarVoice.getCur());
-            LogUtil.INSTANCE.d( "设置音频音量：" + videoAudio);
-            values.put("videovolume",videoAudio);
+            new AudioMngHelper(MyApplication.context).setVoice100((int) binding.seekbarVoice.getCur());
+            LogUtil.INSTANCE.d("设置音频音量：" + videoAudio);
+            values.put("videovolume", videoAudio);
         });
 
     }
@@ -154,9 +158,27 @@ public class DebugBasicSettingFragment extends Fragment {
             if (!isChecked) {
                 binding.all.setChecked(false);
             }
-            if ( binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
+            if (binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
                 binding.all.setChecked(true);
             }
+            Log.d(TAG, "onCheckedChanged: 点击");
+            stringBuffer = new StringBuffer();
+            if (binding.leaderShip.isChecked()) {
+                stringBuffer.append("智能引领 ");
+            }
+            if (binding.explanation.isChecked()) {
+                stringBuffer.append("智能讲解 ");
+            }
+            if (binding.application.isChecked()) {
+                stringBuffer.append("更多服务 ");
+            }
+            if (binding.business.isChecked()) {
+                stringBuffer.append("业务办理 ");
+            }
+            if (binding.EtiquetteWelcome.isChecked()) {
+                stringBuffer.append("礼仪迎宾 ");
+            }
+            values.put("defaultvalue", stringBuffer.toString());
 
         }
     }
@@ -180,61 +202,30 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.explanation.setChecked(true);
         } else if ("更多服务".equals(checkName)) {
             binding.application.setChecked(true);
-        } else if ("业务办理".equals(checkName)){
+        } else if ("业务办理".equals(checkName)) {
             binding.business.setChecked(true);
-        }else if ("礼仪迎宾".equals(checkName)){
+        } else if ("礼仪迎宾".equals(checkName)) {
             binding.EtiquetteWelcome.setChecked(true);
         }
 
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, ": onDestroy");
-        if (getActivity() != null) {
-            //删除所有数据,并且清空变量
-            stringBuffer = new StringBuffer();
-            timbre = null;
-            if (binding.leaderShip.isChecked()) {
-                stringBuffer.append("智能引领 ");
-            }
-            if (binding.explanation.isChecked()) {
-                stringBuffer.append("智能讲解 ");
-            }
-            if (binding.application.isChecked()) {
-                stringBuffer.append("更多服务 ");
-            }
-            if (binding.business.isChecked()){
-                stringBuffer.append("业务办理 ");
-            }
-            if (binding.EtiquetteWelcome.isChecked()){
-                stringBuffer.append("礼仪迎宾 ");
-            }
-
-            if (binding.BoyVoice.isChecked()) {
-                timbre = "男声";
-                viewModel.randomVoice(2,viewModel.settingData().getSpeechSpeed()+"");
-            }
-            if (binding.FemaleVoice.isChecked()) {
-                timbre = "女声";
-                viewModel.randomVoice(1,viewModel.settingData().getSpeechSpeed()+"");
-            }
-            if (binding.ChildVoice.isChecked()) {
-                timbre = "童声";
-                viewModel.randomVoice(3,viewModel.settingData().getSpeechSpeed()+"");
-            }
-            values.put("defaultvalue", stringBuffer.toString());
-            values.put("robotmode", timbre);
+        if (getActivity() != null && !values.isEmpty()) {
             String[] whereArgs = {String.valueOf(QuerySql.QueryBasicId())};
             UpDataSQL.update("table_basic", values, "id = ?", whereArgs);
 
         }
     }
-    private static int BooleanToInt(Boolean data){
-        if (data){
+
+    private static int BooleanToInt(Boolean data) {
+        if (data) {
             return 1;
-        }else {
+        } else {
             return 0;
         }
     }
