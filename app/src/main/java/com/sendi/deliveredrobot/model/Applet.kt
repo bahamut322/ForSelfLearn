@@ -9,5 +9,6 @@ data class Applet(
     val timeStamp: Long?,
     val type: Int?,
     val url: String?,
-    val bigScreenConfig: TopLevelConfig?
+    val bigScreenConfig: TopLevelConfig?,
+    val content: String?
 )

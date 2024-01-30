@@ -110,6 +110,7 @@ class SelfCheckFragment : Fragment() {
                         )
                     }
                 }catch (_:Exception){}
+                resCheck = 0x1FF
                 // ================================初始化状态机====================================
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 LogUtil.i("初始化状态机")

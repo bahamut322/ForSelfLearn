@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.helpers
 
-import android.util.Log
 import com.google.gson.Gson
 import com.sendi.deliveredrobot.entity.Table_Applet_Config
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql

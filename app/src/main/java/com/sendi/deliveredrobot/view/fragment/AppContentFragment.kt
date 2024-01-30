@@ -138,9 +138,9 @@ class AppContentFragment : Fragment() {
                                 APPLET_TYPE_URL -> {
                                     Bundle().apply {
                                         // 设置 Bundle 对象参数数据
-                                        this.putString(AppManagerFragment.URL, applications[position].url)
-                                        this.putString(AppManagerFragment.NAME, applications[position].name)
-                                        this.putInt(AppManagerFragment.TYPE, applications[position].appletType?:-1)
+                                        this.putString(AppManagerFragment.URL, clickItem.url)
+                                        this.putString(AppManagerFragment.NAME, clickItem.name)
+                                        this.putInt(AppManagerFragment.TYPE, clickItem.appletType?:-1)
                                         controller?.navigate(R.id.appManagerFragment, this)
                                     }
                                 }
@@ -148,9 +148,10 @@ class AppContentFragment : Fragment() {
                                 APPLET_TYPE_RICH_TEXT -> {
                                     Bundle().apply {
                                         // 设置 Bundle 对象参数数据
-                                        this.putString(AppManagerFragment.URL, applications[position].url)
-                                        this.putString(AppManagerFragment.NAME, applications[position].name)
-                                        this.putInt(AppManagerFragment.TYPE, applications[position].appletType?:-1)
+                                        this.putString(AppManagerFragment.URL, clickItem.url)
+                                        this.putString(AppManagerFragment.NAME, clickItem.name)
+                                        this.putInt(AppManagerFragment.TYPE, clickItem.appletType?:-1)
+                                        this.putString(AppManagerFragment.RICH_TEXT, clickItem.content)
                                         controller?.navigate(R.id.appManagerFragment, this)
                                     }
                                 }
