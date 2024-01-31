@@ -81,7 +81,7 @@ object RobotStatus {
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
-    var newUpdata : MutableLiveData<Int> = MutableLiveData<Int>()//1:配置下载完成 ；2：数据存储到数据库，不代表配置下载完成 3:下载配置中提醒副屏幕变更成默认图片
+    var newUpdata = MutableLiveData<Int?>()//1:配置下载完成 ；2：数据存储到数据库，不代表配置下载完成 3:下载配置中提醒副屏幕变更成默认图片
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
