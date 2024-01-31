@@ -199,21 +199,25 @@ class SelfCheckFragment : Fragment() {
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
                     DeliverMqttService.publish(ResetTimeModel().toString())
-//                    withContext(Dispatchers.Main) {
-//                        Log.d("TAG", "checkHardware: 获取时间戳")
-//                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
-//                            if (it > 1) {
-//                                SystemClock.setCurrentTimeMillis(it)
-//                                var updated = false
-//                                while (!updated) {
-//                                    updated = ROSHelper.updateCurrent(it)
-//                                    // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
-//                                }
-//                                // 在updated为true时执行下面的代码
-//                                LogUtil.i("checkHardware: 底盘时间设置成功：$it")
-//                            }
-//                        }
-//                    }
+                    withContext(Dispatchers.Main) {
+                        Log.d("TAG", "checkHardware: 获取时间戳")
+                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
+                            val time = it
+                           val thread = Thread {
+                                if (time > 1) {
+                                    SystemClock.setCurrentTimeMillis(time)
+                                    var updated = false
+                                    while (!updated) {
+                                        updated = ROSHelper.updateCurrent(time)
+                                        // 如果ROSHelper.updateCurrent(it)返回false，则继续循环
+                                    }
+                                    // 在updated为true时执行下面的代码
+                                    LogUtil.i("checkHardware: 底盘时间设置成功：$time")
+                                }
+                            }
+                            thread.start()
+                        }
+                    }
                     UpdateReturn().assignment()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id

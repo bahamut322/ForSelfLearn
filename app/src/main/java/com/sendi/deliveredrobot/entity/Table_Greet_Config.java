@@ -12,7 +12,7 @@ import java.util.List;
 public class Table_Greet_Config extends LitePalSupport {
     private String greetPoint = "";
     private String firstPrompt = "开启迎宾模式";
-    private String strangerPrompt = "您好呀，很高兴见到你";
+    private String strangerPrompt = "您好呀，我是这里的多功能服务机器人%唤醒词%很高兴见到你";
     private String vipPrompt = "您好呀，很高兴见到你哟";
     private String exitPrompt = "迎宾结束，我要去忙其他的啦~";
     private Long timeStamp = 0L;

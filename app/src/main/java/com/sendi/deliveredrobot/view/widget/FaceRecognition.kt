@@ -261,7 +261,7 @@ class FaceRecognition {
      */
     private fun checkFace(
         owner: LifecycleOwner?,
-        speak: String = QuerySql.selectGreetConfig().strangerPrompt
+        speak: String = UpdateReturn().replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
         if (speakNum <= 0 && !isProcessing.get()) {
             speakNum = 1
