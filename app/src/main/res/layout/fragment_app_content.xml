@@ -95,52 +95,5 @@
                 app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
                 app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
         </LinearLayout>
-
-
-        <ImageView
-            android:id="@+id/microphone"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginStart="@dimen/dp_48"
-            android:layout_marginBottom="@dimen/dp_28"
-            android:src="@drawable/horn_svg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/bubbleTv"
-            android:text="@{@string/ask(wakeUpName.robotConfig().wakeUpWord)}"
-            android:textColor="@color/white"
-            android:textStyle="normal"
-            android:alpha="0.7"
-            android:layout_marginStart="@dimen/dp_14"
-            android:textSize="@dimen/sp_24"
-            android:gravity="center"
-            android:shadowColor="@color/red"
-            android:shadowRadius="10.0"
-            android:shadowDx="50.0"
-            android:shadowDy="30.0"
-            android:singleLine="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:ellipsize="marquee"
-            android:clickable="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:layout_width="@dimen/dp_320"
-            android:layout_height="wrap_content"
-            tools:text="@string/ask"
-            android:background="@drawable/rectangle"
-            app:layout_constraintBottom_toBottomOf="@+id/microphone"
-            app:layout_constraintStart_toEndOf="@+id/microphone" >
-            <requestFocus />
-        </TextView>
-
-        <ImageView
-            android:layout_width="@dimen/dp_6"
-            android:layout_height="@dimen/dp_7"
-            android:src="@drawable/rt_horn"
-            app:layout_constraintBottom_toBottomOf="@+id/bubbleTv"
-            app:layout_constraintEnd_toStartOf="@+id/bubbleTv" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

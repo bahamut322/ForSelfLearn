@@ -59,7 +59,6 @@ class AppContentFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         controller = Navigation.findNavController(requireView())
         val toSettingDialog = FromeSettingDialog(context)
-        updateDataAndRefreshList()
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE
             binding.llReturn.visibility = View.VISIBLE
@@ -88,11 +87,8 @@ class AppContentFragment : Fragment() {
             }
             Toast.makeText(context, "点击了：设置", Toast.LENGTH_SHORT).show()
         }
-
-        binding.bubbleTv.setOnClickListener {
-            controller?.navigate(R.id.conversationFragment)
-        }
         assignment()
+        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_IDLE)
     }
 
 
@@ -166,22 +162,4 @@ class AppContentFragment : Fragment() {
             }
         }
     }
-
-    //刷新
-    private fun updateDataAndRefreshList() {
-        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
-            binding.bubbleTv.text = String.format(getString(R.string.ask), it.wakeUpWord)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString, _ ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
-                Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
-                controller?.navigate(R.id.conversationFragment)
-            }
-        }
-    }
-
 }
