@@ -18,6 +18,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
+import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.model.Area
 import com.sendi.deliveredrobot.model.Floor
 import com.sendi.deliveredrobot.model.Map
@@ -163,6 +164,7 @@ class UpdateReturn {
                     jsonObject["shoppingGuide"] = shoppingGuide
                     jsonObject["qaTimeStamp"] = replyQaConfigModel.timeStamp ?: 0
                     jsonObject["guide"] = QuerySql.sendGuideConfig()
+                    jsonObject["appletTimeStamp"] = ReplyAppletConfigHelper.queryAppletConfigTimeStamp()
                 } catch (_: Exception) {
                 }
 
