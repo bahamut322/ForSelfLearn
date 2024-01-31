@@ -45,6 +45,8 @@ import com.sendi.fooddeliveryrobot.GetVFFileToTextModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.Timer
@@ -66,6 +68,7 @@ class ConversationFragment : Fragment() {
     private var talkingView: LinearLayoutCompat? = null
     private val defaultTalkingStr = "...."
     private val hashMap = ConcurrentHashMap<String, ReplyIntentModel>()
+    private val mutex = Mutex()
     private var talkingStr = defaultTalkingStr
         set(value) {
             field = ".".repeat(value.length % 4 + 1)
@@ -74,45 +77,50 @@ class ConversationFragment : Fragment() {
     private val pattern =
         "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     val observable = Observer<ReplyIntentModel>{
-        if (context == null) return@Observer
-        if (it == null) return@Observer
-        //addConversationView
-        when(BaseVoiceRecorder.VOICE_RECORD_TYPE){
-            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                addAnswerView(it)
-                val answer = it.questionAnswer
-                if (answer.isNullOrEmpty()) return@Observer
-                SpeakHelper.speakWithoutStop(answer)
-            }
-            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                val replyIntentModel = hashMap["${it.questionNumber}"]
-                when (replyIntentModel == null) {
-                    true -> {
-                        //如果艾小越没有返回，则缓存答案，等待艾小越返回后判断用哪个答案
-                        hashMap["${it.questionNumber ?: -1}"] = it
-                        LogUtil.i("艾小越没有返回")
+        mainScope.launch {
+            mutex.withLock {
+                if (context == null) return@launch
+                if (it == null) return@launch
+                //addConversationView
+                when(BaseVoiceRecorder.VOICE_RECORD_TYPE){
+                    BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                        addAnswerView(it)
+                        val answer = it.questionAnswer
+                        if (answer.isNullOrEmpty()) return@launch
+                        SpeakHelper.speakWithoutStop(answer)
                     }
-                    false -> {
-                        //如果艾小越已经返回，则判断用哪个答案
-                        LogUtil.i("艾小越有返回")
-                        val finalReplyIntentModel = findFinalAnswer(it, replyIntentModel)
-                        if (finalReplyIntentModel == null) {
-                            hashMap.remove("${it.questionNumber ?: -1}")
-                        }else{
-                            mainScope.launch(Dispatchers.Main) {
-                                addAnswerView(finalReplyIntentModel)
+                    BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                        val replyIntentModel = hashMap["${it.questionNumber}"]
+                        when (replyIntentModel == null) {
+                            true -> {
+                                //如果艾小越没有返回，则缓存答案，等待艾小越返回后判断用哪个答案
+                                hashMap["${it.questionNumber ?: -1}"] = it
+                                LogUtil.i("艾小越没有返回")
                             }
-                            hashMap.remove("${finalReplyIntentModel.questionNumber}")
-                            val answer = finalReplyIntentModel.questionAnswer
-                            if (answer.isNullOrEmpty()) return@Observer
-                            SpeakHelper.speakWithoutStop(answer)
-                        }
+                            false -> {
+                                //如果艾小越已经返回，则判断用哪个答案
+                                LogUtil.i("艾小越有返回")
+                                val finalReplyIntentModel = findFinalAnswer(it, replyIntentModel)
+                                if (finalReplyIntentModel == null) {
+                                    hashMap.remove("${it.questionNumber ?: -1}")
+                                }else{
+                                    mainScope.launch(Dispatchers.Main) {
+                                        addAnswerView(finalReplyIntentModel)
+                                    }
+                                    hashMap.remove("${finalReplyIntentModel.questionNumber}")
+                                    val answer = finalReplyIntentModel.questionAnswer
+                                    if (answer.isNullOrEmpty()) return@launch
+                                    SpeakHelper.speakWithoutStop(answer)
+                                }
 
+                            }
+                        }
                     }
                 }
-
             }
         }
+
+
 
     }
     override fun onCreateView(
@@ -185,41 +193,43 @@ class ConversationFragment : Fragment() {
                 textView.text = text
                 linearLayoutCompat.setOnClickListener {
                     mainScope.launch(Dispatchers.Main) {
-                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                                addQuestionView(defaultTalkingStr)
-                                addQuestionView(text, talkingView)
-                                question(text, System.currentTimeMillis())
-                            }
+                        mutex.withLock {
+                            when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                                BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                                    addQuestionView(defaultTalkingStr)
+                                    addQuestionView(text, talkingView)
+                                    question(text, System.currentTimeMillis())
+                                }
 
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                addQuestionView(defaultTalkingStr)
-                                addQuestionView(text,talkingView)
-                                withContext(Dispatchers.IO){
-                                    val currentTimeMillis = System.currentTimeMillis()
-                                    question(text, currentTimeMillis)
-                                    val getVFFileToTextModel = question2(text, currentTimeMillis)
-                                    val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
-                                    val finalAnswer = when (axyAnswer.code) {
-                                        200 -> axyAnswer //axy有答案
-                                        204 -> hashMap[axyAnswer.questionNumber?:"-1"] //axy无答案
-                                        else -> null
-                                    }
-                                    if (finalAnswer != null) {
-                                        addAnswerView(finalAnswer)
-                                        if (hashMap["${finalAnswer.questionNumber}"] == null) {
-                                            hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                                    addQuestionView(defaultTalkingStr)
+                                    addQuestionView(text,talkingView)
+                                    withContext(Dispatchers.IO){
+                                        val currentTimeMillis = System.currentTimeMillis()
+                                        question(text, currentTimeMillis)
+                                        val getVFFileToTextModel = question2(text, currentTimeMillis)
+                                        val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
+                                        val finalAnswer = when (axyAnswer.code) {
+                                            200 -> axyAnswer //axy有答案
+                                            204 -> hashMap[axyAnswer.questionNumber?:"-1"] //axy无答案
+                                            else -> null
+                                        }
+                                        if (finalAnswer != null) {
+                                            addAnswerView(finalAnswer)
+                                            if (hashMap["${finalAnswer.questionNumber}"] == null) {
+                                                hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                            }else{
+                                                hashMap.remove("${finalAnswer.questionNumber}")
+                                            }
+                                            var speakAnswer:String? = axyAnswer.questionAnswer
+                                            if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
+                                                speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
+                                            }
+                                            speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
+                                            SpeakHelper.speakWithoutStop(speakAnswer)
                                         }else{
-                                            hashMap.remove("${finalAnswer.questionNumber}")
+                                            hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
                                         }
-                                        var speakAnswer:String? = axyAnswer.questionAnswer
-                                        if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
-                                            speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
-                                        }
-                                        speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
-                                        SpeakHelper.speakWithoutStop(speakAnswer)
-                                    }else{
-                                        hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
                                     }
                                 }
                             }
@@ -607,49 +617,51 @@ class ConversationFragment : Fragment() {
             } else {
                 if (conversation.isNotEmpty() && !RobotStatus.ttsIsPlaying && !binding?.videoView?.isPlaying!!) {
                     mainScope.launch(Dispatchers.Main) {
-                        if (RobotStatus.ttsIsPlaying) {
-                            return@launch
-                        }
-                        if(binding?.videoView?.isPlaying == true){
-                            return@launch
-                        }
-                        when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
-                                addQuestionView(conversation, talkingView)
-                                question(conversation, System.currentTimeMillis())
+                        mutex.withLock {
+                            if (RobotStatus.ttsIsPlaying) {
+                                return@launch
                             }
+                            if(binding?.videoView?.isPlaying == true){
+                                return@launch
+                            }
+                            when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
+                                BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
+                                    addQuestionView(conversation, talkingView)
+                                    question(conversation, System.currentTimeMillis())
+                                }
 
-                            BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
-                                addQuestionView(conversation, talkingView)
-                                withContext(Dispatchers.IO){
-                                    val currentTimeMillis = System.currentTimeMillis()
-                                    question(conversation, currentTimeMillis)
-                                    val getVFFileToTextModel = question2(conversation, currentTimeMillis)
-                                    val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
-                                    LogUtil.i("number-->${axyAnswer.questionNumber}")
-                                    val finalAnswer = when (axyAnswer.code) {
-                                        200 -> axyAnswer //axy有答案
-                                        204 -> hashMap["${axyAnswer.questionNumber?:-1}"] //axy无答案
-                                        else -> null
-                                    }
-                                    LogUtil.i("finalAnswer-->${finalAnswer.toString()}")
-                                    if (finalAnswer != null) {
-                                        mainScope.launch(Dispatchers.Main) {
-                                            addAnswerView(finalAnswer)
+                                BaseVoiceRecorder.VOICE_RECORD_TYPE_AIXIAOYUE -> {
+                                    addQuestionView(conversation, talkingView)
+                                    withContext(Dispatchers.IO){
+                                        val currentTimeMillis = System.currentTimeMillis()
+                                        question(conversation, currentTimeMillis)
+                                        val getVFFileToTextModel = question2(conversation, currentTimeMillis)
+                                        val axyAnswer = GenerateReplyToX8Utils.getReplyInfoModel(getVFFileToTextModel)
+                                        LogUtil.i("number-->${axyAnswer.questionNumber}")
+                                        val finalAnswer = when (axyAnswer.code) {
+                                            200 -> axyAnswer //axy有答案
+                                            204 -> hashMap["${axyAnswer.questionNumber?:-1}"] //axy无答案
+                                            else -> null
                                         }
-                                        if (hashMap["${finalAnswer.questionNumber}"] == null) {
-                                            hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                        LogUtil.i("finalAnswer-->${finalAnswer.toString()}")
+                                        if (finalAnswer != null) {
+                                            mainScope.launch(Dispatchers.Main) {
+                                                addAnswerView(finalAnswer)
+                                            }
+                                            if (hashMap["${finalAnswer.questionNumber}"] == null) {
+                                                hashMap["${finalAnswer.questionNumber}"] = finalAnswer
+                                            }else{
+                                                hashMap.remove("${finalAnswer.questionNumber}")
+                                            }
+                                            var speakAnswer:String? = axyAnswer.questionAnswer
+                                            if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
+                                                speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
+                                            }
+                                            speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
+                                            SpeakHelper.speakWithoutStop(speakAnswer)
                                         }else{
-                                            hashMap.remove("${finalAnswer.questionNumber}")
+                                            hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
                                         }
-                                        var speakAnswer:String? = axyAnswer.questionAnswer
-                                        if (speakAnswer?.contains("我猜您可能对以下内容感兴趣") == true) {
-                                            speakAnswer = speakAnswer.substringBefore("我猜您可能对以下内容感兴趣")
-                                        }
-                                        speakAnswer = speakAnswer?.replace(Regex(pattern),"")?:""
-                                        SpeakHelper.speakWithoutStop(speakAnswer)
-                                    }else{
-                                        hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
                                     }
                                 }
                             }

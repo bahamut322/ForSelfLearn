@@ -10,6 +10,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
@@ -25,6 +26,12 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     private static final String TAG = "MessageListener";
     TTSProgressHandler progressHandler = new TTSProgressHandlerImpl();
     private static int progressSpeak = -1;
+
+    private SpeakHelper.SpeakCallback speakCallback;
+
+    public MessageListener(SpeakHelper.SpeakCallback speakCallback){
+        this.speakCallback = speakCallback;
+    }
 
     /**
      * 播放开始，每句播放开始都会回调
@@ -102,9 +109,12 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
      */
     @Override
     public void onSpeechFinish(String utteranceId) {
-        if(!Objects.equals(utteranceId, "explanation")){
-            RobotStatus.INSTANCE.setTtsIsPlaying(false);
+        if (speakCallback != null) {
+            speakCallback.speakFinish(utteranceId);
         }
+//        if(!Objects.equals(utteranceId, "explanation")){
+//            RobotStatus.INSTANCE.setTtsIsPlaying(false);
+//        }
         sendMessage("播放结束回调, 序列号:" + utteranceId);
 //        if (TaskQueues.isCompleted()) {
 //            Order.setFlage("0");

@@ -295,7 +295,7 @@ public class CameraPreviewFragment extends Fragment {
                                     return;
                                 //通过tts语音合成播放文字
                                 if (BuildConfig.IS_SPEAK) {
-                                    BaiduTTSHelper.getInstance().speak(Universal.tipsTemperatureWarn);
+                                    BaiduTTSHelper.getInstance().speak(Universal.tipsTemperatureWarn, "");
                                 }
                                 //异常
                                 binding.AbnormalTv1.setTextColor(Color.RED);
@@ -322,7 +322,7 @@ public class CameraPreviewFragment extends Fragment {
                                     return;
                                 //通过tts语音合成播放文字
                                 if (BuildConfig.IS_SPEAK) {
-                                    BaiduTTSHelper.getInstance().speak(Universal.tipsMaskWarn);
+                                    BaiduTTSHelper.getInstance().speak(Universal.tipsMaskWarn,"");
                                 }
                                 abnormalNum = 1;
                             }

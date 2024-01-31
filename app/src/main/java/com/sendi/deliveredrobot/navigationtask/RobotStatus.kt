@@ -1,8 +1,11 @@
 package com.sendi.deliveredrobot.navigationtask
 
+import android.app.Dialog
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
@@ -93,6 +96,11 @@ object RobotStatus {
     var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
     var ttsIsPlaying = false //百度语音播放状态
         set(value) {
+//            when (value) {
+//                true -> DialogHelper.loadingDialog.show()
+//                false -> DialogHelper.loadingDialog.dismiss()
+//            }
+            Log.i("SpeakHelper", "ttsIsPlaying: $value")
             BaseVoiceRecorder.ttsIsPlaying = value
             field = value
         }

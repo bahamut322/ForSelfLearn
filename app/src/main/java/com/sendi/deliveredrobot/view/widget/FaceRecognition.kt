@@ -265,7 +265,7 @@ class FaceRecognition {
     ) {
         if (speakNum <= 0 && !isProcessing.get()) {
             speakNum = 1
-            BaiduTTSHelper.getInstance().speak(speak)
+            BaiduTTSHelper.getInstance().speak(speak,"")
             identifyFace!!.value = 0 //在百度TTS中设置为0不及时
         }
         identifyFace!!.observe(owner!!) { value ->

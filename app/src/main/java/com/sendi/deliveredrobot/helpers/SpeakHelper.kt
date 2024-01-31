@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.helpers
 
+import android.util.Log
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
@@ -7,8 +8,8 @@ import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.ttsIsPlaying
 import kotlinx.coroutines.MainScope
+import java.util.LinkedList
 
 /**
  *   @author: heky
@@ -17,6 +18,15 @@ import kotlinx.coroutines.MainScope
  */
 object SpeakHelper {
     val mainScope = MainScope()
+    val list = LinkedList<SpeakModel>()
+    val speakCallback = object : SpeakCallback {
+        override fun speakFinish(utteranceId: String) {
+            Log.i("SpeakHelper", "speakFinish: $utteranceId")
+            Log.i("SpeakHelper", "list: ${list.size}")
+            playNext(utteranceId)
+        }
+    }
+    var id: Long = 0
 
     fun speak(msg: String) {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
@@ -25,7 +35,7 @@ object SpeakHelper {
             stop()
             AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().voiceVolume)
 //            mainScope.launch(Dispatchers.IO) {
-                BaiduTTSHelper.getInstance().speak(msg)
+                BaiduTTSHelper.getInstance().speak(msg, "")
 //            }
         }
     }
@@ -36,30 +46,57 @@ object SpeakHelper {
         if (BuildConfig.IS_SPEAK) {
 //            mainScope.launch(Dispatchers.IO) {
             var result = msg
-            val list = ArrayList<String>()
             if(result.length > 60){
                 while(result.length > 60){
                     val result1 = result.substring(0,60)
                     result = result.substring(60)
-                    list.add(result1)
+                    list.add(SpeakModel("${id++}", result1))
                 }
                 if(result.isNotEmpty()){
-                   list.add(result)
+                   list.add(SpeakModel("${id++}", result))
                 }
             }else{
-                list.add(result)
+                list.add(SpeakModel("${id++}", result))
             }
-            list.map {
-                BaiduTTSHelper.getInstance().speak(it)
+            if (!RobotStatus.ttsIsPlaying) {
+                playFirst()
             }
-//            }
         }
     }
 
     fun stop() {
 //        mainScope.launch(Dispatchers.IO) {
             BaiduTTSHelper.getInstance().stop()
-            ttsIsPlaying = false
+            RobotStatus.ttsIsPlaying = false
 //        }
     }
+
+    fun playNext(utteranceId: String){
+        if (list.first?.id == utteranceId) {
+            list.pop()
+            if (list.size > 0) {
+                BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
+            } else {
+                RobotStatus.ttsIsPlaying = false
+            }
+        } else {
+            list.pop()
+            playNext(utteranceId)
+        }
+    }
+
+    private fun playFirst(){
+        if(list.size > 0){
+            BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
+        }
+    }
+
+    interface SpeakCallback {
+        fun speakFinish(utteranceId: String)
+    }
+
+    data class SpeakModel(
+        val id: String,
+        val content: String
+    )
 }
