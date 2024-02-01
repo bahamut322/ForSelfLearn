@@ -13,9 +13,10 @@ data class Table_Applet_Config(
     var timeStamp: Long?,
     var type: Int?,
     var url: String?,
-    var content: String?
+    var content: String?,
+    var packageName: String?
 ): LitePalSupport(){
-    constructor():this(null,null,null,null,null,null,null,null,null)
+    constructor():this(null,null,null,null,null,null,null,null,null,null)
 
     companion object{
         fun create(applet: Applet, storagePath: String = "${Universal.robotFile}applet/"): Table_Applet_Config {
@@ -28,7 +29,8 @@ data class Table_Applet_Config(
                 applet.timeStamp,
                 applet.type,
                 applet.url,
-                applet.content
+                applet.content,
+                applet.packageName
             )
         }
     }
