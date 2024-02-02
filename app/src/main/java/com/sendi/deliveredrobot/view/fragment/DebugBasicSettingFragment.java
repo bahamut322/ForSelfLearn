@@ -36,8 +36,6 @@ public class DebugBasicSettingFragment extends Fragment {
     FragmentBasicSettingBinding binding;
     public StringBuffer stringBuffer = new StringBuffer();
     SettingViewModel viewModel;
-    SharedPreferences sp;
-    SharedPreferences.Editor editor;
     public String timbre = "男声";//默认音色
     View view;
     int robotAudio;
@@ -126,9 +124,6 @@ public class DebugBasicSettingFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sp = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
-        // 获取编辑器
-        editor = sp.edit();
     }
 
     @Override

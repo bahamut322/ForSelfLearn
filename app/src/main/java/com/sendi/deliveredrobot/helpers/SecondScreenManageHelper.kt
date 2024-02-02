@@ -34,15 +34,15 @@ object SecondScreenManageHelper {
 
     private var secondModel: SecondModel? by Delegates.observable(null) { _, _, newValue ->
         if (context?.mPresentation != null) {
-            context?.layoutThis(
+            context?.mPresentation?.layoutThis(
                 newValue?.picPlayTime ?: 30,
                 newValue?.file ?: "",
                 newValue?.type ?: 0,
                 newValue?.textPosition ?: 0,
                 newValue?.fontLayout ?: 0,
-                newValue?.fontContent,
-                newValue?.fontBackGround,
-                newValue?.fontColor,
+                newValue?.fontContent?:"",
+                newValue?.fontBackGround?:"",
+                newValue?.fontColor?:"",
                 newValue?.fontSize ?: 0,
                 newValue?.picType ?: 0,
                 newValue?.videolayout ?: 0,

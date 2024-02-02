@@ -2,7 +2,7 @@ package com.sendi.deliveredrobot.view.widget;
 
 public class Order {
     public interface OnChangeListener {    // 创建interface类
-        void onChange();    // 值改变
+        void onChange(String flag);    // 值改变
     }
 
     private static OnChangeListener onChangeListener;    // 声明interface接口
@@ -20,7 +20,7 @@ public class Order {
     public static void setFlage(String flage) {//1是停视频声音 0是播放视频声音
         Order.flage = flage;
         if (onChangeListener!=null) {
-            onChangeListener.onChange();
+            onChangeListener.onChange(flage);
         }
     }
 }

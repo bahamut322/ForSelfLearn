@@ -87,7 +87,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
         //双屏异显的方法
-        ShowPresentationByDisplaymanager()
+//        ShowPresentationByDisplaymanager()
         with(binding.textViewTime) {
             val date = Date()
             text = sdf2.format(date)
