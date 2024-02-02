@@ -3,13 +3,18 @@ package com.sendi.deliveredrobot.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.ApplicationModel
+import com.sendi.deliveredrobot.utils.LogUtil
 
 /**
  * @Author Swn
@@ -19,8 +24,8 @@ import com.sendi.deliveredrobot.model.ApplicationModel
 class ApplicationAdapter(var context: Context, var data: List<ApplicationModel>) : BaseAdapter() {
 
     inner class MyHolder {
-        lateinit var bgCon: ConstraintLayout
-        lateinit var nameTv: TextView
+        lateinit var imageViewApplet: ImageView
+        lateinit var textViewApplet: TextView
     }
 
     @SuppressLint("InflateParams", "ClickableViewAccessibility")
@@ -31,16 +36,19 @@ class ApplicationAdapter(var context: Context, var data: List<ApplicationModel>)
 
         if (convertView == null) {
             myHolder = MyHolder()
-            view = LayoutInflater.from(context).inflate(R.layout.item_business, null)
-            myHolder.bgCon = view.findViewById(R.id.bg_con)
-            myHolder.nameTv = view.findViewById(R.id.business_name)
+            view = LayoutInflater.from(context).inflate(R.layout.item_app_content, null)
+            myHolder.imageViewApplet = view.findViewById(R.id.image_view_applet)
+            myHolder.textViewApplet = view.findViewById(R.id.text_view_applet)
             view.tag = myHolder
         } else {
             view = convertView
             myHolder = view.tag as MyHolder
         }
-
-        myHolder.nameTv.text = data[position].name
+        myHolder.textViewApplet.text = data[position].name
+        Glide.with(myHolder.imageViewApplet)
+            .load(data[position].url)
+            .placeholder(R.color.white)
+            .into(myHolder.imageViewApplet)
         return view!!
     }
 

@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
+
 /**
  * 在 MessageListener的基础上，和UI配合。
  * Created by fujiayi on 2017/9/14.
@@ -16,7 +18,7 @@ public class UiMessageListener extends MessageListener {
     private static final String TAG = "UiMessageListener";
 
     public UiMessageListener(Handler mainHandler) {
-        super();
+        super(SpeakHelper.INSTANCE.getSpeakCallback());
         this.mainHandler = mainHandler;
     }
 

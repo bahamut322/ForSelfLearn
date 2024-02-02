@@ -129,7 +129,7 @@ public class AudioMngHelper {
         a = Math.min(a, 100);
         audioManager.setStreamVolume(NOW_AUDIO_TYPE, a, 0);
         int volume = get100CurrentVolume();
-        LogUtil.INSTANCE.i("num-->"+num+"  volume-->"+volume+ " maxVolume-->"+getSystemMaxVolume()+ " a-->"+a);
+//        LogUtil.INSTANCE.i("num-->"+num+"  volume-->"+volume+ " maxVolume-->"+getSystemMaxVolume()+ " a-->"+a);
         return volume;
     }
 

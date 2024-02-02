@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.model
 
-import com.sendi.deliveredrobot.R
-
 /**
  * @Author Swn
  * @Data 2023-07-27

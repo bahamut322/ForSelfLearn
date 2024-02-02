@@ -69,6 +69,7 @@ public class ExplanationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.INSTANCE.i("explanationFragment onResume");
         BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
         baseVoiceRecorder.setRecordCallback((s, pinyinString,f) -> {
             if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
@@ -392,6 +393,9 @@ public class ExplanationFragment extends Fragment {
         });
         // 更新了引领配置
         RobotStatus.INSTANCE.getNewUpdata().observe(getViewLifecycleOwner(), newUpdata -> {
+            if (newUpdata == null) {
+                return;
+            }
             if (newUpdata == 1 || newUpdata == 2) {
                 // 初始化适配器和其他相关组件
                 init();

@@ -2,6 +2,8 @@ package com.sendi.deliveredrobot.entity.entitySql;
 
 import android.database.Cursor;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.sendi.deliveredrobot.entity.Table_Big_Screen;
 
 import com.sendi.deliveredrobot.entity.Table_Face;
@@ -12,6 +14,7 @@ import com.sendi.deliveredrobot.entity.Table_Shopping_Action;
 import com.sendi.deliveredrobot.entity.Table_Shopping_Config;
 import com.sendi.deliveredrobot.entity.Table_Touch_Screen;
 import com.sendi.deliveredrobot.model.ADVModel;
+import com.sendi.deliveredrobot.model.ApplicationModel;
 import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.model.ExplainConfigModel;
 import com.sendi.deliveredrobot.model.GuideConfigList;
@@ -19,6 +22,7 @@ import com.sendi.deliveredrobot.model.GuideSendModel;
 import com.sendi.deliveredrobot.model.MapConfig;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.RouteMapList;
+import com.sendi.deliveredrobot.model.SecondModel;
 import com.sendi.deliveredrobot.model.SendRoutesModel;
 import com.sendi.deliveredrobot.model.SendShoppingActionModel;
 
@@ -782,6 +786,101 @@ public class QuerySql {
         }
         return greetConfig;
 
+    }
+
+    public static JsonArray queryAppletIdList() {
+        JsonArray jsonArray = new JsonArray();
+        String sql = "SELECT appletid,timestamp FROM table_applet_config";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("id", cursor.getInt(cursor.getColumnIndex("appletid")));
+                jsonObject.addProperty("timeStamp", cursor.getLong(cursor.getColumnIndex("timestamp")));
+                jsonArray.add(jsonObject);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return jsonArray;
+    }
+
+    public static List<ApplicationModel> queryApplicationModelList(){
+        ArrayList<ApplicationModel> list = new ArrayList<>();
+        String sql = "SELECT\n" +
+                "ac.icon as ac_icon,\n" +
+                "ac.name as ac_name,\n" +
+                "ac.type as ac_type,\n" +
+                "ac.url as ac_url,\n" +
+                "ac.title as ac_title,\n" +
+                "ac.content as ac_content,\n" +
+                "ac.packagename as ac_packagename,\n" +
+                "bs.fontbackground as bs_fontbackground,\n" +
+                "bs.picplaytime as bs_picplaytime,\n" +
+                "bs.fontlayout as bs_fontlayout,\n" +
+                "bs.imagefile as bs_imagefile,\n" +
+                "bs.fontsize as bs_fontsize,\n" +
+                "bs.type as bs_type,\n" +
+                "bs.videofile as bs_videofile,\n" +
+                "bs.textposition as bs_textposition,\n" +
+                "bs.videolayout as bs_videolayout,\n" +
+                "bs.fontcontent as bs_fontcontent,\n" +
+                "bs.pictype as bs_pictype,\n" +
+                "bs.videoaudio as bs_videoaudio,\n" +
+                "bs.fontcolor as bs_fontcolor\n" +
+                "FROM table_applet_config as ac\n" +
+                "LEFT JOIN table_big_screen as bs ON ac.id = bs.table_applet_config_id;";
+        Cursor cursor = LitePal.findBySQL(sql);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String icon = cursor.getString(cursor.getColumnIndex("ac_icon"));
+                String url = cursor.getString(cursor.getColumnIndex("ac_url"));
+                String name = cursor.getString(cursor.getColumnIndex("ac_name"));
+                int appletType = cursor.getInt(cursor.getColumnIndex("ac_type"));
+                String title = cursor.getString(cursor.getColumnIndex("ac_title"));
+                String content = cursor.getString(cursor.getColumnIndex("ac_content"));
+                String packageName = cursor.getString(cursor.getColumnIndex("ac_packagename"));
+                String fontBackground = cursor.getString(cursor.getColumnIndex("bs_fontbackground"));
+                int picPlayTime = cursor.getInt(cursor.getColumnIndex("bs_picplaytime"));
+                int fontLayout = cursor.getInt(cursor.getColumnIndex("bs_fontlayout"));
+                String imageFile = cursor.getString(cursor.getColumnIndex("bs_imagefile"));
+                int fontSize = cursor.getInt(cursor.getColumnIndex("bs_fontsize"));
+                int type = cursor.getInt(cursor.getColumnIndex("bs_type"));
+                String videoFile = cursor.getString(cursor.getColumnIndex("bs_videofile"));
+                int textPosition = cursor.getInt(cursor.getColumnIndex("bs_textposition"));
+                int videoLayout = cursor.getInt(cursor.getColumnIndex("bs_videolayout"));
+                String fontContent = cursor.getString(cursor.getColumnIndex("bs_fontcontent"));
+                int picType = cursor.getInt(cursor.getColumnIndex("bs_pictype"));
+                int videoAudio = cursor.getInt(cursor.getColumnIndex("bs_videoaudio"));
+                String fontColor = cursor.getString(cursor.getColumnIndex("bs_fontcolor"));
+                ApplicationModel model = new ApplicationModel(
+                        name,
+                        url,
+                        icon,
+                        appletType,
+                        title,
+                        content,
+                        packageName,
+                        new SecondModel(
+                          picPlayTime,
+                          videoFile != null ? videoFile: imageFile,
+                          type,
+                          textPosition,
+                          fontLayout,
+                          fontContent,
+                          fontBackground,
+                          fontColor,
+                          fontSize,
+                          picType,
+                          videoLayout,
+                          videoAudio,
+                          false
+                        )
+                );
+                list.add(model);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
     }
 
     /**

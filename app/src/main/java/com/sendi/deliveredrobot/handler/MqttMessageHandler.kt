@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.entity.interaction.InteractionMqtt
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper
+import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.RobotLogBagHelper
@@ -296,7 +297,6 @@ object MqttMessageHandler {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
-                    RobotStatus.gatekeeper?.value = gatekeeper
                     deleteAll(Table_Reply_Gate::class.java)
                     //提交到数据库
 //                    deleteFiles(File(Universal.Secondary))
@@ -599,6 +599,11 @@ object MqttMessageHandler {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     LogUtil.d("收到迎宾配置")
                     InteractionMqtt().replyGreet(message)
+                }
+                "replyAppletConfig" -> {
+                    if (RobotStatus.batteryStateNumber.value == false) return
+                    LogUtil.i("收到小程序配置")
+                    ReplyAppletConfigHelper.replyAppletConfig(message)
                 }
                 else -> {}
             }

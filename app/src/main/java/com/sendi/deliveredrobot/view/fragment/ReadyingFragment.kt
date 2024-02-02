@@ -84,7 +84,8 @@ class ReadyingFragment : Fragment() {
                             getString(R.string.hello_we_are_going_to_please_follow_me_1),
                             QuerySql.robotConfig().wakeUpWord,
                             pointName
-                        )
+                        ),
+                        ""
                     )
                 }
             }

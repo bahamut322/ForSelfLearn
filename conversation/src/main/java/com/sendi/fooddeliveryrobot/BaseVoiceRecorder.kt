@@ -61,7 +61,7 @@ abstract class BaseVoiceRecorder {
             audioRecorder?.startRecording()
             isRecording = true
             val audioBuffer = ByteArray(minBufferSize)
-            print("minBufferSize:$minBufferSize")
+//            print("minBufferSize:$minBufferSize")
             val trueStack = Stack<Boolean>()
             val falseStack = Stack<Boolean>()
             while (isRecording) {
@@ -82,18 +82,18 @@ abstract class BaseVoiceRecorder {
                 if (recordCallback != null) {
                     when (fvad?.process(shortArray) ?: -1) {
                         0 -> {
-                            Log.i("AudioChannel", "人声 no")
+//                            Log.i("AudioChannel", "人声 no")
                             talkingCallback?.invoke(false)
                             if (baseAudioChannel?.initialized == true) {
                                 falseStack.push(false)
-                                val totalSize = trueStack.size * 0.7 + falseStack.size
+//                                val totalSize = trueStack.size * 0.7 + falseStack.size
                                 if (trueStack.size > 0) {
-                                    val percentFalseTotal = (falseStack.size * 1f) / totalSize
+//                                    val percentFalseTotal = (falseStack.size * 1f) / totalSize
                                     if(falseStack.size > 20){
-                                        println("trueSize:${trueStack.size}")
-                                        println("falseSize:${falseStack.size}")
-                                        println("totalSize: $totalSize")
-                                        println("percentFalseTotal: $percentFalseTotal")
+//                                        println("trueSize:${trueStack.size}")
+//                                        println("falseSize:${falseStack.size}")
+//                                        println("totalSize: $totalSize")
+//                                        println("percentFalseTotal: $percentFalseTotal")
                                         recordStatusCallback?.invoke(false)
                                         baseAudioChannel?.stopRecord()
                                         trueStack.clear()
@@ -114,7 +114,7 @@ abstract class BaseVoiceRecorder {
 
                         }
                         else -> {
-                            Log.i("AudioChannel", "人声 yes")
+                            Log.i("AudioChannel", "人声 unknown")
                         }
                     }
                 }

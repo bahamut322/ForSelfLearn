@@ -22,6 +22,7 @@ import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
@@ -64,13 +65,13 @@ public class BaiduTTSHelper {
     private static BaiduTTSHelper instance;
     public static BaiduTTSHelper getInstance(){
         if (instance == null) {
-            instance = new BaiduTTSHelper(MyApplication.Companion.getInstance());
+            instance = new BaiduTTSHelper(MyApplication.Companion.getInstance(), SpeakHelper.INSTANCE.getSpeakCallback());
         }
         return instance;
     }
 
     //通过构造函数初始化百度账号相关配置
-    public BaiduTTSHelper(Context context) {
+    public BaiduTTSHelper(Context context, SpeakHelper.SpeakCallback speakCallback) {
         this.context = context;
         try {
             Auth.getInstance(context);
@@ -83,17 +84,17 @@ public class BaiduTTSHelper {
         secretKey = Auth.getInstance(context).getSecretKey();
         sn = Auth.getInstance(context).getSn();
         LogUtil.INSTANCE.d(sn);
-        initialTts(); // 初始化TTS引擎
+        initialTts(speakCallback); // 初始化TTS引擎
         if (!isOnlineSDK) {
             LogUtil.INSTANCE.i("BaiduTTSHelper so version:" + SynthesizerTool.getEngineInfo());
         }
     }
 
-    protected void initialTts() {
+    protected void initialTts(SpeakHelper.SpeakCallback speakCallback) {
         LoggerProxy.printable(true); // 日志打印在logcat中
         // 设置初始化参数
         // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
-        SpeechSynthesizerListener listener = new MessageListener();
+        SpeechSynthesizerListener listener = new MessageListener(speakCallback);
         InitConfig config = getInitConfig(listener,getParams());
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }
@@ -180,7 +181,7 @@ public class BaiduTTSHelper {
      * 获取音频流的方式见SaveFileActivity及FileSaveListener
      * 需要合成的文本text的长度不能超过1024个GBK字节。
      */
-    public void speak(String text) {
+    public void speak(String text, String id) {
         // 需要合成的文本text的长度不能超过1024个GBK字节。
         if (TextUtils.isEmpty(text)) {
             text = "没有指定名称的话，小迪不知道怎么走啦";
@@ -189,7 +190,7 @@ public class BaiduTTSHelper {
         //播报语音音量
         MediaPlayerHelper.getInstance().pause();
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());
-        int result = synthesizer.speak(text);
+        int result = synthesizer.speak(text, id);
 //        LogUtil.INSTANCE.i(text);
     }
 
@@ -225,7 +226,7 @@ public class BaiduTTSHelper {
         // 声学模型文件路径 (离线引擎使用), 请确认下面两个文件存在
         params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, offlineResource.getTextFilename());
         params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, offlineResource.getModelFilename());
-        SpeechSynthesizerListener listener = new MessageListener();
+        SpeechSynthesizerListener listener = new MessageListener(SpeakHelper.INSTANCE.getSpeakCallback());
         InitConfig config = getInitConfig(listener, params);
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }

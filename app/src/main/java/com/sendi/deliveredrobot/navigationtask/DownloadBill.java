@@ -59,7 +59,7 @@ public class DownloadBill {
     public interface DownloadListener {
         void onProgress(int progress);
 
-        void onFinish();
+        void onFinish(String directory, String fileName);
 
         void onError(Exception e);
     }
@@ -137,7 +137,7 @@ public class DownloadBill {
         protected void onPostExecute(Boolean result) {
             if (listener != null) {
                 if (result) {
-                    listener.onFinish();
+                    listener.onFinish(directory, fileName);
                 } else {
                     listener.onError(new Exception("Download failed"));
                 }

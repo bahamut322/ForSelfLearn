@@ -19,19 +19,15 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.hacknife.wifimanager.*
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
-import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Table_Basic
-import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
-import com.sendi.deliveredrobot.model.DefaultModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.newUpdata
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.sdScreenStatus
 import com.sendi.deliveredrobot.receiver.NavigationReceiver
 import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
@@ -46,7 +42,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.findAll
-import org.litepal.LitePal.findFirst
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -92,7 +87,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
         //双屏异显的方法
-        ShowPresentationByDisplaymanager()
+//        ShowPresentationByDisplaymanager()
         with(binding.textViewTime) {
             val date = Date()
             text = sdf2.format(date)
@@ -284,7 +279,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             with(binding.imageViewWifiStatus) {
                 visibility = View.VISIBLE
                 when {
-                    connectWifi.level() <= -100 -> this.setBackgroundResource(com.sendi.deliveredrobot.R.drawable.ic_wifi_level_0)
+                    connectWifi.level() <= -100 -> this.setBackgroundResource(R.drawable.ic_wifi_level_0)
                     connectWifi.level() in -99..-88 || connectWifi.level() in -87..-66 || connectWifi.level() in -65 until 55 -> setBackgroundResource(
                         R.drawable.ic_wifi_level_1
                     )
@@ -424,146 +419,18 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
 
 
     private fun screenRenew() {
-        var doubleScreen = 0
+        SecondScreenManageHelper.init(this)
         //监听观察者更新副屏内容
-        newUpdata.observe(this) {
-            if (newUpdata.value == 1) {
-                newUpdata.postValue(0)
-                if (doubleScreen == 0) {
-                    sdScreenStatus!!.postValue(0)
-                } else if (doubleScreen == 1) {
-                    sdScreenStatus!!.postValue(1)
-                } else if (doubleScreen == 2) {
-                    sdScreenStatus!!.postValue(2)
-                }else if (doubleScreen == 4){
-                    sdScreenStatus!!.postValue(4)
+        RobotStatus.newUpdata.observe(this) {
+            if (it == 1) {
+                RobotStatus.newUpdata.postValue(null)
+                if(RobotStatus.sdScreenStatus != SecondScreenManageHelper.STATE_GUIDE){
+                    SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
                 }
             }
-            if (newUpdata.value ==3) {
-                default(Universal.advDefault,true)
+            if (it == 3) {
+                SecondScreenManageHelper.refreshSecondScreen( null)
             }
         }
-        sdScreenStatus!!.observe(this) {
-            val status = sdScreenStatus!!.value
-            if (mPresentation != null) {
-                doubleScreen = status!!
-                when (status) {
-                    0 -> {
-                        val config = findFirst(Table_Advertising::class.java)
-                        if (config != null && config.type != 0) {
-                            layoutThis(
-                                config.picPlayTime,
-                                Universal.advertisement,
-                                config.type,
-                                config.textPosition,
-                                config.fontLayout,
-                                config.fontContent,
-                                config.fontBackGround,
-                                config.fontColor,
-                                config.fontSize,
-                                config.picType,
-                                config.videolayout,
-                                config.videoAudio,
-                                true
-                            )
-                        } else {
-                            default(Universal.advDefault, true)
-                        }
-                    }
-                    1 -> {
-                        if (Universal.bigScreenType != 0) {
-                            layoutThis(
-                                Universal.picPlayTime,
-                                Universal.Secondary,
-                                Universal.bigScreenType,
-                                Universal.textPosition,
-                                Universal.fontLayout,
-                                Universal.fontContent,
-                                Universal.fontBackGround,
-                                Universal.fontColor,
-                                Universal.fontSize,
-                                Universal.picTypeNum,
-                                Universal.TempVideoLayout,
-                                Universal.AllvideoAudio,
-                                false
-                            )
-                        } else {
-                            default(Universal.usherDefault, false)
-                        }
-                    }
-                    2, 3, 4, 5 -> {
-                        val secondModel = RobotStatus.SecondModel!!.value
-                        if (secondModel?.type != 0) {
-                            layoutThis(
-                                secondModel?.picPlayTime!!,
-                                secondModel.file,
-                                secondModel.type!!,
-                                secondModel.textPosition!!,
-                                secondModel.fontLayout!!,
-                                secondModel.fontContent,
-                                secondModel.fontBackGround,
-                                secondModel.fontColor,
-                                secondModel.fontSize!!,
-                                secondModel.picType!!,
-                                secondModel.videolayout!!,
-                                secondModel.videoAudio!!,
-                                false
-                            )
-                        } else {
-                            val defaultType = when (status) {
-                                2 -> Universal.explainDefault
-                                3 -> Universal.guideDefault
-                                4 -> Universal.businessDefault
-                                5 -> Universal.greetDefault
-                                else -> Universal.advDefault
-                            }
-                            default(defaultType, false)
-                        }
-                    }
-                    else -> {
-                        // Handle any other unexpected status values if necessary
-                    }
-                }
-            }
-        }
-
-        RobotStatus.SecondModel!!.observe(this) {
-            if (mPresentation != null) {
-                layoutThis(
-                    it?.picPlayTime ?: 30,
-                    it?.file ?: "",
-                    it?.type ?: 0,
-                    it?.textPosition ?: 0,
-                    it?.fontLayout?: 0,
-                    it?.fontContent,
-                    it?.fontBackGround,
-                    it?.fontColor,
-                    it?.fontSize?: 0,
-                    it?.picType?: 0,
-                    it?.videolayout?: 0,
-                    it?.videoAudio?: 0,
-                    false
-                )
-            }
-        }
-    }
-    //默认+下载时大屏幕的样式
-    private fun default( picFile : String,boolean: Boolean){
-        val defaultModel = DefaultModel(file = picFile, picPlayTime = 4,type = 1, textPosition = 0, fontLayout = 0, fontContent = "", fontBackGround = (R.color.white).toString(), fontColor = (R.color.white).toString(), fontSize = 1, picType = 1, videolayout = 0, videoAudio = 0)
-        layoutThis(
-            defaultModel.picPlayTime!!,
-            defaultModel.file,
-            defaultModel.type!!,
-            defaultModel.textPosition!!,
-            defaultModel.fontLayout!!,
-            defaultModel.fontContent,
-            defaultModel.fontBackGround,
-            defaultModel.fontColor,
-            defaultModel.fontSize!!,
-            defaultModel.picType!!,
-            defaultModel.videolayout!!,
-            defaultModel.videoAudio!!,
-            boolean
-        )
     }
 }

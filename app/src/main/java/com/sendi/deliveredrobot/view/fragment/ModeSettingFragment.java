@@ -29,10 +29,8 @@ public class ModeSettingFragment extends Fragment {
 
     FragmentModeSettingBinding binding;
     String TAG = "ModeSettingFragment";
-    SharedPreferences sp;
     View view;
     SettingViewModel viewModel;
-    SharedPreferences.Editor editor;
     public int inaccessiblePoint = 0;
     public float leadingSpeedNum = 0.3f;//引领速度默认值
     public float ExplanationSpeedNum = 0.3f;//去往讲解点速度默认值
@@ -262,9 +260,6 @@ public class ModeSettingFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sp = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
-        // 获取编辑器
-        editor = sp.edit();
     }
 
     @Override

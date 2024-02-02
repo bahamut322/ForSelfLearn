@@ -28,11 +28,17 @@ import kotlin.math.abs
 
 
 class AppManagerFragment : Fragment() {
+    companion object{
+        const val URL = "app_manage_url"
+        const val NAME = "app_manage_name"
+        const val TYPE = "app_manage_type"
+        const val RICH_TEXT = "app_manage_rich_text"
+    }
+
 
     private lateinit var binding: FragmentAppManagerBinding
     private var controller: NavController? = null
     private lateinit var gestureDetector: GestureDetector
-    var url = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -124,10 +130,19 @@ class AppManagerFragment : Fragment() {
         initWebView()
         //网页
         arguments?.let {
-            url = it.getString("ManagerUrl")!!
-            val name = it.getString("name")
+            val name = it.getString(NAME)
+            when (it.getInt(TYPE)) {
+                AppContentFragment.APPLET_TYPE_URL -> {
+                    val url = it.getString(URL)?:""
+                    binding.webView.loadUrl(url)
+                }
+                AppContentFragment.APPLET_TYPE_APK -> {}
+                AppContentFragment.APPLET_TYPE_RICH_TEXT -> {
+                    val richText = it.getString(RICH_TEXT)?:""
+                    binding.webView.loadDataWithBaseURL(null, getHtmlData(richText), "text/html", "utf-8", null)
+                }
+            }
             binding.tvAppTitle.text  = name
-            binding.webView.loadUrl(url)
         }
         binding.returnBlack.setOnClickListener {
             goBackInWebView()
@@ -160,5 +175,13 @@ class AppManagerFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun getHtmlData(bodyHTML: String): String {
+        val head = ("<head>"
+                + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"> "
+                + "<style>img{max-width: 100%; width:100%; height:auto;}*{margin:0px;}</style>"
+                + "</head>")
+        return "<html>$head<body>$bodyHTML</body></html>"
     }
 }

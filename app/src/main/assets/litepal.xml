@@ -26,5 +26,6 @@
         <mapping class="com.sendi.deliveredrobot.entity.Table_Qa_Config"/>
         <mapping class="com.sendi.deliveredrobot.entity.Table_Face"/>
         <mapping class="com.sendi.deliveredrobot.entity.Table_Greet_Config"/>
+        <mapping class="com.sendi.deliveredrobot.entity.Table_Applet_Config"/>
     </list>
 </litepal>
