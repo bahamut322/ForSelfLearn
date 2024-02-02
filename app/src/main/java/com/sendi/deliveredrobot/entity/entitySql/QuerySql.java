@@ -811,7 +811,9 @@ public class QuerySql {
                 "ac.name as ac_name,\n" +
                 "ac.type as ac_type,\n" +
                 "ac.url as ac_url,\n" +
+                "ac.title as ac_title,\n" +
                 "ac.content as ac_content,\n" +
+                "ac.packagename as ac_packagename,\n" +
                 "bs.fontbackground as bs_fontbackground,\n" +
                 "bs.picplaytime as bs_picplaytime,\n" +
                 "bs.fontlayout as bs_fontlayout,\n" +
@@ -834,7 +836,9 @@ public class QuerySql {
                 String url = cursor.getString(cursor.getColumnIndex("ac_url"));
                 String name = cursor.getString(cursor.getColumnIndex("ac_name"));
                 int appletType = cursor.getInt(cursor.getColumnIndex("ac_type"));
+                String title = cursor.getString(cursor.getColumnIndex("ac_title"));
                 String content = cursor.getString(cursor.getColumnIndex("ac_content"));
+                String packageName = cursor.getString(cursor.getColumnIndex("ac_packagename"));
                 String fontBackground = cursor.getString(cursor.getColumnIndex("bs_fontbackground"));
                 int picPlayTime = cursor.getInt(cursor.getColumnIndex("bs_picplaytime"));
                 int fontLayout = cursor.getInt(cursor.getColumnIndex("bs_fontlayout"));
@@ -853,7 +857,9 @@ public class QuerySql {
                         url,
                         icon,
                         appletType,
+                        title,
                         content,
+                        packageName,
                         new SecondModel(
                           picPlayTime,
                           videoFile != null ? videoFile: imageFile,

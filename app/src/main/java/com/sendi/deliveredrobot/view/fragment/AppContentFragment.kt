@@ -21,6 +21,7 @@ import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.utils.InstallApkUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.UiUtils
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
@@ -140,7 +141,14 @@ class AppContentFragment : Fragment() {
                                         controller?.navigate(R.id.appManagerFragment, this)
                                     }
                                 }
-                                APPLET_TYPE_APK -> {}
+                                APPLET_TYPE_APK -> {
+                                    val result = InstallApkUtils.launchApp(clickItem.packageName?:"")
+                                    if (result) {
+                                        Toast.makeText(context, "打开成功", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "打开失败", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                                 APPLET_TYPE_RICH_TEXT -> {
                                     Bundle().apply {
                                         // 设置 Bundle 对象参数数据
