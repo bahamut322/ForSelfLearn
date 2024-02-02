@@ -297,7 +297,6 @@ object MqttMessageHandler {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
-                    RobotStatus.gatekeeper?.value = gatekeeper
                     deleteAll(Table_Reply_Gate::class.java)
                     //提交到数据库
 //                    deleteFiles(File(Universal.Secondary))

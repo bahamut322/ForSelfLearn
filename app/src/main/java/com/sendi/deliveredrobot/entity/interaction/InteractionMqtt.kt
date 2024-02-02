@@ -47,7 +47,6 @@ class InteractionMqtt {
         var shoppingActionDB: Table_Shopping_Action
         var map: LinkedHashMap<String, Long>
         val shoppingConfig = gson.fromJson(message, ActionsList::class.java)
-        RobotStatus.shoppingActionList?.value = shoppingConfig
         Log.d("TAG", "收到导购配置")
         val actionList = shoppingConfig.actions// 路线列表对象
         val iterator = actionList?.iterator()
@@ -747,7 +746,6 @@ class InteractionMqtt {
         var guidPointTime: LinkedHashMap<String, Long>
         var guideConfigDB: GuideConfig
         val guideConfig = gson.fromJson(message, GuidePointList::class.java)
-        RobotStatus.guidePointList?.value = guideConfig
         Log.d("TAG", "收到引领配置")
         val mapsList = guideConfig.maps
         val mapIterator = mapsList?.iterator()
@@ -846,8 +844,6 @@ class InteractionMqtt {
     fun guideFoundation(message: String) {
         val gson = Gson()
         val guideFoundation = gson.fromJson(message, guideFoundationModel::class.java)
-        RobotStatus.guideFoundationConfig?.value = guideFoundation
-
         LitePal.deleteAll(Table_Guide_Foundation::class.java)
         MqttMessageHandler.deleteFiles(File(Universal.robotFile + "GuidePic/foundation"))
 
@@ -1082,8 +1078,6 @@ class InteractionMqtt {
     fun replyGreet(message: String) {
         val gson = Gson()
         val replyGreetGson = gson.fromJson(message, ReplyGreetConfigModel::class.java)
-        RobotStatus.replyGreet?.value = replyGreetGson
-
         LitePal.deleteAll(Table_Greet_Config::class.java)
 
         val replyTableGreetConfig =

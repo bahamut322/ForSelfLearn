@@ -85,7 +85,7 @@ object CheckSelfHelper {
         var progress = 0
         //将读取文件中的内容放入变量中，用于之后判断是否可以进行测温/人脸识别
         val self = getFileContent((Universal.SelfCheck))
-        RobotStatus.SelfCheckNum.postValue(self)
+//        RobotStatus.SelfCheckNum.postValue(self)
         var tempFlag = self.toInt(2)//转为二进制之后，对应自检
         var initRosTopic = false
         val preTopicList = listOf(

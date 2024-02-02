@@ -41,7 +41,6 @@ object RobotStatus {
     // 仓门状态
     val doorState = arrayListOf<Int>()
     //广告屏
-    val mPresentation : MutableLiveData<Int?> = MutableLiveData()
     var repeatedReading : Int = 0
 
     //电量
@@ -64,20 +63,13 @@ object RobotStatus {
     var needDelay = false //需要一定的延时
     var currentStatus = TYPE_IDLE //机器人当前状态
     var previousStatus = TYPE_IDLE
-    var sendFailType = -1 //送物失败类型
     var chassisVersionName = "" //底盘版本名字
     val versionStatusModel = MutableLiveData<VersionStatusModel>()//机器人版本状态
     val tenancy = MutableLiveData<ResponseTenancyModel>() //使用期限
     var odomPose: Pose2D? = null //里程计
     val PassWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
-    var gatekeeper : MutableLiveData<Gatekeeper>?  = MutableLiveData<Gatekeeper>()//X8门岗配置
-    var replyGreet : MutableLiveData<ReplyGreetConfigModel>? = MutableLiveData<ReplyGreetConfigModel>()//X8机器人迎宾配置
     var shoppingConfigList : MutableLiveData<ShoppingGuideConfing>? = MutableLiveData<ShoppingGuideConfing>()//导购配置
-    var shoppingActionList : MutableLiveData<ActionsList>? = MutableLiveData<ActionsList>()//导购配置
-    var guidePointList : MutableLiveData<GuidePointList>? = MutableLiveData<GuidePointList>()//引领配置
-    var guideFoundationConfig : MutableLiveData<guideFoundationModel>? = MutableLiveData<guideFoundationModel>()
-
     var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
     var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
     var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
@@ -93,7 +85,6 @@ object RobotStatus {
     var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
     var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
-    var SelfCheckNum : MutableLiveData<String> = MutableLiveData("0")//需要自检的象（二进制）
     var ttsIsPlaying = false //百度语音播放状态
         set(value) {
 //            when (value) {

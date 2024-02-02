@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
             Objects.requireNonNull(mPresentation.getAdvanceView()).setResume();
         }
         //重启双屏异显
-        ShowPresentationByMediarouter();
+        showPresentationByMediaRouter();
 //        ShowPresentationByDisplaymanager();
         RobotStatus.INSTANCE.getNewUpdata().postValue(1);
     }
@@ -92,7 +92,7 @@ public class BaseActivity extends AppCompatActivity {
 //        mDisplayManager = (DisplayManager) this.getSystemService(Context.DISPLAY_SERVICE);
     }
 
-    public void ShowPresentationByMediarouter() {
+    public void showPresentationByMediaRouter() {
         MediaRouter.RouteInfo route = mMediaRouter.getSelectedRoute(MediaRouter.ROUTE_TYPE_LIVE_VIDEO);//选择类型
         if (route != null) {
             Display display = route.getPresentationDisplay();
@@ -112,7 +112,7 @@ public class BaseActivity extends AppCompatActivity {
         if (mPresentation == null && presentationDisplay != null) {
             Log.i(TAG, "Showing presentation on display: " + presentationDisplay);
             mPresentation = new MyPresentation(getApplicationContext(), presentationDisplay);
-            RobotStatus.INSTANCE.getMPresentation().postValue(1);
+//            RobotStatus.INSTANCE.getMPresentation().postValue(1);
             //  mPresentation.setOnDismissListener(mOnDismissListener);
             try {
                 mPresentation.show();
