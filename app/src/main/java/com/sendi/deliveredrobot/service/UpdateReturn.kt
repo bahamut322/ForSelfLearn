@@ -480,12 +480,7 @@ class UpdateReturn {
     fun splitStr(str: String): Array<String?> {
         return str.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     }
-    /**
-     * 根据标识位替换文字
-     */
-    fun replaceText(text : String,name : String = "") : String{
-        return text.replace("%唤醒词%", QuerySql.robotConfig().wakeUpWord).replace("%人脸姓名%",name)
-    }
+
     fun settingMap(batteryState: Boolean = false) {
         mainScope.launch(Dispatchers.Default) {
             UpdateReturn().mapSetting(batteryState)

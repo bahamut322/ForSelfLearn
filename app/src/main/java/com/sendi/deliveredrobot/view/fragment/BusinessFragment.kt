@@ -30,6 +30,7 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.TaskTypeEnum
@@ -88,7 +89,7 @@ class BusinessFragment : Fragment() {
         ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
         updateDataAndRefreshList()
         //进入页面播报
-        BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().firstPrompt!!)
+        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(QuerySql.ShoppingConfig().firstPrompt!!, business = QuerySql.ShoppingConfig().name!!))
 //        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE

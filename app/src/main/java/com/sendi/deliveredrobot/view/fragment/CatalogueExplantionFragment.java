@@ -32,6 +32,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
@@ -70,7 +71,7 @@ public class CatalogueExplantionFragment extends Fragment {
         binding.toCatalog.setOnClickListener(v -> {
             viewModel.start();
             Universal.twice = true;
-            SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getStartText());
+            SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
         binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));

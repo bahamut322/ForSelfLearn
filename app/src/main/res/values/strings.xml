@@ -514,6 +514,8 @@
     <string name="elevator_array_not_exist">电梯列表未创建</string>
     <string name="robot_updata_tips">机器人配置更新中</string>
     <string name="download_progress">当前进度：60% / 剩余任务：6</string>
+    <string name="wakeUpWord">%唤醒词%</string>
+    <string name="faceName">%人脸姓名%</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

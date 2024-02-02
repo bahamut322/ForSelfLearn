@@ -25,7 +25,9 @@ import com.sendi.deliveredrobot.interfaces.FaceDataListener
 import com.sendi.deliveredrobot.model.FaceModel
 import com.sendi.deliveredrobot.model.RectDeserializer
 import com.sendi.deliveredrobot.model.Similarity
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.identifyFace
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.UpdateReturn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +79,10 @@ class FaceRecognition {
         owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-        doubleString = QuerySql.faceMessage()
+        RobotStatus.newUpdata.observe(owner){
+            Log.d(TAG, "suerFaceInit: 获取数据")
+            doubleString = QuerySql.faceMessage()
+        }
         var cameraIds = arrayOfNulls<String>(0)
         try {
             cameraIds = manager.cameraIdList
@@ -261,7 +266,7 @@ class FaceRecognition {
      */
     private fun checkFace(
         owner: LifecycleOwner?,
-        speak: String = UpdateReturn().replaceText(QuerySql.selectGreetConfig().strangerPrompt)
+        speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
         if (speakNum <= 0 && !isProcessing.get()) {
             speakNum = 1
@@ -358,7 +363,7 @@ class FaceRecognition {
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
                     owner,
-                    UpdateReturn().replaceText(QuerySql.selectGreetConfig().vipPrompt)
+                    Placeholder.replaceText(QuerySql.selectGreetConfig().vipPrompt, name = correspondingValues)
                 )
             } else {
                 println("人脸库：没有查到此人")

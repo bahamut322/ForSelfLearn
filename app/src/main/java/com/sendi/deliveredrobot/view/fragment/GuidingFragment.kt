@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
@@ -59,7 +60,7 @@ class GuidingFragment : Fragment() {
     private var finishTaskDialog: FinishTaskDialog? = null
     private val arrayPoint = RobotStatus.ArrayPointExplan
     private val progress = RobotStatus.progress
-
+    var pointName = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,7 +85,7 @@ class GuidingFragment : Fragment() {
         if (bill is GuideTaskBill) {
             // 设置标志位为true，表示已经进入过该方法
             Universal.speakInt++
-            var pointName = bill.endTarget()
+            pointName = bill.endTarget()
             pointName = pointName.toList().joinToString(" ")
             binding.bottomAlarmTextViewArrive.text = pointName
             binding.businessName.text = String.format(getString(R.string.business_going), pointName)
@@ -132,7 +133,7 @@ class GuidingFragment : Fragment() {
             delay(1000L) // 延迟1秒
             RobotStatus.repeatedReading++
             if (RobotStatus.repeatedReading % 2 == 0 && actionData?.movePrompt!!.isNotEmpty()) {
-                BaiduTTSHelper.getInstance().speaks(actionData?.movePrompt!!)
+                BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = actionData?.movePrompt!!,pointName =pointName , business = "智能引领"))
             }
 
         }
@@ -218,7 +219,7 @@ class GuidingFragment : Fragment() {
             binding.motionLayoutGuideArrive.visibility = View.VISIBLE
         }
         RobotStatus.progress.postValue(0)
-        BaiduTTSHelper.getInstance().speaks(arriveText!!)
+        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = arriveText!!,pointName =pointName , business = "智能引领"))
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
@@ -263,7 +264,7 @@ class GuidingFragment : Fragment() {
             finishTaskDialog?.dismiss()
             //中断提示
             if (QuerySql.selectGuideFouConfig().interruptPrompt!!.isNotEmpty()) {
-                BaiduTTSHelper.getInstance().speaks(UpdateReturn().replaceText(QuerySql.selectGuideFouConfig().interruptPrompt!!))
+                BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName =pointName , business = "智能引领"))
             }
             //返回
             viewModel!!.finishTask()

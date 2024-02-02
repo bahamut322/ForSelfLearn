@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
 import com.sendi.deliveredrobot.entity.FunctionSkip;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
@@ -36,6 +37,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
+import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
@@ -91,6 +93,10 @@ public class ExplanationFragment extends Fragment {
         }
         updateDataAndRefreshList();
         controller = Navigation.findNavController(requireView());
+
+        BaiduTTSHelper.getInstance().speak( Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"));
+
+
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> controller.navigate(R.id.action_explanationFragment_to_homeFragment));
@@ -329,7 +335,7 @@ public class ExplanationFragment extends Fragment {
                     RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                     Log.d("TAG", "onBindViewHolder: " + mDatas.get(position).getId());
                     controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
-                    SpeakHelper.INSTANCE.speak(QuerySql.QueryExplainConfig().getPointListText());
+                    SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","",mDatas.get(position).getRouteName(),"智能讲解"));
                 }
             });
         }
