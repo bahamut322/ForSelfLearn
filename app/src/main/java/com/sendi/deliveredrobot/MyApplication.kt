@@ -16,12 +16,15 @@ import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.UpdateReturn
+import com.sendi.deliveredrobot.utils.InstallApkUtils
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.tencent.bugly.crashreport.CrashReport
 import jni.Usbcontorl
 import org.litepal.LitePal
 import org.xutils.x
 import java.io.File
+import kotlin.concurrent.thread
 
 class MyApplication : Application() {
     companion object {
@@ -56,7 +59,7 @@ class MyApplication : Application() {
                     RobotStatus.newUpdata.postValue(3)
                 }
             }
-            override fun onFinish() {
+            override fun onFinish(directory: String, fileName: String) {
                 // 下载完成
                 Log.d("TAG", "DownLoad FinishOnce")
                 if (DownloadBill.getInstance().taskCount == 0) {
@@ -64,6 +67,18 @@ class MyApplication : Application() {
                     Log.d("TAG", "onProgress: FinishAll")
                     UpdateReturn().method(Universal.mapType.value!!)
                     RobotStatus.newUpdata.postValue(1)
+                }
+                thread {
+                    //如果fileName以.apk结尾，则安装
+                    if(fileName.endsWith(".apk")){
+                        val result = InstallApkUtils.installApk("$directory${fileName}")
+                        LogUtil.i("install $fileName $result")
+                        //删除文件
+                        val file = File("$directory$fileName")
+                        if (file.exists()) {
+                            file.delete()
+                        }
+                    }
                 }
             }
             override fun onError(e: Exception) {

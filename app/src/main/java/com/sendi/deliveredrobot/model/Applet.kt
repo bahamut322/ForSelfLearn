@@ -10,6 +10,8 @@ data class Applet(
     val type: Int?,
     val url: String?,
     val bigScreenConfig: TopLevelConfig?,
+    val title: String?,
     val content: String?,
-    val packageName: String?
+    val packageName: String?,
+    val apk: String?
 )

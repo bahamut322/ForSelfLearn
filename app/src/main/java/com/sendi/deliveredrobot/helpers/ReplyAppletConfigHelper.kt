@@ -1,8 +1,12 @@
 package com.sendi.deliveredrobot.helpers
 
 import com.google.gson.Gson
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.Table_Applet_Config
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.handler.MqttMessageHandler
+import com.sendi.deliveredrobot.model.Applet
 import com.sendi.deliveredrobot.model.ApplicationModel
 import com.sendi.deliveredrobot.model.ReplyAppletConfigModel
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
@@ -25,7 +29,7 @@ object ReplyAppletConfigHelper {
         LogUtil.i(json)
         val appletConfig = gson.fromJson(json, ReplyAppletConfigModel::class.java)
         val uninstallList = mutableListOf<String>()
-        val installList = mutableListOf<String>()
+        val installList = mutableListOf<Applet>()
         appletConfig.applets?.forEach {
             if (LitePal.isExist(Table_Applet_Config::class.java,"appletid = ${it.appletId}")) {
                 //如果存在，检查包名是否一致，如果不一致则卸载原包名，如果一致则判断时间戳是否为-1，如果为-1则卸载
@@ -53,19 +57,29 @@ object ReplyAppletConfigHelper {
                 applet.bigScreenConfig?.save()
                 //如果包名未安装
                 if (applet.type == TYPE_APPLET_APK && !InstallApkUtils.isPackageExist(it.packageName ?: "")) {
-                    installList.add(it.packageName ?: "")
+                    installList.add(it)
                 }
             }
         }
         val installedList = LitePal.findAll<Table_Applet_Config>()
         uninstallList.filter { packageName ->
-            !installList.contains(packageName) && (!installedList.any { it.packageName == packageName})
+            !installList.any{ it.packageName == packageName } && (!installedList.any { it.packageName == packageName})
         }.map {
             val result = InstallApkUtils.uninstallApk(it)
             LogUtil.i("uninstall $it result $result")
         }
-        installList.map {
+        installList.apply{
+            if(size > 0){
+                MqttMessageHandler.openFile("${Universal.robotFile}applet/apks")
+            }
+        }.map {
             //下载，安装
+            DownloadBill.getInstance().addTask(
+                it.apk,
+                "${Universal.robotFile}applet/apks/",
+                it.apk?.substringAfterLast("/"),
+                MyApplication.listener
+            )
         }
     }
 
