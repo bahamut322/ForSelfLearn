@@ -80,8 +80,12 @@ object SpeakHelper {
                 RobotStatus.ttsIsPlaying = false
             }
         } else {
-            list.pop()
-            playNext(utteranceId)
+            if(list.size > 0){
+                list.pop()
+                playNext(utteranceId)
+            }else{
+                RobotStatus.ttsIsPlaying = false
+            }
         }
     }
 
