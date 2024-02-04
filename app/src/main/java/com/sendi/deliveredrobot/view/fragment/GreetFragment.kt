@@ -16,6 +16,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
@@ -91,7 +92,7 @@ class GreetFragment : Fragment() {
                     .into(binding.argPic)
             }
         } catch (_: Exception) {}
-        binding.bgCon.setOnClickListener {
+        binding.argPic.setOnClickListener {
             processClickDialog?.show()
             pause()
         }
@@ -115,7 +116,7 @@ class GreetFragment : Fragment() {
             finishTaskDialog?.dismiss()
             //返回
             BillManager.currentBill()?.executeNextTask()
-            BaiduTTSHelper.getInstance().speaks(UpdateReturn().replaceText(QuerySql.selectGreetConfig().exitPrompt))
+            BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
 
         }
         finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }

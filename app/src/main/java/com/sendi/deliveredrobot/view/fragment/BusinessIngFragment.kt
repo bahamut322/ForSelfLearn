@@ -29,6 +29,7 @@ import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -144,14 +145,14 @@ class BusinessIngFragment : Fragment() {
                 RobotStatus.repeatedReading++
                 //添加任务
                 if (RobotStatus.repeatedReading % 2 == 0) {
-                    BaiduTTSHelper.getInstance().speaks(actionData?.moveText!!)
+                    BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(actionData?.moveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //                    viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
                     binding.businessName.text =
                         String.format(getString(R.string.business_going), Universal.shoppingName)
                     Universal.businessTask = actionData!!.name
                 }
             } else {
-                BaiduTTSHelper.getInstance().speaks(actionData?.standText!!)
+                BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //                viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
                     String.format(getString(R.string.business_doing), Universal.shoppingName)
@@ -259,7 +260,7 @@ class BusinessIngFragment : Fragment() {
             return
         }
         arrayPic()
-        BaiduTTSHelper.getInstance().speaks(arriveText)
+        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = arriveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText!!.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
@@ -324,8 +325,8 @@ class BusinessIngFragment : Fragment() {
                     if (arrayPoint.value != 1) {//如果到点点击结束
                     } else {
                         //中断提示
-                        BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().interruptPrompt!!)
-//                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
+                        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                    //                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
                     }
                     viewModel!!.finishTask()
                 }

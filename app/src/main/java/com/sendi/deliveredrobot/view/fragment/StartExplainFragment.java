@@ -47,6 +47,7 @@ import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
+import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.service.TaskStageEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
@@ -186,7 +187,7 @@ public class StartExplainFragment extends Fragment {
                     RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                     binding.acceptstationTv.stopPlay();
 
-                    BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().getInterruptionText());
+                    BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",explantionNameModel.getName(),viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
                     viewModel.finishTask();
                 });
 
@@ -596,7 +597,7 @@ public class StartExplainFragment extends Fragment {
                         Log.d("TAG", "doInBackground: 开始播报");
                         // 在后台线程中执行耗时操作，例如数据预加载
                         if (mDatas.get(position).getWalktext() != null && !mDatas.get(position).getWalktext().isEmpty()) {
-                            BaiduTTSHelper.getInstance().speaks(mDatas.get(position).getWalktext());
+                            BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(mDatas.get(position).getWalktext(),"",mDatas.get(position).getName(),mDatas.get(position).getRoutename(),"智能讲解"));
 //                            viewModel.splitTextByPunctuation(mDatas.get(position).getWalktext());
                         }
                         return null;
@@ -696,8 +697,7 @@ public class StartExplainFragment extends Fragment {
                     binding.acceptstationTv.setText(textEqually.get(beforePage));
                     LogUtil.INSTANCE.i("当前页数: " + beforePage);
                     //将第一页的内容再次等分成BaiduTTS可以朗读的范围
-                    BaiduTTSHelper.getInstance().speaks(mData.get(position).getExplanationtext());
-
+                    BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(mData.get(position).getExplanationtext(),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
 
                     RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                         if (nextTaskToDo) {
@@ -793,8 +793,8 @@ public class StartExplainFragment extends Fragment {
                 binding.acceptstationTv.stopPlay();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
-                BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().getInterruptionText());
-//                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
+                BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",explantionNameModel.getName(),viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
+                //                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
             });
             finishTaskDialog.NoExit.setOnClickListener(v1 -> finishTaskDialog.dismiss());
 

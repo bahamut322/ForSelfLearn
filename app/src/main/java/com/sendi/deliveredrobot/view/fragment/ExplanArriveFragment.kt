@@ -18,6 +18,8 @@ import com.sendi.deliveredrobot.databinding.FragmentGuideArriveBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +71,7 @@ class ExplanArriveFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
         mainScope = MainScope()
-        BaiduTTSHelper.getInstance().speaks(QuerySql.QueryExplainConfig().endText)
+        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(QuerySql.QueryExplainConfig().endText, route = QuerySql.queryPointDate(RobotStatus.selectRoutMapItem!!.value!!)[0].routename))
 //        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
         binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget() ?: ""
         binding.motionLayoutGuideArrive.apply {

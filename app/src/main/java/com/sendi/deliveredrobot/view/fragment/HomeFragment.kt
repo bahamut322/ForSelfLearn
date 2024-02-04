@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -578,7 +579,6 @@ class HomeFragment : Fragment(), IMainView {
                 } else {
                     controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
                     Log.d("TAG", "点击智能讲解 ")
-                    SpeakHelper.speak(QuerySql.QueryExplainConfig().routeListText)
                 }
             }
 
