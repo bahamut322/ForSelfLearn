@@ -95,7 +95,7 @@ public class ExplanationFragment extends Fragment {
         updateDataAndRefreshList();
         controller = Navigation.findNavController(requireView());
 
-        BaiduTTSHelper.getInstance().speak( Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"));
+        BaiduTTSHelper.getInstance().speak( Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"),"");
 
 
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());

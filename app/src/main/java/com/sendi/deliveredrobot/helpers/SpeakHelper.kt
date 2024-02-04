@@ -72,20 +72,20 @@ object SpeakHelper {
     }
 
     fun playNext(utteranceId: String){
-        if (list.first?.id == utteranceId) {
-            list.pop()
-            if (list.size > 0) {
-                BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
+        if(list.size > 0){
+            if (list.first?.id == utteranceId) {
+                list.pop()
+                if (list.size > 0) {
+                    BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
+                } else {
+                    RobotStatus.ttsIsPlaying = false
+                }
             } else {
-                RobotStatus.ttsIsPlaying = false
-            }
-        } else {
-            if(list.size > 0){
                 list.pop()
                 playNext(utteranceId)
-            }else{
-                RobotStatus.ttsIsPlaying = false
             }
+        }else{
+            RobotStatus.ttsIsPlaying = false
         }
     }
 

@@ -190,7 +190,11 @@ public class BaiduTTSHelper {
         //播报语音音量
         MediaPlayerHelper.getInstance().pause();
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());
-        int result = synthesizer.speak(text, id);
+        if (id.isEmpty()){
+            synthesizer.speak(text);
+        }else{
+            synthesizer.speak(text, id);
+        }
 //        LogUtil.INSTANCE.i(text);
     }
 
