@@ -53,8 +53,7 @@ object SecondScreenManageHelper {
     }
 
     fun refreshSecondScreen(state: Int?, tempSecondModel: SecondModel? = null) {
-        RobotStatus.sdScreenStatus = state
-        when (state) {
+        RobotStatus.sdScreenStatus = when (state) {
             STATE_IDLE -> {
                 val config = LitePal.findFirst(Table_Advertising::class.java)
                 if (config != null && config.type != 0) {
@@ -76,6 +75,7 @@ object SecondScreenManageHelper {
                 } else {
                     default(Universal.advDefault, true)
                 }
+                state
             }
 
             STATE_TEMPERATURE -> {
@@ -98,6 +98,7 @@ object SecondScreenManageHelper {
                 } else {
                     default(Universal.usherDefault, false)
                 }
+                state
             }
 
             STATE_EXPLAIN,
@@ -118,10 +119,14 @@ object SecondScreenManageHelper {
                     }
                     default(defaultType, false)
                 }
+                state
             }
-
-            else -> {
+            null -> {
                 default(Universal.advDefault, true)
+                RobotStatus.sdScreenStatus
+            }
+            else -> {
+                RobotStatus.sdScreenStatus
             }
         }
     }
