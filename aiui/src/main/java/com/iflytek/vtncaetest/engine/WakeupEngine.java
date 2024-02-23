@@ -9,7 +9,6 @@ import static com.iflytek.vtncaetest.engine.EngineConstants.serialNumber;
 import static com.iflytek.vtncaetest.engine.EngineConstants.wakeEngineLogLevel;
 import static com.iflytek.vtncaetest.engine.EngineConstants.wakeupEngineDir;
 
-import android.util.JsonReader;
 import android.util.Log;
 
 import com.iflytek.aiui.AIUIConstant;
@@ -58,7 +57,7 @@ public class WakeupEngine {
                     if (result == 0) {
                         wakeupEngine = new WakeupEngine();
                         Log.i(TAG, "wakeupEngine初始化成功");
-                        SoundPoolUtil.create();
+//                        SoundPoolUtil.create();
                     } else {
                         Log.e(TAG, "wakeupEngine初始化失败,错误码：" + result);
                         Log.e(TAG, "解决方案：" + ErrorCode.getError(result) + " \n 错误解决详情参考：https://www.yuque.com/iflyaiui/zzoolv/igbuol");
@@ -143,8 +142,9 @@ public class WakeupEngine {
         @Override
         public void onWakeup(String result) {
             if (EngineConstants.wakeInfoOn) {
+                JSONObject wakeupResult = null;
                 try {
-                    JSONObject wakeupResult = new JSONObject(result);
+                    wakeupResult = new JSONObject(result).getJSONObject("ivw");
                     int physicalBeam = wakeupResult.getInt("physical"); //波束
                     int score = wakeupResult.getInt("score");           //唤醒得分，得分>阈值才会抛出唤醒
                     int angle = wakeupResult.getInt("angle");           //唤醒角度
@@ -158,9 +158,7 @@ public class WakeupEngine {
             */
                     SingleWakeWord(physicalBeam, score, angle, keyWord);
                 } catch (JSONException e) {
-
                 }
-//                JSONObject wakeupResult = JSON.parseObject(result).getJSONObject("ivw");
 
             } else {
                 //量产设备不需要解析具体的唤醒信息，节省算力

@@ -1,7 +1,5 @@
 package com.iflytek.vtncaetest.engine;
 
-
-
 import static com.iflytek.vtncaetest.engine.EngineConstants.serialNumber;
 
 import android.content.Context;

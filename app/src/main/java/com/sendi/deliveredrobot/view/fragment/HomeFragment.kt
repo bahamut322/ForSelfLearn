@@ -80,6 +80,8 @@ class HomeFragment : Fragment(), IMainView {
      */
     private var wakeupListener: WakeupListener? =
         WakeupListener { angle, beam, score, keyWord ->
+            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+            destroyRecord()
             controller?.navigate(R.id.conversationFragment)
         }
 
@@ -89,6 +91,8 @@ class HomeFragment : Fragment(), IMainView {
         super.onResume()
         LogUtil.i("homefragment onResume")
         mPresenter?.startTipsTimer()
+        // 资源拷贝
+        CopyAssetsUtils.portingFile(requireContext())
         initSDK()
         startRecord()
 //        BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
@@ -255,11 +259,11 @@ class HomeFragment : Fragment(), IMainView {
         }
 
         if (queryBasic.etiquette || queryBasic.identifyVip) {
-            fastRecognition.suerFaceInit(
-                extractFeature = queryBasic.identifyVip,
-                owner = this,
-                needEtiquette = queryBasic.etiquette,
-            )
+//            fastRecognition.suerFaceInit(
+//                extractFeature = queryBasic.identifyVip,
+//                owner = this,
+//                needEtiquette = queryBasic.etiquette,
+//            )
             val backgroundRes =
                 if (queryBasic.defaultValue != "") R.drawable.guests_open_bg else R.drawable.once_guests_bg
             binding.homeClay.setBackgroundResource(backgroundRes)
@@ -801,7 +805,8 @@ class HomeFragment : Fragment(), IMainView {
         EngineConstants.isRecording = false
         //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
         //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
+//        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
+        EngineConstants.serialNumber = "iflytek-test"
         LogUtil.i("sn : " + EngineConstants.serialNumber)
         //对音频的处理为降噪唤醒再送去识别,
         SystemRecorder.AUDIO_TYPE_ASR = false

@@ -22,4 +22,8 @@ public class ContextHolder extends Application {
     public static Context getContext() {
         return context;
     }
+
+    public static void setContext(Context context) {
+        ContextHolder.context = context;
+    }
 }
