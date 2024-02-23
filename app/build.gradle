@@ -116,6 +116,8 @@ dependencies {
     implementation files('lib/com.baidu.tts_2.6.2.2.20200629_44818d4.jar')
     implementation files('lib/AMap_Location_V4.7.2_20190927.jar')
     implementation project(path: ':ScanCodeModule')
+    implementation project(path: ':aiui')
+    implementation files('libs/AIUI.jar')
     // =============================================
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

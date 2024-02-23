@@ -13,6 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.iflytek.vtncaetest.engine.EngineConstants
+import com.iflytek.vtncaetest.engine.WakeupEngine
+import com.iflytek.vtncaetest.engine.WakeupListener
+import com.iflytek.vtncaetest.recorder.AudioRecorder
+import com.iflytek.vtncaetest.recorder.RecorderFactory
+import com.iflytek.vtncaetest.recorder.SystemRecorder
+import com.iflytek.vtncaetest.utils.CopyAssetsUtils
+import com.iflytek.vtncaetest.utils.ErrorCode
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
@@ -23,7 +31,6 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
@@ -33,7 +40,6 @@ import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.*
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -69,28 +75,42 @@ class HomeFragment : Fragment(), IMainView {
     private val fastRecognition: FaceRecognition = FaceRecognition()
     private val queryBasic = QuerySql.QueryBasic()
 
+    /**
+     * 唤醒回调
+     */
+    private var wakeupListener: WakeupListener? =
+        WakeupListener { angle, beam, score, keyWord ->
+            controller?.navigate(R.id.conversationFragment)
+        }
+
+    private var recorder: AudioRecorder? = null
+
     override fun onResume() {
         super.onResume()
         LogUtil.i("homefragment onResume")
         mPresenter?.startTipsTimer()
-        BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
-            LogUtil.i("听到--->$conversation")
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
-                LogUtil.i("包含${WakeupWordHelper.wakeupWord}")
-                controller?.navigate(R.id.conversationFragment)
-            }
-        }
-        BaseVoiceRecorder.getInstance()?.talkingCallback = { talking ->
-            when (talking) {
-                true -> {
-//                    println("****talking")
-                }
+        initSDK()
+        startRecord()
+//        BaseVoiceRecorder.getInstance()?.recordCallback = { conversation, pinyinString,_ ->
+//            LogUtil.i("听到--->$conversation")
+//            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
+//                LogUtil.i("包含${WakeupWordHelper.wakeupWord}")
+//                controller?.navigate(R.id.conversationFragment)
+//            }
+//        }
+//        BaseVoiceRecorder.getInstance()?.talkingCallback = { talking ->
+//            when (talking) {
+//                true -> {
+////                    println("****talking")
+//                }
+//
+//                false -> {
+////                    println("not talking")
+//                }
+//            }
+//        }
 
-                false -> {
-//                    println("not talking")
-                }
-            }
-        }
+
     }
 
     override fun onPause() {
@@ -103,6 +123,8 @@ class HomeFragment : Fragment(), IMainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         mPresenter = MainPresenter(this@HomeFragment)
         super.onCreate(savedInstanceState)
+        // 资源拷贝
+        CopyAssetsUtils.portingFile(requireContext())
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -193,6 +215,21 @@ class HomeFragment : Fragment(), IMainView {
         super.onStop()
         mainScope.cancel()
         remindDialog?.dismiss()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (EngineConstants.isRecording) {
+            stopRecord()
+        }
+        if (recorder != null) {
+            recorder!!.destroyRecord()
+            recorder = null
+        }
+        if (wakeupListener != null) {
+            wakeupListener = null
+        }
+        WakeupEngine.destroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -757,5 +794,64 @@ class HomeFragment : Fragment(), IMainView {
             }
         }
         return resultCode == 1
+    }
+
+    private fun initSDK() {
+        //状态初始化
+        EngineConstants.isRecording = false
+        //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
+        //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
+        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
+        LogUtil.i("sn : " + EngineConstants.serialNumber)
+        //对音频的处理为降噪唤醒再送去识别,
+        SystemRecorder.AUDIO_TYPE_ASR = false
+        //初始化wakeupEngine(降噪+唤醒)
+        val initResult = WakeupEngine.getInstance(wakeupListener)
+        if (initResult == 0) {
+            LogUtil.i("wakeupEngine初始化成功")
+        } else {
+            LogUtil.i(
+                "wakeupEngine初始化失败，错误码$initResult " + ErrorCode.getError(
+                    initResult
+                ) + "  \n错误解决详情参考：https://www.yuque.com/iflyaiui/zzoolv/igbuol")
+            LogUtil.i( "wakeupEngine初始化失败")
+        }
+
+        //初始化录音
+        if (recorder == null) {
+            recorder = RecorderFactory.getRecorder()
+        }
+        if (recorder != null) {
+            LogUtil.i("录音机初始化成功")
+        } else {
+            LogUtil.i("录音机初始化失败")
+        }
+    }
+
+    private fun startRecord() {
+        if (recorder != null) {
+            val ret = recorder!!.startRecord()
+            if (0 == ret) {
+                LogUtil.i("开启录音成功！")
+            } else if (111111 == ret) {
+                LogUtil.i("异常,AlsaRecorder is null ...")
+            } else {
+                LogUtil.i("开启录音失败，请查看/dev/snd/下的设备节点是否有777权限！\nAndroid 8.0 以上需要暂时使用setenforce 0 命令关闭Selinux权限！")
+                destroyRecord()
+            }
+        }
+    }
+
+    private fun stopRecord() {
+        if (recorder != null) {
+            recorder!!.stopRecord()
+            LogUtil.i("停止录音")
+        }
+    }
+
+    private fun destroyRecord() {
+        stopRecord()
+        recorder = null
+        LogUtil.i("destroy is Done!")
     }
 }
