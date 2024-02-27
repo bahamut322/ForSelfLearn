@@ -78,12 +78,7 @@ class HomeFragment : Fragment(), IMainView {
     /**
      * 唤醒回调
      */
-    private var wakeupListener: WakeupListener? =
-        WakeupListener { angle, beam, score, keyWord ->
-            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
-            destroyRecord()
-            controller?.navigate(R.id.conversationFragment)
-        }
+    private var wakeupListener: WakeupListener? = null
 
     private var recorder: AudioRecorder? = null
 
@@ -91,6 +86,10 @@ class HomeFragment : Fragment(), IMainView {
         super.onResume()
         LogUtil.i("homefragment onResume")
         mPresenter?.startTipsTimer()
+        wakeupListener = WakeupListener { angle, beam, score, keyWord ->
+            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+            controller?.navigate(R.id.conversationFragment)
+        }
         // 资源拷贝
         CopyAssetsUtils.portingFile(requireContext())
         initSDK()
@@ -121,6 +120,8 @@ class HomeFragment : Fragment(), IMainView {
         //有其他操作时结束计时
         fastRecognition.onDestroy()
         mPresenter?.endTipsTimer()
+        LogUtil.i("homefragment onPause")
+        quitFragment()
         super.onPause()
     }
 
@@ -170,6 +171,7 @@ class HomeFragment : Fragment(), IMainView {
     override fun onDestroyView() {
         (this.activity as MainActivity?)!!.unRegisterMyTouchListener(myTouchListener)
         mPresenter?.endTipsTimer()
+        LogUtil.i("homefragment onDestroyView")
         super.onDestroyView()
     }
 
@@ -217,23 +219,9 @@ class HomeFragment : Fragment(), IMainView {
 
     override fun onStop() {
         super.onStop()
+        LogUtil.i("homefragment onStop")
         mainScope.cancel()
         remindDialog?.dismiss()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (EngineConstants.isRecording) {
-            stopRecord()
-        }
-        if (recorder != null) {
-            recorder!!.destroyRecord()
-            recorder = null
-        }
-        if (wakeupListener != null) {
-            wakeupListener = null
-        }
-        WakeupEngine.destroy()
     }
 
     @SuppressLint("SetTextI18n")
@@ -858,5 +846,19 @@ class HomeFragment : Fragment(), IMainView {
         stopRecord()
         recorder = null
         LogUtil.i("destroy is Done!")
+    }
+
+    private fun quitFragment(){
+        if (EngineConstants.isRecording) {
+            stopRecord()
+        }
+        if (recorder != null) {
+            recorder!!.destroyRecord()
+            recorder = null
+        }
+        if (wakeupListener != null) {
+            wakeupListener = null
+        }
+        WakeupEngine.destroy()
     }
 }

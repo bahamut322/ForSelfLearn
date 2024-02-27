@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
+import com.iflytek.vtncaetest.ContextHolder
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
@@ -42,6 +43,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        ContextHolder.setContext(this)
         context = baseContext
         x.Ext.init(this)//初始化xUtils3
         CrashHandler().getInstance()?.init(this)

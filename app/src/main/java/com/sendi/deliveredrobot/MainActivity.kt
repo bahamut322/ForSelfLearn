@@ -99,12 +99,12 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         NavigationBarUtil.hideNavigationBar(window)
         //-----------------设置页面跳转receiver-------------------
         navController = Navigation.findNavController(this, R.id.fragmentContainerView)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            LogUtil.i("mainactivity onDestinationChangedListener:${destination.label}")
-            ReplyIntentHelper.clearCache()
-            BaseVoiceRecorder.getInstance()?.clearCache()
-            BaseVoiceRecorder.getInstance()?.removeCallback()
-        }
+//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+//            LogUtil.i("mainactivity onDestinationChangedListener:${destination.label}")
+//            ReplyIntentHelper.clearCache()
+//            BaseVoiceRecorder.getInstance()?.clearCache()
+//            BaseVoiceRecorder.getInstance()?.removeCallback()
+//        }
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController
         registerReceiver(navigationReceiver, IntentFilter(ACTION_NAVIGATE))

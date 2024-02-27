@@ -235,7 +235,7 @@ public class WakeupEngine {
     //唤醒后的响应
     private static void wakeResponse(int physicalBeam, int score, int angle, String keyWord) {
         //唤醒后播放提示音或用灯光，UI响应
-        SoundPoolUtil.play("唤醒提示音");
+//        SoundPoolUtil.play("唤醒提示音");
         //唤醒后给AIUI SDK发送唤醒事件：让AIUI SDK工作
         AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE);
         //回调唤醒结果给上层
@@ -249,7 +249,7 @@ public class WakeupEngine {
             CAE.CAEDestory();
             Log.i(TAG, "销毁wakeupEngine");
         }
-        SoundPoolUtil.release();
+//        SoundPoolUtil.release();
     }
 
     // 外部音频写入唤醒引擎进行降噪和唤醒

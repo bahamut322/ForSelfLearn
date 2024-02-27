@@ -120,5 +120,5 @@ public class EngineConstants {
     /* 唤醒词+识别文本连说功能，true(开启,直接说小飞小飞今天天气。缺点是单说唤醒词的时候，噪声环境下可能直接结束识别) ，false(关闭，小飞小飞，停顿300ms，再说今天天气)
        说明文档：https://www.yuque.com/iflyaiui/zzoolv/egon7vb08s91qoa2
      */
-    public static boolean freeAsr = true;
+    public static boolean freeAsr = false;
 }
