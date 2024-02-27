@@ -53,7 +53,7 @@ import java.util.Objects;
  * @author swn
  * @describe 智能讲解
  */
-public class ExplanationFragment extends Fragment {
+public class ExplanationFragment extends BaseFragment {
 
     FragmentExplanationBinding binding;
     private explantionAdapter mAdapter;
@@ -64,20 +64,6 @@ public class ExplanationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        LogUtil.INSTANCE.i("explanationFragment onResume");
-        BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
-        baseVoiceRecorder.setRecordCallback((s, pinyinString,f) -> {
-            if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
-                Log.i("AudioChannel", "包含" + WakeupWordHelper.INSTANCE.getWakeupWord());
-                controller.navigate(R.id.conversationFragment);
-            }
-            return null;
-        });
     }
 
     @Override

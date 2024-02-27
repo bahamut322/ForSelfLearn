@@ -185,9 +185,6 @@ class SelfCheckFragment : Fragment() {
                             RobotCommand.LIFT_CONTROL_TIME = this.liftControlTime.toInt()
                         }
                     }
-                    VoiceRecordCommand.getInstance(requireContext()).apply {
-                        BaseVoiceRecorder.VOICE_RECORD_TYPE = this.voiceRecordType.toInt()
-                    }
                     DeliverMqttService.publish(QueryFloorListModel().toString())
                     // 电梯
                     DeliverMqttService.publish(QueryElevatorListModel().toString())
@@ -402,7 +399,6 @@ class SelfCheckFragment : Fragment() {
 
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
-        BaseVoiceRecorder.getInstance()?.startRecording()
         Looper.prepare()
         UpdateReturn().deleteDirectory(Universal.AppVersion)
         when (FunctionSkip.selectFunction()) {

@@ -50,7 +50,7 @@ import java.util.Timer
  * 智能引领X8
  * @author swn
  */
-class GuideFragment : Fragment() {
+class GuideFragment : BaseFragment() {
 
     val mainScope = MainScope()
     private var controller: NavController? = null
@@ -192,17 +192,6 @@ class GuideFragment : Fragment() {
                 binding.GvGuideList.adapter = context?.let { GuidePointAdapter(requireContext(), queryFloorPoints) }
                 // 通知Adapter数据已变更
                 (binding.GvGuideList.adapter as? GuidePointAdapter)?.notifyDataSetChanged()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        LogUtil.i("guide 设置recordCallback")
-        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
-                Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
-                controller?.navigate(R.id.conversationFragment)
             }
         }
     }

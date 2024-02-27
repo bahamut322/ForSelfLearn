@@ -92,7 +92,7 @@ object RobotStatus {
 //                false -> DialogHelper.loadingDialog.dismiss()
 //            }
             Log.i("SpeakHelper", "ttsIsPlaying: $value")
-            BaseVoiceRecorder.ttsIsPlaying = value
+//            BaseVoiceRecorder.ttsIsPlaying = value
             field = value
         }
 

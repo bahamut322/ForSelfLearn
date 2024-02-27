@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.iflytek.vtncaetest.engine.WakeupListener
+import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
@@ -50,7 +52,7 @@ import kotlin.concurrent.thread
  * @Data 2023/10/18
  * @describe 业务办理页面
  */
-class BusinessFragment : Fragment() {
+class BusinessFragment : BaseFragment() {
 
     private lateinit var binding: FragmentBusinessBinding
     private var controller: NavController? = null
@@ -203,16 +205,6 @@ class BusinessFragment : Fragment() {
                 // 通知Adapter数据已变更
                 (binding.businessGv.adapter as? BusinessAdapter)?.notifyDataSetChanged()
                 binding.businessName.text = RobotStatus.shoppingConfigList?.value?.name ?: QuerySql.ShoppingConfig()?.name
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString,_ ->
-            if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
-                Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
-                controller?.navigate(R.id.conversationFragment)
             }
         }
     }

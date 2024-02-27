@@ -44,7 +44,7 @@ import java.util.Objects;
  * @author swn
  * @describe 讲解目录
  */
-public class CatalogueExplantionFragment extends Fragment {
+public class CatalogueExplantionFragment extends BaseFragment {
 
     private StartExplanViewModel viewModel;
     private FragmentCatalogueExplantionBinding binding;
@@ -131,18 +131,5 @@ public class CatalogueExplantionFragment extends Fragment {
             return convertView;
         }
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        BaseVoiceRecorder baseVoiceRecorder = BaseVoiceRecorder.Companion.getInstance();
-        baseVoiceRecorder.setRecordCallback((s, pinyinString,f) -> {
-            if (pinyinString.contains(Objects.requireNonNull(WakeupWordHelper.INSTANCE.getWakeupWordPinyin()))) {
-                Log.i("AudioChannel", "包含"+WakeupWordHelper.INSTANCE.getWakeupWord());
-                controller.navigate(R.id.conversationFragment);
-            }
-            return null;
-        });
     }
 }
