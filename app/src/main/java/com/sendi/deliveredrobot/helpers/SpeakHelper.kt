@@ -25,8 +25,14 @@ object SpeakHelper {
             Log.i("SpeakHelper", "list: ${list.size}")
             playNext(utteranceId)
         }
+
+        override fun progressChange(utteranceId: String, progress: Int) {
+            speakUserCallback?.progressChange(utteranceId, progress)
+        }
     }
     var id: Long = 0
+
+    var speakUserCallback: SpeakUserCallback? = null
 
     fun speak(msg: String) {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
@@ -79,6 +85,7 @@ object SpeakHelper {
                     BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
                 } else {
                     RobotStatus.ttsIsPlaying = false
+                    speakUserCallback?.speakAllFinish()
                 }
             } else {
                 list.pop()
@@ -86,6 +93,7 @@ object SpeakHelper {
             }
         }else{
             RobotStatus.ttsIsPlaying = false
+            speakUserCallback?.speakAllFinish()
         }
     }
 
@@ -97,10 +105,18 @@ object SpeakHelper {
 
     interface SpeakCallback {
         fun speakFinish(utteranceId: String)
+
+        fun progressChange(utteranceId: String, progress: Int)
     }
 
     data class SpeakModel(
         val id: String,
         val content: String
     )
+
+    interface SpeakUserCallback {
+        fun speakAllFinish()
+
+        fun progressChange(utteranceId: String, progress: Int)
+    }
 }

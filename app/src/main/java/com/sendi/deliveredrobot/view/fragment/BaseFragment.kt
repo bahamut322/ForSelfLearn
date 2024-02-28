@@ -13,6 +13,7 @@ import com.iflytek.vtncaetest.recorder.SystemRecorder
 import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.iflytek.vtncaetest.utils.ErrorCode
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 
 open class BaseFragment: Fragment(){
@@ -89,7 +90,7 @@ open class BaseFragment: Fragment(){
         }
     }
 
-    private fun stopRecord() {
+    protected fun stopRecord() {
         if (recorder != null) {
             recorder!!.stopRecord()
             LogUtil.i("停止录音")

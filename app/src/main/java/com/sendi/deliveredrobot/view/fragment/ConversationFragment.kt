@@ -29,6 +29,7 @@ import com.iflytek.vtncaetest.utils.senselessWordUtil
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -52,7 +53,7 @@ import kotlin.coroutines.suspendCoroutine
  * @date 2023-10-24
  * @description 人机对话fragment
  */
-class ConversationFragment : Fragment() {
+class ConversationFragment : BaseFragment() {
     var binding: FragmentConversationBinding? = null
     val mainScope = MainScope()
     lateinit var timer:Timer
@@ -361,13 +362,17 @@ class ConversationFragment : Fragment() {
             }
         }, Date(), 1000)
 //        initVoiceRecord()
-        Handler().postDelayed({
-            LogUtil.i("conversation initSDK")
-            // 资源拷贝
-            CopyAssetsUtils.portingFile(requireContext())
-            initSDK()
-            startRecord()
-        }, 1000)
+        SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
+            override fun speakAllFinish() {
+                LogUtil.i("tts:播放完成")
+                AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
+                talkingView = null
+            }
+
+            override fun progressChange(utteranceId: String, progress: Int) {
+                startTime = System.currentTimeMillis()
+            }
+        }
 
     }
 
@@ -931,95 +936,17 @@ class ConversationFragment : Fragment() {
 //    }
 
     private fun startTTS(text: String) {
-        //构建合成参数
-        val params = StringBuffer()
-        //合成发音人，发音人列表：https://www.yuque.com/iflyaiui/zzoolv/iwxf76#d1uw4
-        params.append("vcn=x4_lingxiaoying_em_v2")
-        //语速，取值范围[0,100]
-        params.append(",speed=55")
-        //音调，取值范围[0,100]
-        params.append(",pitch=50")
-        //音量，取值范围[0,100]
-        params.append(",volume=55")
-        AiuiEngine.TTS_start(text, params)
-    }
-
-    private fun initSDK() {
-        //状态初始化
-        EngineConstants.isRecording = false
-        //TODO 开发者需要实现生成sn的代码，参考：https://www.yuque.com/iflyaiui/zzoolv/tgftb5
-        //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
-        //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-        //TODO 开发者需要实现生成sn的代码，参考：https://www.yuque.com/iflyaiui/zzoolv/tgftb5
-        //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
-        //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-        EngineConstants.serialNumber = "iflytek-test"
-//        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
-        // 初始化AIUI(识别+语义+合成）
-        mAIUIAgent = AiuiEngine.getInstance(aiuiListener, "cfg/aiui.cfg")
-        if (mAIUIAgent != null) {
-            LogUtil.i("AIUI初始化成功")
-        } else {
-            LogUtil.i("AIUI初始化失败")
-        }
-
-        //对音频的处理为不降噪唤醒直接送去识别，只保留1声道音频,
-        SystemRecorder.AUDIO_TYPE_ASR = true
-        //初始化录音
-        if (recorder == null) {
-            recorder = RecorderFactory.getRecorder()
-        }
-        if (recorder != null) {
-            LogUtil.i("录音机初始化成功")
-        } else {
-            LogUtil.i("录音机初始化失败")
-        }
-    }
-
-
-    private fun startRecord() {
-        if (recorder != null) {
-            when (recorder?.startRecord()) {
-                0 -> {
-                    LogUtil.i("开启录音成功！")
-                }
-                111111 -> {
-                    LogUtil.i("异常,AlsaRecorder is null ...")
-                }
-                else -> {
-                    LogUtil.i("开启录音失败，请查看/dev/snd/下的设备节点是否有777权限！\nAndroid 8.0 以上需要暂时使用setenforce 0 命令关闭Selinux权限！")
-                    destroyRecord()
-                }
-            }
-        }
-    }
-
-    private fun stopRecord() {
-        if (recorder != null) {
-            recorder?.stopRecord()
-            LogUtil.i("停止录音")
-        }
-    }
-
-    private fun destroyRecord() {
-        stopRecord()
-        recorder = null
-        LogUtil.d("destroy is Done!")
-    }
-
-    fun quitFragment() {
-        if (EngineConstants.isRecording) {
-            stopRecord()
-        }
-        if (recorder != null) {
-            recorder!!.destroyRecord()
-            recorder = null
-        }
-        if (aiuiListener != null) {
-            aiuiListener = null
-        }
-        SystemRecorder.AUDIO_TYPE_ASR = false
-        //销毁aiui
-        AiuiEngine.destroy()
+//        //构建合成参数
+//        val params = StringBuffer()
+//        //合成发音人，发音人列表：https://www.yuque.com/iflyaiui/zzoolv/iwxf76#d1uw4
+//        params.append("vcn=x4_lingxiaoying_em_v2")
+//        //语速，取值范围[0,100]
+//        params.append(",speed=55")
+//        //音调，取值范围[0,100]
+//        params.append(",pitch=50")
+//        //音量，取值范围[0,100]
+//        params.append(",volume=55")
+//        AiuiEngine.TTS_start(text, params)
+        SpeakHelper.speakWithoutStop(text)
     }
 }

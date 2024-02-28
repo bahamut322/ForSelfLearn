@@ -100,6 +100,10 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 
         Log.d(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
 
+        if (speakCallback != null) {
+            speakCallback.progressChange(utteranceId, progress);
+        }
+
     }
 
     /**
