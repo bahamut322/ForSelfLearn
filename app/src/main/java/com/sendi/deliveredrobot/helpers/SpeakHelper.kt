@@ -66,6 +66,7 @@ object SpeakHelper {
 
     fun stop() {
 //        mainScope.launch(Dispatchers.IO) {
+            list.clear()
             BaiduTTSHelper.getInstance().stop()
             RobotStatus.ttsIsPlaying = false
 //        }
