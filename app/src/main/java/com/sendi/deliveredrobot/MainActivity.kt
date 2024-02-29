@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -165,9 +166,9 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
                 }
             }
         }
-        RobotStatus.robotConfig?.observe(this){
+        RobotStatus.robotConfig?.observe(this) {
             if (it != null) {
-                WakeupWordHelper.wakeupWord = it.wakeUpWord?:""
+                WakeupWordHelper.wakeupWord = it.wakeUpWord ?: ""
             }
         }
         WakeupWordHelper.wakeupWord = QuerySql.robotConfig().wakeUpWord
@@ -422,11 +423,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         SecondScreenManageHelper.init(this)
         //监听观察者更新副屏内容
         RobotStatus.newUpdata.observe(this) {
-            if (it == 1) {
+            if (it == 1 || it == 2) {
+                Log.d(TAG, "screenRenew: 更新副屏内容")
                 RobotStatus.newUpdata.postValue(null)
-                if(RobotStatus.sdScreenStatus != SecondScreenManageHelper.STATE_GUIDE){
-                    SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
-                }
+                SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
             }
             if (it == 3) {
                 SecondScreenManageHelper.refreshSecondScreen( null)
