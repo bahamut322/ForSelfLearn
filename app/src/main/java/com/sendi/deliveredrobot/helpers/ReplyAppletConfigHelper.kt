@@ -1,6 +1,8 @@
 package com.sendi.deliveredrobot.helpers
 
+import com.alibaba.fastjson.JSONArray
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.Table_Applet_Config
 import com.sendi.deliveredrobot.entity.Universal
@@ -93,8 +95,8 @@ object ReplyAppletConfigHelper {
     /**
      * @description 获取时间戳String
      */
-    suspend fun queryAppletConfigTimeStamp(): String = suspendCoroutine {
-        it.resume(QuerySql.queryAppletIdList().toString() )
+    suspend fun queryAppletConfigTimeStamp(): JSONArray = suspendCoroutine {
+        it.resume(QuerySql.queryAppletIdList())
     }
 
     suspend fun queryApplicationModelList(): List<ApplicationModel> = suspendCoroutine {
