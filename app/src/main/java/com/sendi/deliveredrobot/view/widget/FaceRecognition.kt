@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -57,13 +58,15 @@ class FaceRecognition {
     var c: Camera? = null
     private var speakNum = 0
     private var canSendData = true
-    private var doubleString: ArrayList<Table_Face> = ArrayList()
+    private var doubleString: ArrayList<Table_Face?> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
     private val jsonParams = JSONObject()
     private val faceScope = CoroutineScope(Dispatchers.Default + Job())
     private var manager =
         MyApplication.instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
+    private var shouldExecute = true // 控制方法是否执行的标志
+
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -79,10 +82,11 @@ class FaceRecognition {
         owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-        RobotStatus.newUpdata.observe(owner){
+        RobotStatus.newUpdata.observe(owner) {
             Log.d(TAG, "suerFaceInit: 获取数据")
             doubleString = QuerySql.faceMessage()
         }
+        shouldExecute = true
         var cameraIds = arrayOfNulls<String>(0)
         try {
             cameraIds = manager.cameraIdList
@@ -129,7 +133,8 @@ class FaceRecognition {
                         FaceDataListener.setFaceBit(bm)
                         bm.recycle()
                     }
-                }catch (_:Exception){}
+                } catch (_: Exception) {
+                }
             }
         }
     }
@@ -268,9 +273,9 @@ class FaceRecognition {
         owner: LifecycleOwner?,
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (speakNum <= 0 && !isProcessing.get()) {
+        if (speakNum <= 0 && !isProcessing.get() && shouldExecute) {
             speakNum = 1
-            BaiduTTSHelper.getInstance().speak(speak,"")
+            BaiduTTSHelper.getInstance().speak(speak, "")
             identifyFace!!.value = 0 //在百度TTS中设置为0不及时
         }
         identifyFace!!.observe(owner!!) { value ->
@@ -363,7 +368,10 @@ class FaceRecognition {
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
                     owner,
-                    Placeholder.replaceText(QuerySql.selectGreetConfig().vipPrompt, name = correspondingValues)
+                    Placeholder.replaceText(
+                        QuerySql.selectGreetConfig().vipPrompt,
+                        name = correspondingValues
+                    )
                 )
             } else {
                 println("人脸库：没有查到此人")
@@ -382,25 +390,31 @@ class FaceRecognition {
     /**
      * 将数据库中的人脸特征String转二位数组
      */
-    private fun faceList(doubleString: List<Table_Face>): MutableList<List<Double>> {
-        // 假设这是你的 JSON 字符串列表
-        val jsonStringList = doubleString.map { it.sexual }
+    private fun faceList(doubleString: List<Table_Face?>): MutableList<List<Double>> {
         // 创建 Gson 实例
         val gson = Gson()
         // 创建一个新的列表来存放二维数组
         val twoDimensionalArrayList = mutableListOf<List<Double>>()
         // 遍历 JSON 字符串列表
-        jsonStringList.forEach { jsonString ->
-            // 使用 Gson 将 JSON 字符串转换为一维数组
-            val typeToken = object : TypeToken<List<Double>>() {}.type
-            val oneDimensionalArray: List<Double> = gson.fromJson(jsonString, typeToken)
-            // 将一维数组转换为二维数组（这里假设每个子数组有512个元素）
-            val chunkedArray = oneDimensionalArray.chunked(512)
-            // 将二维数组添加到列表中
-            twoDimensionalArrayList.addAll(chunkedArray)
+        doubleString.forEach { tableFace ->
+            try {
+                // 假设这是你的 JSON 字符串
+                val jsonString = tableFace?.sexual
+                // 使用 Gson 将 JSON 字符串转换为一维数组
+                val typeToken = object : TypeToken<List<Double>>() {}.type
+                val oneDimensionalArray: List<Double> = gson.fromJson(jsonString, typeToken)
+                // 将一维数组转换为二维数组（这里假设每个子数组有512个元素）
+                val chunkedArray = oneDimensionalArray.chunked(512)
+                // 将二维数组添加到列表中
+                twoDimensionalArrayList.addAll(chunkedArray)
+            } catch (e: JsonSyntaxException) {
+                // 解析失败时，捕获异常并添加一个空的字符串列表
+                twoDimensionalArrayList.add(emptyList())
+            }
         }
         return twoDimensionalArrayList
     }
+
 
     //检测人脸随机播放
     private fun speakContent(): String {
@@ -415,6 +429,7 @@ class FaceRecognition {
     fun onDestroy() {
         if (null != c) {
             // 取消所有协程任务
+            shouldExecute = false
             faceScope.cancel()
             channel.close()
             // 停止预览
