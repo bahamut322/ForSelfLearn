@@ -694,7 +694,7 @@ public class StartExplainFragment extends Fragment {
                     AtomicInteger page = new AtomicInteger(textEqually.size());
 //                Log.d("TAG", "内容列表长度: " + page + "当前内容：" + textEqually.get(beforePage));
                     //显示第一页
-                    binding.acceptstationTv.setText(textEqually.get(beforePage));
+                    binding.acceptstationTv.setText(Placeholder.Companion.replaceText(textEqually.get(beforePage),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
                     LogUtil.INSTANCE.i("当前页数: " + beforePage);
                     //将第一页的内容再次等分成BaiduTTS可以朗读的范围
                     BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(mData.get(position).getExplanationtext(),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
@@ -717,7 +717,7 @@ public class StartExplainFragment extends Fragment {
                             if (beforePage <= page.get() - 1) {
                                 RobotStatus.INSTANCE.getProgress().postValue(0);
                                 beforePage++;
-                                binding.acceptstationTv.setText(textEqually.get(beforePage));
+                                binding.acceptstationTv.setText(Placeholder.Companion.replaceText(textEqually.get(beforePage),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
                                 nextTaskToDo = true;
                             }
                         }

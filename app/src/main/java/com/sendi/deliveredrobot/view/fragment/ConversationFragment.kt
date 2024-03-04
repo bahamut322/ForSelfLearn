@@ -661,6 +661,7 @@ class ConversationFragment : Fragment() {
                                             SpeakHelper.speakWithoutStop(speakAnswer)
                                         }else{
                                             hashMap["${axyAnswer.questionNumber ?:-1}"] = axyAnswer
+                                            addAnswer2("这个问题有点难，请稍等...")
                                         }
                                     }
                                 }
