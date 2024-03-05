@@ -10,7 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.util.Consumer;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.sendi.deliveredrobot.BuildConfig;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.adapter.ChangePointGridViewAdapter;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
@@ -41,12 +39,10 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
-import com.sendi.deliveredrobot.helpers.ReportDataHelper;
 import com.sendi.deliveredrobot.model.ExplantionNameModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.service.TaskStageEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
@@ -169,7 +165,7 @@ public class StartExplainFragment extends Fragment {
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
                 isButtonClickable = false;
-                Log.d("", "pause: zhantzant4");
+                Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 BaiduTTSHelper.getInstance().pause();
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
@@ -196,6 +192,7 @@ public class StartExplainFragment extends Fragment {
                         BaiduTTSHelper.getInstance().resume();
                     }
                     MediaPlayerHelper.getInstance().resume();
+                    Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
                     finishTaskDialog.dismiss();
                 });
 
@@ -778,6 +775,7 @@ public class StartExplainFragment extends Fragment {
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
             finishTaskDialog.YesExit.setOnClickListener(v12 -> {
+                array = false;
                 //返回
                 Universal.taskNum = 0;
                 Universal.progress = 0;
@@ -898,7 +896,6 @@ public class StartExplainFragment extends Fragment {
                         }
                     }
                     binding.pointImage.setData(fileList);
-
                 }
             }
         } catch (Exception e) {

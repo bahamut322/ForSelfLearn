@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * @Author Swn
  * @Data 2023/12/7
- * @describe
+ * @describe 人脸识别
  */
 class FaceRecognition {
     private val TAG = "人脸TAG"
@@ -139,6 +139,12 @@ class FaceRecognition {
         }
     }
 
+    /**
+     * 将NV21格式的字节数组转换为Bitmap
+     * @param data NV21格式的字节数组
+     * @param width 图片宽
+     * @param height 图片高
+     */
     private fun decodeByteArrayToBitmap(data: ByteArray, width: Int, height: Int): Bitmap? {
         var bitmap: Bitmap? = null
         val image = YuvImage(data, ImageFormat.NV21, width, height, null)
@@ -292,6 +298,12 @@ class FaceRecognition {
     }
 
 
+    /**
+     * 人脸识别
+     * @param faces 人脸特征
+     * @param owner LifecycleOwner
+     * @param needEtiquette 是否需要播报
+     */
     fun faceIdentify(
         faces: List<List<Double>?>,
         owner: LifecycleOwner,
@@ -339,6 +351,12 @@ class FaceRecognition {
     }
 
 
+    /**
+     * 人脸识别主要逻辑
+     * @param similarityResponse 人脸识别数据
+     * @param owner LifecycleOwner
+     * @param needEtiquette 是否需要播报
+     */
     fun main(
         similarityResponse: Similarity,
         owner: LifecycleOwner,
@@ -388,7 +406,8 @@ class FaceRecognition {
 
 
     /**
-     * 将数据库中的人脸特征String转二位数组
+     * 将人脸特征字符串列表转换为二维数组
+     * @param doubleString 人脸特征字符串列表
      */
     private fun faceList(doubleString: List<Table_Face?>): MutableList<List<Double>> {
         // 创建 Gson 实例
@@ -426,6 +445,9 @@ class FaceRecognition {
         return list[randomIndex]
     }
 
+    /**
+     * 销毁
+     */
     fun onDestroy() {
         if (null != c) {
             // 取消所有协程任务
