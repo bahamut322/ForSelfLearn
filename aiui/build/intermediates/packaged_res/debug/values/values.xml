@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <color name="black">#FF000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="action_sign_in">登录</string>
+    <string name="app_name">AiuiDemo</string>
+    <string name="error_invalid_graphic_code">请输入有效的图形验证码</string>
+    <string name="error_invalid_phone">请输入正确的手机号码</string>
+    <string name="error_invalid_sms_code">请输入有效的短信验证码</string>
+    <string name="graphic_code_tip">图形验证码</string>
+    <string name="kugou_multi_user_dialog_title">请选择账户登陆:</string>
+    <string name="prompt_phone">手机号码</string>
+    <string name="register_btn">快速注册</string>
+    <string name="send_sms_code_tip">发送验证码</string>
+    <string name="sms_code_tip">短信验证码</string>
+    <style name="Theme.Main" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" ns1:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
