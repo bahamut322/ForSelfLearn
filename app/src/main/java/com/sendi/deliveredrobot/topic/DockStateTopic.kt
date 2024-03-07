@@ -56,13 +56,15 @@ object DockStateTopic {
                         RobotStatus.docking = false
                         //自主充电超时
                         if (RobotStatus.retryDockTimes < RobotStatus.RETRY_DOCK_MAX_TIMES) {
-                            //创建返回队列
-                            val bill = BillManager.currentBill() as GoBackTaskBill
-                            bill.dockFail()
-                            //重试次数自增
-                            RobotStatus.retryDockTimes++
-                            LogUtil.i("第${RobotStatus.retryDockTimes + 1}次尝试试对接充电桩")
-                            ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_STOP)
+                            if(BillManager.currentBill() is GoBackTaskBill){
+                                //创建返回队列
+                                val bill = BillManager.currentBill() as GoBackTaskBill
+                                bill.dockFail()
+                                //重试次数自增
+                                RobotStatus.retryDockTimes++
+                                LogUtil.i("第${RobotStatus.retryDockTimes + 1}次尝试试对接充电桩")
+                                ROSHelper.manageRobotUntilDone(RobotCommand.MANAGE_STATUS_STOP)
+                            }
                         } else {
                             BillManager.currentBill()?.exception()
                             DialogHelper.troubleDialog.show()
