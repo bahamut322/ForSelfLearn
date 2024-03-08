@@ -41,8 +41,6 @@ object RobotStatus {
     // 仓门状态
     val doorState = arrayListOf<Int>()
     //广告屏
-    var repeatedReading : Int = 0
-
     //电量
     val batteryPower: MutableLiveData<Float> = MutableLiveData(-1f)
 

@@ -142,15 +142,18 @@ class BusinessIngFragment : Fragment() {
             delay(1000L) // 延迟1秒
 
             if (actionData?.actionType == 2) {
-                RobotStatus.repeatedReading++
                 //添加任务
-                if (RobotStatus.repeatedReading % 2 == 0) {
-                    BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(actionData?.moveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                BaiduTTSHelper.getInstance().speaks(
+                    Placeholder.replaceText(
+                        actionData?.moveText!!,
+                        pointName = actionData?.pointName!!,
+                        business = actionData?.name!!
+                    )
+                )
 //                    viewModel!!.splitTextByPunctuation(actionData?.moveText!!)
-                    binding.businessName.text =
-                        String.format(getString(R.string.business_going), Universal.shoppingName)
-                    Universal.businessTask = actionData!!.name
-                }
+                binding.businessName.text =
+                    String.format(getString(R.string.business_going), Universal.shoppingName)
+                Universal.businessTask = actionData!!.name
             } else {
                 BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //                viewModel!!.splitTextByPunctuation(actionData?.standText)
