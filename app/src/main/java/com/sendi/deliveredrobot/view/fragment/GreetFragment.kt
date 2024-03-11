@@ -31,7 +31,6 @@ import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 class GreetFragment : Fragment() {
 
     private lateinit var binding: FragmentGreetBinding
-    private val fastRecognition: FaceRecognition = FaceRecognition()
     private var actionData : Table_Greet_Config? = Table_Greet_Config()
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
@@ -61,7 +60,7 @@ class GreetFragment : Fragment() {
             if (it == Universal.ExplainLength || Universal.ExplainLength != -1) {
                 Log.d("tag", "onViewCreated:  迎宾到达进行")
                 if (arrayFacePoint == 0) {
-                    fastRecognition.suerFaceInit(
+                    FaceRecognition.suerFaceInit(
                         extractFeature = true,
                         owner = this,
                         needEtiquette = true,
@@ -130,7 +129,7 @@ class GreetFragment : Fragment() {
     override fun onStop() {
         //释放人脸识别资源
         arrayFacePoint = 0
-        fastRecognition.onDestroy()
+        FaceRecognition.onDestroy()
         super.onStop()
     }
 }

@@ -66,7 +66,6 @@ class HomeFragment : Fragment(), IMainView {
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
     private var shoppingName = ""
-    private val fastRecognition: FaceRecognition = FaceRecognition()
     private val queryBasic = QuerySql.QueryBasic()
 
     override fun onResume() {
@@ -95,7 +94,7 @@ class HomeFragment : Fragment(), IMainView {
 
     override fun onPause() {
         //有其他操作时结束计时
-        fastRecognition.onDestroy()
+        FaceRecognition.onDestroy()
         mPresenter?.endTipsTimer()
         super.onPause()
     }
@@ -218,7 +217,7 @@ class HomeFragment : Fragment(), IMainView {
         }
 
         if (queryBasic.etiquette || queryBasic.identifyVip) {
-            fastRecognition.suerFaceInit(
+            FaceRecognition.suerFaceInit(
                 extractFeature = queryBasic.identifyVip,
                 owner = this,
                 needEtiquette = queryBasic.etiquette,

@@ -94,7 +94,7 @@ public class CameraPreviewFragment extends Fragment {
         controller = Navigation.findNavController(view);
         binding = DataBindingUtil.bind(view);
 //        DialogHelper.loadingDialog.show();
-        new FaceRecognition().suerFaceInit(false, 800, 600,this,false);
+        FaceRecognition.INSTANCE.suerFaceInit(false, 800, 600,this,false);
         new TimeThread().start(); //启动新的线程
 //        initViews();
         //副屏状态
@@ -172,7 +172,7 @@ public class CameraPreviewFragment extends Fragment {
             Usbcontorl.usb3803_mode_setting(0);//打开5V
         Log.e("Camera", "onDestroy");
         Abnormalbitmaps.clear();
-        new FaceRecognition().onDestroy();
+        FaceRecognition.INSTANCE.onDestroy();
         // 释放系统资源
 //        player.release();
     }

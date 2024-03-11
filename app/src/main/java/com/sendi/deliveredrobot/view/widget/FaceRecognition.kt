@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Data 2023/12/7
  * @describe 人脸识别
  */
-class FaceRecognition {
+object FaceRecognition {
     private val TAG = "人脸TAG"
     var c: Camera? = null
     private var speakNum = 0
@@ -179,7 +179,7 @@ class FaceRecognition {
         needEtiquette: Boolean = false
     ) {
         val base64 = bitmapToBase64(bitmap)
-        bitmap?.recycle()
+        bitmap.recycle()
         System.gc()
         // 添加参数到JSON对象
         jsonParams["img"] = base64 // 后续需要修改base64
