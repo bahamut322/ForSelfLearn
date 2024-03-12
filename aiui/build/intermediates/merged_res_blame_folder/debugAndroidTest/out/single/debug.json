@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/layout_activity_main.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/layout_activity_translate.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/layout/activity_translate.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xxxhdpi-v4_ic_launcher_round.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xxxhdpi-v4/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-hdpi-v4_ic_launcher.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-hdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/drawable-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xhdpi-v4_ic_launcher_round.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xhdpi-v4/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-hdpi-v4_ic_launcher_round.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-hdpi-v4/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xxhdpi-v4_ic_launcher_round.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xxhdpi-v4/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xhdpi-v4_ic_launcher.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xhdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/layout_activity_asr.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/layout/activity_asr.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-mdpi-v4_ic_launcher.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-mdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/layout-land_activity_asr.xml.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/layout-land/activity_asr.xml"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-mdpi-v4_ic_launcher_round.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-mdpi-v4/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xxhdpi-v4_ic_launcher.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xxhdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/res/merged/androidTest/debug/mipmap-xxxhdpi-v4_ic_launcher.png.flat",
+        "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/mipmap-xxxhdpi-v4/ic_launcher.png"
+    }
+]

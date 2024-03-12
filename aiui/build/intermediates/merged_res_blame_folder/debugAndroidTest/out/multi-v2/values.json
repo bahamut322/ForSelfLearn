@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
+            "map": [
+                {
+                    "source": "/Users/heky/Desktop/heky/projects/android_projects/multifunctionalrobot/aiui/build/intermediates/packaged_res/debug/values/values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "100,142,189,236,283,328,373,415,461,507,574,633,696,747,814,860,906,958,1005",
+                        "endLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,32",
+                        "endColumns": "41,46,46,46,44,44,41,45,45,66,58,62,50,66,45,45,51,46,12",
+                        "endOffsets": "137,184,231,278,323,368,410,456,502,569,628,691,742,809,855,901,953,1000,1716"
+                    }
+                }
+            ]
+        }
+    ]
+}
