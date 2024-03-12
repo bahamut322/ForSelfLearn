@@ -94,7 +94,7 @@ public class CameraPreviewFragment extends Fragment {
         controller = Navigation.findNavController(view);
         binding = DataBindingUtil.bind(view);
 //        DialogHelper.loadingDialog.show();
-        FaceRecognition.INSTANCE.suerFaceInit(false, 800, 600,this,false);
+        FaceRecognition.INSTANCE.suerFaceInit(false, 800, 600,false);
         new TimeThread().start(); //启动新的线程
 //        initViews();
         //副屏状态

@@ -58,14 +58,14 @@ public class IdentifyDialog extends Dialog {
         Tips.setText(name);
         Bitmap bitmap = BitmapFactory.decodeFile(name);
         submitBtn.setOnClickListener(v -> {
-            FaceRecognition.INSTANCE.faceHttp(true, bitmap, owner, false);
+            FaceRecognition.INSTANCE.faceHttp(true, bitmap, false);
             DialogHelper.loadingDialog.show();
             Toast.makeText(context, editText.getText(), Toast.LENGTH_LONG).show();
         });
         FaceDataListener.setOnChangeListener(() -> {
             anInt++;
             if (anInt < 5) {
-                FaceRecognition.INSTANCE.faceHttp(true, bitmap, owner, false);
+                FaceRecognition.INSTANCE.faceHttp(true, bitmap, false);
             } else {
                 if (FaceDataListener.getFaceModels() != null && FaceDataListener.getFaceModels().size() == 1) {
                     Table_Face faceTips = new Table_Face();

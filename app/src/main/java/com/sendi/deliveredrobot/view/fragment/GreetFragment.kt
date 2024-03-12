@@ -62,7 +62,6 @@ class GreetFragment : Fragment() {
                 if (arrayFacePoint == 0) {
                     FaceRecognition.suerFaceInit(
                         extractFeature = true,
-                        owner = this,
                         needEtiquette = true,
                     )
                 }
