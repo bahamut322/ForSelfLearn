@@ -135,6 +135,7 @@ abstract class BaseVoiceRecorder {
 
     fun removeCallback(){
         recordCallback = null
+        recordStatusCallback = null
     }
 
     fun clearCache(){

@@ -131,11 +131,9 @@ class GuidingFragment : Fragment() {
 
         lifecycleScope.launch {
             delay(1000L) // 延迟1秒
-            RobotStatus.repeatedReading++
-            if (RobotStatus.repeatedReading % 2 == 0 && actionData?.movePrompt!!.isNotEmpty()) {
+            if (actionData?.movePrompt!!.isNotEmpty()) {
                 BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = actionData?.movePrompt!!,pointName =pointName , business = "智能引领"))
             }
-
         }
 
 

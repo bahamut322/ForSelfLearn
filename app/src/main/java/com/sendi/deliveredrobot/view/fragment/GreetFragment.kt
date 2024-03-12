@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,10 +31,10 @@ import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 class GreetFragment : Fragment() {
 
     private lateinit var binding: FragmentGreetBinding
-    private val fastRecognition: FaceRecognition = FaceRecognition()
     private var actionData : Table_Greet_Config? = Table_Greet_Config()
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
+    private var arrayFacePoint = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,11 +58,15 @@ class GreetFragment : Fragment() {
 
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.ExplainLength || Universal.ExplainLength != -1) {
-                fastRecognition.suerFaceInit(
-                    extractFeature = true,
-                    owner = this,
-                    needEtiquette = true,
-                )
+                Log.d("tag", "onViewCreated:  迎宾到达进行")
+                if (arrayFacePoint == 0) {
+                    FaceRecognition.suerFaceInit(
+                        extractFeature = true,
+                        owner = this,
+                        needEtiquette = true,
+                    )
+                }
+                arrayFacePoint++
             }
         }
 
@@ -123,7 +128,8 @@ class GreetFragment : Fragment() {
     }
     override fun onStop() {
         //释放人脸识别资源
-        fastRecognition.onDestroy()
+        arrayFacePoint = 0
+        FaceRecognition.onDestroy()
         super.onStop()
     }
 }

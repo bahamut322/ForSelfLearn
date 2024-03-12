@@ -31,10 +31,8 @@
 
     <GridView
         android:id="@+id/pointGV"
-        android:layout_width="996dp"
+        android:layout_width="708dp"
         android:layout_height="520dp"
-        android:layout_marginStart="@dimen/dp_238"
-        android:layout_marginEnd="@dimen/dp_238"
         android:layout_marginTop="@dimen/dp_8"
         android:numColumns="3"
         android:verticalSpacing="@dimen/dp_48"
@@ -46,6 +44,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialog_button"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent"
         android:background="#40FFFFFF">
         <View

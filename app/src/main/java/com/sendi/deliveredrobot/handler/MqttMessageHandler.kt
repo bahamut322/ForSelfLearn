@@ -601,8 +601,9 @@ object MqttMessageHandler {
                     InteractionMqtt().replyGreet(message)
                 }
                 "replyAppletConfig" -> {
-                    if (RobotStatus.batteryStateNumber.value == false) return
                     LogUtil.i("收到小程序配置")
+                    if (RobotStatus.batteryStateNumber.value == false) return
+                    LogUtil.i("处理小程序配置")
                     ReplyAppletConfigHelper.replyAppletConfig(message)
                 }
                 else -> {}

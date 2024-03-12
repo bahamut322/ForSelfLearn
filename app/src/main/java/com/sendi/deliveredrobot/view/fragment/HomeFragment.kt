@@ -63,7 +63,6 @@ class HomeFragment : BaseFragment(), IMainView {
     private var controller: NavController? = null
     private var fromeSettingDialog: FromeSettingDialog? = null
     private var shoppingName = ""
-    private val fastRecognition: FaceRecognition = FaceRecognition()
     private val queryBasic = QuerySql.QueryBasic()
 
     override fun onResume() {
@@ -74,7 +73,7 @@ class HomeFragment : BaseFragment(), IMainView {
 
     override fun onPause() {
         //有其他操作时结束计时
-        fastRecognition.onDestroy()
+        FaceRecognition.onDestroy()
         mPresenter?.endTipsTimer()
         LogUtil.i("homefragment onPause")
         super.onPause()
@@ -200,11 +199,11 @@ class HomeFragment : BaseFragment(), IMainView {
         }
 
         if (queryBasic.etiquette || queryBasic.identifyVip) {
-//            fastRecognition.suerFaceInit(
-//                extractFeature = queryBasic.identifyVip,
-//                owner = this,
-//                needEtiquette = queryBasic.etiquette,
-//            )
+            FaceRecognition.suerFaceInit(
+                extractFeature = queryBasic.identifyVip,
+                owner = this,
+                needEtiquette = queryBasic.etiquette,
+            )
             val backgroundRes =
                 if (queryBasic.defaultValue != "") R.drawable.guests_open_bg else R.drawable.once_guests_bg
             binding.homeClay.setBackgroundResource(backgroundRes)

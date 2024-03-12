@@ -231,6 +231,7 @@
                     android:layout_marginStart="@dimen/dp_32"
                     android:layout_marginEnd="@dimen/dp_32"
                     android:scaleType="fitXY"
+                    android:background="@drawable/explain_def_img"
                     app:layout_constraintBottom_toBottomOf="@+id/view26"
                     app:layout_constraintEnd_toStartOf="@+id/contentLin"
                     app:layout_constraintStart_toStartOf="@+id/view26"

@@ -43,7 +43,6 @@ class StandbyFragment : Fragment() {
     private var imagePaths: List<Advance> = ArrayList()
     private var controller: NavController? = null
     private var baseViewModel: BaseViewModel? = null
-    private val fastRecognition: FaceRecognition = FaceRecognition()
     private var sendFace: Int = 0 //用来只接收一次人脸数据，否则多次跳转页面时会报错
 
     /**
@@ -91,7 +90,7 @@ class StandbyFragment : Fragment() {
         }
         if (contains2) {
             println("字符串中包含数字2,检测到人脸")
-            fastRecognition.suerFaceInit(
+            FaceRecognition.suerFaceInit(
                 extractFeature = false,
                 owner = this,
                 needEtiquette = false
@@ -157,7 +156,7 @@ class StandbyFragment : Fragment() {
 
     override fun onStop() {
         FaceDataListener.removeOnChangeListener()
-        fastRecognition.onDestroy()
+        FaceRecognition.onDestroy()
         super.onStop()
     }
 

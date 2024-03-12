@@ -26,7 +26,7 @@ enum class Placeholder(placeholder: String) {
     }
 
 
-    companion object{
+    companion object {
         /**
          * 根据标识位替换文字
          * @param text 需要替换的文字
@@ -36,17 +36,17 @@ enum class Placeholder(placeholder: String) {
          * @param business 业务名称
          */
         fun replaceText(
-            text: String,
-            name: String = "",
-            pointName: String = "",
-            route: String = "",
-            business: String = "",
+            text: String? = "",
+            name: String? = "",
+            pointName: String? = "",
+            route: String? = "",
+            business: String? = "",
         ): String {
-            return text.replace(WAKE_UP_WORD.getPlaceholder(), QuerySql.robotConfig().wakeUpWord)
-                .replace(FACE_NAME.getPlaceholder(), name)
-                .replace(POINT_NAME.getPlaceholder(), pointName)
-                .replace(ROUTE_NAME.getPlaceholder(), route)
-                .replace(BUSINESS_NAME.getPlaceholder(), business)
+            return text!!.replace(WAKE_UP_WORD.getPlaceholder(), QuerySql.robotConfig().wakeUpWord ?: "")
+                .replace(FACE_NAME.getPlaceholder(), name ?: "")
+                .replace(POINT_NAME.getPlaceholder(), pointName ?: "")
+                .replace(ROUTE_NAME.getPlaceholder(), route ?: "")
+                .replace(BUSINESS_NAME.getPlaceholder(), business ?: "")
         }
     }
 }

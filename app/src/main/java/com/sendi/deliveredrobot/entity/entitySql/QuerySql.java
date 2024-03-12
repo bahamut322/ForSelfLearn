@@ -2,7 +2,8 @@ package com.sendi.deliveredrobot.entity.entitySql;
 
 import android.database.Cursor;
 
-import com.google.gson.JsonArray;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.sendi.deliveredrobot.entity.Table_Big_Screen;
 
@@ -788,15 +789,15 @@ public class QuerySql {
 
     }
 
-    public static JsonArray queryAppletIdList() {
-        JsonArray jsonArray = new JsonArray();
+    public static JSONArray queryAppletIdList() {
+        JSONArray jsonArray = new JSONArray();
         String sql = "SELECT appletid,timestamp FROM table_applet_config";
         Cursor cursor = LitePal.findBySQL(sql);
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("id", cursor.getInt(cursor.getColumnIndex("appletid")));
-                jsonObject.addProperty("timeStamp", cursor.getLong(cursor.getColumnIndex("timestamp")));
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", cursor.getInt(cursor.getColumnIndex("appletid")));
+                jsonObject.put("timeStamp", cursor.getLong(cursor.getColumnIndex("timestamp")));
                 jsonArray.add(jsonObject);
             } while (cursor.moveToNext());
             cursor.close();

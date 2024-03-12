@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,9 +13,11 @@ import android.hardware.camera2.CameraManager
 import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MediatorLiveData
 import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -28,7 +31,6 @@ import com.sendi.deliveredrobot.model.Similarity
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.identifyFace
 import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.service.UpdateReturn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,20 +52,31 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * @Author Swn
  * @Data 2023/12/7
- * @describe
+ * @describe 人脸识别
  */
-class FaceRecognition {
-    private val TAG = "人脸TAG"
+object FaceRecognition {
+    private const val TAG = "人脸TAG"
     var c: Camera? = null
     private var speakNum = 0
     private var canSendData = true
-    private var doubleString: ArrayList<Table_Face> = ArrayList()
+    private var doubleString: ArrayList<Table_Face?> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
     private val jsonParams = JSONObject()
     private val faceScope = CoroutineScope(Dispatchers.Default + Job())
     private var manager =
         MyApplication.instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
+    private var shouldExecute = true // 控制方法是否执行的标志
+    val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(Rect::class.java, RectDeserializer())
+        .create()
+    val listType: Type = object : TypeToken<List<FaceModel>>() {}.type
+    @SuppressLint("StaticFieldLeak")
+    private val faceIdentifyParams = RequestParams(Universal.POST_IDENTIFY) // 替换为你的API端点URL
+    private val typeToken: Type = object : TypeToken<List<Double>>() {}.type
+    @SuppressLint("StaticFieldLeak")
+    private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
+
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -79,10 +92,11 @@ class FaceRecognition {
         owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-        RobotStatus.newUpdata.observe(owner){
+        RobotStatus.newUpdata.observe(owner) {
             Log.d(TAG, "suerFaceInit: 获取数据")
             doubleString = QuerySql.faceMessage()
         }
+        shouldExecute = true
         var cameraIds = arrayOfNulls<String>(0)
         try {
             cameraIds = manager.cameraIdList
@@ -114,26 +128,34 @@ class FaceRecognition {
         c?.setPreviewCallbackWithBuffer { data: ByteArray, _: Camera? ->
             if (data.isNotEmpty() && canSendData) {
                 canSendData = false
-                channel.trySend(data).isSuccess // 将数据发送到Channel
+                channel.trySend(data) // 将数据发送到Channel
             }
             c?.addCallbackBuffer(buffer)
         }
+        identifyMediatorLiveData.addSource(identifyFace, checkFaceObserver)
         // 启动一个单独的协程来处理数据
         faceScope.launch {
             for (data in channel) { // 从Channel中接收数据
                 try {
-                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
+//                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
                     val bm = decodeByteArrayToBitmap(data, width, height)
                     if (bm != null) {
-                        faceHttp(extractFeature, bm, owner, needEtiquette)
+                        faceHttp(extractFeature, bm, needEtiquette)
                         FaceDataListener.setFaceBit(bm)
                         bm.recycle()
                     }
-                }catch (_:Exception){}
+                } catch (_: Exception) {
+                }
             }
         }
     }
 
+    /**
+     * 将NV21格式的字节数组转换为Bitmap
+     * @param data NV21格式的字节数组
+     * @param width 图片宽
+     * @param height 图片高
+     */
     private fun decodeByteArrayToBitmap(data: ByteArray, width: Int, height: Int): Bitmap? {
         var bitmap: Bitmap? = null
         val image = YuvImage(data, ImageFormat.NV21, width, height, null)
@@ -164,11 +186,9 @@ class FaceRecognition {
     fun faceHttp(
         extractFeature: Boolean = false,
         bitmap: Bitmap,
-        owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
         val base64 = bitmapToBase64(bitmap)
-        bitmap?.recycle()
         System.gc()
         // 添加参数到JSON对象
         jsonParams["img"] = base64 // 后续需要修改base64
@@ -178,28 +198,23 @@ class FaceRecognition {
         // 打印请求的JSON数据
         Log.d(TAG, "发送人脸检测请求数据: $jsonString")
         // 创建RequestParams对象
-        val params = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
-        params.isAsJsonContent = true // 设置请求内容为JSON
-        params.bodyContent = jsonString // 设置请求体为JSON字符串
+        faceHttpParams.isAsJsonContent = true // 设置请求内容为JSON
+        faceHttpParams.bodyContent = jsonString // 设置请求体为JSON字符串
         // 发送POST请求
-        x.http().post(params, object : CommonCallback<String> {
+        x.http().post(faceHttpParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
                 Log.d(TAG, "收到人脸检测数据：$result")
-                val gson = GsonBuilder()
-                    .registerTypeAdapter(Rect::class.java, RectDeserializer())
-                    .create()
-                val listType: Type = object : TypeToken<List<FaceModel>>() {}.type
                 val faceModelList: List<FaceModel> = gson.fromJson(result, listType)
                 FaceDataListener.setFaceModels(faceModelList)
                 // Update data
                 if (faceModelList.isNotEmpty()) {
                     Log.d(TAG, "人脸检测解析数据：${faceModelList}")
                     if (needEtiquette && !extractFeature) {
-                        checkFace(owner)
+                        checkFace()
                     }
                     if (extractFeature) {
                         val allFeatures = faceModelList.map { it.feat }
-                        faceIdentify(allFeatures, owner, needEtiquette)
+                        faceIdentify(allFeatures, needEtiquette)
                     }
                 }
                 //需要人脸识别，但是人脸数据返回为空的时候可以继续发送数据
@@ -260,36 +275,40 @@ class FaceRecognition {
         }
         return result
     }
+    private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
+    private val checkFaceObserver = { value: Int ->
+        if (value == 1 && isProcessing.compareAndSet(false, true)) {
+            // 在协程内部调用挂起函数
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(5000)
+                speakNum = 0  // 将speakNum设置为0
+                isProcessing.set(false) // 处理完成，重置标志
+                this@launch.cancel()
+            }
+        }
+    }
 
     /**
      * 人脸播报
      */
     private fun checkFace(
-        owner: LifecycleOwner?,
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (speakNum <= 0 && !isProcessing.get()) {
+        if (speakNum <= 0 && !isProcessing.get() && shouldExecute) {
             speakNum = 1
-            BaiduTTSHelper.getInstance().speak(speak,"")
-            identifyFace!!.value = 0 //在百度TTS中设置为0不及时
-        }
-        identifyFace!!.observe(owner!!) { value ->
-            if (value == 1 && isProcessing.compareAndSet(false, true)) {
-                // 在协程内部调用挂起函数
-                CoroutineScope(Dispatchers.Default).launch {
-                    delay(5000)
-                    speakNum = 0  // 将speakNum设置为0
-                    isProcessing.set(false) // 处理完成，重置标志
-                    this@launch.cancel()
-                }
-            }
+            identifyFace.value = 0 //在百度TTS中设置为0不及时
+            BaiduTTSHelper.getInstance().speak(speak, "")
         }
     }
 
 
+    /**
+     * 人脸识别
+     * @param faces 人脸特征
+     * @param needEtiquette 是否需要播报
+     */
     fun faceIdentify(
         faces: List<List<Double>?>,
-        owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
         // 添加参数到JSON对象
@@ -298,19 +317,16 @@ class FaceRecognition {
         // 将JSON对象转换为字符串
         val jsonString = jsonParams.toString()
         // 打印请求的JSON数据
-        val params = RequestParams(Universal.POST_IDENTIFY) // 替换为你的API端点URL
-        params.isAsJsonContent = true // 设置请求内容为JSON
-        params.bodyContent = jsonString // 设置请求体为JSON字符串
-        Log.d(TAG, "人脸识别请求发送数据: $jsonString")
+        faceIdentifyParams.isAsJsonContent = true // 设置请求内容为JSON
+        faceIdentifyParams.bodyContent = jsonString // 设置请求体为JSON字符串
+        Log.d(TAG, "人脸识别请求发送数据")
         // 发送POST请求
-        x.http().post(params, object : CommonCallback<String> {
+        x.http().post(faceIdentifyParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
                 Log.d(TAG, "收到人脸识别数据：$result")
                 if (result != null) {
-                    val gson = Gson()
                     // 确保这里使用的是正确的数据类
-                    val similarityResponse = gson.fromJson(result, Similarity::class.java)
-                    main(similarityResponse, owner, needEtiquette)
+                    main(gson.fromJson(result, Similarity::class.java), needEtiquette)
                 }
             }
 
@@ -334,9 +350,13 @@ class FaceRecognition {
     }
 
 
+    /**
+     * 人脸识别主要逻辑
+     * @param similarityResponse 人脸识别数据
+     * @param needEtiquette 是否需要播报
+     */
     fun main(
         similarityResponse: Similarity,
-        owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
         if (similarityResponse.similarity.isNotEmpty()) {
@@ -362,45 +382,52 @@ class FaceRecognition {
 
             if (correspondingValues.isNotEmpty()) {
                 checkFace(
-                    owner,
-                    Placeholder.replaceText(QuerySql.selectGreetConfig().vipPrompt, name = correspondingValues)
+                    Placeholder.replaceText(
+                        QuerySql.selectGreetConfig().vipPrompt,
+                        name = correspondingValues
+                    )
                 )
             } else {
                 println("人脸库：没有查到此人")
                 if (needEtiquette) {
-                    checkFace(owner)
+                    checkFace()
                 }
             }
         } else {
             if (needEtiquette) {
-                checkFace(owner)
+                checkFace()
             }
         }
     }
 
 
     /**
-     * 将数据库中的人脸特征String转二位数组
+     * 将人脸特征字符串列表转换为二维数组
+     * @param doubleString 人脸特征字符串列表
      */
-    private fun faceList(doubleString: List<Table_Face>): MutableList<List<Double>> {
-        // 假设这是你的 JSON 字符串列表
-        val jsonStringList = doubleString.map { it.sexual }
+    private fun faceList(doubleString: List<Table_Face?>): MutableList<List<Double>> {
         // 创建 Gson 实例
-        val gson = Gson()
         // 创建一个新的列表来存放二维数组
         val twoDimensionalArrayList = mutableListOf<List<Double>>()
         // 遍历 JSON 字符串列表
-        jsonStringList.forEach { jsonString ->
-            // 使用 Gson 将 JSON 字符串转换为一维数组
-            val typeToken = object : TypeToken<List<Double>>() {}.type
-            val oneDimensionalArray: List<Double> = gson.fromJson(jsonString, typeToken)
-            // 将一维数组转换为二维数组（这里假设每个子数组有512个元素）
-            val chunkedArray = oneDimensionalArray.chunked(512)
-            // 将二维数组添加到列表中
-            twoDimensionalArrayList.addAll(chunkedArray)
+        doubleString.forEach { tableFace ->
+            try {
+                // 假设这是你的 JSON 字符串
+                val jsonString = tableFace?.sexual
+                // 使用 Gson 将 JSON 字符串转换为一维数组
+                val oneDimensionalArray: List<Double> = gson.fromJson(jsonString, typeToken)
+                // 将一维数组转换为二维数组（这里假设每个子数组有512个元素）
+                val chunkedArray = oneDimensionalArray.chunked(512)
+                // 将二维数组添加到列表中
+                twoDimensionalArrayList.addAll(chunkedArray)
+            } catch (e: JsonSyntaxException) {
+                // 解析失败时，捕获异常并添加一个空的字符串列表
+                twoDimensionalArrayList.add(emptyList())
+            }
         }
         return twoDimensionalArrayList
     }
+
 
     //检测人脸随机播放
     private fun speakContent(): String {
@@ -412,9 +439,14 @@ class FaceRecognition {
         return list[randomIndex]
     }
 
+    /**
+     * 销毁
+     */
     fun onDestroy() {
         if (null != c) {
             // 取消所有协程任务
+            shouldExecute = false
+            identifyMediatorLiveData.removeSource(identifyFace)
             faceScope.cancel()
             channel.close()
             // 停止预览

@@ -47,15 +47,15 @@ object LiftHelper {
             qos = 0
         )
         // lora
-        ROSHelper.sendLoraLiftMessage(
-            LiftControlLoraModel(
-                control = control,
-                floorName = floorName,
-                time = time,
-                elevator = elevator,
-                timeStamp = timeStamp
-            )
-        )
+//        ROSHelper.sendLoraLiftMessage(
+//            LiftControlLoraModel(
+//                control = control,
+//                floorName = floorName,
+//                time = time,
+//                elevator = elevator,
+//                timeStamp = timeStamp
+//            )
+//        )
     }
 
     /**

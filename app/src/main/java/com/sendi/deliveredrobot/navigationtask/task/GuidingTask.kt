@@ -32,12 +32,7 @@ class GuidingTask(
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        MyApplication.instance!!.sendBroadcast(Intent().apply {
-            action = ACTION_NAVIGATE
-            putExtra(NAVIGATE_ID, navigateId)
-        })
         RobotStatus.ArrayPointExplan.postValue(0)
-
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         val result = ROSHelper.navigateTo(taskModel!!.location!!)
@@ -48,6 +43,5 @@ class GuidingTask(
             })
         }
         DialogHelper.loadingDialog.dismiss()
-
     }
 }

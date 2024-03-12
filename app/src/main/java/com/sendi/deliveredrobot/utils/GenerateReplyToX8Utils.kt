@@ -25,8 +25,9 @@ object GenerateReplyToX8Utils {
         questionID: String = "0"
     ): GetVFFileToTextModel? {
         val client = OkHttpClient.Builder()
-            .connectTimeout(2, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
             .build()
         val mediaType = "application/json".toMediaTypeOrNull()
         val getVFFileToTextModel = JsonObject().apply {
@@ -39,7 +40,7 @@ object GenerateReplyToX8Utils {
         val requestBody = getVFFileToTextModel.toString().toRequestBody(mediaType)
         val url = HttpUrl.Builder()
             .scheme("http")
-            .host("103.215.44.36")
+            .host("app.yuexiu.gov.cn")
             .addPathSegments("wechatWork/automaticResponse/generateReplyToX8")
             .addQueryParameter("questionID", questionID)
             .build()

@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.ApplicationModel
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -46,7 +47,7 @@ class ApplicationAdapter(var context: Context, var data: List<ApplicationModel>)
         }
         myHolder.textViewApplet.text = data[position].name
         Glide.with(myHolder.imageViewApplet)
-            .load(data[position].url)
+            .load("${BuildConfig.HTTP_HOST}${data[position].icon}")
             .placeholder(R.color.white)
             .into(myHolder.imageViewApplet)
         return view!!
