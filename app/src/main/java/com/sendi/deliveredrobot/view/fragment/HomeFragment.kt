@@ -201,7 +201,6 @@ class HomeFragment : BaseFragment(), IMainView {
         if (queryBasic.etiquette || queryBasic.identifyVip) {
             FaceRecognition.suerFaceInit(
                 extractFeature = queryBasic.identifyVip,
-                owner = this,
                 needEtiquette = queryBasic.etiquette,
             )
             val backgroundRes =

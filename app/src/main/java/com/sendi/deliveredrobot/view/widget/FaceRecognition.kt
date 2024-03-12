@@ -76,6 +76,25 @@ object FaceRecognition {
     private val typeToken: Type = object : TypeToken<List<Double>>() {}.type
     @SuppressLint("StaticFieldLeak")
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
+    private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
+    private val checkFaceObserver = { value: Int ->
+        if (value == 1 && isProcessing.compareAndSet(false, true)) {
+            // 在协程内部调用挂起函数
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(5000)
+                speakNum = 0  // 将speakNum设置为0
+                isProcessing.set(false) // 处理完成，重置标志
+                this@launch.cancel()
+            }
+        }
+    }
+
+    init {
+        identifyMediatorLiveData.addSource(RobotStatus.newUpdata){
+            Log.d(TAG, "suerFaceInit: 获取数据")
+            doubleString = QuerySql.faceMessage()
+        }
+    }
 
 
     /**
@@ -89,13 +108,8 @@ object FaceRecognition {
         extractFeature: Boolean = false,
         width: Int = 800,
         height: Int = 600,
-        owner: LifecycleOwner,
         needEtiquette: Boolean = false
     ) {
-        RobotStatus.newUpdata.observe(owner) {
-            Log.d(TAG, "suerFaceInit: 获取数据")
-            doubleString = QuerySql.faceMessage()
-        }
         shouldExecute = true
         var cameraIds = arrayOfNulls<String>(0)
         try {
@@ -274,18 +288,6 @@ object FaceRecognition {
             bitmap?.recycle()
         }
         return result
-    }
-    private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
-    private val checkFaceObserver = { value: Int ->
-        if (value == 1 && isProcessing.compareAndSet(false, true)) {
-            // 在协程内部调用挂起函数
-            CoroutineScope(Dispatchers.Default).launch {
-                delay(5000)
-                speakNum = 0  // 将speakNum设置为0
-                isProcessing.set(false) // 处理完成，重置标志
-                this@launch.cancel()
-            }
-        }
     }
 
     /**

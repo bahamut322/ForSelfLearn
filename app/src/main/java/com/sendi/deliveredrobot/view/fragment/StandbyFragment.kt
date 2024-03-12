@@ -92,7 +92,6 @@ class StandbyFragment : Fragment() {
             println("字符串中包含数字2,检测到人脸")
             FaceRecognition.suerFaceInit(
                 extractFeature = false,
-                owner = this,
                 needEtiquette = false
             )
             FaceDataListener.setOnChangeListener {
