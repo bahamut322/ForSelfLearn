@@ -12,7 +12,7 @@ import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.util.Base64
 import android.util.Log
-import androidx.lifecycle.LifecycleOwner
+import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
@@ -29,8 +29,8 @@ import com.sendi.deliveredrobot.model.FaceModel
 import com.sendi.deliveredrobot.model.RectDeserializer
 import com.sendi.deliveredrobot.model.Similarity
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.identifyFace
 import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.utils.ToastUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,6 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.xutils.common.Callback
 import org.xutils.common.Callback.CommonCallback
+import org.xutils.common.util.LogUtil
 import org.xutils.http.RequestParams
 import org.xutils.x
 import java.io.ByteArrayOutputStream
@@ -47,6 +48,7 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.Random
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.concurrent.thread
 
 
 /**
@@ -77,25 +79,16 @@ object FaceRecognition {
     @SuppressLint("StaticFieldLeak")
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
     private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
+    private val newUpdateMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
     private val checkFaceObserver = { value: Int ->
         if (value == 1 && isProcessing.compareAndSet(false, true)) {
-            // 在协程内部调用挂起函数
-            CoroutineScope(Dispatchers.Default).launch {
+            faceScope.launch {
                 delay(5000)
                 speakNum = 0  // 将speakNum设置为0
                 isProcessing.set(false) // 处理完成，重置标志
-                this@launch.cancel()
             }
         }
     }
-
-    init {
-        identifyMediatorLiveData.addSource(RobotStatus.newUpdata){
-            Log.d(TAG, "suerFaceInit: 获取数据")
-            doubleString = QuerySql.faceMessage()
-        }
-    }
-
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -110,55 +103,62 @@ object FaceRecognition {
         height: Int = 600,
         needEtiquette: Boolean = false
     ) {
-        shouldExecute = true
-        var cameraIds = arrayOfNulls<String>(0)
-        try {
-            cameraIds = manager.cameraIdList
-        } catch (e: CameraAccessException) {
-            e.printStackTrace()
-        }
-        if (cameraIds.isNotEmpty()) {
-            //后置摄像头存在
-            c = if (cameraIds[0] != null) {
-                Camera.open(0) //1，0代表前后摄像头
-            } else {
-                Camera.open(1) //1，0代表前后摄像头
+        thread {
+            LogUtil.i("suerFaceInit")
+            shouldExecute = true
+            var cameraIds = arrayOfNulls<String>(0)
+            try {
+                cameraIds = manager.cameraIdList
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
             }
-        }
-        c?.setDisplayOrientation(0) //预览图与手机方向一致
-        val parameters: Camera.Parameters? = c?.parameters?.apply {
-            setPictureSize(width, height)
-            setPreviewSize(width, height)
-        }
-        try {
-            c?.parameters = parameters
-        } catch (_: Exception) {
-        }
-        c?.startPreview()
-        //对于 YUV_420_SP（NV21）格式，公式为：width * height * 3 / 2
-        val buffer = ByteArray((width * height * 3 / 2))
-        c?.addCallbackBuffer(buffer)
-        //获取摄像实时数据
-        c?.setPreviewCallbackWithBuffer { data: ByteArray, _: Camera? ->
-            if (data.isNotEmpty() && canSendData) {
-                canSendData = false
-                channel.trySend(data) // 将数据发送到Channel
+            if (cameraIds.isNotEmpty()) {
+                //后置摄像头存在
+                c = if (cameraIds[0] != null) {
+                    Camera.open(0) //1，0代表前后摄像头
+                } else {
+                    Camera.open(1) //1，0代表前后摄像头
+                }
             }
+            c?.setDisplayOrientation(0) //预览图与手机方向一致
+            val parameters: Camera.Parameters? = c?.parameters?.apply {
+                setPictureSize(width, height)
+                setPreviewSize(width, height)
+            }
+            try {
+                c?.parameters = parameters
+            } catch (_: Exception) {
+            }
+            c?.startPreview()
+            //对于 YUV_420_SP（NV21）格式，公式为：width * height * 3 / 2
+            val buffer = ByteArray((width * height * 3 / 2))
             c?.addCallbackBuffer(buffer)
-        }
-        identifyMediatorLiveData.addSource(identifyFace, checkFaceObserver)
-        // 启动一个单独的协程来处理数据
-        faceScope.launch {
-            for (data in channel) { // 从Channel中接收数据
-                try {
+            //获取摄像实时数据
+            c?.setPreviewCallbackWithBuffer { data: ByteArray, _: Camera? ->
+                if (data.isNotEmpty() && canSendData) {
+                    canSendData = false
+                    channel.trySend(data) // 将数据发送到Channel
+                }
+                c?.addCallbackBuffer(buffer)
+            }
+            newUpdateMediatorLiveData.addSource(RobotStatus.newUpdata){
+                Log.d(TAG, "suerFaceInit: 获取数据")
+                doubleString = QuerySql.faceMessage()
+            }
+            identifyMediatorLiveData.addSource(RobotStatus.identifyFace, checkFaceObserver)
+            // 启动一个单独的协程来处理数据
+            faceScope.launch {
+                for (data in channel) { // 从Channel中接收数据
+                    try {
 //                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
-                    val bm = decodeByteArrayToBitmap(data, width, height)
-                    if (bm != null) {
-                        faceHttp(extractFeature, bm, needEtiquette)
-                        FaceDataListener.setFaceBit(bm)
-                        bm.recycle()
+                        val bm = decodeByteArrayToBitmap(data, width, height)
+                        if (bm != null) {
+                            faceHttp(extractFeature, bm, needEtiquette)
+                            FaceDataListener.setFaceBit(bm)
+                            bm.recycle()
+                        }
+                    } catch (_: Exception) {
                     }
-                } catch (_: Exception) {
                 }
             }
         }
@@ -210,19 +210,19 @@ object FaceRecognition {
         // 将JSON对象转换为字符串
         val jsonString = jsonParams.toString()
         // 打印请求的JSON数据
-        Log.d(TAG, "发送人脸检测请求数据: $jsonString")
+//        Log.d(TAG, "发送人脸检测请求数据: $jsonString")
         // 创建RequestParams对象
         faceHttpParams.isAsJsonContent = true // 设置请求内容为JSON
         faceHttpParams.bodyContent = jsonString // 设置请求体为JSON字符串
         // 发送POST请求
         x.http().post(faceHttpParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
-                Log.d(TAG, "收到人脸检测数据：$result")
+//                Log.d(TAG, "收到人脸检测数据：$result")
                 val faceModelList: List<FaceModel> = gson.fromJson(result, listType)
                 FaceDataListener.setFaceModels(faceModelList)
                 // Update data
                 if (faceModelList.isNotEmpty()) {
-                    Log.d(TAG, "人脸检测解析数据：${faceModelList}")
+//                    Log.d(TAG, "人脸检测解析数据：${faceModelList}")
                     if (needEtiquette && !extractFeature) {
                         checkFace()
                     }
@@ -298,7 +298,7 @@ object FaceRecognition {
     ) {
         if (speakNum <= 0 && !isProcessing.get() && shouldExecute) {
             speakNum = 1
-            identifyFace.value = 0 //在百度TTS中设置为0不及时
+            RobotStatus.identifyFace.value = 0 //在百度TTS中设置为0不及时
             BaiduTTSHelper.getInstance().speak(speak, "")
         }
     }
@@ -321,11 +321,11 @@ object FaceRecognition {
         // 打印请求的JSON数据
         faceIdentifyParams.isAsJsonContent = true // 设置请求内容为JSON
         faceIdentifyParams.bodyContent = jsonString // 设置请求体为JSON字符串
-        Log.d(TAG, "人脸识别请求发送数据")
+//        Log.d(TAG, "人脸识别请求发送数据")
         // 发送POST请求
         x.http().post(faceIdentifyParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
-                Log.d(TAG, "收到人脸识别数据：$result")
+//                Log.d(TAG, "收到人脸识别数据：$result")
                 if (result != null) {
                     // 确保这里使用的是正确的数据类
                     main(gson.fromJson(result, Similarity::class.java), needEtiquette)
@@ -448,7 +448,8 @@ object FaceRecognition {
         if (null != c) {
             // 取消所有协程任务
             shouldExecute = false
-            identifyMediatorLiveData.removeSource(identifyFace)
+            newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdata)
+            identifyMediatorLiveData.removeSource(RobotStatus.identifyFace)
             faceScope.cancel()
             channel.close()
             // 停止预览
