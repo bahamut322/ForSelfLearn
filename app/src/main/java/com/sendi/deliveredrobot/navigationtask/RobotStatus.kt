@@ -1,11 +1,9 @@
 package com.sendi.deliveredrobot.navigationtask
 
-import android.app.Dialog
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.RobotCommand.STOP_BUTTON_UNPRESSED
-import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.model.*
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
@@ -75,7 +73,7 @@ object RobotStatus {
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
     var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
-    var identifyFace : MutableLiveData<Int> = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
+    var identifyFaceSpeak : MutableLiveData<Int> = MutableLiveData()//观察百度语音是否朗读完毕，之后进行人脸识别
     var sdScreenStatus: Int? = 0 // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾 6:轻应用
     var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择的item
     var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
