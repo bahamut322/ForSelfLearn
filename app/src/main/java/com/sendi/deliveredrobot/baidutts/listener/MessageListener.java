@@ -12,7 +12,6 @@ import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.util.Objects;
@@ -79,7 +78,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         if (utteranceId == Universal.speakTextId) {
             return;
         }
-        RobotStatus.INSTANCE.getIdentifyFace().postValue(0);
+        RobotStatus.INSTANCE.getIdentifyFaceSpeak().postValue(0);
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
         Order.setFlage("1");
     }
@@ -124,7 +123,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         if (utteranceId.equals("0")) {
             //恢复视频声音
             Order.setFlage("0");
-            RobotStatus.INSTANCE.getIdentifyFace().postValue(1);
+            RobotStatus.INSTANCE.getIdentifyFaceSpeak().postValue(1);
             if (Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).length() != 0) {
                 RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
             }

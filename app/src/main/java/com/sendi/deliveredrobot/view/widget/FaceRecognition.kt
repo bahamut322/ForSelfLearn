@@ -12,7 +12,6 @@ import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.util.Base64
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
@@ -30,7 +29,7 @@ import com.sendi.deliveredrobot.model.RectDeserializer
 import com.sendi.deliveredrobot.model.Similarity
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,7 +39,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.xutils.common.Callback
 import org.xutils.common.Callback.CommonCallback
-import org.xutils.common.util.LogUtil
 import org.xutils.http.RequestParams
 import org.xutils.x
 import java.io.ByteArrayOutputStream
@@ -59,11 +57,12 @@ import kotlin.concurrent.thread
 object FaceRecognition {
     private const val TAG = "人脸TAG"
     var c: Camera? = null
-    private var speakNum = 0
+//    private var speakNum = 0
     private var canSendData = true
     private var doubleString: ArrayList<Table_Face?> = ArrayList()
     private val isProcessing = AtomicBoolean(false)
-    private val jsonParams = JSONObject()
+    private val faceHttpJsonParams = JSONObject()
+    private val faceIdentifyJsonParams = JSONObject()
     private val faceScope = CoroutineScope(Dispatchers.Default + Job())
     private var manager =
         MyApplication.instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -84,7 +83,7 @@ object FaceRecognition {
         if (value == 1 && isProcessing.compareAndSet(false, true)) {
             faceScope.launch {
                 delay(5000)
-                speakNum = 0  // 将speakNum设置为0
+//                speakNum = 0  // 将speakNum设置为0
                 isProcessing.set(false) // 处理完成，重置标志
             }
         }
@@ -104,7 +103,7 @@ object FaceRecognition {
         needEtiquette: Boolean = false
     ) {
         thread {
-            LogUtil.i("suerFaceInit")
+            LogUtil.i("人脸识别初始化")
             shouldExecute = true
             var cameraIds = arrayOfNulls<String>(0)
             try {
@@ -145,7 +144,7 @@ object FaceRecognition {
                 Log.d(TAG, "suerFaceInit: 获取数据")
                 doubleString = QuerySql.faceMessage()
             }
-            identifyMediatorLiveData.addSource(RobotStatus.identifyFace, checkFaceObserver)
+            identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak, checkFaceObserver)
             // 启动一个单独的协程来处理数据
             faceScope.launch {
                 for (data in channel) { // 从Channel中接收数据
@@ -205,10 +204,10 @@ object FaceRecognition {
         val base64 = bitmapToBase64(bitmap)
         System.gc()
         // 添加参数到JSON对象
-        jsonParams["img"] = base64 // 后续需要修改base64
-        jsonParams["extract"] = extractFeature
+        faceHttpJsonParams["img"] = base64 // 后续需要修改base64
+        faceHttpJsonParams["extract"] = extractFeature
         // 将JSON对象转换为字符串
-        val jsonString = jsonParams.toString()
+        val jsonString = faceHttpJsonParams.toString()
         // 打印请求的JSON数据
 //        Log.d(TAG, "发送人脸检测请求数据: $jsonString")
         // 创建RequestParams对象
@@ -224,7 +223,7 @@ object FaceRecognition {
                 if (faceModelList.isNotEmpty()) {
 //                    Log.d(TAG, "人脸检测解析数据：${faceModelList}")
                     if (needEtiquette && !extractFeature) {
-                        checkFace()
+                        checkFaceSpeak()
                     }
                     if (extractFeature) {
                         val allFeatures = faceModelList.map { it.feat }
@@ -293,12 +292,12 @@ object FaceRecognition {
     /**
      * 人脸播报
      */
-    private fun checkFace(
+    private fun checkFaceSpeak(
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (speakNum <= 0 && !isProcessing.get() && shouldExecute) {
-            speakNum = 1
-            RobotStatus.identifyFace.value = 0 //在百度TTS中设置为0不及时
+        if (RobotStatus.identifyFaceSpeak.value == 1 && !isProcessing.get() && shouldExecute) {
+//            speakNum = 1
+            RobotStatus.identifyFaceSpeak.value = 0 //在百度TTS中设置为0不及时
             BaiduTTSHelper.getInstance().speak(speak, "")
         }
     }
@@ -314,10 +313,10 @@ object FaceRecognition {
         needEtiquette: Boolean = false
     ) {
         // 添加参数到JSON对象
-        jsonParams["feat"] = faces
-        jsonParams["feats"] = faceList(doubleString)
+        faceIdentifyJsonParams["feat"] = faces
+        faceIdentifyJsonParams["feats"] = faceList(doubleString)
         // 将JSON对象转换为字符串
-        val jsonString = jsonParams.toString()
+        val jsonString = faceIdentifyJsonParams.toString()
         // 打印请求的JSON数据
         faceIdentifyParams.isAsJsonContent = true // 设置请求内容为JSON
         faceIdentifyParams.bodyContent = jsonString // 设置请求体为JSON字符串
@@ -383,7 +382,7 @@ object FaceRecognition {
             println("Concatenated Corresponding Values: $correspondingValues")
 
             if (correspondingValues.isNotEmpty()) {
-                checkFace(
+                checkFaceSpeak(
                     Placeholder.replaceText(
                         QuerySql.selectGreetConfig().vipPrompt,
                         name = correspondingValues
@@ -392,12 +391,12 @@ object FaceRecognition {
             } else {
                 println("人脸库：没有查到此人")
                 if (needEtiquette) {
-                    checkFace()
+                    checkFaceSpeak()
                 }
             }
         } else {
             if (needEtiquette) {
-                checkFace()
+                checkFaceSpeak()
             }
         }
     }
@@ -446,10 +445,11 @@ object FaceRecognition {
      */
     fun onDestroy() {
         if (null != c) {
+            LogUtil.i("人脸识别销毁")
             // 取消所有协程任务
             shouldExecute = false
             newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdata)
-            identifyMediatorLiveData.removeSource(RobotStatus.identifyFace)
+            identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
             faceScope.cancel()
             channel.close()
             // 停止预览
