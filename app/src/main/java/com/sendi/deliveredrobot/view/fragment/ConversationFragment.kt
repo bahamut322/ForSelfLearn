@@ -1035,5 +1035,6 @@ class ConversationFragment : Fragment() {
             SystemRecorder.AUDIO_TYPE_ASR = false
             //销毁aiui
             AiuiEngine.destroy()
+            SpeakHelper.stop()
         }
     }
