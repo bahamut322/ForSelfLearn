@@ -139,5 +139,64 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView61"
             app:layout_constraintEnd_toStartOf="@+id/textView61" />
 
+        <View
+            android:id="@+id/view_one_key_call_background"
+            android:layout_width="@dimen/dp_112"
+            android:layout_height="@dimen/dp_112"
+            android:background="@drawable/shape_solid_4d000000_oval"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <View
+            android:id="@+id/view_one_key_call_icon"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_one_key_call_phone"
+            app:layout_constraintBottom_toBottomOf="@+id/view_one_key_call_background"
+            app:layout_constraintEnd_toEndOf="@+id/view_one_key_call_background"
+            app:layout_constraintStart_toStartOf="@+id/view_one_key_call_background"
+            app:layout_constraintTop_toTopOf="@+id/view_one_key_call_background"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textView_one_key_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:text="@string/one_key_call_phone"
+            android:textColor="@color/color_E5FFFFFF"
+            android:textSize="@dimen/sp_18"
+            app:layout_constraintBottom_toBottomOf="@+id/view_one_key_call_background"
+            app:layout_constraintEnd_toEndOf="@+id/view_one_key_call_background"
+            app:layout_constraintStart_toStartOf="@+id/view_one_key_call_background"
+            app:layout_constraintTop_toTopOf="@+id/view_one_key_call_background"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <View
+            android:id="@+id/view_one_key_call_foreground"
+            android:layout_width="@dimen/dp_112"
+            android:layout_height="@dimen/dp_112"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_one_key_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="view_one_key_call_background,view_one_key_call_icon,textView_one_key_call,view_one_key_call_foreground" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

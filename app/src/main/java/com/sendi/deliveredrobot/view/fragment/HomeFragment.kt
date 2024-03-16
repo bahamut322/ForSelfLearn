@@ -27,6 +27,7 @@ import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
@@ -275,6 +276,11 @@ class HomeFragment : Fragment(), IMainView {
         binding.textView61.apply {
             setOnClickListener {
                 controller?.navigate(R.id.conversationFragment)
+            }
+        }
+        binding.viewOneKeyCallForeground.apply {
+            setOnClickListener {
+                ToastUtil.show("一键呼叫")
             }
         }
         //启动定位
@@ -549,6 +555,11 @@ class HomeFragment : Fragment(), IMainView {
 
                 else -> {}
             }
+        }
+        if(queryBasic.oneKeyCallPhone == 1){
+            binding.groupOneKeyCall.visibility = View.VISIBLE
+        }else{
+            binding.groupOneKeyCall.visibility = View.GONE
         }
         RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
