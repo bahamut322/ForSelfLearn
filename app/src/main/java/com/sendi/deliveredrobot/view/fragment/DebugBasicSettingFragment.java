@@ -26,6 +26,7 @@ import com.sendi.deliveredrobot.databinding.FragmentBasicSettingBinding;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
+import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
@@ -55,21 +56,23 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.explain.setRange(1, 15, 0);
 
         assert binding != null;
+        BasicModel settingData = viewModel.settingData();
 
-        binding.seekbarMusic.setCur(viewModel.settingData().getVoiceVolume());
-        binding.seekbarVoice.setCur(viewModel.settingData().getVideoVolume());
-        timbres(viewModel.settingData().getRobotMode());//选中音色方法
-        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
-        binding.expressionCB.setChecked(viewModel.settingData().getExpression());//是否开启表情
-        binding.cbEtiquette.setChecked(viewModel.settingData().getEtiquette());//是否开启礼仪迎宾
-        binding.cbIntelligent.setChecked(viewModel.settingData().getIntelligent());//是否开启智能语音
-
-        if (viewModel.settingData().getDefaultValue() != null) {
-            for (int i = 0; i < viewModel.settingData().getDefaultValue().split(" ").length; i++) {
-                check(viewModel.settingData().getDefaultValue().split(" ")[i]);
+        binding.seekbarMusic.setCur(settingData.getVoiceVolume());
+        binding.seekbarVoice.setCur(settingData.getVideoVolume());
+        timbres(settingData.getRobotMode());//选中音色方法
+        binding.explain.setCur(settingData.getSpeechSpeed());
+        binding.expressionCB.setChecked(settingData.getExpression());//是否开启表情
+        binding.cbEtiquette.setChecked(settingData.getEtiquette());//是否开启礼仪迎宾
+        binding.cbIntelligent.setChecked(settingData.getIntelligent());//是否开启智能语音
+        binding.oneKeyCallPhone.setChecked(settingData.getOneKeyCallPhone() == 1);//是否开启一键呼叫电话
+        String defaultValue = settingData.getDefaultValue();
+        if (defaultValue != null) {
+            for (int i = 0; i < defaultValue.split(" ").length; i++) {
+                check(defaultValue.split(" ")[i]);
             }
             //判断数据长度来，判断全选是否勾选
-            if (viewModel.settingData().getDefaultValue().split(" ").length == 5) {
+            if (defaultValue.split(" ").length == 5 && binding.oneKeyCallPhone.isChecked()) {
                 binding.all.setChecked(true);
             }
         }
@@ -85,6 +88,7 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.business.setOnCheckedChangeListener(boxCheckListener);
         binding.EtiquetteWelcome.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
+        binding.oneKeyCallPhone.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
         binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression", BooleanToInt(b)));
         binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent", BooleanToInt(b)));
@@ -143,7 +147,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.business.setChecked(all.isChecked());
             binding.EtiquetteWelcome.setChecked(all.isChecked());
             binding.application.setChecked(all.isChecked());
-
+            binding.oneKeyCallPhone.setChecked(all.isChecked());
         }
     }
 
@@ -153,7 +157,7 @@ public class DebugBasicSettingFragment extends Fragment {
             if (!isChecked) {
                 binding.all.setChecked(false);
             }
-            if (binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked()) {
+            if (binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked() && binding.oneKeyCallPhone.isChecked()) {
                 binding.all.setChecked(true);
             }
             Log.d(TAG, "onCheckedChanged: 点击");
@@ -174,7 +178,11 @@ public class DebugBasicSettingFragment extends Fragment {
                 stringBuffer.append("礼仪迎宾 ");
             }
             values.put("defaultvalue", stringBuffer.toString());
-
+            if (binding.oneKeyCallPhone.isChecked()) {
+                values.put("onekeycallphone", 1);
+            } else {
+                values.put("onekeycallphone", 0);
+            }
         }
     }
 
