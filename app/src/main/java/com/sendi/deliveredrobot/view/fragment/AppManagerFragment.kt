@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -23,7 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAppManagerBinding
-import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlin.math.abs
 
 
@@ -171,7 +172,14 @@ class AppManagerFragment : Fragment() {
                 error: WebResourceError?
             ) {
                 binding.progress.visibility = View.GONE
-                ToastUtil.show("网页请求出错：$error")
+                LogUtil.i("网页请求出错：code:${error?.errorCode}\n description:${error?.description}")
+            }
+
+            override fun onRenderProcessGone(
+                view: WebView?,
+                detail: RenderProcessGoneDetail?
+            ): Boolean {
+                return super.onRenderProcessGone(view, detail)
             }
         }
 
