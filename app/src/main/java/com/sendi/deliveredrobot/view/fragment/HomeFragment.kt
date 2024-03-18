@@ -33,6 +33,7 @@ import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
+import com.sendi.deliveredrobot.view.widget.OneKeyCallPhoneDialog
 import com.sendi.deliveredrobot.viewmodel.*
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.*
@@ -68,6 +69,7 @@ class HomeFragment : Fragment(), IMainView {
     private var fromeSettingDialog: FromeSettingDialog? = null
     private var shoppingName = ""
     private val queryBasic = QuerySql.QueryBasic()
+    private var oneKeyCallPhoneDialog: OneKeyCallPhoneDialog? = null
 
     override fun onResume() {
         super.onResume()
@@ -280,7 +282,10 @@ class HomeFragment : Fragment(), IMainView {
         }
         binding.viewOneKeyCallForeground.apply {
             setOnClickListener {
-                ToastUtil.show("一键呼叫")
+                if (oneKeyCallPhoneDialog == null) {
+                    oneKeyCallPhoneDialog = OneKeyCallPhoneDialog(requireContext())
+                }
+                oneKeyCallPhoneDialog?.show()
             }
         }
         //启动定位
