@@ -48,8 +48,8 @@ open class BaseFragment: Fragment(){
         EngineConstants.isRecording = false
         //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
         //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-//        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
-        EngineConstants.serialNumber = "iflytek-test"
+        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
+//        EngineConstants.serialNumber = "iflytek-test"
         LogUtil.i("sn : " + EngineConstants.serialNumber)
         //对音频的处理为降噪唤醒再送去识别,
         SystemRecorder.AUDIO_TYPE_ASR = false

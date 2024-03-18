@@ -967,8 +967,8 @@ class ConversationFragment : Fragment() {
             //TODO 开发者需要实现生成sn的代码，参考：https://www.yuque.com/iflyaiui/zzoolv/tgftb5
             //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
             //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-            EngineConstants.serialNumber = "iflytek-test"
-//        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
+//            EngineConstants.serialNumber = "iflytek-test"
+        EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
             // 初始化AIUI(识别+语义+合成）
             mAIUIAgent = AiuiEngine.getInstance(aiuiListener, "cfg/aiui.cfg")
             if (mAIUIAgent != null) {
