@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.R
 
 /**
  *   @author: heky
@@ -22,8 +24,9 @@ class OneKeyPhoneNumberListHolder(itemView: View) : RecyclerView.ViewHolder(item
             if (itemView is TextView) {
                 (itemView as TextView).apply {
                     text = value
-                    textSize = 28f
-                    setTextColor(Color.WHITE)
+                    textSize = 32f
+                    setTextColor(ContextCompat.getColor(MyApplication.context, R.color.color_99FFFFFF))
+                    setPadding(0,52,0,0)
                     setOnClickListener {
                         val intent = Intent(Intent.ACTION_CALL)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
