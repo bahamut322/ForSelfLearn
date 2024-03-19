@@ -417,7 +417,7 @@ class ConversationFragment : Fragment() {
                     viewHead.visibility = View.GONE
                     textView.text = text
                     linearLayoutCompat.setOnClickListener {
-                        mainScope.launch(Dispatchers.Main) {
+//                        mainScope.launch(Dispatchers.Main) {
 //                        mutex.withLock {
 //                            when (BaseVoiceRecorder.VOICE_RECORD_TYPE) {
 //                                BaseVoiceRecorder.VOICE_RECORD_TYPE_SENDI -> {
@@ -459,7 +459,9 @@ class ConversationFragment : Fragment() {
 //                                }
 //                            }
 //                        }
-                        }
+//                        }
+                        AiuiEngine.MSG_sendTextForNlp(text, "main")
+                        addQuestionView(text)
                     }
                     myFlowLayout.addView(linearLayoutCompat)
                 }

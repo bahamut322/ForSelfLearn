@@ -52,9 +52,9 @@ public class EngineConstants {
     //*********Alsa双声卡配置，代码在DoubleAlsaRecorder.java*********
 
     //原始音频音量倍数,默认1.0f
-    public static final float rawAudioGain = 1.0f;
+    public static final float rawAudioGain = 1.2f;
     //识别音频音量倍数,默认1.0f
-    public static final float asrAudioGain = 1.0f;
+    public static final float asrAudioGain = 1.2f;
 
     // Alsa-Jni录音模块日志控制 1(debug) 2(info) 3(warn) 4(error) 5(fatal)
     public static final int wakeEngineLogLevel = 4;
