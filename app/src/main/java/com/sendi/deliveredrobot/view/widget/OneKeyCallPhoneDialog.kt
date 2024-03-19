@@ -34,7 +34,7 @@ class OneKeyCallPhoneDialog(
         phoneNumberList = ArrayList<String>().apply {
             add("18998377831")
             add("13926096581")
-            add("18925090633")
+//            add("18925090633")
         }
         recyclerViewPhoneNumber = dialogView.findViewById(R.id.recycler_view_phone_number)
         recyclerViewPhoneNumber?.apply {

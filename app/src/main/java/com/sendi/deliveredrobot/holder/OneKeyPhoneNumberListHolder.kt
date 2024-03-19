@@ -26,7 +26,7 @@ class OneKeyPhoneNumberListHolder(itemView: View) : RecyclerView.ViewHolder(item
                     text = value
                     textSize = 32f
                     setTextColor(ContextCompat.getColor(MyApplication.context, R.color.color_99FFFFFF))
-                    setPadding(0,52,0,0)
+                    setPadding(0,26,0,26)
                     setOnClickListener {
                         val intent = Intent(Intent.ACTION_CALL)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
