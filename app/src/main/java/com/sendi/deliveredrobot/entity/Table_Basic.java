@@ -62,6 +62,9 @@ public class Table_Basic extends LitePalSupport {
     @Column(defaultValue = "1")
     private int businessWhetherTime = 20;//打断任务暂停时间
 
+    @Column(defaultValue = "1")
+    private int oneKeyCallPhone = 1;//一键呼叫电话 0、不开启 1、开启
+
 
     public int getId() {
         return id;
@@ -269,6 +272,13 @@ public class Table_Basic extends LitePalSupport {
 
     public void setRobotMode(String robotMode) {
         this.robotMode = robotMode;
+    }
+
+    public void setOneKeyCallPhone(int oneKeyCallPhone) {
+        this.oneKeyCallPhone = oneKeyCallPhone;
+    }
+    public int getOneKeyCallPhone() {
+        return oneKeyCallPhone;
     }
 }
 

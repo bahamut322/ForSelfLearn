@@ -30,6 +30,7 @@ public class BasicModel {
     private float goBusinessPoint = 0.8F;//去往导购速度
     private boolean businessInterrupt = true;//导购过程中允许打断
     private int businessWhetherTime = 30;//打断任务暂停时间
+    private int oneKeyCallPhone = 1;//一键呼叫电话 0、不开启 1、开启
 
 
     public String getDefaultValue() {
@@ -238,5 +239,12 @@ public class BasicModel {
 
     public void setVoiceAnnouncements(Boolean voiceAnnouncements) {
         this.voiceAnnouncements = voiceAnnouncements;
+    }
+
+    public void setOneKeyCallPhone(int oneKeyCallPhone) {
+        this.oneKeyCallPhone = oneKeyCallPhone;
+    }
+    public int getOneKeyCallPhone() {
+        return oneKeyCallPhone;
     }
 }

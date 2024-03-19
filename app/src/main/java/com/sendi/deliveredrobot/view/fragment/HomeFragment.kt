@@ -25,11 +25,13 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
+import com.sendi.deliveredrobot.view.widget.OneKeyCallPhoneDialog
 import com.sendi.deliveredrobot.viewmodel.*
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -64,6 +66,7 @@ class HomeFragment : BaseFragment(), IMainView {
     private var fromeSettingDialog: FromeSettingDialog? = null
     private var shoppingName = ""
     private val queryBasic = QuerySql.QueryBasic()
+    private var oneKeyCallPhoneDialog: OneKeyCallPhoneDialog? = null
 
     override fun onResume() {
         super.onResume()
@@ -257,6 +260,14 @@ class HomeFragment : BaseFragment(), IMainView {
         binding.textView61.apply {
             setOnClickListener {
                 controller?.navigate(R.id.conversationFragment)
+            }
+        }
+        binding.viewOneKeyCallForeground.apply {
+            setOnClickListener {
+                if (oneKeyCallPhoneDialog == null) {
+                    oneKeyCallPhoneDialog = OneKeyCallPhoneDialog(requireContext())
+                }
+                oneKeyCallPhoneDialog?.show()
             }
         }
         //启动定位
@@ -531,6 +542,11 @@ class HomeFragment : BaseFragment(), IMainView {
 
                 else -> {}
             }
+        }
+        if(queryBasic.oneKeyCallPhone == 1){
+            binding.groupOneKeyCall.visibility = View.VISIBLE
+        }else{
+            binding.groupOneKeyCall.visibility = View.GONE
         }
         RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)

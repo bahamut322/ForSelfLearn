@@ -516,7 +516,6 @@
     <string name="download_progress">当前进度：60% / 剩余任务：6</string>
     <string name="wakeUpWord">%唤醒词%</string>
     <string name="faceName">%人脸姓名%</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="one_key_call_phone">一键呼叫</string>
 
 </resources>

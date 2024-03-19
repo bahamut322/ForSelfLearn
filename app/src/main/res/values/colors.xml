@@ -139,5 +139,7 @@
     <color name="color_E5FFFFFF">#E5FFFFFF</color>
     <color name="color_FF00EEFF">#FF00EEFF</color>
     <color name="color_1A00EEFF">#1A00EEFF</color>
+    <color name="color_33FFFFFF">#33FFFFFF</color>
+    <color name="color_99FFFFFF">#99FFFFFF</color>
 
 </resources>

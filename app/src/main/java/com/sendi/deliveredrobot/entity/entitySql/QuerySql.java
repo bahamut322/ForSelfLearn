@@ -318,6 +318,7 @@ public class QuerySql {
                 boolean businessInterrupt = intToBoolean(cursor.getInt(cursor.getColumnIndex("businessinterrupt")));
                 model.setBusinessInterrupt(businessInterrupt);
                 model.setExpression(Expression);
+                model.setOneKeyCallPhone(cursor.getInt(cursor.getColumnIndex("onekeycallphone")));
             } while (cursor.moveToNext());
             cursor.close();
         }
