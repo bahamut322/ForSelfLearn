@@ -45,6 +45,7 @@ import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 import java.util.Date
 import java.util.Timer
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -54,21 +55,17 @@ import kotlin.coroutines.suspendCoroutine
  * @description 人机对话fragment
  */
 class ConversationFragment : Fragment() {
-//    class ConversationFragment : BaseFragment() {
-        var binding: FragmentConversationBinding? = null
-        val mainScope = MainScope()
-        lateinit var timer:Timer
-        private var startTime: Long = 0
-        private var totalHeight: Int = 0
-        private var talkingView: LinearLayoutCompat? = null
-        //    private val defaultTalkingStr = "...."
+    var binding: FragmentConversationBinding? = null
+    val mainScope = MainScope()
+    lateinit var timer: Timer
+    private var startTime: Long = 0
+    private var totalHeight: Int = 0
+    private var talkingView: LinearLayoutCompat? = null
 //    private val hashMap = ConcurrentHashMap<String, ReplyIntentModel>()
+    private val hashMap = ConcurrentHashMap<String, Array<String>>()
+    private var answerPriority: Array<Int>? = null
 //    private val mutex = Mutex()
-//    private var talkingStr = defaultTalkingStr
-//        set(value) {
-//            field = ".".repeat(value.length % 4 + 1)
-//        }
-        private var waitTalk = true
+    private var waitTalk = true
 //    private val pattern =
 //        "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
 //    val observable = Observer<ReplyIntentModel>{
@@ -347,19 +344,8 @@ class ConversationFragment : Fragment() {
                     val durationSeconds = (System.currentTimeMillis() - startTime) / 1000
                     if (durationSeconds > 30) {
                         quitFragment()
-//                    MyApplication.instance!!.sendBroadcast(Intent().apply {
-//                        action = ACTION_NAVIGATE
-//                        putExtra(NAVIGATE_ID, NAVIGATE_TO_HOME)
-//                    })
                         findNavController().popBackStack(R.id.homeFragment,false)
                     }
-//                binding?.seekBar?.progress = binding?.videoView?.currentPosition ?: 0
-//                if (talkingView != null && waitTalk) {
-//                    talkingStr = talkingStr
-//                    mainScope.launch(Dispatchers.Main) {
-//                        talkingView?.findViewById<TextView>(R.id.tv_content)?.text = talkingStr
-//                    }
-//                }
                 }
             }, Date(), 1000)
 //        initVoiceRecord()
@@ -521,11 +507,6 @@ class ConversationFragment : Fragment() {
                             R.layout.layout_conversation_text_view_right,
                             null
                         ) as LinearLayoutCompat
-//                    LayoutInflater.from(localContext)
-//                        .inflate(
-//                            R.layout.layout_conversation_text_view_right,
-//                            null
-//                        ) as LinearLayoutCompat
                     }
 
                     false -> {
@@ -562,210 +543,9 @@ class ConversationFragment : Fragment() {
                     totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
-//            talkingView = if (conversation == defaultTalkingStr) {
-//                linearLayoutCompat
-//            }else{
-//                null
-//            }
                 talkingView = linearLayoutCompat
             }
         }
-
-//    @SuppressLint("InflateParams")
-//    private fun addAnswerView(replyIntentModel: ReplyIntentModel) {
-//        if (context == null) {
-//            return
-//        }
-//        val linearLayoutCompat = LayoutInflater.from(requireContext())
-//            .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
-//        val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
-//        val linearLayoutContent =
-//            linearLayoutCompat.findViewById<LinearLayoutCompat>(R.id.linear_layout_content)
-//        textView.text = replyIntentModel.questionAnswer ?: ""
-//        SpanUtils.interceptHyperLink(textView, findNavController())
-//        val emptyView = View(requireContext()).apply {
-//            layoutParams = LinearLayoutCompat.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//            ).apply {
-//                setMargins(0, 0, 0, 96)
-//            }
-//        }
-//        val images = replyIntentModel.images
-//        images?.forEach { imagePath ->
-//            val imageView = ImageView(requireContext())
-//            imageView.apply {
-//                layoutParams = LinearLayoutCompat.LayoutParams(
-//                    ViewGroup.LayoutParams.WRAP_CONTENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT
-//                ).apply {
-//                    setMargins(0, 16, 0, 0)
-//                    scaleType = ImageView.ScaleType.CENTER_CROP
-//                }
-//                setOnClickListener {
-//                    Glide.with(requireContext())
-//                        .asBitmap()
-//                        .load("${BuildConfig.HTTP_HOST}$imagePath")
-////                        .preload()
-//                        .into(object :SimpleTarget<Bitmap>(){
-//                            override fun onResourceReady(
-//                                resource: Bitmap,
-//                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-//                            ) {
-//                                var finalWidth = resource.width
-//                                var finalHeight = resource.height
-//                                if (finalWidth > resources.displayMetrics.widthPixels){
-//                                    finalWidth = resources.displayMetrics.widthPixels
-//                                    finalHeight = resource.height * finalWidth / resource.width
-//                                }
-//                                if(finalHeight > resources.displayMetrics.heightPixels){
-//                                    finalHeight = resources.displayMetrics.heightPixels
-//                                    finalWidth = finalHeight * resource.width / resource.height
-//                                }
-//                                binding?.imageViewPreview?.layoutParams = binding?.imageViewPreview?.layoutParams.apply {
-//                                    this?.width = finalWidth
-//                                    this?.height = finalHeight
-//                                }
-//                                Glide.with(requireContext())
-//                                    .load("${BuildConfig.HTTP_HOST}$imagePath")
-//                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                                    .override(finalWidth, finalHeight)
-//                                    .into(binding!!.imageViewPreview)
-//                                binding?.group3?.visibility = View.VISIBLE
-//                            }
-//                        })
-//                }
-//            }
-//            linearLayoutContent.addView(imageView)
-//            imageView.post {
-//                Glide.with(requireContext())
-//                    .load("${BuildConfig.HTTP_HOST}$imagePath")
-//                    .override(319, 240)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .into(imageView)
-//            }
-//        }
-//        val frames = replyIntentModel.frames
-//        frames?.forEachIndexed { index, framePath ->
-//            val frameLayout = LayoutInflater.from(requireContext())
-//                .inflate(R.layout.layout_video_thumbnail, null) as FrameLayout
-//            frameLayout.apply {
-//                layoutParams = LinearLayoutCompat.LayoutParams(
-//                    ViewGroup.LayoutParams.WRAP_CONTENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT
-//                ).apply {
-//                    setMargins(0, 16, 0, 0)
-//                }
-//            }
-//            val imageView = frameLayout.findViewById<ImageView>(R.id.image_view_thumbnail).apply {
-//                setOnClickListener {
-//                    val videoView = binding?.videoView
-//                    videoView?.apply {
-//                        setVideoPath("${BuildConfig.HTTP_HOST}${replyIntentModel.videos?.get(index)?:""}")
-//                        setOnPreparedListener {
-//                            it.isLooping = true
-//                            binding?.seekBar?.apply{
-//                                max = it.duration
-//                                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-//                                    override fun onProgressChanged(
-//                                        seekBar: SeekBar?,
-//                                        progress: Int,
-//                                        fromUser: Boolean
-//                                    ) {
-//                                        if (fromUser){
-//                                            it.seekTo(progress)
-//                                        }
-//                                    }
-//
-//                                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
-//
-//                                    }
-//
-//                                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-//
-//                                    }
-//
-//                                })
-//                            }
-//                            post {
-//                                var finalWidth = 0
-//                                var finalHeight = 0
-//                                layoutParams = layoutParams.apply {
-//                                    if(videoView.height > videoView.width){
-//                                        finalWidth = videoView.width * resources.displayMetrics.heightPixels / videoView.height
-//                                        finalWidth = when(finalWidth > resources.displayMetrics.widthPixels){
-//                                            true -> {
-//                                                finalHeight = resources.displayMetrics.widthPixels * videoView.height / videoView.width
-//                                                resources.displayMetrics.widthPixels
-//                                            }
-//                                            false -> {
-//                                                finalHeight = resources.displayMetrics.heightPixels
-//                                                finalWidth
-//                                            }
-//                                        }
-//                                        this.width = finalWidth
-//                                        this.height = finalHeight
-//
-//                                    }
-//                                    if(videoView.width > videoView.height){
-//                                        finalWidth = resources.displayMetrics.widthPixels
-//                                        finalHeight = when((videoView.height * resources.displayMetrics.widthPixels / videoView.width) > resources.displayMetrics.heightPixels){
-//                                            true -> {
-//                                                finalWidth = resources.displayMetrics.heightPixels * videoView.width / videoView.height
-//                                                resources.displayMetrics.heightPixels
-//                                            }
-//                                            false -> {
-//                                                finalWidth = resources.displayMetrics.widthPixels
-//                                                videoView.height * resources.displayMetrics.widthPixels / videoView.width
-//                                            }
-//                                        }
-//                                        this.width = finalWidth
-//                                        this.height = finalHeight
-//                                    }
-//                                }
-//                                binding?.seekBar?.layoutParams = binding?.seekBar?.layoutParams.apply {
-//                                    this?.width = finalWidth
-//                                    this?.height = 64
-//                                }
-//                                start()
-//                            }
-//                        }
-//                    }
-//                    binding?.group4?.visibility = View.VISIBLE
-//                    binding?.viewPlay?.visibility = View.GONE
-//                }
-//            }
-//            linearLayoutContent.addView(frameLayout)
-//            imageView.post {
-//                Glide.with(requireContext())
-//                    .load("${BuildConfig.HTTP_HOST}$framePath")
-//                    .override(320, 180)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .into(imageView)
-//            }
-//        }
-//        binding?.linearLayoutConversation?.apply {
-//            linearLayoutCompat.post {
-//                linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
-//                    ViewGroup.LayoutParams.WRAP_CONTENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT
-//                ).apply {
-//                    gravity = Gravity.START
-//                }
-//                linearLayoutCompat.visibility = View.VISIBLE
-//                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
-//                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-//            }
-//            emptyView.post {
-//                totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
-//                binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
-//            }
-//            addView(linearLayoutCompat)
-//            addView(emptyView)
-//        }
-//        ReplyIntentHelper.replyIntentLiveData.postValue(null)
-////        talkingView = null
-//    }
 
         private suspend fun addAnswer2(conversation: String){
             LogUtil.i("回复--->$conversation")
@@ -802,20 +582,8 @@ class ConversationFragment : Fragment() {
                         binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                     }
                 }
-//            talkingView = null
             }
         }
-//    private suspend fun question(question: String, questionNumber: Long) {
-//        LogUtil.i("提问--->$question")
-//        withContext(Dispatchers.IO) {
-//            CloudMqttService.publish(
-//                QueryIntentModel(
-//                    questionContent = question,
-//                    questionNumber = questionNumber
-//                ).toString()
-//            )
-//        }
-//    }
 
         private suspend fun question2(conversation: String, questionNumber: Long): GetVFFileToTextModel? = suspendCoroutine {
             LogUtil.i("提问--->$conversation")
@@ -963,13 +731,8 @@ class ConversationFragment : Fragment() {
         private fun initSDK() {
             //状态初始化
             EngineConstants.isRecording = false
-            //TODO 开发者需要实现生成sn的代码，参考：https://www.yuque.com/iflyaiui/zzoolv/tgftb5
             //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
             //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-            //TODO 开发者需要实现生成sn的代码，参考：https://www.yuque.com/iflyaiui/zzoolv/tgftb5
-            //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
-            //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
-//            EngineConstants.serialNumber = "iflytek-test"
         EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
             // 初始化AIUI(识别+语义+合成）
             mAIUIAgent = AiuiEngine.getInstance(aiuiListener, "cfg/aiui.cfg")
