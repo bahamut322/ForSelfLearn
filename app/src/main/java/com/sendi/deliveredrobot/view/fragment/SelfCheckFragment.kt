@@ -201,7 +201,7 @@ class SelfCheckFragment : Fragment() {
                     DeliverMqttService.publish(ResetTimeModel().toString())
                     withContext(Dispatchers.Main) {
                         Log.d("TAG", "checkHardware: 获取时间戳")
-                        RobotStatus.sysTimeStamp.observe(this@SelfCheckFragment) {
+                        RobotStatus.sysTimeStamp.observe(viewLifecycleOwner) {
                             val time = it
                            val thread = Thread {
                                 if (time > 1) {
@@ -237,9 +237,9 @@ class SelfCheckFragment : Fragment() {
                                 LogUtil.i("手动充电中")
                                 withContext(Dispatchers.Main) {
                                     val chargingDialog =
-                                        DialogHelper.initChargingDialog(this@SelfCheckFragment)
+                                        DialogHelper.initChargingDialog(viewLifecycleOwner)
 //                                    chargingDialog.show()
-                                    RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
+                                    RobotStatus.batterySupplyStatus.observe(viewLifecycleOwner) {
                                         if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                             LogUtil.i("已取消手动充电")
                                             chargingDialog.dismiss()
@@ -250,7 +250,7 @@ class SelfCheckFragment : Fragment() {
                                         }
                                     }
 
-                                    RobotStatus.adapterState.observe(this@SelfCheckFragment) {
+                                    RobotStatus.adapterState.observe(viewLifecycleOwner) {
                                         if (RobotStatus.adapterState.value != SafeState.STATE_IS_TRIGGING) {
                                             LogUtil.i("已拔出电源线")
                                             DialogHelper.pullOutAdapterDialog.dismiss()
@@ -263,7 +263,7 @@ class SelfCheckFragment : Fragment() {
                                 withContext(Dispatchers.Main) {
                                     //请拔出电源线
                                     DialogHelper.pullOutAdapterDialog.show()
-                                    RobotStatus.adapterState.observe(this@SelfCheckFragment) {
+                                    RobotStatus.adapterState.observe(viewLifecycleOwner) {
                                         if (RobotStatus.adapterState.value != SafeState.STATE_IS_TRIGGING) {
                                             LogUtil.i("已拔出电源线")
                                             DialogHelper.pullOutAdapterDialog.dismiss()
@@ -283,7 +283,7 @@ class SelfCheckFragment : Fragment() {
                                         val chargingDialog =
                                             DialogHelper.initChargingDialog(this@SelfCheckFragment)
 //                                        chargingDialog.show()
-                                        RobotStatus.batterySupplyStatus.observe(this@SelfCheckFragment) {
+                                        RobotStatus.batterySupplyStatus.observe(viewLifecycleOwner) {
                                             if (RobotStatus.batterySupplyStatus.value != BatteryState.POWER_SUPPLY_STATUS_CHARGING) {
                                                 LogUtil.i("已取消自动充电")
                                                 chargingDialog.dismiss()
@@ -291,7 +291,7 @@ class SelfCheckFragment : Fragment() {
                                                 selectFunction()
                                             }
                                         }
-                                        RobotStatus.batteryPower.observe(this@SelfCheckFragment) {
+                                        RobotStatus.batteryPower.observe(viewLifecycleOwner) {
                                             if ((RobotStatus.batteryPower.value!! * 100).toInt() >= RobotStatus.LOW_POWER_VALUE) {
                                                 LogUtil.i("电量已超过最小阈值")
                                                 chargingDialog.dismiss()
