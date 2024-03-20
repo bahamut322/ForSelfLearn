@@ -10,6 +10,7 @@ import com.iflytek.vtncaetest.recorder.RecorderFactory
 import com.iflytek.vtncaetest.recorder.SystemRecorder
 import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.iflytek.vtncaetest.utils.ErrorCode
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -31,7 +32,7 @@ open class BaseFragment: Fragment(){
         }
         thread {
             Thread.sleep(1000)
-            CopyAssetsUtils.portingFile(requireContext())
+            CopyAssetsUtils.portingFile(MyApplication.context)
             initSDK()
             startRecord()
         }
@@ -104,6 +105,7 @@ open class BaseFragment: Fragment(){
 
     private fun quitFragment(){
         thread {
+            LogUtil.i("quitFragment")
             if (EngineConstants.isRecording) {
                 stopRecord()
             }
@@ -115,6 +117,7 @@ open class BaseFragment: Fragment(){
                 wakeupListener = null
             }
             WakeupEngine.destroy()
+            LogUtil.i("quitFragment is Done!")
         }
     }
 }
