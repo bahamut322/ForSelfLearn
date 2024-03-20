@@ -95,7 +95,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onSpeechProgressChanged(String utteranceId, int progress) {
 
         //耗时计算的方法，丢到子线程去做咯，面的卡线程
-        new Thread(() -> progressHandler.handleProgressUpdate(utteranceId, progress)).start();
+        progressHandler.handleProgressUpdate(utteranceId, progress);
 
         Log.d(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId);
 
