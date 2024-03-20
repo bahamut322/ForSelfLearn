@@ -399,7 +399,7 @@ class SelfCheckFragment : Fragment() {
 
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
-        Looper.prepare()
+//        Looper.prepare()
         UpdateReturn().deleteDirectory(Universal.AppVersion)
         when (FunctionSkip.selectFunction()) {
             //智能引领
@@ -439,7 +439,7 @@ class SelfCheckFragment : Fragment() {
                 LogUtil.i("自检->设置")
             }
         }
-        Looper.loop()
+//        Looper.loop()
     }
 
 
