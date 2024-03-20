@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.iflytek.vtncaetest.engine.EngineConstants
@@ -15,6 +13,7 @@ import com.iflytek.vtncaetest.utils.ErrorCode
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
+import kotlin.concurrent.thread
 
 open class BaseFragment: Fragment(){
     /**
@@ -30,12 +29,12 @@ open class BaseFragment: Fragment(){
             LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
             findNavController().navigate(R.id.conversationFragment)
         }
-        Handler(Looper.getMainLooper()).postDelayed({
-            // 资源拷贝
+        thread {
+            Thread.sleep(1000)
             CopyAssetsUtils.portingFile(requireContext())
             initSDK()
             startRecord()
-        }, 1000)
+        }
     }
 
     override fun onPause() {
@@ -90,7 +89,7 @@ open class BaseFragment: Fragment(){
         }
     }
 
-    protected fun stopRecord() {
+    private fun stopRecord() {
         if (recorder != null) {
             recorder!!.stopRecord()
             LogUtil.i("停止录音")
@@ -103,17 +102,19 @@ open class BaseFragment: Fragment(){
         LogUtil.i("destroy is Done!")
     }
 
-    protected fun quitFragment(){
-        if (EngineConstants.isRecording) {
-            stopRecord()
+    private fun quitFragment(){
+        thread {
+            if (EngineConstants.isRecording) {
+                stopRecord()
+            }
+            if (recorder != null) {
+                recorder!!.destroyRecord()
+                recorder = null
+            }
+            if (wakeupListener != null) {
+                wakeupListener = null
+            }
+            WakeupEngine.destroy()
         }
-        if (recorder != null) {
-            recorder!!.destroyRecord()
-            recorder = null
-        }
-        if (wakeupListener != null) {
-            wakeupListener = null
-        }
-        WakeupEngine.destroy()
     }
 }
