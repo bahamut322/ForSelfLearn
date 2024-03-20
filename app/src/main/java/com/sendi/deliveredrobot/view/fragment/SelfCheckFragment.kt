@@ -402,6 +402,7 @@ class SelfCheckFragment : Fragment() {
 
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
+//        Looper.prepare()
         BaseVoiceRecorder.getInstance()?.startRecording()
         Looper.prepare()
         UpdateReturn().deleteDirectory(Universal.AppVersion)
@@ -443,7 +444,7 @@ class SelfCheckFragment : Fragment() {
                 LogUtil.i("自检->设置")
             }
         }
-        Looper.loop()
+//        Looper.loop()
     }
 
 
