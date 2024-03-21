@@ -21,6 +21,7 @@ import com.iflytek.vtncaetest.recorder.RecorderFactory
 import com.iflytek.vtncaetest.recorder.SystemRecorder
 import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.iflytek.vtncaetest.utils.ErrorCode
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
@@ -35,6 +36,7 @@ import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
 import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import java.io.File
+import kotlin.concurrent.thread
 
 
 class StandbyFragment : Fragment() {
@@ -118,12 +120,12 @@ class StandbyFragment : Fragment() {
                 LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
                 controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
             }
-            Handler(Looper.getMainLooper()).postDelayed({
-                // 资源拷贝
-                CopyAssetsUtils.portingFile(requireContext())
+            thread {
+                Thread.sleep(1000)
+                CopyAssetsUtils.portingFile(MyApplication.context)
                 initSDK()
                 startRecord()
-            }, 1000)
+            }
         }
     }
 
@@ -220,17 +222,21 @@ class StandbyFragment : Fragment() {
     }
 
     private fun quitFragment(){
-        if (EngineConstants.isRecording) {
-            stopRecord()
+        thread {
+            LogUtil.i("standby fragment quitFragment")
+            if (EngineConstants.isRecording) {
+                stopRecord()
+            }
+            if (recorder != null) {
+                recorder!!.destroyRecord()
+                recorder = null
+            }
+            if (wakeupListener != null) {
+                wakeupListener = null
+            }
+            WakeupEngine.destroy()
+            LogUtil.i("standby fragment quitFragment done!")
         }
-        if (recorder != null) {
-            recorder!!.destroyRecord()
-            recorder = null
-        }
-        if (wakeupListener != null) {
-            wakeupListener = null
-        }
-        WakeupEngine.destroy()
     }
 
 

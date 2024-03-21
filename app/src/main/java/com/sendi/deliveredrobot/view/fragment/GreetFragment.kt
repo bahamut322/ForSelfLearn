@@ -120,7 +120,7 @@ class GreetFragment : Fragment() {
             finishTaskDialog?.dismiss()
             //返回
             BillManager.currentBill()?.executeNextTask()
-            BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
+            BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
 
         }
         finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }

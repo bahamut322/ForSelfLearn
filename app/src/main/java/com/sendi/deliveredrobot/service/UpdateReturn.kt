@@ -26,8 +26,10 @@ import com.sendi.deliveredrobot.model.Point
 import com.sendi.deliveredrobot.model.ReplyQaConfigModel
 import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
+import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -191,16 +193,20 @@ class UpdateReturn {
     fun resume() {
         MainScope().launch {
             Universal.explainUnSpeak = false
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-            this@launch.cancel()
+            when (RobotStatus.manageStatus) {
+                RobotCommand.MANAGE_STATUS_PAUSE -> ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+            }
         }
     }
 
     fun pause() {
         MainScope().launch {
             Universal.explainUnSpeak = true
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-            this@launch.cancel()
+            when (RobotStatus.manageStatus) {
+                RobotCommand.MANAGE_STATUS_CONTINUE -> {
+                    ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+                }
+            }
         }
     }
 

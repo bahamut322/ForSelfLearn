@@ -444,12 +444,12 @@ object FaceRecognition {
      * 销毁
      */
     fun onDestroy() {
+        newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdata)
+        identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
         if (null != c) {
             LogUtil.i("人脸识别销毁")
             // 取消所有协程任务
             shouldExecute = false
-            newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdata)
-            identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
             faceScope.cancel()
             channel.close()
             // 停止预览
