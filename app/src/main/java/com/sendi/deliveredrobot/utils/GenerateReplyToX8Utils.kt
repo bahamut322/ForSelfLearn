@@ -3,11 +3,10 @@ package com.sendi.deliveredrobot.utils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
+import com.sendi.deliveredrobot.model.GetVFFileToTextModel
 import com.sendi.deliveredrobot.model.ReplyIntentModel
-import com.sendi.fooddeliveryrobot.GetVFFileToTextModel
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody

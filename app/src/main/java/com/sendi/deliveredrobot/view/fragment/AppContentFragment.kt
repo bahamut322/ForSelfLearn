@@ -1,13 +1,11 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.view.marginTop
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -19,13 +17,11 @@ import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.InstallApkUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.UiUtils
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

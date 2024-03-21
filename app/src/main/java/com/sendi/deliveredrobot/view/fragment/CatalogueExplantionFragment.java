@@ -3,41 +3,33 @@ package com.sendi.deliveredrobot.view.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
-
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
-
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
 import java.util.List;
-import java.util.Objects;
 
 
 /**

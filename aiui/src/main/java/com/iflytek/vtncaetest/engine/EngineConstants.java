@@ -15,7 +15,7 @@ public class EngineConstants {
      * 2 (多麦阵列,Alsa双声卡录音，mic数据和回采数据不在一个声卡),代码在DoubleAlsaRecorder.java
      * 3 (单麦，系统录音,录制1mic+1回采数据,声道1是MIC,声道2是回采),代码在SystemRecorder.java
      **/
-    public final static int recorderType = 0;
+    public final static int recorderType = 3;
 
     /**
      * alsa录音参数，参考文档：https://www.yuque.com/iflyaiui/zzoolv/fp0444

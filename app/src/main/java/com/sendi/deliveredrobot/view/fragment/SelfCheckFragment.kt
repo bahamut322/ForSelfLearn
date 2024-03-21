@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,8 +21,9 @@ import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.databinding.FragmentSelfCheckBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.enum.ASROrNlpModelTypeEnum
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.helpers.CheckSelfHelper.OnCheckChangeListener
 import com.sendi.deliveredrobot.model.QueryElevatorListModel
@@ -36,7 +36,6 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.*
 import okhttp3.internal.toHexString
 import sensor_msgs.BatteryState
@@ -195,6 +194,9 @@ class SelfCheckFragment : Fragment() {
 //                    if(BuildConfig.IS_REPORT){
 //                        ReportRobotStateService.startService(requireActivity())
 //                    }
+                    VoiceRecordCommand.getInstance(requireContext()).apply {
+                        ASROrNlpModelTypeEnum.voiceRecordType = this.voiceRecordType
+                    }
                     DeliverMqttService.publish(ResetTimeModel().toString())
                     withContext(Dispatchers.Main) {
                         Log.d("TAG", "checkHardware: 获取时间戳")

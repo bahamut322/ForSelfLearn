@@ -154,7 +154,7 @@ dependencies {
     //ssh包
     implementation 'ch.ethz.ganymed:ganymed-ssh2:build210'
 
-    implementation project(path: ':conversation')
+//    implementation project(path: ':conversation')
 //    implementation("") {
 //        exclude(group="com.alibaba" ,module = "fastjson")
 //    }

@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
@@ -18,14 +21,18 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.hacknife.wifimanager.*
+import com.hacknife.wifimanager.IWifi
+import com.hacknife.wifimanager.OnWifiChangeListener
+import com.hacknife.wifimanager.OnWifiConnectListener
+import com.hacknife.wifimanager.OnWifiStateChangeListener
+import com.hacknife.wifimanager.State
+import com.hacknife.wifimanager.WifiManager
 import com.sendi.deliveredrobot.databinding.ActivityMainBinding
 import com.sendi.deliveredrobot.entity.Table_Basic
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
-import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -34,9 +41,11 @@ import com.sendi.deliveredrobot.receiver.SendTaskFinishReceiver
 import com.sendi.deliveredrobot.receiver.SimNetStatusReceiver
 import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
-import com.sendi.deliveredrobot.utils.*
+import com.sendi.deliveredrobot.utils.AppUtils
+import com.sendi.deliveredrobot.utils.FileUtil
+import com.sendi.deliveredrobot.utils.NavigationBarUtil
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -44,7 +53,7 @@ import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.findAll
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 
 class

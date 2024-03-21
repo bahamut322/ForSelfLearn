@@ -39,7 +39,7 @@ public class SystemRecorder implements AudioRecorder {
                 if (recorder == null) {
                     recorder = new SystemRecorder();
                     int SAMPLE_RATE = 16000;
-                    mBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+                    mBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT);
                     if(EngineConstants.recorderType==0) {
                         audioRecord = new AudioRecord(
                                 MediaRecorder.AudioSource.VOICE_COMMUNICATION,  //获取手机回声消除后的音频

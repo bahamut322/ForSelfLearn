@@ -3,7 +3,7 @@ package com.sendi.deliveredrobot.helpers
 import android.util.Log
 import com.apkfuns.logutils.LogUtils
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
-import com.sendi.fooddeliveryrobot.util.HanziToPinyin
+import com.sendi.deliveredrobot.utils.HanziToPinyin
 
 object WakeupWordHelper {
     var wakeupWord: String? = QuerySql.robotConfig().wakeUpWord

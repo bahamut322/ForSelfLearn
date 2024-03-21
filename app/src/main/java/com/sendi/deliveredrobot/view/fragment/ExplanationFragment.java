@@ -5,16 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,16 +15,23 @@ import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentExplanationBinding;
 import com.sendi.deliveredrobot.entity.FunctionSkip;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.Placeholder;
@@ -42,12 +39,10 @@ import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog;
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author swn
