@@ -143,7 +143,7 @@ class BusinessViewModel : ViewModel() {
 //            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
             Order.setFlage("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 

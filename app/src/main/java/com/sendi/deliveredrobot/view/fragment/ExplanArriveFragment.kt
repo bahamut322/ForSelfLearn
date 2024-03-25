@@ -68,7 +68,7 @@ class ExplanArriveFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
         mainScope = MainScope()
-        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(QuerySql.QueryExplainConfig().endText, route = QuerySql.queryPointDate(RobotStatus.selectRoutMapItem!!.value!!)[0].routename))
+        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(QuerySql.QueryExplainConfig().endText, route = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[0].routename))
 //        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
         binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget() ?: ""
         binding.motionLayoutGuideArrive.apply {

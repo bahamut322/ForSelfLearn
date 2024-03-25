@@ -27,7 +27,6 @@ import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.pointItem
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.service.Placeholder
@@ -87,7 +86,7 @@ class GuideFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //回到主页面的时候初始化一下选择讲解点的值
-        selectRoutMapItem!!.postValue(-1)
+        RobotStatus.selectRouteMapItemId = -1
         pointItem!!.postValue(-1)
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         updateDataAndRefreshList()

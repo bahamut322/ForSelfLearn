@@ -20,7 +20,6 @@ import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
@@ -45,7 +44,7 @@ class StartExplainViewModel : ViewModel() {
 
 
     fun inForListData(): ArrayList<MyResultModel?>? {
-        mData = QuerySql.queryPointDate(selectRoutMapItem!!.value!!)
+        mData = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)
         return mData
     }
 
@@ -56,7 +55,7 @@ class StartExplainViewModel : ViewModel() {
             }
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 
@@ -92,7 +91,7 @@ class StartExplainViewModel : ViewModel() {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             }
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
             if (array) {
                 currentBill()?.executeNextTask()
@@ -304,7 +303,7 @@ class StartExplainViewModel : ViewModel() {
                 UpdateReturn().stop()
             }
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 

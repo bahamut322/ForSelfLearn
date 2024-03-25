@@ -114,7 +114,7 @@ public class ExplanationFragment extends BaseFragment {
     private void init() {
 //        new UpdateReturn().method();
         //回到主页面的时候初始化一下选择讲解点的值
-        RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(-1);
+        RobotStatus.INSTANCE.setSelectRouteMapItemId(-1);
         RobotStatus.INSTANCE.getPointItem().postValue(-1);
         binding.explainRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.explainRv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -314,7 +314,7 @@ public class ExplanationFragment extends BaseFragment {
                     DialogHelper.briefingDialog.show();
                 } else {
                     scrollToCenter(fp);
-                    RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
+                    RobotStatus.INSTANCE.setSelectRouteMapItemId(mDatas.get(position).getId());
                     Log.d("TAG", "onBindViewHolder: " + mDatas.get(position).getId());
                     navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
                     SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","",mDatas.get(position).getRouteName(),"智能讲解"));

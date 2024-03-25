@@ -429,10 +429,10 @@ public class StartExplainFragment extends Fragment {
                     DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
                     binding.goingName.setText(viewModel.inForListData().get(position).getName());
-                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type());
-                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
+                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                         binding.argPic.setVisibility(View.VISIBLE);
-                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_walkPic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_walkPic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                         //touch_walkPic
                     } else {
                         binding.argPic.setVisibility(View.GONE);
@@ -449,14 +449,14 @@ public class StartExplainFragment extends Fragment {
 
 
                     if (Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext() != null && !Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext().isEmpty()) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                             LogUtil.INSTANCE.i("是否到点：" + integer1 + ",讲解进度：" + integer + "," + Universal.ExplainLength);
                             if (integer1 == 1 && !array && integer != Universal.ExplainLength) {
                                 binding.PauseBtn.setVisibility(View.GONE);
                                 mHandler.post(() -> {
-                                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                                         binding.argPic.setVisibility(View.VISIBLE);
-                                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                                     } else {
                                         binding.argPic.setVisibility(View.GONE);
                                         try {
@@ -485,15 +485,15 @@ public class StartExplainFragment extends Fragment {
                         }));
                     }
                     if (viewModel.inForListData().get(position).getWalkvoice() != null && !viewModel.inForListData().get(position).getWalkvoice().isEmpty()) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer -> MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
                             LogUtil.INSTANCE.i("途径MP3：currentPosition: " + currentPosition + ",totalDuration: " + totalDuration);
                             if (integer == 1) {
 //                                currentPosition1.observe(getViewLifecycleOwner(), integer1 -> totalDuration1.observe(getViewLifecycleOwner(), integer2 -> {
                                     if ((totalDuration - currentPosition) > 500 && !array) {
                                         mHandler.post(() -> {
-                                            if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                                            if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                                                 binding.argPic.setVisibility(View.VISIBLE);
-                                                Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                                                Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                                             } else {
                                                 binding.argPic.setVisibility(View.GONE);
                                                 try {
@@ -526,7 +526,7 @@ public class StartExplainFragment extends Fragment {
                         }));
                     }
                     if (viewModel.inForListData().get(position).getWalkvoice() == null && viewModel.inForListData().get(position).getWalktext() == null ) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> {
                             if (integer1 == 1 && !array) {
                                 arrayToDo(viewModel.inForListData(), position);
                             }
@@ -654,12 +654,12 @@ public class StartExplainFragment extends Fragment {
                 binding.statusTv.setText("正在讲解:");
                 binding.nowExplanation.setText(mData.get(position).getName());
 
-                if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                     binding.finishBtn.setEnabled(false);
                     binding.ChangingOver.setEnabled(false);
                     binding.nextTaskBtn.setEnabled(false);
                     binding.argPic.setVisibility(View.VISIBLE);
-                    Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                    Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                 } else {
                     binding.finishBtn.setEnabled(true);
                     binding.ChangingOver.setEnabled(true);

@@ -45,12 +45,12 @@ class GoBackFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
         try {
-            if (QuerySql.queryPointDate(RobotStatus.selectRoutMapItem?.value!!)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
+            if (QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
                 binding.goBackTv.visibility = View.GONE
                 binding.imageViewGoBack.apply {
                     Glide.with(this)
                         .asGif()
-                        .load(QuerySql.queryPointDate(RobotStatus.selectRoutMapItem!!.value!!)[RobotStatus.pointItem!!.value!!].touch_overTaskPic)
+                        .load(QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[RobotStatus.pointItem!!.value!!].touch_overTaskPic)
                         .placeholder(R.drawable.ic_warming) // 设置默认图片
                         .into(this)
                 }
