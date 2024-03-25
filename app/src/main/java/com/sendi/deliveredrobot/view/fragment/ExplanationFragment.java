@@ -115,7 +115,7 @@ public class ExplanationFragment extends BaseFragment {
 //        new UpdateReturn().method();
         //回到主页面的时候初始化一下选择讲解点的值
         RobotStatus.INSTANCE.setSelectRouteMapItemId(-1);
-        RobotStatus.INSTANCE.getPointItem().postValue(-1);
+        RobotStatus.INSTANCE.setPointItemIndex(-1);
         binding.explainRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.explainRv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

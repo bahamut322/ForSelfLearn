@@ -45,14 +45,17 @@ class GoBackFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         seconds = MutableLiveData(30)
         try {
-            if (QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[RobotStatus.pointItem!!.value!!]?.touch_type == 4) {
-                binding.goBackTv.visibility = View.GONE
-                binding.imageViewGoBack.apply {
-                    Glide.with(this)
-                        .asGif()
-                        .load(QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[RobotStatus.pointItem!!.value!!].touch_overTaskPic)
-                        .placeholder(R.drawable.ic_warming) // 设置默认图片
-                        .into(this)
+            if(RobotStatus.pointItemIndex > -1){
+                val myResultModel = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[RobotStatus.pointItemIndex]
+                if (myResultModel.touch_type == 4) {
+                    binding.goBackTv.visibility = View.GONE
+                    binding.imageViewGoBack.apply {
+                        Glide.with(this)
+                            .asGif()
+                            .load(myResultModel.touch_overTaskPic)
+                            .placeholder(R.drawable.ic_warming) // 设置默认图片
+                            .into(this)
+                    }
                 }
             }
             Log.d("TAG", "返回查询: ${QuerySql.selectGuideFouConfig().touchScreenConfig?.touch_type},${Universal.guideTask}")

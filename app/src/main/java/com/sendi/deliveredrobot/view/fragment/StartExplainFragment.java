@@ -423,8 +423,7 @@ public class StartExplainFragment extends Fragment {
                 animationDrawable.start();
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
-
-                    RobotStatus.INSTANCE.getPointItem().postValue(position);
+                    RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
                     DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
