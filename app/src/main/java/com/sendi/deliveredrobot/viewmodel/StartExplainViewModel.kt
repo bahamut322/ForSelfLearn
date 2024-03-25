@@ -137,7 +137,7 @@ class StartExplainViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
-        if (mData != null) return
+        if (mData == null) return
         BillManager.billList().clear()
         mainScope.launch(Dispatchers.Default) {
             for (data in mData!!) {

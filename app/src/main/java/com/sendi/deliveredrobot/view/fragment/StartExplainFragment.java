@@ -180,6 +180,7 @@ public class StartExplainFragment extends Fragment {
 
                     MediaPlayerHelper.getInstance().stop();
                     RobotStatus.INSTANCE.getSpeakNumber().postValue("");
+                    nextTaskToDo = false;
                     binding.acceptstationTv.stopPlay();
 
                     BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",explantionNameModel.getName(),viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
@@ -706,7 +707,7 @@ public class StartExplainFragment extends Fragment {
                                 Log.d("TAG", "进度越界啦: " + e);
                             }
                         }
-                        if (integer >= ((beforePage + 1) * 135) && integer != 0) {
+                        if (beforePage > -1 && integer >= ((beforePage + 1) * 135) && integer != 0) {
                             Log.i("TAG", "页数, progress：" + beforePage + ";进度:" + integer + "当前进度：" + Universal.progress);
                             nextTaskToDo = false;
                             if (beforePage <= page.get() - 1) {
@@ -842,7 +843,6 @@ public class StartExplainFragment extends Fragment {
                 beforePage = -1;
                 Universal.progress = 0;
                 MediaPlayerHelper.getInstance().stop();
-                binding.acceptstationTv.stopPlay();
                 RobotStatus.INSTANCE.getSpeakNumber().postValue(null);
                 binding.acceptstationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
