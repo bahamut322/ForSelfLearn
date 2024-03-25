@@ -373,11 +373,11 @@ public class ExplanationFragment extends BaseFragment {
             }
         });
         // 更新了引领配置
-        RobotStatus.INSTANCE.getNewUpdata().observe(getViewLifecycleOwner(), newUpdata -> {
-            if (newUpdata == null) {
+        RobotStatus.INSTANCE.getNewUpdate().observe(getViewLifecycleOwner(), newUpdate -> {
+            if (newUpdate == null) {
                 return;
             }
-            if (newUpdata == 1 || newUpdata == 2) {
+            if (newUpdate == 1 || newUpdate == 2) {
                 // 初始化适配器和其他相关组件
                 init();
                 // 检查 mAdapter 是否非空，然后调用 notifyDataSetChanged()
@@ -394,8 +394,8 @@ public class ExplanationFragment extends BaseFragment {
                 binding.tvExplanationName.setText(slogan);
             }
         });
-        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {
-            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdata.getWakeUpWord()));
+        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdate -> {
+            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdate.getWakeUpWord()));
         });
     }
 

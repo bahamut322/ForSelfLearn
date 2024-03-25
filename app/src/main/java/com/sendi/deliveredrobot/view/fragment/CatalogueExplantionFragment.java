@@ -56,8 +56,8 @@ public class CatalogueExplantionFragment extends BaseFragment {
         controller = Navigation.findNavController(requireView());
         binding = DataBindingUtil.bind(view);
         mAdapter = new CatalogueAdapter(viewModel.inForListData(), getContext());
-        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdata -> {
-            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdata.getWakeUpWord()));
+        RobotStatus.INSTANCE.getRobotConfig().observe(getViewLifecycleOwner(), newUpdate -> {
+            binding.bubbleTv.setText(String.format(getString(R.string.ask), newUpdate.getWakeUpWord()));
         });
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {

@@ -1,17 +1,13 @@
 package com.sendi.deliveredrobot
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.pm.ActivityInfo
-import android.os.Bundle
 import android.util.Log
 import com.iflytek.vtncaetest.ContextHolder
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
-import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
@@ -58,7 +54,7 @@ class MyApplication : Application() {
                 if (!DialogHelper.robotUpDataDialog.isShowing) {
                     DialogHelper.robotUpDataDialog.show()
                     //设置一个大屏幕默认的图片
-                    RobotStatus.newUpdata.postValue(3)
+                    RobotStatus.newUpdate.postValue(3)
                 }
             }
             override fun onFinish(directory: String, fileName: String) {
@@ -68,7 +64,7 @@ class MyApplication : Application() {
                     DialogHelper.robotUpDataDialog.dismiss()
                     Log.d("TAG", "onProgress: FinishAll")
                     UpdateReturn().method(Universal.mapType.value!!)
-                    RobotStatus.newUpdata.postValue(1)
+                    RobotStatus.newUpdate.postValue(1)
                 }
                 thread {
                     //如果fileName以.apk结尾，则安装

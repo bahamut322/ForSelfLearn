@@ -164,7 +164,7 @@ class GuideFragment : BaseFragment() {
             }
         }
         //更新了引领配置
-        RobotStatus.newUpdata.observe(viewLifecycleOwner) {
+        RobotStatus.newUpdate.observe(viewLifecycleOwner) {
             if (it == 1 || it ==2) {
                 updateList()
             }

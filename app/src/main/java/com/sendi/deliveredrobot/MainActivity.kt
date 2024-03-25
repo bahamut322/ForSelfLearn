@@ -25,7 +25,6 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.handler.TopicHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
-import com.sendi.deliveredrobot.helpers.ReplyIntentHelper
 import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -36,7 +35,6 @@ import com.sendi.deliveredrobot.receiver.TimeChangeReceiver
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.*
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -422,10 +420,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private fun screenRenew() {
         SecondScreenManageHelper.init(this)
         //监听观察者更新副屏内容
-        RobotStatus.newUpdata.observe(this) {
+        RobotStatus.newUpdate.observe(this) {
             if (it == 1 || it == 2) {
                 Log.d(TAG, "screenRenew: 更新副屏内容")
-                RobotStatus.newUpdata.postValue(null)
+                RobotStatus.newUpdate.postValue(null)
                 SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
             }
             if (it == 3) {
