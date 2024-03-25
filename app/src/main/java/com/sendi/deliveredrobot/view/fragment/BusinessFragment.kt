@@ -8,12 +8,9 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.iflytek.vtncaetest.engine.WakeupListener
-import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.BusinessAdapter
@@ -26,7 +23,6 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
@@ -40,7 +36,6 @@ import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -107,7 +102,7 @@ class BusinessFragment : BaseFragment() {
         //返回按钮
         binding.llReturn.setOnClickListener {
             BaiduTTSHelper.getInstance().stop()
-            controller!!.navigate(R.id.action_businessFragment_to_homeFragment)
+            navigateToFragment(R.id.action_businessFragment_to_homeFragment)
         }
         //设置按钮
         binding.imageViewSetting.setOnClickListener {
@@ -116,7 +111,7 @@ class BusinessFragment : BaseFragment() {
                 if (RobotStatus.PassWordToSetting.value == true) {
                     try {
                         BaiduTTSHelper.getInstance().stop()
-                        controller!!.navigate(R.id.action_businessFragment_to_planSettingFragment)
+                        navigateToFragment(R.id.action_businessFragment_to_planSettingFragment)
                     } catch (_: Exception) {
                     }
                     toSettingDialog.dismiss()
@@ -147,7 +142,7 @@ class BusinessFragment : BaseFragment() {
                             // 设置 Bundle 对象参数数据
                             this.putString("taskId", taskId)
                         }
-                        controller?.navigate(R.id.businessIngFragment, args)
+                        navigateToFragment(R.id.businessIngFragment, args)
                         //上报定点任务开始
                         reportTaskDto(
                             TaskModel(endTarget = "定点导购",taskId = taskId),
@@ -171,7 +166,7 @@ class BusinessFragment : BaseFragment() {
                 }
             }
         binding.bubbleTv.setOnClickListener {
-            controller?.navigate(R.id.conversationFragment)
+            navigateToFragment(R.id.conversationFragment)
         }
     }
 

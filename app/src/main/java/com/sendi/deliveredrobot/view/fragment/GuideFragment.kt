@@ -6,13 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import androidx.core.util.Consumer
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.base.i.GuidePointAdapter
@@ -24,7 +21,6 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
@@ -32,14 +28,12 @@ import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.pointItem
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
-import com.sendi.deliveredrobot.navigationtask.TaskQueues
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
 import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -140,7 +134,8 @@ class GuideFragment : BaseFragment() {
             }
         binding.llReturn.setOnClickListener {
             BaiduTTSHelper.getInstance().stop()
-            controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
+
+            navigateToFragment(R.id.action_guideFragment_to_homeFragment)
         }
         binding.imageViewSetting.setOnClickListener {
             toSettingDialog.show()
@@ -148,7 +143,7 @@ class GuideFragment : BaseFragment() {
                 if (PassWordToSetting.value == true) {
                     try {
                         BaiduTTSHelper.getInstance().stop()
-                        controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
+                        navigateToFragment(R.id.action_guideFragment_to_settingHomeFragment)
                     } catch (_: Exception) {
                     }
                     toSettingDialog.dismiss()

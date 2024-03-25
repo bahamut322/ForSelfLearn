@@ -3,41 +3,33 @@ package com.sendi.deliveredrobot.view.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentCatalogueExplantionBinding;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
-
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
-
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.Placeholder;
 import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder;
 
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -74,9 +66,9 @@ public class CatalogueExplantionFragment extends BaseFragment {
             SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
-        binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
+        binding.returnHome.setOnClickListener(v -> navigateToFragment(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment,null));
         binding.bubbleTv.setOnClickListener(v -> {
-            controller.navigate(R.id.conversationFragment);
+            navigateToFragment(R.id.conversationFragment,null);
         });
     }
 

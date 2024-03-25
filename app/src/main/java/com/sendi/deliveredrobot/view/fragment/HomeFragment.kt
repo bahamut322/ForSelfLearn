@@ -96,7 +96,7 @@ class HomeFragment : BaseFragment(), IMainView {
         fromeSettingDialog!!.dismiss()
         if (QuerySql.robotConfig().sleep == 1) {
             try {
-                controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+                navigateToFragment(R.id.action_homeFragment_to_standbyFragment)
             } catch (_: Exception) {
             }
         }
@@ -220,7 +220,7 @@ class HomeFragment : BaseFragment(), IMainView {
                 if (PassWordToSetting.value == true) {
                     fromeSettingDialog!!.dismiss()
                     try {
-                        controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
+                        navigateToFragment(R.id.action_homeFragment_to_planSettingFragment)
                     } catch (_: Exception) {
 
                     }
@@ -259,7 +259,7 @@ class HomeFragment : BaseFragment(), IMainView {
         }
         binding.textView61.apply {
             setOnClickListener {
-                controller?.navigate(R.id.conversationFragment)
+                navigateToFragment(R.id.conversationFragment)
             }
         }
         binding.viewOneKeyCallForeground.apply {
@@ -564,7 +564,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
+                    navigateToFragment(R.id.action_homeFragment_to_guideFragment)
                 }
             }
 
@@ -573,7 +573,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
+                    navigateToFragment(R.id.action_homeFragment_to_explanationFragment)
                     Log.d("TAG", "点击智能讲解 ")
                 }
             }
@@ -582,7 +582,7 @@ class HomeFragment : BaseFragment(), IMainView {
                 //跳转到测温模式
                 Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
                 Log.d("TAG", "点击更多服务")
-                controller?.navigate(R.id.appContentFragment)
+                navigateToFragment(R.id.appContentFragment)
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
@@ -592,7 +592,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
+                    navigateToFragment(R.id.action_homeFragment_to_businessFragment)
                     Log.d("TAG", "业务办理 ")
                 }
             }

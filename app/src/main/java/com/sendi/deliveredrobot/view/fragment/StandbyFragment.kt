@@ -1,9 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.iflytek.vtncaetest.engine.EngineConstants
 import com.iflytek.vtncaetest.engine.WakeupEngine
 import com.iflytek.vtncaetest.engine.WakeupListener
@@ -26,7 +22,6 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
-import com.sendi.deliveredrobot.helpers.WakeupWordHelper
 import com.sendi.deliveredrobot.interfaces.FaceDataListener
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -34,7 +29,6 @@ import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel.checkIsImageFile
-import com.sendi.fooddeliveryrobot.BaseVoiceRecorder
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -62,7 +56,6 @@ class StandbyFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         binding.Standby.setPause()
-        quitFragment()
     }
 
     override fun onCreateView(
@@ -87,6 +80,7 @@ class StandbyFragment : Fragment() {
         if (contains1) {
             println("字符串中包含数字1,点击屏幕")
             binding.imageButton.setOnClickListener {
+                quitFragment()
                 controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
             }
         }
@@ -100,6 +94,7 @@ class StandbyFragment : Fragment() {
                 try {
                     if (FaceDataListener.getFaceModels().isNotEmpty() && sendFace == 0) {
                         sendFace++
+                        quitFragment()
                         controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
 
                     }
@@ -118,6 +113,7 @@ class StandbyFragment : Fragment() {
 
             wakeupListener = WakeupListener { angle, beam, score, keyWord ->
                 LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+                quitFragment()
                 controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
             }
             thread {
@@ -238,7 +234,4 @@ class StandbyFragment : Fragment() {
             LogUtil.i("standby fragment quitFragment done!")
         }
     }
-
-
-
 }
