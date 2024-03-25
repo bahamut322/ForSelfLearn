@@ -81,14 +81,14 @@ public class ExplanationFragment extends BaseFragment {
 
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
-        binding.llReturn.setOnClickListener(v -> controller.navigate(R.id.action_explanationFragment_to_homeFragment));
+        binding.llReturn.setOnClickListener(v -> navigateToFragment(R.id.action_explanationFragment_to_homeFragment, null));
 
         binding.imageViewSetting.setOnClickListener(v -> {
             fromeSettingDialog.show();
             RobotStatus.INSTANCE.getPassWordToSetting().observe(getViewLifecycleOwner(), it -> {
                 if (Boolean.TRUE.equals(RobotStatus.INSTANCE.getPassWordToSetting().getValue())) {
                     try {
-                        controller.navigate(R.id.action_explanationFragment_to_settingHomeFragment);
+                        navigateToFragment(R.id.action_explanationFragment_to_settingHomeFragment, null);
                     } catch (Exception ignored) {
                     }
                     fromeSettingDialog.dismiss();
@@ -97,7 +97,7 @@ public class ExplanationFragment extends BaseFragment {
             });
         });
         binding.bubbleTv.setOnClickListener(v -> {
-            controller.navigate(R.id.conversationFragment);
+            navigateToFragment(R.id.conversationFragment, null);
         });
         init();
     }
@@ -316,7 +316,7 @@ public class ExplanationFragment extends BaseFragment {
                     scrollToCenter(fp);
                     RobotStatus.INSTANCE.getSelectRoutMapItem().postValue(mDatas.get(position).getId());
                     Log.d("TAG", "onBindViewHolder: " + mDatas.get(position).getId());
-                    controller.navigate(R.id.action_explanationFragment_to_CatalogueExplantionFragment);
+                    navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
                     SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","",mDatas.get(position).getRouteName(),"智能讲解"));
                 }
             });

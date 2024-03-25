@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.iflytek.vtncaetest.engine.EngineConstants
@@ -31,16 +32,14 @@ open class BaseFragment: Fragment(){
             findNavController().navigate(R.id.conversationFragment)
         }
         thread {
-            Thread.sleep(1000)
+//            DialogHelper.loadingDialog.show()
+//            Thread.sleep(2000)
             CopyAssetsUtils.portingFile(MyApplication.context)
             initSDK()
+//            Thread.sleep(5000)
             startRecord()
+//            DialogHelper.loadingDialog.dismiss()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        quitFragment()
     }
 
     private fun initSDK() {
@@ -119,5 +118,10 @@ open class BaseFragment: Fragment(){
             WakeupEngine.destroy()
             LogUtil.i("quitFragment is Done!")
         }
+    }
+
+    protected fun navigateToFragment(fragmentId: Int, args: Bundle? = null){
+        quitFragment()
+        findNavController().navigate(fragmentId,args)
     }
 }

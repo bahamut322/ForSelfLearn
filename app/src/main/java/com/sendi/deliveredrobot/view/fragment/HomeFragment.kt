@@ -25,7 +25,6 @@ import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.MainPresenter
-import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.inputfilter.IMainView
 import com.sendi.deliveredrobot.view.widget.CloseDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
@@ -76,7 +75,6 @@ class HomeFragment : BaseFragment(), IMainView {
 
     override fun onPause() {
         //有其他操作时结束计时
-        FaceRecognition.onDestroy()
         mPresenter?.endTipsTimer()
         LogUtil.i("homefragment onPause")
         super.onPause()
@@ -96,7 +94,7 @@ class HomeFragment : BaseFragment(), IMainView {
         fromeSettingDialog!!.dismiss()
         if (QuerySql.robotConfig().sleep == 1) {
             try {
-                controller!!.navigate(R.id.action_homeFragment_to_standbyFragment)
+                homeFragmentNavigateToFragment(R.id.action_homeFragment_to_standbyFragment)
             } catch (_: Exception) {
             }
         }
@@ -220,7 +218,7 @@ class HomeFragment : BaseFragment(), IMainView {
                 if (PassWordToSetting.value == true) {
                     fromeSettingDialog!!.dismiss()
                     try {
-                        controller!!.navigate(R.id.action_homeFragment_to_planSettingFragment)
+                        homeFragmentNavigateToFragment(R.id.action_homeFragment_to_planSettingFragment)
                     } catch (_: Exception) {
 
                     }
@@ -259,7 +257,7 @@ class HomeFragment : BaseFragment(), IMainView {
         }
         binding.textView61.apply {
             setOnClickListener {
-                controller?.navigate(R.id.conversationFragment)
+                homeFragmentNavigateToFragment(R.id.conversationFragment)
             }
         }
         binding.viewOneKeyCallForeground.apply {
@@ -564,7 +562,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_guideFragment)
+                    homeFragmentNavigateToFragment(R.id.action_homeFragment_to_guideFragment)
                 }
             }
 
@@ -573,7 +571,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_explanationFragment)
+                    homeFragmentNavigateToFragment(R.id.action_homeFragment_to_explanationFragment)
                     Log.d("TAG", "点击智能讲解 ")
                 }
             }
@@ -582,7 +580,7 @@ class HomeFragment : BaseFragment(), IMainView {
                 //跳转到测温模式
                 Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
                 Log.d("TAG", "点击更多服务")
-                controller?.navigate(R.id.appContentFragment)
+                homeFragmentNavigateToFragment(R.id.appContentFragment)
             }
 
             "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
@@ -592,7 +590,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    controller!!.navigate(R.id.action_homeFragment_to_businessFragment)
+                    homeFragmentNavigateToFragment(R.id.action_homeFragment_to_businessFragment)
                     Log.d("TAG", "业务办理 ")
                 }
             }
@@ -753,5 +751,10 @@ class HomeFragment : BaseFragment(), IMainView {
             }
         }
         return resultCode == 1
+    }
+
+    private fun homeFragmentNavigateToFragment(actionId: Int) {
+        FaceRecognition.onDestroy()
+        navigateToFragment(actionId)
     }
 }

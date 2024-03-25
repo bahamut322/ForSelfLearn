@@ -102,7 +102,7 @@ class BusinessFragment : BaseFragment() {
         //返回按钮
         binding.llReturn.setOnClickListener {
             BaiduTTSHelper.getInstance().stop()
-            controller!!.navigate(R.id.action_businessFragment_to_homeFragment)
+            navigateToFragment(R.id.action_businessFragment_to_homeFragment)
         }
         //设置按钮
         binding.imageViewSetting.setOnClickListener {
@@ -111,7 +111,7 @@ class BusinessFragment : BaseFragment() {
                 if (RobotStatus.PassWordToSetting.value == true) {
                     try {
                         BaiduTTSHelper.getInstance().stop()
-                        controller!!.navigate(R.id.action_businessFragment_to_planSettingFragment)
+                        navigateToFragment(R.id.action_businessFragment_to_planSettingFragment)
                     } catch (_: Exception) {
                     }
                     toSettingDialog.dismiss()
@@ -142,7 +142,7 @@ class BusinessFragment : BaseFragment() {
                             // 设置 Bundle 对象参数数据
                             this.putString("taskId", taskId)
                         }
-                        controller?.navigate(R.id.businessIngFragment, args)
+                        navigateToFragment(R.id.businessIngFragment, args)
                         //上报定点任务开始
                         reportTaskDto(
                             TaskModel(endTarget = "定点导购",taskId = taskId),
@@ -166,7 +166,7 @@ class BusinessFragment : BaseFragment() {
                 }
             }
         binding.bubbleTv.setOnClickListener {
-            controller?.navigate(R.id.conversationFragment)
+            navigateToFragment(R.id.conversationFragment)
         }
     }
 

@@ -27,7 +27,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.Placeholder;
-import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
+import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class CatalogueExplantionFragment extends BaseFragment {
 
-    private StartExplanViewModel viewModel;
+    private StartExplainViewModel viewModel;
     private FragmentCatalogueExplantionBinding binding;
     private NavController controller;
     private CatalogueAdapter mAdapter;
@@ -47,7 +47,7 @@ public class CatalogueExplantionFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StartExplainViewModel.class);
     }
 
     @Override
@@ -66,9 +66,9 @@ public class CatalogueExplantionFragment extends BaseFragment {
             SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
-        binding.returnHome.setOnClickListener(v -> controller.navigate(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment));
+        binding.returnHome.setOnClickListener(v -> navigateToFragment(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment,null));
         binding.bubbleTv.setOnClickListener(v -> {
-            controller.navigate(R.id.conversationFragment);
+            navigateToFragment(R.id.conversationFragment,null);
         });
     }
 

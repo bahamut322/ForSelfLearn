@@ -134,7 +134,8 @@ class GuideFragment : BaseFragment() {
             }
         binding.llReturn.setOnClickListener {
             BaiduTTSHelper.getInstance().stop()
-            controller!!.navigate(R.id.action_guideFragment_to_homeFragment)
+
+            navigateToFragment(R.id.action_guideFragment_to_homeFragment)
         }
         binding.imageViewSetting.setOnClickListener {
             toSettingDialog.show()
@@ -142,7 +143,7 @@ class GuideFragment : BaseFragment() {
                 if (PassWordToSetting.value == true) {
                     try {
                         BaiduTTSHelper.getInstance().stop()
-                        controller!!.navigate(R.id.action_guideFragment_to_settingHomeFragment)
+                        navigateToFragment(R.id.action_guideFragment_to_settingHomeFragment)
                     } catch (_: Exception) {
                     }
                     toSettingDialog.dismiss()
