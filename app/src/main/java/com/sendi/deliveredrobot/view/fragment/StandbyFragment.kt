@@ -80,8 +80,7 @@ class StandbyFragment : Fragment() {
         if (contains1) {
             println("字符串中包含数字1,点击屏幕")
             binding.imageButton.setOnClickListener {
-                quitFragment()
-                controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
+                navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
             }
         }
         if (contains2) {
@@ -94,8 +93,7 @@ class StandbyFragment : Fragment() {
                 try {
                     if (FaceDataListener.getFaceModels().isNotEmpty() && sendFace == 0) {
                         sendFace++
-                        quitFragment()
-                        controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
+                        navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
 
                     }
                 } catch (_: Exception) {
@@ -107,14 +105,13 @@ class StandbyFragment : Fragment() {
 //            BaseVoiceRecorder.getInstance()?.recordCallback = { _, pinyinString, _ ->
 //                if (pinyinString.contains(WakeupWordHelper.wakeupWordPinyin ?: "")) {
 //                    Log.i("AudioChannel", "包含${WakeupWordHelper.wakeupWord}")
-//                    controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
+//                    navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
 //                }
 //            }
 
             wakeupListener = WakeupListener { angle, beam, score, keyWord ->
                 LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
-                quitFragment()
-                controller!!.navigate(R.id.action_standbyFragment_to_homeFragment)
+                navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
             }
             thread {
                 Thread.sleep(1000)
@@ -233,5 +230,11 @@ class StandbyFragment : Fragment() {
             WakeupEngine.destroy()
             LogUtil.i("standby fragment quitFragment done!")
         }
+    }
+
+    private fun navigateToFragment(fragmentId: Int, args: Bundle? = null){
+        FaceRecognition.onDestroy()
+        quitFragment()
+        controller?.navigate(fragmentId, args)
     }
 }

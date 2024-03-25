@@ -27,7 +27,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.Placeholder;
-import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
+import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class CatalogueExplantionFragment extends BaseFragment {
 
-    private StartExplanViewModel viewModel;
+    private StartExplainViewModel viewModel;
     private FragmentCatalogueExplantionBinding binding;
     private NavController controller;
     private CatalogueAdapter mAdapter;
@@ -47,7 +47,7 @@ public class CatalogueExplantionFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StartExplainViewModel.class);
     }
 
     @Override

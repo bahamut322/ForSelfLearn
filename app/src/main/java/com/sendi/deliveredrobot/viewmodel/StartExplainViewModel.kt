@@ -37,20 +37,20 @@ import java.util.Objects
 import kotlin.math.pow
 
 
-class StartExplanViewModel : ViewModel() {
-    var mDatas: ArrayList<MyResultModel?>? = ArrayList()
-    lateinit var mainScope: CoroutineScope
+class StartExplainViewModel : ViewModel() {
+    private var mData: ArrayList<MyResultModel?>? = null
+    var mainScope: CoroutineScope = MainScope()
     var countDownTimer: MyCountDownTimer? = null
+    val dao = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
 
 
     fun inForListData(): ArrayList<MyResultModel?>? {
-        mDatas = ArrayList()
-        mDatas = QuerySql.queryPointDate(selectRoutMapItem!!.value!!)
-        return mDatas
+        mData = QuerySql.queryPointDate(selectRoutMapItem!!.value!!)
+        return mData
     }
 
     fun finishTask() {
-        MainScope().launch {
+        mainScope.launch {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
@@ -61,16 +61,17 @@ class StartExplanViewModel : ViewModel() {
     }
 
     fun recombine(selectName: String, array: Boolean) {
+        if (mData == null) return
         var position = 0
         Universal.selectMapPoint = true
-        for (i in mDatas!!.indices) {
-            if (mDatas!![i]!!.name == selectName) {
+        for (i in mData!!.indices) {
+            if (mData!![i]?.name == selectName) {
                 Log.d("TAG", "onClick: $i")
                 position = i
                 break
             }
         }
-        MainScope().launch(Dispatchers.Default) {
+        mainScope.launch(Dispatchers.Default) {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
@@ -79,10 +80,10 @@ class StartExplanViewModel : ViewModel() {
 //            Universal.Model = "结束讲解"
 
             LogUtil.i("选择地点的索引：$position")
-            for (index in position until inForListData()!!.size) {
+//            for (index in position until mData!!.size) {
+            for (index in position until mData!!.size) {
                 val taskModel = TaskModel(
-                    location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
-                        .queryPoint(inForListData()!![index]!!.name),
+                    location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
                 val bill = createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
@@ -137,22 +138,22 @@ class StartExplanViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
+        if (mData != null) return
         BillManager.billList().clear()
-        MainScope().launch(Dispatchers.Default) {
-            for (i in mDatas!!.indices) {
+        mainScope.launch(Dispatchers.Default) {
+            for (data in mData!!) {
                 val taskModel = TaskModel(
-                    location = DataBaseDeliveredRobotMap.getDatabase(MyApplication.context).getDao()
-                        .queryPoint(mDatas!![i]!!.name),
+                    location = dao.queryPoint(data?.name?:""),
                 )
                 val bill = createBill(taskModel = taskModel)
 //                BillManager.addAllLast(bill)
-                BillManager.addAllAtIndex(bill, i)
+                BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
             }
             ready.postValue(0)
             currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
-            if (mDatas!!.size != BillManager.billList().size){
+            if (mData!!.size != BillManager.billList().size){
                 LogUtil.d("正在重新添加："+ BillManager.billList().size)
                 start()
             }
@@ -288,13 +289,6 @@ class StartExplanViewModel : ViewModel() {
         }
         return ""
     }
-
-
-    fun mainScope() {
-        mainScope = MainScope()
-
-    }
-
 
     //下一个任务
     fun nextTask(array: Boolean) {

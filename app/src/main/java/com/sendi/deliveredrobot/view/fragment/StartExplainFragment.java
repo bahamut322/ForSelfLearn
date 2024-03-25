@@ -57,7 +57,7 @@ import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
 import com.sendi.deliveredrobot.view.widget.Stat;
 import com.sendi.deliveredrobot.view.widget.TaskNext;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
-import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
+import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class StartExplainFragment extends Fragment {
     NavController controller;
     private MAdapter mAdapter;
     private int centerToTopDistance; //RecyclerView高度的一半 ,也就是控件中间位置到顶部的距离 ，
-    private StartExplanViewModel viewModel;
+    private StartExplainViewModel viewModel;
     private BaseViewModel baseViewModel;
     private ProcessClickDialog processClickDialog;
     private ChangingOverDialog changingOverDialog;
@@ -143,7 +143,7 @@ public class StartExplainFragment extends Fragment {
         LogUtil.INSTANCE.d("onViewCreated进入讲解页面");
         status();
         baseViewModel = new ViewModelProvider(this).get(BaseViewModel.class);
-        viewModel = new ViewModelProvider(this).get(StartExplanViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StartExplainViewModel.class);
         finishTaskDialog = new FinishTaskDialog(getContext());
         viewModel.downTimer();
         processClickDialog = new ProcessClickDialog(getContext());
@@ -151,7 +151,6 @@ public class StartExplainFragment extends Fragment {
         processClickDialog.setCountdownTime(QuerySql.QueryBasic().getExplainWhetherTime());
 
         init();
-        viewModel.mainScope();
 
         TaskNext.setOnChangeListener(() -> {
             if (Objects.equals(TaskNext.getToDo(), "1")) {

@@ -3,12 +3,6 @@ package com.sendi.deliveredrobot.navigationtask;
 import androidx.core.util.Consumer;
 
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
-import com.sendi.deliveredrobot.helpers.ReportDataHelper;
-import com.sendi.deliveredrobot.service.TaskStageEnum;
-import com.sendi.deliveredrobot.service.UpdateReturn;
-import com.sendi.deliveredrobot.utils.LogUtil;
-import com.sendi.deliveredrobot.view.widget.Order;
-import com.sendi.deliveredrobot.viewmodel.StartExplanViewModel;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
