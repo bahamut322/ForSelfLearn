@@ -223,21 +223,21 @@ class StandbyFragment : Fragment() {
     }
 
     private fun quitFragment() {
-        DialogHelper.loadingDialog.show()
-        LogUtil.i("standby fragment quitFragment")
-        if (EngineConstants.isRecording) {
-            stopRecord()
+        thread {
+            LogUtil.i("standby fragment quitFragment")
+            if (EngineConstants.isRecording) {
+                stopRecord()
+            }
+            if (recorder != null) {
+                recorder!!.destroyRecord()
+                recorder = null
+            }
+            if (wakeupListener != null) {
+                wakeupListener = null
+            }
+            WakeupEngine.destroy()
+            LogUtil.i("standby fragment quitFragment done!")
         }
-        if (recorder != null) {
-            recorder!!.destroyRecord()
-            recorder = null
-        }
-        if (wakeupListener != null) {
-            wakeupListener = null
-        }
-        WakeupEngine.destroy()
-        LogUtil.i("standby fragment quitFragment done!")
-        DialogHelper.loadingDialog.dismiss()
     }
 
     private fun navigateToFragment(fragmentId: Int, args: Bundle? = null) {
