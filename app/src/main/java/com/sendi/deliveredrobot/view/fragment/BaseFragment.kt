@@ -13,6 +13,7 @@ import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.iflytek.vtncaetest.utils.ErrorCode
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlin.concurrent.thread
@@ -29,6 +30,7 @@ open class BaseFragment: Fragment(){
         super.onResume()
         wakeupListener = WakeupListener { angle, beam, score, keyWord ->
             LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+            quitFragment()
             findNavController().navigate(R.id.conversationFragment)
         }
         thread {
@@ -102,7 +104,7 @@ open class BaseFragment: Fragment(){
         LogUtil.i("destroy is Done!")
     }
 
-    private fun quitFragment(){
+    protected fun quitFragment(){
         thread {
             LogUtil.i("quitFragment")
             if (EngineConstants.isRecording) {

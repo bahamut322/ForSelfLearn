@@ -61,6 +61,7 @@ public class CatalogueExplantionFragment extends BaseFragment {
         });
         binding.CatalogueList.setAdapter(mAdapter);
         binding.toCatalog.setOnClickListener(v -> {
+            quitFragment();
             viewModel.start();
             Universal.twice = true;
             SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));

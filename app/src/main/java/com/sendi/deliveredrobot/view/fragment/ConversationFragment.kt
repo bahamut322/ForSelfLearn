@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
@@ -29,6 +30,7 @@ import com.iflytek.vtncaetest.utils.senselessWordUtil
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -1231,23 +1233,23 @@ class ConversationFragment : Fragment() {
         }
 
         fun quitFragment() {
-            thread {
-                LogUtil.i("conversation quitFragment")
-                if (EngineConstants.isRecording) {
-                    stopRecord()
-                }
-                if (recorder != null) {
-                    recorder!!.destroyRecord()
-                    recorder = null
-                }
-                if (aiuiListener != null) {
-                    aiuiListener = null
-                }
-                SystemRecorder.AUDIO_TYPE_ASR = false
-                //销毁aiui
-                AiuiEngine.destroy()
-                SpeakHelper.stop()
-                LogUtil.i("conversation quitFragment is done")
+            DialogHelper.loadingDialog.show()
+            LogUtil.i("conversation quitFragment")
+            if (EngineConstants.isRecording) {
+                stopRecord()
             }
+            if (recorder != null) {
+                recorder!!.destroyRecord()
+                recorder = null
+            }
+            if (aiuiListener != null) {
+                aiuiListener = null
+            }
+            SystemRecorder.AUDIO_TYPE_ASR = false
+            //销毁aiui
+            AiuiEngine.destroy()
+            SpeakHelper.stop()
+            LogUtil.i("conversation quitFragment is done")
+            DialogHelper.loadingDialog.dismiss()
         }
     }

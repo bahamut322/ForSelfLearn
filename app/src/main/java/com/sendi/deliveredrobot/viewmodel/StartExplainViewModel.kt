@@ -15,12 +15,8 @@ import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
-import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
+import com.sendi.deliveredrobot.navigationtask.ExplanationBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.service.TaskStageEnum
@@ -84,7 +80,7 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
-                val bill = createBill(taskModel = taskModel)
+                val bill = ExplanationBill.createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
             if (!array) {
@@ -94,7 +90,7 @@ class StartExplainViewModel : ViewModel() {
             RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
             if (array) {
-                currentBill()?.executeNextTask()
+                BillManager.currentBill()?.executeNextTask()
             }
         }
     }
@@ -113,7 +109,7 @@ class StartExplainViewModel : ViewModel() {
     }
 
     fun downTimer() {
-        speakNumber.postValue("")
+        RobotStatus.speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
             countDownInterval = 1000, // 倒计时间隔，单位为毫秒
@@ -126,9 +122,9 @@ class StartExplainViewModel : ViewModel() {
 //                }
             },
             onFinish = {
-                progress.postValue(0)
+                RobotStatus.progress.postValue(0)
                 TaskNext.setToDo("1")
-                ready.postValue(0)
+                RobotStatus.ready.postValue(0)
             }
         )
     }
@@ -144,13 +140,13 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(data?.name?:""),
                 )
-                val bill = createBill(taskModel = taskModel)
+                val bill = ExplanationBill.createBill(taskModel = taskModel)
 //                BillManager.addAllLast(bill)
                 BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
             }
-            ready.postValue(0)
-            currentBill()?.executeNextTask()
+            RobotStatus.ready.postValue(0)
+            BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
             if (mData!!.size != BillManager.billList().size){
                 LogUtil.d("正在重新添加："+ BillManager.billList().size)
@@ -265,7 +261,7 @@ class StartExplainViewModel : ViewModel() {
         reportTaskDto(
             Objects.requireNonNull(
                 Objects.requireNonNull(
-                    currentBill()
+                    BillManager.currentBill()
                 )?.currentTask()
             )?.taskModel(),
             enum,
@@ -294,10 +290,10 @@ class StartExplainViewModel : ViewModel() {
 //        UpdateReturn().stop()
         mainScope.launch {
             countDownTimer?.pause()
-            currentBill()?.executeNextTask()
+            BillManager.currentBill()?.executeNextTask()
             Universal.progress = 0
             Universal.taskNum = 0
-            speakNumber.postValue(null)
+            RobotStatus.speakNumber.postValue(null)
             if (!array) {
                 Universal.nextPointGo = 1
                 UpdateReturn().stop()
