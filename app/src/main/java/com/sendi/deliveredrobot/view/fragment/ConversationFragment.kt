@@ -365,22 +365,23 @@ class ConversationFragment : Fragment() {
                                     false -> arrayOfNulls(answerPriority!!.size)
                                 }
                                 mainScope.launch(Dispatchers.IO) {
-                                    val test1 = test1()
-                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_1.getCode(),test1)
-                                    val test2 = test2()
-                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_2.getCode(),test2)
-                                    val answerAiXiaoYue = questionAiXiaoYue(asrResult, sid?:"")
-                                    findFinalAnswerAndStartTTS(
-                                        sid?:"",
-                                        ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode(),
-                                        when(answerAiXiaoYue?.code) {
-                                            200 -> answerAiXiaoYue.data.reply
-                                            204 -> ""
-                                            else -> ""
-                                        }
-                                    )
+//                                    val test1 = test1()
+//                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_1.getCode(),test1)
+//                                    val test2 = test2()
+//                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_2.getCode(),test2)
+                                    if (answerPriority?.contains(ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode()) == true) {
+                                        val answerAiXiaoYue = questionAiXiaoYue(asrResult, sid?:"")
+                                        findFinalAnswerAndStartTTS(
+                                            sid?:"",
+                                            ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode(),
+                                            when(answerAiXiaoYue?.code) {
+                                                200 -> answerAiXiaoYue.data.reply
+                                                204 -> ""
+                                                else -> ""
+                                            }
+                                        )
+                                    }
                                 }
-
                             }
                         } else if (event.info.contains("\"sub\":\"nlp")) {
                             val json = event.data.getByteArray("0").let {
@@ -414,11 +415,13 @@ class ConversationFragment : Fragment() {
                                 //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
                                 val answer = "${nlpResult.getJSONObject("answer")["text"]}"
                                 val sid = nlpResult.getString("sid")
-                                val finalAnswer = findFinalAnswer(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
-                                if (finalAnswer != null) {
-                                    startTTS(finalAnswer)
-                                    mainScope.launch {
-                                        addAnswer2(finalAnswer)
+                                if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
+                                    val finalAnswer = findFinalAnswer(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
+                                    if (finalAnswer != null) {
+                                        startTTS(finalAnswer)
+                                        mainScope.launch {
+                                            addAnswer2(finalAnswer)
+                                        }
                                     }
                                 }
                             } catch (e: JSONException) {
