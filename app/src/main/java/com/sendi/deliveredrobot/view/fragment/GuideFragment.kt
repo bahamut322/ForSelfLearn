@@ -120,6 +120,7 @@ class GuideFragment : BaseFragment() {
                     BaiduTTSHelper.getInstance().stop()
                     LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
                     mainScope.launch {
+                        quitFragment()
                         val endPoint = queryFloorPoints[position]
                         Log.d("TAG", "onViewCreated: " + endPoint.pointDirection)
                         val taskModel = TaskModel(location = endPoint)
