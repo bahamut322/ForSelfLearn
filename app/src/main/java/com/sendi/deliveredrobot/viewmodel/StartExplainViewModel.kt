@@ -40,7 +40,9 @@ class StartExplainViewModel : ViewModel() {
 
 
     fun inForListData(): ArrayList<MyResultModel?>? {
-        mData = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)
+        if (mData == null) {
+            mData = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)
+        }
         return mData
     }
 
