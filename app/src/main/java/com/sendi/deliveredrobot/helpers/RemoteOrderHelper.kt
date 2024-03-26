@@ -53,11 +53,6 @@ object RemoteOrderHelper {
             if(RobotStatus.originalLocation == null){
                 ToastUtil.show("创建远程任务失败，充电点为null")
                 LogUtil.i("创建远程任务失败，充电点为null")
-                IdleGateDataHelper.reportIdleGateCount(
-                    orderId = remoteOrderModel?.taskId?:"",
-                    accept = false,
-                    reportType = 2
-                )
             }else{
                 if(remoteOrderModel != null){
                     mainScope.launch {
@@ -72,21 +67,11 @@ object RemoteOrderHelper {
                             }else{
                                 RemoteOrderPutBillFactory.addBillToQueue(billList)
                             }
-                            IdleGateDataHelper.reportIdleGateCount(
-                                orderId = remoteOrderModel.taskId,
-                                accept = !result,
-                                reportType = 2
-                            )
                         }
                     }
                 }else{
                     ToastUtil.show("创建远程任务失败，解析错误")
                     LogUtil.i("创建远程任务失败，解析错误")
-                    IdleGateDataHelper.reportIdleGateCount(
-                        orderId = remoteOrderModel?.taskId?:"",
-                        accept = false,
-                        reportType = 2
-                    )
                 }
             }
         }

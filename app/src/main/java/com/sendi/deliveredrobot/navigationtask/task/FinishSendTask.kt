@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.navigationtask.task
 import android.content.Intent
 import com.sendi.deliveredrobot.ACTION_SEND_TASK_FINISH
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.RobotMileageHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -23,7 +22,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
                 viewModelBin1.value.resetBill()
                 taskDto.status = when(viewModelBin1.value.previousTaskFinished){
                     true -> {
-                        IdleGateDataHelper.addCount()
                         1
                     }
                     false -> {
@@ -40,7 +38,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
                 viewModelBin2.value.resetBill()
                 taskDto.status = when(viewModelBin2.value.previousTaskFinished){
                     true -> {
-                        IdleGateDataHelper.addCount()
                         1
                     }
                     false -> {
@@ -56,7 +53,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
         taskDto.apply {
             mileage = RobotMileageHelper.robotMileage()
         }
-        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun configEnum(): TaskStageEnum {

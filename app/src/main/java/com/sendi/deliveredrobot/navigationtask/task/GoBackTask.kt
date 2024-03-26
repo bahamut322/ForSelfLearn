@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_GO_BACK
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -15,7 +14,6 @@ class GoBackTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstrac
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         RobotStatus.currentStatus = TYPE_GO_BACK
-        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun configEnum(): TaskStageEnum {

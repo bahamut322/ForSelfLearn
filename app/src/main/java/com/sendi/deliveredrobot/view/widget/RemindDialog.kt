@@ -11,10 +11,7 @@ import android.widget.TextView
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.NAVIGATE_BUNDLE
-import com.sendi.deliveredrobot.NAVIGATE_ID
-import com.sendi.deliveredrobot.NAVIGATE_TO
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,7 +36,6 @@ class RemindDialog(
         }
         dialogView.findViewById<TextView>(R.id.textViewGotoSetting).apply {
             setOnClickListener {
-                IdleGateDataHelper.reportIdleGateCount(0)
                 dismiss()
                 MyApplication.instance!!.sendBroadcast(Intent().apply {
                     action = ACTION_NAVIGATE

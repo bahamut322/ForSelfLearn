@@ -4,8 +4,6 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_EXPLAN
-import com.sendi.deliveredrobot.TYPE_GUIDE
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
@@ -45,7 +43,6 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
     }
 
     override suspend fun exception() {
-        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         earlyFinish()
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)

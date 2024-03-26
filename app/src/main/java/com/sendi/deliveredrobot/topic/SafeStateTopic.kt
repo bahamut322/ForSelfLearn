@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.topic
 
-import android.util.Log
 import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_CHARGING
@@ -9,7 +8,6 @@ import com.sendi.deliveredrobot.TYPE_IDLE
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.LiftHelper
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -48,7 +46,6 @@ object SafeStateTopic {
                         //播报语音音量
                         MediaPlayerHelper.getInstance().pause()
                         BaiduTTSHelper.getInstance().pause()
-                        IdleGateDataHelper.reportIdleGateCount(0)
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_PRESSED
                         }
@@ -85,7 +82,6 @@ object SafeStateTopic {
                             MediaPlayerHelper.getInstance().resume()
                             BaiduTTSHelper.getInstance().resume()
                         }
-                        IdleGateDataHelper.reportIdleGateCount()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED
                         }
@@ -101,7 +97,6 @@ object SafeStateTopic {
 
                             else -> RobotStatus.currentStatus = previousStatus
                         }
-                        IdleGateDataHelper.reportIdleGateCount()
                         if (safeStateListener == null) {
                             when (RobotStatus.manageStatus) {
                                 RobotCommand.MANAGE_STATUS_STOP -> {

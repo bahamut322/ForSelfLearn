@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_BUSINESS
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -32,7 +31,6 @@ class StartBusinessTask (taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_BUSINESS
-        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

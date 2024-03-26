@@ -3,15 +3,12 @@ package com.sendi.deliveredrobot.navigationtask.task
 import com.sendi.deliveredrobot.TYPE_EXPLAN
 import com.sendi.deliveredrobot.TYPE_GUIDE
 import com.sendi.deliveredrobot.entity.Universal
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 /**
@@ -42,7 +39,6 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_GUIDE
-        IdleGateDataHelper.reportIdleGateCount()
 //        withContext(Dispatchers.Main){
 //            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
 //
