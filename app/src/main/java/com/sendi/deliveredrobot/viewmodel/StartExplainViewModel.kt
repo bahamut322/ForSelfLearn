@@ -125,7 +125,6 @@ class StartExplainViewModel : ViewModel() {
             onFinish = {
                 RobotStatus.progress.postValue(0)
                 TaskNext.setToDo("1")
-                RobotStatus.ready.postValue(0)
             }
         )
     }
@@ -146,7 +145,6 @@ class StartExplainViewModel : ViewModel() {
                 BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
             }
-            RobotStatus.ready.postValue(0)
             BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
             if (mData!!.size != BillManager.billList().size){

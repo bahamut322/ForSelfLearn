@@ -113,7 +113,6 @@ class BusinessViewModel : ViewModel() {
             onFinish = {
                 RobotStatus.progress.postValue(0)
                 hasArrive = false
-                RobotStatus.ready.postValue(0)
                 if (type == 1) {
                     pageJump(controller)
                     //上报定点任务流程结束

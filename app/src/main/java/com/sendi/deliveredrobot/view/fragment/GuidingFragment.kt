@@ -150,14 +150,12 @@ class GuidingFragment : Fragment() {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
                 Order.setFlage("0")
-                RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
             } else if (actionData?.movePrompt.isNullOrEmpty() && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
                 Order.setFlage("0")
-                RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
             } else if (progressObserver == Universal.ExplainLength && arrayPointObserver != 1) {
@@ -225,7 +223,6 @@ class GuidingFragment : Fragment() {
             }
             RobotStatus.progress.postValue(0)
             Order.setFlage("0")
-            RobotStatus.ready.postValue(0)
             viewModel!!.hasArrive = false
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
@@ -236,7 +233,6 @@ class GuidingFragment : Fragment() {
                 }
                 RobotStatus.progress.postValue(0)
                 Order.setFlage("0")
-                RobotStatus.ready.postValue(0)
                 viewModel!!.hasArrive = false
             }
         }

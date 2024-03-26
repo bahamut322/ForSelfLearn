@@ -370,7 +370,6 @@ class SelfCheckFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(requireView())
-        RobotStatus.ready.postValue(0)
         settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
         //帧动画
         binding.bootIv.setImageResource(R.drawable.self_login)
