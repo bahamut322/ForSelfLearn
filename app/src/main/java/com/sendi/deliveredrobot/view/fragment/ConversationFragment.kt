@@ -367,6 +367,7 @@ class ConversationFragment : Fragment() {
                 }
             }, Date(), 1000)
 //        initVoiceRecord()
+            DialogHelper.loadingDialog.show()
             thread {
                 LogUtil.i("conversation initSDK")
                 // 资源拷贝
@@ -576,8 +577,14 @@ class ConversationFragment : Fragment() {
                         else -> {}
                     }
                 }
+                Thread.sleep(500)
+                if(!isResumed){
+                    DialogHelper.loadingDialog.dismiss()
+                    return@thread
+                }
                 initSDK()
                 startRecord()
+                DialogHelper.loadingDialog.dismiss()
             }
             SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
                 override fun speakAllFinish() {

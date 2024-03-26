@@ -115,11 +115,17 @@ class StandbyFragment : Fragment() {
                 LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
                 navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
             }
+            DialogHelper.loadingDialog.show()
             thread {
-                Thread.sleep(1000)
+                Thread.sleep(500)
+                if (!isResumed) {
+                    DialogHelper.loadingDialog.dismiss()
+                    return@thread
+                }
                 CopyAssetsUtils.portingFile(MyApplication.context)
                 initSDK()
                 startRecord()
+                DialogHelper.loadingDialog.dismiss()
             }
         }
     }

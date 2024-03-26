@@ -33,14 +33,17 @@ open class BaseFragment: Fragment(){
             quitFragment()
             findNavController().navigate(R.id.conversationFragment)
         }
+        DialogHelper.loadingDialog.show()
         thread {
-//            DialogHelper.loadingDialog.show()
-//            Thread.sleep(2000)
+            Thread.sleep(500)
+            if(!isResumed) {
+                DialogHelper.loadingDialog.dismiss()
+                return@thread
+            }
             CopyAssetsUtils.portingFile(MyApplication.context)
             initSDK()
-//            Thread.sleep(5000)
             startRecord()
-//            DialogHelper.loadingDialog.dismiss()
+            DialogHelper.loadingDialog.dismiss()
         }
     }
 
