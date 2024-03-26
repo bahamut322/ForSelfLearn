@@ -698,7 +698,7 @@
 
     <fragment
         android:id="@+id/CatalogueExplantionFragment"
-        android:name="com.sendi.deliveredrobot.view.fragment.CatalogueExplantionFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.CatalogueExplanationFragment"
         android:label="CatalogueExplantionFragment">
         <action
             android:id="@+id/action_CatalogueExplantionFragment_to_StartExplantionFragment"

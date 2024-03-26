@@ -36,7 +36,7 @@ import java.util.List;
  * @author swn
  * @describe 讲解目录
  */
-public class CatalogueExplantionFragment extends BaseFragment {
+public class CatalogueExplanationFragment extends BaseFragment {
 
     private StartExplainViewModel viewModel;
     private FragmentCatalogueExplantionBinding binding;

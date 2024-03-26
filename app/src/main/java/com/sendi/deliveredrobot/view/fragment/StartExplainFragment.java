@@ -429,7 +429,7 @@ public class StartExplainFragment extends Fragment {
                     DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
                     binding.goingName.setText(viewModel.inForListData().get(position).getName());
-                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
+//                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
                     if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                         binding.argPic.setVisibility(View.VISIBLE);
                         Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_walkPic()).placeholder(R.drawable.ic_warming).into(binding.argPic);

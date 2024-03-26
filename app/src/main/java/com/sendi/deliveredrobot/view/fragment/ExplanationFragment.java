@@ -224,21 +224,15 @@ public class ExplanationFragment extends BaseFragment {
 
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) binding.explainRv.getLayoutManager();
         View childView = linearLayoutManager.findViewByPosition(position);
-        Log.i("ccb", "000000: " + position);
         //把当前View移动到居中位置
         if (childView == null) return;
         int childVhalf = childView.getWidth() / 2;
         int childViewLeft = childView.getLeft();
         int viewCTop = centerToLiftDistance;
         int smoothDistance = childViewLeft - viewCTop + childVhalf;
-        Log.i("ccb", "\n居中位置距离左部距离: " + viewCTop
-                + "\n当前居中控件距离左部距离: " + childViewLeft
-                + "\n当前居中控件的一半高度: " + childVhalf
-                + "\n滑动后再次移动距离: " + smoothDistance);
         binding.explainRv.smoothScrollBy(smoothDistance, 0, decelerateInterpolator);
         mAdapter.setSelectPosition(position);
-
-        LogUtil.INSTANCE.d("当前选中:" + mDatas.get(position));
+//        LogUtil.INSTANCE.d("当前选中:" + mDatas.get(position));
     }
 
 
@@ -315,7 +309,6 @@ public class ExplanationFragment extends BaseFragment {
                 } else {
                     scrollToCenter(fp);
                     RobotStatus.INSTANCE.setSelectRouteMapItemId(mDatas.get(position).getId());
-                    Log.d("TAG", "onBindViewHolder: " + mDatas.get(position).getId());
                     navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
                     SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","",mDatas.get(position).getRouteName(),"智能讲解"));
                 }
