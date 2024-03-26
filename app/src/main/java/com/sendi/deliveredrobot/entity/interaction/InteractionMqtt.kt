@@ -331,10 +331,9 @@ class InteractionMqtt {
     }
 
 
-    fun ExplainType(message: String) {
+    fun explainType(message: String) {
         val gson = Gson()
         val routeConfig = gson.fromJson(message, RouteConfig::class.java)
-        RobotStatus.routeConfig?.value = routeConfig
         //所有图片存储的总路径
         LogUtil.d("收到讲解路线配置")
         val tableRoute = Table_Route()

@@ -264,8 +264,8 @@ public class ExplanationFragment extends BaseFragment {
                 if (binding.explainRv.getAdapter() != null) {
                     binding.explainRv.getAdapter().notifyDataSetChanged();
                 }
-                String slogan = (RobotStatus.INSTANCE.getExplainConfig().getValue() != null
-                        ? RobotStatus.INSTANCE.getExplainConfig().getValue().getSlogan()
+                String slogan = (RobotStatus.INSTANCE.getExplainConfig() == null
+                        ? RobotStatus.INSTANCE.getExplainConfig().getSlogan()
                         : QuerySql.QueryExplainConfig().getSlogan());
                 binding.tvExplanationName.setText(slogan);
             }

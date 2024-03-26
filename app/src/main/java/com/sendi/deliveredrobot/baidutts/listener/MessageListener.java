@@ -128,9 +128,6 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
             //恢复视频声音
             Order.setFlage("0");
             RobotStatus.INSTANCE.getIdentifyFaceSpeak().postValue(1);
-            if (Objects.requireNonNull(RobotStatus.INSTANCE.getSpeakNumber().getValue()).length() != 0) {
-                RobotStatus.INSTANCE.getSpeakContinue().postValue(1);
-            }
         }
 //        RobotStatus.INSTANCE.getProgress().observeForever(integer -> {
 //            if (utteranceId.equals("explanation") && integer == Universal.ExplainLength) {

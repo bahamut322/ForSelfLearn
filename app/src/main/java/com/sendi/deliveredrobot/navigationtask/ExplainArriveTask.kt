@@ -25,7 +25,6 @@ class ExplainArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 //        if (TaskQueues.previousTask != null && TaskQueues.previousTask !is NavToFarPointTask) {
         if (BillManager.billList().size<=1) {
             LogUtil.i("all讲解任务结束")
-            RobotStatus.explanationTaskFinish.postValue(1)
             var pointName = taskModel?.location?.pointName ?: ""
             pointName = pointName.toList().joinToString(" ")
 //            SpeakHelper.speak(

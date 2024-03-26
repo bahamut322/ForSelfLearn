@@ -144,7 +144,7 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val explainConfig = gson.fromJson(message, ExplainConfig::class.java)
                     deleteAll(Table_Explain_Config::class.java)
-                    RobotStatus.explainConfig?.value = explainConfig
+                    RobotStatus.explainConfig = explainConfig
                     val tableExplainConfig =
                         Table_Explain_Config()
                     tableExplainConfig.slogan = explainConfig.slogan
@@ -174,7 +174,6 @@ object MqttMessageHandler {
                     deleteAll(Table_Advertising::class.java)
 //                    deleteFiles(File(Universal.advertisement))
 //                    advFile = null
-                    RobotStatus.advertisingConfig?.value = advertisingConfig
                     ToastUtil.show("收到广告配置")
                     LogUtil.d("收到广告配置")
                     val tableAdvertising =
@@ -289,7 +288,7 @@ object MqttMessageHandler {
                 "replyRouteList" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解路线配置")
-                    InteractionMqtt().ExplainType(message)
+                    InteractionMqtt().explainType(message)
                 }
 
                 //机器人门岗配置

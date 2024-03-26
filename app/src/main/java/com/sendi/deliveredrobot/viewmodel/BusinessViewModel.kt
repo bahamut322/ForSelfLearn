@@ -101,7 +101,6 @@ class BusinessViewModel : ViewModel() {
      * @param type 任务类型
      */
     fun downTimer(timer: Int, type: Int, controller: NavController,taskId : String) {
-        RobotStatus.speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = timer * 1000L, // 倒计时总时长，单位为毫秒
             countDownInterval = 1000, // 倒计时间隔，单位为毫秒

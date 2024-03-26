@@ -297,27 +297,6 @@ object CheckSelfHelper {
     }
 
     /**
-     * @describe 检测仓门状态
-     */
-    private fun checkDoor() {
-        // 检测仓门是否关闭
-        var state = ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_ONE)
-        RobotStatus.doorState.add(state)
-        if (state != 2) {
-            LogUtil.i("仓门1未关闭,开机执行关闭")
-            //仓门未关闭
-            ROSHelper.controlBin(cmd = RobotCommand.CMD_CLOSE, door = DoorState.DOOR_ONE)
-        }
-        state = ROSHelper.controlBin(cmd = RobotCommand.CMD_CHECK, door = DoorState.DOOR_TWO)
-        RobotStatus.doorState.add(state)
-        if (state != 2) {
-            LogUtil.i("仓门2未关闭,开机执行关闭")
-            //仓门未关闭,执行关闭仓门
-            ROSHelper.controlBin(cmd = RobotCommand.CMD_CLOSE, door = DoorState.DOOR_TWO)
-        }
-    }
-
-    /**
      * 检测摄像头
      */
     @SuppressLint("UnsupportedChromeOsCameraSystemFeature")

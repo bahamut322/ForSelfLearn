@@ -177,7 +177,6 @@ public class StartExplainFragment extends Fragment {
                     BaiduTTSHelper.getInstance().stop();
 
                     MediaPlayerHelper.getInstance().stop();
-                    RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                     nextTaskToDo = false;
                     binding.acceptstationTv.stopPlay();
 
@@ -207,7 +206,6 @@ public class StartExplainFragment extends Fragment {
 //                if (Universal.taskQueue != null) {
 //                    Universal.taskQueue.clear();
 //                }
-                RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 binding.acceptstationTv.stopPlay();
@@ -693,7 +691,6 @@ public class StartExplainFragment extends Fragment {
                             beforePage = -1;
                             page.set(0);
                             Universal.progress = 0;
-                            RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
                         }
 
                     });
@@ -746,7 +743,6 @@ public class StartExplainFragment extends Fragment {
 //                if (Universal.taskQueue != null) {
 //                    Universal.taskQueue.clear();
 //                }
-                RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 viewModel.finishTask();
                 binding.acceptstationTv.stopPlay();
@@ -765,7 +761,6 @@ public class StartExplainFragment extends Fragment {
 //                Universal.taskQueue.clear();
 //            }
             beforePage = -1;
-            RobotStatus.INSTANCE.getSpeakNumber().postValue("");
             MediaPlayerHelper.getInstance().stop();
 //            isMethodExecuted = false;
             binding.acceptstationTv.stopPlay();
@@ -805,7 +800,6 @@ public class StartExplainFragment extends Fragment {
                 beforePage = -1;
                 Universal.progress = 0;
                 MediaPlayerHelper.getInstance().stop();
-                RobotStatus.INSTANCE.getSpeakNumber().postValue(null);
                 binding.acceptstationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
                 changingOverDialog.dismiss();

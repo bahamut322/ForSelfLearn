@@ -44,7 +44,6 @@ public class ExplainGoingSpeakAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void result) {
         if (mDatas.get(position).getWalktext() != null && !mDatas.get(position).getWalktext().isEmpty()) {
-            RobotStatus.INSTANCE.getSpeakNumber().setValue(mDatas.get(position).getWalktext());
         }
         if (mDatas.get(position).getWalkvoice() != null && !mDatas.get(position).getWalkvoice().isEmpty()) {
             try {

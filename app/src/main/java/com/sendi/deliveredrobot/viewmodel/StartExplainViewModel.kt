@@ -111,7 +111,6 @@ class StartExplainViewModel : ViewModel() {
     }
 
     fun downTimer() {
-        RobotStatus.speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
             countDownInterval = 1000, // 倒计时间隔，单位为毫秒
@@ -295,7 +294,6 @@ class StartExplainViewModel : ViewModel() {
             BillManager.currentBill()?.executeNextTask()
             Universal.progress = 0
             Universal.taskNum = 0
-            RobotStatus.speakNumber.postValue(null)
             if (!array) {
                 Universal.nextPointGo = 1
                 UpdateReturn().stop()
