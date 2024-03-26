@@ -57,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
         //重启双屏异显
         showPresentationByMediaRouter();
 //        ShowPresentationByDisplaymanager();
-        RobotStatus.INSTANCE.getNewUpdata().postValue(1);
+        RobotStatus.INSTANCE.getNewUpdate().postValue(1);
     }
 
     @Override

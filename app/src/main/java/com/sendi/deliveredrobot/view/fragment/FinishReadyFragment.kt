@@ -44,7 +44,7 @@ class FinishReadyFragment : Fragment() {
         controller = Navigation.findNavController(requireView())
         binding.successTv.text = "已到达待命点"
         Universal.guideTask = false
-        RobotStatus.selectRoutMapItem!!.postValue(-1)
+        RobotStatus.selectRouteMapItemId = -1
         Universal.businessTask = null
         MainScope().launch {
             virtualTaskExecute(2, "到达待命点")

@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -29,6 +30,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.enum.ASROrNlpModelTypeEnum
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
@@ -305,16 +307,17 @@ class ConversationFragment : Fragment() {
             }
         }, Date(), 1000)
 //        initVoiceRecord()
-        thread {
-            LogUtil.i("conversation initSDK")
-            // 资源拷贝
-            CopyAssetsUtils.portingFile(MyApplication.context)
-            aiuiListener = AIUIListener { event: AIUIEvent ->
-                when (event.eventType) {
-                    AIUIConstant.EVENT_CONNECTED_TO_SERVER -> {
-                        val uid = event.data.getString("uid")
-                        LogUtil.i("已连接服务器,uid：$uid")
-                    }
+            DialogHelper.loadingDialog.show()
+            thread {
+                LogUtil.i("conversation initSDK")
+                // 资源拷贝
+                CopyAssetsUtils.portingFile(MyApplication.context)
+                aiuiListener = AIUIListener { event: AIUIEvent ->
+                    when (event.eventType) {
+                        AIUIConstant.EVENT_CONNECTED_TO_SERVER -> {
+                            val uid = event.data.getString("uid")
+                            LogUtil.i("已连接服务器,uid：$uid")
+                        }
 
                     AIUIConstant.EVENT_SERVER_DISCONNECTED -> LogUtil.i("与服务器断开连接")
 
@@ -535,18 +538,24 @@ class ConversationFragment : Fragment() {
                         }
                     }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
+                Thread.sleep(500)
+                if(!isResumed){
+                    DialogHelper.loadingDialog.dismiss()
+                    return@thread
+                }
+                initSDK()
+                startRecord()
+                DialogHelper.loadingDialog.dismiss()
             }
-            initSDK()
-            startRecord()
-        }
-        SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
-            override fun speakAllFinish() {
-                LogUtil.i("tts:播放完成")
-                AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
-                talkingView = null
-            }
+            SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
+                override fun speakAllFinish() {
+                    LogUtil.i("tts:播放完成")
+                    AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
+                    talkingView = null
+                }
 
             override fun progressChange(utteranceId: String, progress: Int) {
                 startTime = System.currentTimeMillis()

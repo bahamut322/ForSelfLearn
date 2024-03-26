@@ -118,7 +118,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
         navigationReceiver = NavigationReceiver()
         navigationReceiver.navController = navController
         registerReceiver(navigationReceiver, IntentFilter(ACTION_NAVIGATE))
-        RobotStatus.PassWordToSetting.postValue(false);
+        RobotStatus.passWordToSetting.postValue(false);
         //-----------------设置状态栏状态receiver--------------------
         val intentFilter = IntentFilter()
         intentFilter.addAction(Intent.ACTION_TIME_TICK) //每分钟变化
@@ -431,10 +431,10 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
     private fun screenRenew() {
         SecondScreenManageHelper.init(this)
         //监听观察者更新副屏内容
-        RobotStatus.newUpdata.observe(this) {
+        RobotStatus.newUpdate.observe(this) {
             if (it == 1 || it == 2) {
                 Log.d(TAG, "screenRenew: 更新副屏内容")
-                RobotStatus.newUpdata.postValue(null)
+                RobotStatus.newUpdate.postValue(null)
                 SecondScreenManageHelper.refreshSecondScreen(RobotStatus.sdScreenStatus)
             }
             if (it == 3) {

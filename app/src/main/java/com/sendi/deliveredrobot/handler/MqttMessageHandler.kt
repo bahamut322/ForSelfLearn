@@ -144,7 +144,7 @@ object MqttMessageHandler {
                     val gson = Gson()
                     val explainConfig = gson.fromJson(message, ExplainConfig::class.java)
                     deleteAll(Table_Explain_Config::class.java)
-                    RobotStatus.explainConfig?.value = explainConfig
+                    RobotStatus.explainConfig = explainConfig
                     val tableExplainConfig =
                         Table_Explain_Config()
                     tableExplainConfig.slogan = explainConfig.slogan
@@ -158,7 +158,7 @@ object MqttMessageHandler {
                     tableExplainConfig.timeStamp = explainConfig.timeStamp!!
                     if (tableExplainConfig.save()) {
                         // 数据保存成功
-                        RobotStatus.newUpdata.postValue(2)
+                        RobotStatus.newUpdate.postValue(2)
                         Log.d("TAG", "receive: 讲解配置数据保存成功")
                         UpdateReturn().method()
                     } else {
@@ -174,7 +174,6 @@ object MqttMessageHandler {
                     deleteAll(Table_Advertising::class.java)
 //                    deleteFiles(File(Universal.advertisement))
 //                    advFile = null
-                    RobotStatus.advertisingConfig?.value = advertisingConfig
                     ToastUtil.show("收到广告配置")
                     LogUtil.d("收到广告配置")
                     val tableAdvertising =
@@ -243,7 +242,7 @@ object MqttMessageHandler {
                     if (tableAdvertising.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 广告配置数据保存成功")
-                        RobotStatus.newUpdata.postValue(1)
+                        RobotStatus.newUpdate.postValue(1)
                         updateConfig()
                     } else {
                         // 数据保存失败
@@ -278,7 +277,7 @@ object MqttMessageHandler {
                     shoppingConfigDB.baseTimeStamp = shoppingConfig.baseTimeStamp
                     if (shoppingConfigDB.save()) {
                         // 数据保存成功
-                        RobotStatus.newUpdata.postValue(2)
+                        RobotStatus.newUpdate.postValue(2)
                         Log.d("TAG", "云平台下发导购配置保存成功")
                     } else {
                         // 数据保存失败
@@ -289,7 +288,7 @@ object MqttMessageHandler {
                 "replyRouteList" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解路线配置")
-                    InteractionMqtt().ExplainType(message)
+                    InteractionMqtt().explainType(message)
                 }
 
                 //机器人门岗配置

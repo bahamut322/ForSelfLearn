@@ -140,7 +140,7 @@ object FaceRecognition {
                 }
                 c?.addCallbackBuffer(buffer)
             }
-            newUpdateMediatorLiveData.addSource(RobotStatus.newUpdata){
+            newUpdateMediatorLiveData.addSource(RobotStatus.newUpdate){
                 Log.d(TAG, "suerFaceInit: 获取数据")
                 doubleString = QuerySql.faceMessage()
             }
@@ -444,7 +444,7 @@ object FaceRecognition {
      * 销毁
      */
     fun onDestroy() {
-        newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdata)
+        newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
         identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
         if (null != c) {
             LogUtil.i("人脸识别销毁")

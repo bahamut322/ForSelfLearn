@@ -1,11 +1,5 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
-import android.content.Intent
-import com.sendi.deliveredrobot.ACTION_NAVIGATE
-import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.NAVIGATE_ID
-import com.sendi.deliveredrobot.R
-import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -28,7 +22,7 @@ class GuideArriveTask(taskModel: TaskModel, needReportData: Boolean = true) : Ab
 //        if (TaskQueues.previousTask != null && TaskQueues.previousTask !is NavToFarPointTask) {
             var pointName = taskModel?.location?.pointName ?: ""
             pointName = pointName.toList().joinToString(" ")
-        RobotStatus.ArrayPointExplan.postValue(1)
+        RobotStatus.arrayPointExplain.postValue(1)
 
 //        SpeakHelper.speak(String.format(MyApplication.instance!!.getString(R.string.point_arrived),pointName))
 //        }

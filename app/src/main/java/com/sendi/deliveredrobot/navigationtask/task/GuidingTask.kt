@@ -3,17 +3,13 @@ package com.sendi.deliveredrobot.navigationtask.task
 import android.content.Intent
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.helpers.SpeakHelper
-import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
-import kotlinx.coroutines.launch
 
 /**
  * @describe:引领中
@@ -32,7 +28,7 @@ class GuidingTask(
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        RobotStatus.ArrayPointExplan.postValue(0)
+        RobotStatus.arrayPointExplain.postValue(0)
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         val result = ROSHelper.navigateTo(taskModel!!.location!!)

@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.entity.interaction
 import android.content.ContentValues
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.entity.GuideConfig
 import com.sendi.deliveredrobot.entity.Table_Big_Screen
@@ -68,7 +67,7 @@ class InteractionMqtt {
                 } else {
                     LogUtil.d("导购：地图${action.rootMapName}中${action.name}删除失败")
                 }
-                RobotStatus.newUpdata.postValue(2)
+                RobotStatus.newUpdate.postValue(2)
                 continue
             }
             map = LinkedHashMap()
@@ -95,7 +94,7 @@ class InteractionMqtt {
                     DeleteSql.deleteShoppingAction(action.name, action.rootMapName)
                     println("Name: $action.name, Timestamp: $timestamp")
                 } else if (action.timeStamp == timestamp) {
-                    RobotStatus.newUpdata.postValue(2)
+                    RobotStatus.newUpdate.postValue(2)
                     continue
                 }
             }
@@ -325,17 +324,16 @@ class InteractionMqtt {
                 shoppingActionDB.touchScreenConfig = tableTouchScreen
             }
             if (shoppingActionDB.save()) {
-                RobotStatus.newUpdata.postValue(2)
+                RobotStatus.newUpdate.postValue(2)
             }
         }
 
     }
 
 
-    fun ExplainType(message: String) {
+    fun explainType(message: String) {
         val gson = Gson()
         val routeConfig = gson.fromJson(message, RouteConfig::class.java)
-        RobotStatus.routeConfig?.value = routeConfig
         //所有图片存储的总路径
         LogUtil.d("收到讲解路线配置")
         val tableRoute = Table_Route()
@@ -731,7 +729,7 @@ class InteractionMqtt {
                     if (tableRoute.save()) {
                         // 数据保存成功
                         Log.d("TAG", "receive: 讲解点数据保存成功")
-                        RobotStatus.newUpdata.postValue(2)
+                        RobotStatus.newUpdate.postValue(2)
                     } else {
                         // 数据保存失败
                         Log.d("TAG", "receive: 讲解点数据保存失败")
@@ -796,7 +794,7 @@ class InteractionMqtt {
                             points.pointName,
                             maps.mapName
                         )
-                        RobotStatus.newUpdata.postValue(2)
+                        RobotStatus.newUpdate.postValue(2)
                         continue
                     } else if (points.pointTimeStamp!! <= 0) {
                         Log.e("TAG", "ActionShoppingType: 引领数据删除")
@@ -835,7 +833,7 @@ class InteractionMqtt {
                 guideConfigDB.pointList = pointList
 
                 if (guidePointPicDB.save()) {
-                    RobotStatus.newUpdata.postValue(2)
+                    RobotStatus.newUpdate.postValue(2)
                 }
             }
         }
@@ -1071,7 +1069,7 @@ class InteractionMqtt {
             guideFoundationConfigDB.touchScreenConfig = tableTouchScreen
         }
         if (guideFoundationConfigDB.save()) {
-            RobotStatus.newUpdata.postValue(2)
+            RobotStatus.newUpdate.postValue(2)
         }
     }
 
@@ -1325,7 +1323,7 @@ class InteractionMqtt {
 
         // 如果输出存储成功
         if (replyTableGreetConfig.save()) {
-            RobotStatus.newUpdata.postValue(2)
+            RobotStatus.newUpdate.postValue(2)
         }
     }
 

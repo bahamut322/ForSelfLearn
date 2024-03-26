@@ -35,8 +35,6 @@ object RobotStatus {
 
     // 适配器状态 1-接入电源线 0-电源线拔出
     val adapterState: MutableLiveData<Byte> = MutableLiveData(-1)
-    // 仓门状态
-    val doorState = arrayListOf<Int>()
     //广告屏
     //电量
     val batteryPower: MutableLiveData<Float> = MutableLiveData(-1f)
@@ -62,24 +60,19 @@ object RobotStatus {
     val versionStatusModel = MutableLiveData<VersionStatusModel>()//机器人版本状态
     val tenancy = MutableLiveData<ResponseTenancyModel>() //使用期限
     var odomPose: Pose2D? = null //里程计
-    val PassWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
+    val passWordToSetting : MutableLiveData<Boolean> = MutableLiveData<Boolean>()//监听密码是否输入正确
     var robotConfig : MutableLiveData<RobotConfig>? = MutableLiveData<RobotConfig>()//X8机器人配置
     var shoppingConfigList : MutableLiveData<ShoppingGuideConfing>? = MutableLiveData<ShoppingGuideConfing>()//导购配置
-    var routeConfig : MutableLiveData<RouteConfig>? = MutableLiveData<RouteConfig>()//讲解路线配置
-    var explainConfig : MutableLiveData<ExplainConfig>? = MutableLiveData<ExplainConfig>()//讲解配置
-    var advertisingConfig : MutableLiveData<AdvertisingConfig>? = MutableLiveData<AdvertisingConfig>()
-    var newUpdata = MutableLiveData<Int?>()//1:配置下载完成 ；2：数据存储到数据库，不代表配置下载完成 3:下载配置中提醒副屏幕变更成默认图片
+    var explainConfig : ExplainConfig? = null//讲解配置
+    var newUpdate = MutableLiveData<Int?>()//1:配置下载完成 ；2：数据存储到数据库，不代表配置下载完成 3:下载配置中提醒副屏幕变更成默认图片
     var onTouch : MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
-    var speakNumber : MutableLiveData<String> = MutableLiveData("")//记录智能讲解中断的之前朗读的文字个数
-    var speakContinue : MutableLiveData<Int>? = MutableLiveData<Int>()//记录智能讲解朗读的内容
     var identifyFaceSpeak : MutableLiveData<Int> = MutableLiveData(1)//观察百度语音是否朗读完毕，之后进行人脸识别
     var sdScreenStatus: Int? = 0 // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾 6:轻应用
-    var selectRoutMapItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择的item
-    var pointItem : MutableLiveData<Int>? = MutableLiveData(-1)//选择item中的列表的索引
+    var selectRouteMapItemId  = -1//选择的item的id
+    var pointItemIndex = -1//选择item中的列表的索引
     var targetName : MutableLiveData<String?>? = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
-    var ArrayPointExplan : MutableLiveData<Int> = MutableLiveData()//记录是否到点
-    var explanationTaskFinish : MutableLiveData<Int> = MutableLiveData()//是否完成任务
+    var arrayPointExplain : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var ttsIsPlaying = false //百度语音播放状态
         set(value) {
 //            when (value) {

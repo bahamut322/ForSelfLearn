@@ -15,13 +15,8 @@ import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.BillManager.currentBill
-import com.sendi.deliveredrobot.navigationtask.ExplanationBill.createBill
+import com.sendi.deliveredrobot.navigationtask.ExplanationBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.progress
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.ready
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.selectRoutMapItem
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.speakNumber
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.service.TaskStageEnum
@@ -45,7 +40,9 @@ class StartExplainViewModel : ViewModel() {
 
 
     fun inForListData(): ArrayList<MyResultModel?>? {
-        mData = QuerySql.queryPointDate(selectRoutMapItem!!.value!!)
+        if (mData == null) {
+            mData = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)
+        }
         return mData
     }
 
@@ -56,7 +53,7 @@ class StartExplainViewModel : ViewModel() {
             }
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 
@@ -85,17 +82,17 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
-                val bill = createBill(taskModel = taskModel)
+                val bill = ExplanationBill.createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
             if (!array) {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             }
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
             if (array) {
-                currentBill()?.executeNextTask()
+                BillManager.currentBill()?.executeNextTask()
             }
         }
     }
@@ -114,7 +111,6 @@ class StartExplainViewModel : ViewModel() {
     }
 
     fun downTimer() {
-        speakNumber.postValue("")
         countDownTimer = MyCountDownTimer(
             millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
             countDownInterval = 1000, // 倒计时间隔，单位为毫秒
@@ -127,9 +123,9 @@ class StartExplainViewModel : ViewModel() {
 //                }
             },
             onFinish = {
-                progress.postValue(0)
+                RobotStatus.progress.postValue(0)
                 TaskNext.setToDo("1")
-                ready.postValue(0)
+                RobotStatus.ready.postValue(0)
             }
         )
     }
@@ -138,20 +134,20 @@ class StartExplainViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
-        if (mData != null) return
+        if (mData == null) return
         BillManager.billList().clear()
         mainScope.launch(Dispatchers.Default) {
             for (data in mData!!) {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(data?.name?:""),
                 )
-                val bill = createBill(taskModel = taskModel)
+                val bill = ExplanationBill.createBill(taskModel = taskModel)
 //                BillManager.addAllLast(bill)
                 BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
             }
-            ready.postValue(0)
-            currentBill()?.executeNextTask()
+            RobotStatus.ready.postValue(0)
+            BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
             if (mData!!.size != BillManager.billList().size){
                 LogUtil.d("正在重新添加："+ BillManager.billList().size)
@@ -266,7 +262,7 @@ class StartExplainViewModel : ViewModel() {
         reportTaskDto(
             Objects.requireNonNull(
                 Objects.requireNonNull(
-                    currentBill()
+                    BillManager.currentBill()
                 )?.currentTask()
             )?.taskModel(),
             enum,
@@ -295,16 +291,15 @@ class StartExplainViewModel : ViewModel() {
 //        UpdateReturn().stop()
         mainScope.launch {
             countDownTimer?.pause()
-            currentBill()?.executeNextTask()
+            BillManager.currentBill()?.executeNextTask()
             Universal.progress = 0
             Universal.taskNum = 0
-            speakNumber.postValue(null)
             if (!array) {
                 Universal.nextPointGo = 1
                 UpdateReturn().stop()
             }
             TaskNext.setToDo("0")
-            RobotStatus.ArrayPointExplan.postValue(0)
+            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 

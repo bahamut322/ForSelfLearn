@@ -1,14 +1,10 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -33,7 +29,6 @@ import com.sendi.deliveredrobot.service.Placeholder
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
@@ -43,7 +38,6 @@ import com.sendi.deliveredrobot.viewmodel.BaseViewModel
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 /**
  * @Author Swn
@@ -60,7 +54,7 @@ class BusinessIngFragment : Fragment() {
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
-    private val arrayPoint = RobotStatus.ArrayPointExplan
+    private val arrayPoint = RobotStatus.arrayPointExplain
     private val progress = RobotStatus.progress
     private var taskId = ""
 

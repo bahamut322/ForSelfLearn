@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
@@ -43,7 +42,7 @@ class DockingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         Universal.guideTask = false
-        RobotStatus.selectRoutMapItem!!.postValue(-1)
+        RobotStatus.selectRouteMapItemId = -1
         Universal.businessTask = null
 //        Glide.with(this).asGif().load(R.raw.docking).into(binding.imageViewDocking)
         binding.textViewBeginPush.apply {

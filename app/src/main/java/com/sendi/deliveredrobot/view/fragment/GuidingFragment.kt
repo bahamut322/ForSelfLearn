@@ -27,7 +27,6 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.Order
@@ -58,7 +57,7 @@ class GuidingFragment : Fragment() {
         MediatorLiveData<Pair<Int, Int>>()//储存两个Int类型的值来观察，监听多个LiveData源的变化
     private var processClickDialog: ProcessClickDialog? = null
     private var finishTaskDialog: FinishTaskDialog? = null
-    private val arrayPoint = RobotStatus.ArrayPointExplan
+    private val arrayPoint = RobotStatus.arrayPointExplain
     private val progress = RobotStatus.progress
     var pointName = ""
     override fun onCreateView(

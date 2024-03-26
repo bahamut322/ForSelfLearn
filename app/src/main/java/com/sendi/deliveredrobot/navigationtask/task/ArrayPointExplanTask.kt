@@ -33,13 +33,13 @@ class ArrayPointExplanTask(var status: Int = 1, taskModel: TaskModel) : Abstract
         LogUtil.i("TODO 到达讲解点")
         if (Universal.nextPointGo == 0) {
             LogUtil.i("TODO 到达讲解点通知")
-            RobotStatus.ArrayPointExplan.postValue(1)
+            RobotStatus.arrayPointExplain.postValue(1)
             TaskNext.setOnChangeListener {
                 if (TaskNext.getToDo() == "1") {
                     LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
                     BillManager.currentBill()?.executeNextTask()
                     TaskNext.setToDo("0")
-                    RobotStatus.ArrayPointExplan.postValue(0)
+                    RobotStatus.arrayPointExplain.postValue(0)
                 }
             }
         }

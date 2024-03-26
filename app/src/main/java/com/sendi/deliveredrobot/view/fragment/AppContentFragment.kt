@@ -71,15 +71,15 @@ class AppContentFragment : Fragment() {
         //设置按钮
         binding.imageViewSetting.setOnClickListener {
             toSettingDialog.show()
-            RobotStatus.PassWordToSetting.observe(viewLifecycleOwner) {
-                if (RobotStatus.PassWordToSetting.value == true) {
+            RobotStatus.passWordToSetting.observe(viewLifecycleOwner) {
+                if (RobotStatus.passWordToSetting.value == true) {
                     try {
                         BaiduTTSHelper.getInstance().stop()
                         controller!!.navigate(R.id.planSettingFragment)
                     } catch (_: Exception) {
                     }
                     toSettingDialog.dismiss()
-                    RobotStatus.PassWordToSetting.postValue(false)
+                    RobotStatus.passWordToSetting.postValue(false)
                 }
             }
             Toast.makeText(context, "点击了：设置", Toast.LENGTH_SHORT).show()

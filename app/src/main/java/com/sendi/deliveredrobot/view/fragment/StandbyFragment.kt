@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentStandbyBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.interfaces.FaceDataListener
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -113,11 +115,17 @@ class StandbyFragment : Fragment() {
                 LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
                 navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
             }
+            DialogHelper.loadingDialog.show()
             thread {
-                Thread.sleep(1000)
+                Thread.sleep(500)
+                if (!isResumed) {
+                    DialogHelper.loadingDialog.dismiss()
+                    return@thread
+                }
                 CopyAssetsUtils.portingFile(MyApplication.context)
                 initSDK()
                 startRecord()
+                DialogHelper.loadingDialog.dismiss()
             }
         }
     }
@@ -147,7 +155,6 @@ class StandbyFragment : Fragment() {
     }
 
 
-
     override fun onStop() {
         FaceDataListener.removeOnChangeListener()
         FaceRecognition.onDestroy()
@@ -172,8 +179,9 @@ class StandbyFragment : Fragment() {
             LogUtil.i(
                 "wakeupEngine初始化失败，错误码$initResult " + ErrorCode.getError(
                     initResult
-                ) + "  \n错误解决详情参考：https://www.yuque.com/iflyaiui/zzoolv/igbuol")
-            LogUtil.i( "wakeupEngine初始化失败")
+                ) + "  \n错误解决详情参考：https://www.yuque.com/iflyaiui/zzoolv/igbuol"
+            )
+            LogUtil.i("wakeupEngine初始化失败")
         }
 
         //初始化录音
@@ -214,7 +222,7 @@ class StandbyFragment : Fragment() {
         LogUtil.i("destroy is Done!")
     }
 
-    private fun quitFragment(){
+    private fun quitFragment() {
         thread {
             LogUtil.i("standby fragment quitFragment")
             if (EngineConstants.isRecording) {
@@ -232,7 +240,7 @@ class StandbyFragment : Fragment() {
         }
     }
 
-    private fun navigateToFragment(fragmentId: Int, args: Bundle? = null){
+    private fun navigateToFragment(fragmentId: Int, args: Bundle? = null) {
         FaceRecognition.onDestroy()
         quitFragment()
         controller?.navigate(fragmentId, args)

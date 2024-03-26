@@ -20,7 +20,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.*
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
-import com.sendi.deliveredrobot.navigationtask.RobotStatus.PassWordToSetting
+import com.sendi.deliveredrobot.navigationtask.RobotStatus.passWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -214,15 +214,15 @@ class HomeFragment : BaseFragment(), IMainView {
             //密码弹窗
             fromeSettingDialog!!.show()
             //弹窗点击事件。回到主页面
-            PassWordToSetting.observe(viewLifecycleOwner) {
-                if (PassWordToSetting.value == true) {
+            passWordToSetting.observe(viewLifecycleOwner) {
+                if (passWordToSetting.value == true) {
                     fromeSettingDialog!!.dismiss()
                     try {
                         homeFragmentNavigateToFragment(R.id.action_homeFragment_to_planSettingFragment)
                     } catch (_: Exception) {
 
                     }
-                    PassWordToSetting.postValue(false)
+                    passWordToSetting.postValue(false)
                 }
             }
 

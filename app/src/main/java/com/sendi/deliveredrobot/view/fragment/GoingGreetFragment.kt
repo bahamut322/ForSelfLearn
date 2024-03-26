@@ -17,12 +17,10 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.Order
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.TaskNext
-import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
 import com.sendi.deliveredrobot.viewmodel.GreetViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -102,7 +100,7 @@ class GoingGreetFragment : Fragment() {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 TaskNext.setToDo("0")
                 Order.setFlage("0")
-                RobotStatus.ArrayPointExplan.postValue(0)
+                RobotStatus.arrayPointExplain.postValue(0)
             }
             BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
         }

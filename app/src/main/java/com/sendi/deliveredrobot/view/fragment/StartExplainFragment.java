@@ -4,20 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -30,13 +17,25 @@ import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.adapter.ChangePointGridViewAdapter;
+import com.sendi.deliveredrobot.asynctask.ExplainGoingSpeakAsyncTask;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentStartExplantionBinding;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.model.ExplantionNameModel;
@@ -50,7 +49,6 @@ import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.ChangingOverDialog;
-
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog;
 import com.sendi.deliveredrobot.view.widget.Order;
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
@@ -179,7 +177,7 @@ public class StartExplainFragment extends Fragment {
                     BaiduTTSHelper.getInstance().stop();
 
                     MediaPlayerHelper.getInstance().stop();
-                    RobotStatus.INSTANCE.getSpeakNumber().postValue("");
+                    nextTaskToDo = false;
                     binding.acceptstationTv.stopPlay();
 
                     BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",explantionNameModel.getName(),viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
@@ -208,7 +206,6 @@ public class StartExplainFragment extends Fragment {
 //                if (Universal.taskQueue != null) {
 //                    Universal.taskQueue.clear();
 //                }
-                RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 binding.acceptstationTv.stopPlay();
@@ -423,16 +420,15 @@ public class StartExplainFragment extends Fragment {
                 animationDrawable.start();
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
-
-                    RobotStatus.INSTANCE.getPointItem().postValue(position);
+                    RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
                     DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
                     binding.goingName.setText(viewModel.inForListData().get(position).getName());
-                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type());
-                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+//                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
+                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                         binding.argPic.setVisibility(View.VISIBLE);
-                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_walkPic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_walkPic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                         //touch_walkPic
                     } else {
                         binding.argPic.setVisibility(View.GONE);
@@ -449,14 +445,14 @@ public class StartExplainFragment extends Fragment {
 
 
                     if (Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext() != null && !Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext().isEmpty()) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                             LogUtil.INSTANCE.i("是否到点：" + integer1 + ",讲解进度：" + integer + "," + Universal.ExplainLength);
                             if (integer1 == 1 && !array && integer != Universal.ExplainLength) {
                                 binding.PauseBtn.setVisibility(View.GONE);
                                 mHandler.post(() -> {
-                                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                                    if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                                         binding.argPic.setVisibility(View.VISIBLE);
-                                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                                        Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                                     } else {
                                         binding.argPic.setVisibility(View.GONE);
                                         try {
@@ -485,15 +481,15 @@ public class StartExplainFragment extends Fragment {
                         }));
                     }
                     if (viewModel.inForListData().get(position).getWalkvoice() != null && !viewModel.inForListData().get(position).getWalkvoice().isEmpty()) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer -> MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer -> MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
                             LogUtil.INSTANCE.i("途径MP3：currentPosition: " + currentPosition + ",totalDuration: " + totalDuration);
                             if (integer == 1) {
 //                                currentPosition1.observe(getViewLifecycleOwner(), integer1 -> totalDuration1.observe(getViewLifecycleOwner(), integer2 -> {
                                     if ((totalDuration - currentPosition) > 500 && !array) {
                                         mHandler.post(() -> {
-                                            if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                                            if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                                                 binding.argPic.setVisibility(View.VISIBLE);
-                                                Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                                                Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                                             } else {
                                                 binding.argPic.setVisibility(View.GONE);
                                                 try {
@@ -526,7 +522,7 @@ public class StartExplainFragment extends Fragment {
                         }));
                     }
                     if (viewModel.inForListData().get(position).getWalkvoice() == null && viewModel.inForListData().get(position).getWalktext() == null ) {
-                        RobotStatus.INSTANCE.getArrayPointExplan().observe(getViewLifecycleOwner(), integer1 -> {
+                        RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> {
                             if (integer1 == 1 && !array) {
                                 arrayToDo(viewModel.inForListData(), position);
                             }
@@ -576,49 +572,13 @@ public class StartExplainFragment extends Fragment {
         try {
             if (tr) {
                 //有讲解内容
-                @SuppressLint("StaticFieldLeak")
-                class MyAsyncTask extends AsyncTask<Void, Void, Void> {
-                    @Override
-                    protected void onPreExecute() {
-                        // 在执行后台任务之前执行，通常用于初始化操作
-                        try {
-                            viewModel.getTask(TaskStageEnum.StartChannelBroadcast);
-                        } catch (Exception e) {
-                            Log.d("TAG", "上报StartChannelBroadcast: " + e);
-                        }
-                    }
-
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        Log.d("TAG", "doInBackground: 开始播报");
-                        // 在后台线程中执行耗时操作，例如数据预加载
-                        if (mDatas.get(position).getWalktext() != null && !mDatas.get(position).getWalktext().isEmpty()) {
-                            BaiduTTSHelper.getInstance().speaks(Placeholder.Companion.replaceText(mDatas.get(position).getWalktext(),"",mDatas.get(position).getName(),mDatas.get(position).getRoutename(),"智能讲解"));
-//                            viewModel.splitTextByPunctuation(mDatas.get(position).getWalktext());
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        if (mDatas.get(position).getWalktext() != null && !mDatas.get(position).getWalktext().isEmpty()) {
-                            RobotStatus.INSTANCE.getSpeakNumber().setValue(mDatas.get(position).getWalktext());
-                        }
-                        if (mDatas.get(position).getWalkvoice() != null && !mDatas.get(position).getWalkvoice().isEmpty()) {
-                            try {
-                                MediaPlayerHelper.getInstance().play(mDatas.get(position).getWalkvoice(), "1");
-                            } catch (Exception ignored) {
-                            }
-                        }
-                    }
-                }
                 Runnable runnable = () -> {
                     try {
                         Thread.sleep(1);
                     } catch (Exception e) {
                         Log.d("TAG", "onBindViewHolder: " + e);
                     }
-                    MyAsyncTask task = new MyAsyncTask();
+                    ExplainGoingSpeakAsyncTask task = new ExplainGoingSpeakAsyncTask(mDatas, position);
                     task.execute();
                 };
                 handler.postDelayed(runnable, 1);
@@ -654,12 +614,12 @@ public class StartExplainFragment extends Fragment {
                 binding.statusTv.setText("正在讲解:");
                 binding.nowExplanation.setText(mData.get(position).getName());
 
-                if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_type() == 4) {
+                if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                     binding.finishBtn.setEnabled(false);
                     binding.ChangingOver.setEnabled(false);
                     binding.nextTaskBtn.setEnabled(false);
                     binding.argPic.setVisibility(View.VISIBLE);
-                    Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRoutMapItem().getValue()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
+                    Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
                 } else {
                     binding.finishBtn.setEnabled(true);
                     binding.ChangingOver.setEnabled(true);
@@ -707,7 +667,7 @@ public class StartExplainFragment extends Fragment {
                                 Log.d("TAG", "进度越界啦: " + e);
                             }
                         }
-                        if (integer >= ((beforePage + 1) * 135) && integer != 0) {
+                        if (beforePage > -1 && integer >= ((beforePage + 1) * 135) && integer != 0) {
                             Log.i("TAG", "页数, progress：" + beforePage + ";进度:" + integer + "当前进度：" + Universal.progress);
                             nextTaskToDo = false;
                             if (beforePage <= page.get() - 1) {
@@ -731,7 +691,6 @@ public class StartExplainFragment extends Fragment {
                             beforePage = -1;
                             page.set(0);
                             Universal.progress = 0;
-                            RobotStatus.INSTANCE.getSpeakContinue().postValue(0);
                         }
 
                     });
@@ -784,7 +743,6 @@ public class StartExplainFragment extends Fragment {
 //                if (Universal.taskQueue != null) {
 //                    Universal.taskQueue.clear();
 //                }
-                RobotStatus.INSTANCE.getSpeakNumber().postValue("");
                 MediaPlayerHelper.getInstance().stop();
                 viewModel.finishTask();
                 binding.acceptstationTv.stopPlay();
@@ -803,7 +761,6 @@ public class StartExplainFragment extends Fragment {
 //                Universal.taskQueue.clear();
 //            }
             beforePage = -1;
-            RobotStatus.INSTANCE.getSpeakNumber().postValue("");
             MediaPlayerHelper.getInstance().stop();
 //            isMethodExecuted = false;
             binding.acceptstationTv.stopPlay();
@@ -843,8 +800,6 @@ public class StartExplainFragment extends Fragment {
                 beforePage = -1;
                 Universal.progress = 0;
                 MediaPlayerHelper.getInstance().stop();
-                binding.acceptstationTv.stopPlay();
-                RobotStatus.INSTANCE.getSpeakNumber().postValue(null);
                 binding.acceptstationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
                 changingOverDialog.dismiss();
