@@ -301,7 +301,7 @@ public class StartExplainFragment extends Fragment {
             }
         });
 
-        binding.pointList.postDelayed(() -> RobotStatus.INSTANCE.getTargetName().observe(getViewLifecycleOwner(), s -> {
+        RobotStatus.INSTANCE.getTargetName().observe(getViewLifecycleOwner(), s -> {
             DialogHelper.loadingDialog.show();
             targetName = s;
             LogUtil.INSTANCE.i("当前讲解点: " + s);
@@ -322,7 +322,7 @@ public class StartExplainFragment extends Fragment {
                 }
                 DialogHelper.loadingDialog.dismiss();
             }
-        }), 0);
+        });
 
     }
 

@@ -36,7 +36,7 @@ class ExplainingTask (
             return
         }
         withContext(Dispatchers.Main){
-            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
+            RobotStatus.targetName.postValue(taskModel?.location?.pointName?:"")
         }
         MyApplication.instance!!.sendBroadcast(Intent().apply {
             action = ACTION_NAVIGATE
