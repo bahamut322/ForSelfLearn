@@ -146,7 +146,7 @@ class GuidingFragment : Fragment() {
 
 
         mediatorLiveData.observe(viewLifecycleOwner) { (arrayPointObserver, progressObserver) ->
-            if (progressObserver == Universal.ExplainLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
+            if (progressObserver == Universal.explainTextLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.value = 0
                 Order.setFlage("0")
@@ -158,7 +158,7 @@ class GuidingFragment : Fragment() {
                 Order.setFlage("0")
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
-            } else if (progressObserver == Universal.ExplainLength && arrayPointObserver != 1) {
+            } else if (progressObserver == Universal.explainTextLength && arrayPointObserver != 1) {
                 LogUtil.i("未到点，但播报任务完毕")
                 Order.setFlage("0")
             }
@@ -226,7 +226,7 @@ class GuidingFragment : Fragment() {
             viewModel!!.hasArrive = false
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
-            if (it == Universal.ExplainLength && viewModel!!.hasArrive) {
+            if (it == Universal.explainTextLength && viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕_返回")
                 mainScope.launch {
                     BillManager.currentBill()?.executeNextTask()

@@ -188,7 +188,7 @@ class BusinessIngFragment : Fragment() {
             //非定点任务
             when (actionData?.actionType) {
                 2 -> {
-                    if (progress == Universal.ExplainLength && arrayPoint == 1 && !viewModel!!.hasArrive) {
+                    if (progress == Universal.explainTextLength && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
                         Order.setFlage("0")
                         LogUtil.i("到点，并任务执行完毕")
@@ -200,7 +200,7 @@ class BusinessIngFragment : Fragment() {
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
-                    } else if (progress == Universal.ExplainLength && arrayPoint != 1) {
+                    } else if (progress == Universal.explainTextLength && arrayPoint != 1) {
                         LogUtil.i("未到点，但播报任务完毕")
                         Order.setFlage("0")
                     }
@@ -212,8 +212,8 @@ class BusinessIngFragment : Fragment() {
             //定点任务
             when (actionData?.actionType) {
                 1 -> {
-                    LogUtil.i("day:${viewModel!!.hasArrive},${Universal.ExplainLength},${it}")
-                    if (it == Universal.ExplainLength && !viewModel!!.hasArrive) {
+                    LogUtil.i("day:${viewModel!!.hasArrive},${Universal.explainTextLength},${it}")
+                    if (it == Universal.explainTextLength && !viewModel!!.hasArrive) {
                         LogUtil.i("定点任务执行完毕")
                         arrayPic()
                         Order.setFlage("0")
@@ -265,7 +265,7 @@ class BusinessIngFragment : Fragment() {
             viewModel!!.countDownTimer!!.startCountDown()
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
-            if (it == Universal.ExplainLength && viewModel!!.hasArrive) {
+            if (it == Universal.explainTextLength && viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕_返回")
                 Order.setFlage("0")
                 viewModel!!.countDownTimer!!.startCountDown()

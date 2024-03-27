@@ -155,7 +155,7 @@ object TopicHandler {
         rosResult: RosResult<*>?,
         navController: NavController
     ) {
-        if(RobotStatus.progress.value == Universal.ExplainLength || Universal.ExplainLength==-1) {
+        if(RobotStatus.progress.value == Universal.explainTextLength || Universal.explainTextLength==-1) {
             VoicePromptTopic.handle(rosResult, navController)
         }
     }

@@ -38,7 +38,7 @@ public class TTSProgressHandlerImpl implements TTSProgressHandler {
             LogUtil.INSTANCE.d(" BaiduTTS播放进度：" + progress
                     + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
                     + " 当前朗读完的item的总算：" + Universal.taskNum
-                    + " 播放目标进度：" + Universal.ExplainLength
+                    + " 播放目标进度：" + Universal.explainTextLength
             );
             previousProgress = progress; // 更新前一次的 progress，避重
         }

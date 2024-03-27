@@ -18,7 +18,6 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
@@ -57,7 +56,7 @@ class GreetFragment : Fragment() {
         actionData = QuerySql.selectGreetConfig()
 
         RobotStatus.progress.observe(viewLifecycleOwner) {
-            if (it == Universal.ExplainLength || Universal.ExplainLength != -1) {
+            if (it == Universal.explainTextLength || Universal.explainTextLength != -1) {
                 Log.d("tag", "onViewCreated:  迎宾到达进行")
                 if (arrayFacePoint == 0) {
                     FaceRecognition.suerFaceInit(

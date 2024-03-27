@@ -22,7 +22,7 @@ class PunctuationTextSplitter : TextSplitter {
 //        if (Universal.taskQueue != null) {
 //            Universal.taskQueue.clear()
 //        }
-        Universal.ExplainLength = text!!.length
+        Universal.explainTextLength = text!!.length
         LogUtil.i("总内容长度: ${text.length}")
         val pattern = "(?<=[，；？！。,.;])".toRegex()
         val splitText = text.split(pattern).filter { it.isNotEmpty() } // 过滤掉空字符串

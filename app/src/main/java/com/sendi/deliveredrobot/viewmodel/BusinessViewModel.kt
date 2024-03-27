@@ -82,7 +82,7 @@ class BusinessViewModel : ViewModel() {
     fun restoreVideo(owner: LifecycleOwner) {
         // 创建一个观察者
         val observer = Observer<Int> {
-            if (it == Universal.ExplainLength) {
+            if (it == Universal.explainTextLength) {
                 LogUtil.i("恢复视频声音")
                 // 恢复视频声音
                 Order.setFlage("0")

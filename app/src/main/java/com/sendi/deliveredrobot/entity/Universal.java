@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import androidx.lifecycle.MutableLiveData;
 
 import com.sendi.deliveredrobot.BuildConfig;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 
 import java.io.File;
@@ -113,7 +112,7 @@ public class Universal {
     public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
-    public static int ExplainLength = -1;
+    public static int explainTextLength = -1;
     public static String lastValue = null;
     public static boolean selectMapPoint = false;
     public static boolean twice = false;

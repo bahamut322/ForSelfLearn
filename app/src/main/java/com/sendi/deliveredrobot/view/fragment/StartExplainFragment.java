@@ -169,7 +169,7 @@ public class StartExplainFragment extends Fragment {
                 finishTaskDialog.YesExit.setOnClickListener(v1 -> {
                     processClickDialog.dismiss();
                     finishTaskDialog.dismiss();
-                    Universal.ExplainLength = -1;
+                    Universal.explainTextLength = -1;
                     beforePage = -1;
                     //返回
                     Universal.taskNum = 0;
@@ -446,8 +446,8 @@ public class StartExplainFragment extends Fragment {
 
                     if (Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext() != null && !Objects.requireNonNull(viewModel.inForListData()).get(position).getWalktext().isEmpty()) {
                         RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
-                            LogUtil.INSTANCE.i("是否到点：" + integer1 + ",讲解进度：" + integer + "," + Universal.ExplainLength);
-                            if (integer1 == 1 && !array && integer != Universal.ExplainLength) {
+                            LogUtil.INSTANCE.i("是否到点：" + integer1 + ",讲解进度：" + integer + "," + Universal.explainTextLength);
+                            if (integer1 == 1 && !array && integer != Universal.explainTextLength) {
                                 binding.PauseBtn.setVisibility(View.GONE);
                                 mHandler.post(() -> {
                                     if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
@@ -469,12 +469,12 @@ public class StartExplainFragment extends Fragment {
                                     binding.nowExplanation.setText(Objects.requireNonNull(viewModel.inForListData()).get(position).getName());
                                 });
                             }
-                            if (integer == Universal.ExplainLength) {
+                            if (integer == Universal.explainTextLength) {
                                 //恢复视频声音
                                 Order.setFlage("0");
                                 viewModel.getTask(TaskStageEnum.FinishChannelBroadcast);
                             }
-                            if (integer1 == 1 && integer == Universal.ExplainLength && !array) {
+                            if (integer1 == 1 && integer == Universal.explainTextLength && !array) {
                                 LogUtil.INSTANCE.i("途径播报结束（文本）");
                                 arrayToDo(viewModel.inForListData(), position);
                             }
@@ -596,7 +596,7 @@ public class StartExplainFragment extends Fragment {
                 return;
             }
             array = true;
-            Universal.ExplainLength = -1;
+            Universal.explainTextLength = -1;
             RobotStatus.INSTANCE.getProgress().setValue(0);
             nextTaskToDo = true;
             Universal.progress = 0;
@@ -677,7 +677,7 @@ public class StartExplainFragment extends Fragment {
                                 nextTaskToDo = true;
                             }
                         }
-                        if (beforePage == (page.get() - 1)  && integer == Universal.ExplainLength) {
+                        if (beforePage == (page.get() - 1)  && integer == Universal.explainTextLength) {
                             LogUtil.INSTANCE.d("Tips: 讲解内容完成,进入倒计时");
                             viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
                             binding.acceptstationTv.stopPlay();
@@ -738,7 +738,7 @@ public class StartExplainFragment extends Fragment {
                 Universal.taskNum = 0;
                 Universal.progress = 0;
 //                isMethodExecuted = false;
-                Universal.ExplainLength = -1;
+                Universal.explainTextLength = -1;
                 //删除讲解队列
 //                if (Universal.taskQueue != null) {
 //                    Universal.taskQueue.clear();
