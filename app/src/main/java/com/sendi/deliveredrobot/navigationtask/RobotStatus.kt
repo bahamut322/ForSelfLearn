@@ -50,7 +50,6 @@ object RobotStatus {
     var outOfLift = true //是否在电梯内
     var autoCruise = false //自动巡航
     var liftState = true //电梯可用状态
-    var ready : MutableLiveData<Int> = MutableLiveData<Int>()
     val stopButtonPressed = MutableLiveData(STOP_BUTTON_UNPRESSED) //急停按钮是否按下
     var manageStatus: Int = -1 //状态机状态
     var needDelay = false //需要一定的延时

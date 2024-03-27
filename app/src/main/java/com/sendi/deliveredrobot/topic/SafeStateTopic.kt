@@ -78,7 +78,7 @@ object SafeStateTopic {
                     } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
-                        if (!Universal.speakIng && !Universal.Process && !Universal.Changing && !Universal.Finish) {
+                        if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
                             MediaPlayerHelper.getInstance().resume()
                             BaiduTTSHelper.getInstance().resume()
                         }

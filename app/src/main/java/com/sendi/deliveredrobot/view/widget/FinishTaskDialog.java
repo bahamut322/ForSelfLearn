@@ -44,7 +44,7 @@ public class FinishTaskDialog extends Dialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        Universal.Finish = false;
+        Universal.finish = false;
     }
 
     /**
@@ -54,7 +54,7 @@ public class FinishTaskDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Universal.Finish = true;
+        Universal.finish = true;
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

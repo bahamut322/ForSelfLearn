@@ -291,7 +291,7 @@ class MyPresentation(context: Context?, display: Display?) :
         allVideoAudio: Int
     ) {
 //        Universal.time = picPlayTime;
-        Universal.AllvideoAudio = allVideoAudio
+        Universal.allVideoAudio = allVideoAudio
         try {
             val file = File(path)
                 advanceView!!.removeAllViews()

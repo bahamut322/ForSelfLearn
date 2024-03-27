@@ -242,7 +242,7 @@ public class StartExplainFragment extends Fragment {
             if (isButtonClickable) {
                 isButtonClickable = false;
                 if (clickCount % 2 == 1) {
-                    Universal.speakIng = true;
+                    Universal.speaking = true;
                     // 奇数次点击，执行暂停操作
                     BaiduTTSHelper.getInstance().pause();
                     MediaPlayerHelper.getInstance().pause();
@@ -250,7 +250,7 @@ public class StartExplainFragment extends Fragment {
                     binding.PauseTV.setVisibility(View.VISIBLE);
                 } else {
                     // 偶数次点击，执行恢复操作
-                    Universal.speakIng = false;
+                    Universal.speaking = false;
                     BaiduTTSHelper.getInstance().resume();
                     MediaPlayerHelper.getInstance().resume();
                     binding.PauseTV.setVisibility(View.GONE);
@@ -305,7 +305,7 @@ public class StartExplainFragment extends Fragment {
             DialogHelper.loadingDialog.show();
             targetName = s;
             LogUtil.INSTANCE.i("当前讲解点: " + s);
-            Universal.speakIng = false;
+            Universal.speaking = false;
             // 在这里处理新值，比如更新UI或执行其他逻辑
             for (int i = 0; i < Objects.requireNonNull(viewModel.inForListData()).size(); i++) {
                 if (Objects.equals(Objects.requireNonNull(viewModel.inForListData()).get(i).getName(), s)) {
