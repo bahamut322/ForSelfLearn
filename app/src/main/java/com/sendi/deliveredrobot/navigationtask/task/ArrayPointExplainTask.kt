@@ -16,7 +16,7 @@ import com.sendi.deliveredrobot.view.widget.TaskNext
  * @describe 到点讲解
  * @Data 2023-04-13 08:51
  */
-class ArrayPointExplanTask(var status: Int = 1, taskModel: TaskModel) : AbstractTask(taskModel) {
+class ArrayPointExplainTask(var status: Int = 1, taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         taskDto.apply {

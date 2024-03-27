@@ -101,7 +101,7 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                 )
             )
             add(
-                ArrayPointExplanTask(
+                ArrayPointExplainTask(
                     taskModel = TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
