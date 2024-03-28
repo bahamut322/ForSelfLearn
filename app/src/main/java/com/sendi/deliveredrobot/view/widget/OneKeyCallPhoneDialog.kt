@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.OneKeyPhoneNumberListAdapter
+import com.sendi.deliveredrobot.model.OneKeyCallPhoneModel
 
 class OneKeyCallPhoneDialog(
     context: Context,
@@ -18,7 +19,7 @@ class OneKeyCallPhoneDialog(
 ) : HideNavigationBarDialog(context = context, themeResId = themeResId, needBlur = needBlur) {
     private var constraintLayoutClose: ConstraintLayout? = null
     private var recyclerViewPhoneNumber: RecyclerView? = null
-    private var phoneNumberList: List<String>? = null
+    private var phoneNumberList: List<OneKeyCallPhoneModel>? = null
     init {
         val mWindowWidth: Int
         val mWindowHeight: Int
@@ -31,9 +32,9 @@ class OneKeyCallPhoneDialog(
                 dismiss()
             }
         }
-        phoneNumberList = ArrayList<String>().apply {
-            add("18998377831")
-            add("13926096581")
+        phoneNumberList = ArrayList<OneKeyCallPhoneModel>().apply {
+            add(OneKeyCallPhoneModel("社区居委会1", "(020)83368771"))
+            add(OneKeyCallPhoneModel("社区居委会2", "(020)83179130"))
 //            add("18925090633")
         }
         recyclerViewPhoneNumber = dialogView.findViewById(R.id.recycler_view_phone_number)

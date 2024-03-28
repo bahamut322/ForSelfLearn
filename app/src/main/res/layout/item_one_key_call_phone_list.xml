@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:background="@color/col_common_btn_bg_dark_start_press">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_24"
+        android:textColor="@color/color_99FFFFFF"
+        android:paddingTop="@dimen/dp_18"
+        tools:text="苏主任" />
+
+    <TextView
+        android:id="@+id/tv_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="@dimen/mid_small_small_text_size"
+        android:textColor="@color/color_FF00EEFF"
+        android:paddingBottom="@dimen/dp_18"
+        tools:text="1234567890"/>
+</LinearLayout>
