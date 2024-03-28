@@ -26,7 +26,7 @@ import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.service.Placeholder;
+import com.sendi.deliveredrobot.service.PlaceholderEnum;
 import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class CatalogueExplanationFragment extends BaseFragment {
             quitFragment();
             viewModel.start();
             Universal.twice = true;
-            SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
+            SpeakHelper.INSTANCE.speak(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
         binding.returnHome.setOnClickListener(v -> navigateToFragment(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment,null));

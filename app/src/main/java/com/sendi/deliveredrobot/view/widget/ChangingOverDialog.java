@@ -50,7 +50,6 @@ public class ChangingOverDialog extends Dialog {
 
     @Override
     public void dismiss() {
-        Log.d("TAG", "dismiss: dialog");
         Universal.changing = false;
         Universal.explainUnSpeak = false;
         super.dismiss();
@@ -63,7 +62,6 @@ public class ChangingOverDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Log.d("TAG", "show: dialog");
         Universal.changing = true;
         dialog_button.setVisibility(View.GONE);
         new UpdateReturn().pause();

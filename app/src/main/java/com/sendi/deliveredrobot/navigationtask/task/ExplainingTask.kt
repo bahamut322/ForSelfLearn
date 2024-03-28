@@ -35,9 +35,6 @@ class ExplainingTask (
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        withContext(Dispatchers.Main){
-            RobotStatus.targetName.postValue(taskModel?.location?.pointName?:"")
-        }
         MyApplication.instance!!.sendBroadcast(Intent().apply {
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, navigateId)
@@ -49,5 +46,9 @@ class ExplainingTask (
         ROSHelper.navigateTo(taskModel!!.location!!)
         DialogHelper.loadingDialog.dismiss()
 
+    }
+
+    fun test(): Boolean{
+        return true
     }
 }

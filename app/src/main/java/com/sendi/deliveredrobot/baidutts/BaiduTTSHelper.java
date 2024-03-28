@@ -23,9 +23,8 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
-import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.utils.LogUtil;
-import com.sendi.deliveredrobot.view.widget.Order;
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -186,7 +185,7 @@ public class BaiduTTSHelper {
         if (TextUtils.isEmpty(text)) {
             text = "没有指定名称的话，小迪不知道怎么走啦";
         }
-        Order.setFlage("1");
+        MediaStatusManager.stopMediaPlay(true);
         //播报语音音量
         MediaPlayerHelper.getInstance().pause();
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());
@@ -200,12 +199,12 @@ public class BaiduTTSHelper {
 
     public void stop(){
         synthesizer.stop();
-        Order.setFlage("0");
+        MediaStatusManager.stopMediaPlay(false);
         MediaPlayerHelper.getInstance().resume();
     }
 
     public void pause(){
-        Order.setFlage("0");
+        MediaStatusManager.stopMediaPlay(false);
         synthesizer.pause();
     }
 
@@ -214,7 +213,7 @@ public class BaiduTTSHelper {
      * @param text 长语音朗读
      */
     public void speaks(String text) {
-        Order.setFlage("1");
+        MediaStatusManager.stopMediaPlay(true);
         MediaPlayerHelper.getInstance().pause();
         List<String> textList = textSplitter.splitTextByPunctuation(text);
         new AudioMngHelper(context).setVoice100(QuerySql.QueryBasic().getVoiceVolume());//设置语音音量
@@ -235,7 +234,7 @@ public class BaiduTTSHelper {
         synthesizer = new MySyntherizer(context, config); // 此处可以改为MySyntherizer 了解调用过程
     }
     public void resume(){
-        Order.setFlage("1");
+        MediaStatusManager.stopMediaPlay(true);
         synthesizer.resume();
     }
     public void resetParam(){

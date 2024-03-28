@@ -165,6 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pointList"
                 app:layout_constraintTop_toTopOf="parent">
@@ -332,7 +333,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/view26">
 
                     <Button
-                        android:id="@+id/PauseBtn"
+                        android:id="@+id/pauseBtn"
                         android:layout_width="@dimen/dp_204"
                         android:layout_height="@dimen/dp_72"
                         android:layout_marginEnd="@dimen/dp_32"
@@ -354,7 +355,7 @@
                         android:textSize="32sp" />
 
                     <Button
-                        android:id="@+id/ChangingOver"
+                        android:id="@+id/changingOver"
                         android:layout_width="@dimen/dp_204"
                         android:layout_height="@dimen/dp_72"
                         android:layout_marginEnd="@dimen/dp_32"

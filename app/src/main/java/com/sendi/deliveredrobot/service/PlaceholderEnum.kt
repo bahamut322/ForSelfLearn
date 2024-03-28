@@ -8,7 +8,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
  * @describe 文字替换
  */
 
-enum class Placeholder(placeholder: String) {
+enum class PlaceholderEnum(placeholder: String) {
     WAKE_UP_WORD("%唤醒词%"),
     FACE_NAME("%人脸姓名%"),
     POINT_NAME("%目标点名称%"),

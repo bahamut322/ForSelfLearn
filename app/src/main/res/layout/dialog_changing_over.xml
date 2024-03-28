@@ -46,7 +46,9 @@
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent"
-        android:background="#40FFFFFF">
+        android:background="#40FFFFFF"
+        tools:visibility="visible"
+        >
         <View
             android:id="@+id/view13"
             android:layout_width="@dimen/dp_640"
@@ -85,7 +87,9 @@
                 android:text="@string/Abnormal_face"
                 android:textColor="@color/color_00EEFF"
                 android:textSize="@dimen/sp_32"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                tools:text="Abnormal face"
+                />
 
             <TextView
                 android:layout_width="wrap_content"

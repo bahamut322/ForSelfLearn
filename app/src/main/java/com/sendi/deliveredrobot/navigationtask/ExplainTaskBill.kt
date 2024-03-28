@@ -48,6 +48,25 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }
 
+    override fun executeNextTask() {
+        when(currentTask){
+            is OnTheWayExplainTask -> {
+                // 如果当前任务是途径讲解任务，则判断是否途径讲解是否完成，如果完成，则执行下一个任务，如果未完成，则通知页面更新，等待讲解完成
+                val onTheWayExplainTask = (currentTask as OnTheWayExplainTask)
+                if (onTheWayExplainTask.oneWayExplainFinish()) {
+                    // 途径讲解完成
+                    super.executeNextTask()
+                }else{
+                    // 途径讲解未完成，通知页面更新，等待讲解完成
+                    onTheWayExplainTask.notifyFragmentUpdate()
+                }
+            }
+            else -> {
+                super.executeNextTask()
+            }
+        }
+    }
+
     /**
      * @describe 创建引领任务队列
      */

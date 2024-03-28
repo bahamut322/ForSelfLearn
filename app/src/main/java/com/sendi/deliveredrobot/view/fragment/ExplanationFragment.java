@@ -13,8 +13,6 @@ import android.widget.AbsListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +27,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.RouteMapList;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.service.Placeholder;
+import com.sendi.deliveredrobot.service.PlaceholderEnum;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.utils.UiUtils;
@@ -67,7 +65,7 @@ public class ExplanationFragment extends BaseFragment {
             binding.llReturn.setVisibility(View.GONE);
         }
         updateDataAndRefreshList();
-        BaiduTTSHelper.getInstance().speak( Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"),"");
+        BaiduTTSHelper.getInstance().speak( PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"),"");
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> navigateToFragment(R.id.action_explanationFragment_to_homeFragment, null));
@@ -152,7 +150,7 @@ public class ExplanationFragment extends BaseFragment {
                 scrollToCenter(position);
                 RobotStatus.INSTANCE.setSelectRouteMapItemId(routeMap.getId());
                 navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
-                SpeakHelper.INSTANCE.speak(Placeholder.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","", routeMap.getRouteName(),"智能讲解"));
+                SpeakHelper.INSTANCE.speak(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","", routeMap.getRouteName(),"智能讲解"));
             }
         };
         mAdapter = new ExplantionAdapter(requireContext(), listener);

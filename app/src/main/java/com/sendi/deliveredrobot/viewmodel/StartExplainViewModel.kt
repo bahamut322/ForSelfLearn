@@ -97,19 +97,6 @@ class StartExplainViewModel : ViewModel() {
         }
     }
 
-
-    fun pause() {
-        mainScope.launch {
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-        }
-    }
-
-    fun resume() {
-        mainScope.launch {
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-        }
-    }
-
     fun downTimer() {
         countDownTimer = MyCountDownTimer(
             millisInFuture = QuerySql.QueryExplainConfig().stayTime * 1000L, // 倒计时总时长，单位为毫秒
@@ -305,30 +292,30 @@ class StartExplainViewModel : ViewModel() {
         mainScope.cancel()
     }
 
-    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
-        var file = ""
-        if (mData[position]!!.big_videofile !=null){
-            file = mData[position]!!.big_videofile.toString()
-        }else if (mData[position]!!.big_imagefile !=null){
-            file = mData[position]!!.big_imagefile.toString()
-        }
-        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
-            picPlayTime = mData[position]?.big_picplaytime ,
-            file = file,
-            type = mData[position]?.big_type?: 0,
-            textPosition = mData[position]?.big_textposition,
-            fontLayout = mData[position]?.big_fontlayout,
-            fontContent = mData[position]?.big_fontcontent?.toString(),
-            fontBackGround = mData[position]?.big_fontbackground?.toString(),
-            fontColor = mData[position]?.big_fontcolor?.toString(),
-            fontSize = mData[position]?.big_fontsize,
-            picType = mData[position]?.big_pictype,
-            videolayout = mData[position]?.videolayout,
-            videoAudio = mData[position]?.big_videoaudio,
-            false
-        ))
-        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
-    }
+//    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
+//        var file = ""
+//        if (mData[position]!!.big_videofile !=null){
+//            file = mData[position]!!.big_videofile.toString()
+//        }else if (mData[position]!!.big_imagefile !=null){
+//            file = mData[position]!!.big_imagefile.toString()
+//        }
+//        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
+//            picPlayTime = mData[position]?.big_picplaytime ,
+//            file = file,
+//            type = mData[position]?.big_type?: 0,
+//            textPosition = mData[position]?.big_textposition,
+//            fontLayout = mData[position]?.big_fontlayout,
+//            fontContent = mData[position]?.big_fontcontent?.toString(),
+//            fontBackGround = mData[position]?.big_fontbackground?.toString(),
+//            fontColor = mData[position]?.big_fontcolor?.toString(),
+//            fontSize = mData[position]?.big_fontsize,
+//            picType = mData[position]?.big_pictype,
+//            videolayout = mData[position]?.videolayout,
+//            videoAudio = mData[position]?.big_videoaudio,
+//            false
+//        ))
+//        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
+//    }
 
     fun splitString(input: String, length: Int): List<String> {
         val result: MutableList<String> = ArrayList()

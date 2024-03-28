@@ -25,12 +25,12 @@ import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
-import com.sendi.deliveredrobot.view.widget.Order
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.Stat
 import com.sendi.deliveredrobot.view.widget.TaskArray
@@ -138,7 +138,7 @@ class BusinessIngFragment : Fragment() {
             if (actionData?.actionType == 2) {
                 //添加任务
                 BaiduTTSHelper.getInstance().speaks(
-                    Placeholder.replaceText(
+                    PlaceholderEnum.replaceText(
                         actionData?.moveText!!,
                         pointName = actionData?.pointName!!,
                         business = actionData?.name!!
@@ -149,7 +149,7 @@ class BusinessIngFragment : Fragment() {
                     String.format(getString(R.string.business_going), Universal.shoppingName)
                 Universal.businessTask = actionData!!.name
             } else {
-                BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //                viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
                     String.format(getString(R.string.business_doing), Universal.shoppingName)
@@ -190,19 +190,19 @@ class BusinessIngFragment : Fragment() {
                 2 -> {
                     if (progress == Universal.explainTextLength && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
-                        Order.setFlage("0")
+                        MediaStatusManager.stopMediaPlay(false)
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
                     } else if (actionData?.moveText.isNullOrEmpty() && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
-                        Order.setFlage("0")
+                        MediaStatusManager.stopMediaPlay(false)
                         LogUtil.i("到点，并任务执行完毕")
                         RobotStatus.progress.value = 0
                         arriveSpeak(actionData?.arriveText!!)
                     } else if (progress == Universal.explainTextLength && arrayPoint != 1) {
                         LogUtil.i("未到点，但播报任务完毕")
-                        Order.setFlage("0")
+                        MediaStatusManager.stopMediaPlay(false)
                     }
                 }
             }
@@ -216,7 +216,7 @@ class BusinessIngFragment : Fragment() {
                     if (it == Universal.explainTextLength && !viewModel!!.hasArrive) {
                         LogUtil.i("定点任务执行完毕")
                         arrayPic()
-                        Order.setFlage("0")
+                        MediaStatusManager.stopMediaPlay(false)
                         //定点任务完成倒计时
                         viewModel!!.countDownTimer!!.startCountDown()
                     }
@@ -257,17 +257,17 @@ class BusinessIngFragment : Fragment() {
             return
         }
         arrayPic()
-        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = arriveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText!!.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
-            Order.setFlage("0")
+            MediaStatusManager.stopMediaPlay(false)
             viewModel!!.countDownTimer!!.startCountDown()
         }
         RobotStatus.progress.observe(viewLifecycleOwner) {
             if (it == Universal.explainTextLength && viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕_返回")
-                Order.setFlage("0")
+                MediaStatusManager.stopMediaPlay(false)
                 viewModel!!.countDownTimer!!.startCountDown()
 
             }
@@ -322,7 +322,7 @@ class BusinessIngFragment : Fragment() {
                     if (arrayPoint.value != 1) {//如果到点点击结束
                     } else {
                         //中断提示
-                        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
                     //                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
                     }
                     viewModel!!.finishTask()

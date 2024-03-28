@@ -61,8 +61,8 @@ class MyPresentation(context: Context?, display: Display?) :
                 constraintLayout2?.rotation = 270f
             }
         })
-        Order.setOnChangeListener {
-            if (it == "1") {
+        MediaStatusManager.setOnChangeListener {
+            if (it) {
                 advanceView?.mediaStop()
             } else {
                 advanceView?.mediaRestart()
