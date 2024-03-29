@@ -4,7 +4,9 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_EXPLAN
+import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
 import com.sendi.deliveredrobot.service.TaskIdGenerator
@@ -17,10 +19,18 @@ import java.util.*
  * @description 智能讲解任务清单
  */
 class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
+    var route: MyResultModel? = null
+    var position: Int = -1
+
     init {
         setEndTarget(taskModel?.location?.pointName ?: "")
         setTaskId(TaskIdGenerator.getInstance().generateTaskId(TaskTypeEnum.EXPLAIN))
         floorName = taskModel?.location?.floorName?:""
+        val routes = ExplainManager.routes
+        route = routes?.find {
+            it?.name == taskModel?.location?.pointName
+        }
+        position = routes?.indexOf(route) ?: -1
         val tempList = createTaskQueue(taskModel)
         taskQueue.addAll(tempList)
     }
@@ -120,8 +130,18 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                 )
             )
             add(
-                ArrayPointExplainTask(
-                    taskModel = TaskModel(
+                OnTheWayExplainTask(
+                    TaskModel(
+                        location = taskModel?.location,
+                        endTarget = endTarget(),
+                        taskId = taskId(),
+                        bill = this@ExplainTaskBill
+                    ),
+                )
+            )
+            add(
+                ArriveExplainTask(
+                    TaskModel(
                         location = taskModel?.location,
                         endTarget = endTarget(),
                         taskId = taskId(),
@@ -129,6 +149,16 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                     )
                 )
             )
+//            add(
+//                ArrayPointExplainTask(
+//                    taskModel = TaskModel(
+//                        location = taskModel?.location,
+//                        endTarget = endTarget(),
+//                        taskId = taskId(),
+//                        bill = this@ExplainTaskBill
+//                    )
+//                )
+//            )
             // step 11：到达目的地
             add(
                 ExplainArriveTask(

@@ -8,9 +8,11 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
@@ -120,10 +122,11 @@ class StartExplainViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
-        if (mData == null) return
+        if (inForListData().isNullOrEmpty()) return
+        ExplainManager.routes = inForListData()
         BillManager.billList().clear()
         mainScope.launch(Dispatchers.Default) {
-            for (data in mData!!) {
+            for (data in inForListData()!!) {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(data?.name?:""),
                 )
@@ -134,7 +137,7 @@ class StartExplainViewModel : ViewModel() {
             }
             BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
-            if (mData!!.size != BillManager.billList().size){
+            if (inForListData()!!.size != BillManager.billList().size){
                 LogUtil.d("正在重新添加："+ BillManager.billList().size)
                 start()
             }
@@ -277,7 +280,6 @@ class StartExplainViewModel : ViewModel() {
         mainScope.launch {
             countDownTimer?.pause()
             BillManager.currentBill()?.executeNextTask()
-            Universal.progress = 0
             Universal.taskNum = 0
             if (!array) {
                 Universal.nextPointGo = 1
@@ -317,20 +319,7 @@ class StartExplainViewModel : ViewModel() {
 //        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
 //    }
 
-    fun splitString(input: String, length: Int): List<String> {
-        val result: MutableList<String> = ArrayList()
-        var startIndex = 0
-        while (startIndex < input.length) {
-            var endIndex = startIndex + length
-            if (endIndex > input.length) {
-                endIndex = input.length
-            }
-            val substring = input.substring(startIndex, endIndex)
-            result.add(substring)
-            startIndex = endIndex
-        }
-        return result
-    }
+
 }
 
 

@@ -80,4 +80,19 @@ object ExplainManager {
         )
         LogUtil.i("图片位置：${route?.big_imagefile?.toString()}")
     }
+
+    fun splitString(input: String, length: Int): List<String> {
+        val result: MutableList<String> = ArrayList()
+        var startIndex = 0
+        while (startIndex < input.length) {
+            var endIndex = startIndex + length
+            if (endIndex > input.length) {
+                endIndex = input.length
+            }
+            val substring = input.substring(startIndex, endIndex)
+            result.add(substring)
+            startIndex = endIndex
+        }
+        return result
+    }
 }

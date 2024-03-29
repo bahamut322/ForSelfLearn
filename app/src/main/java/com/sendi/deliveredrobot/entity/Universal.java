@@ -71,7 +71,6 @@ public class Universal {
     public static String POST_IDENTIFY = "http://192.168.73.204:5005/get_similarity";
 
 
-    //TODO 门岗管理
     //副屏轮播间隔时间
     public static int picPlayTime = 3;
     //副屏视频是否播放声音
@@ -108,8 +107,6 @@ public class Universal {
     public static MutableLiveData<Boolean> mapType = new MutableLiveData<>(false);
     //密码
     public static String password;
-    //播放进度
-    public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
     public static int explainTextLength = -1;

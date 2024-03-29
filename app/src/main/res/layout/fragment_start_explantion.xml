@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="data"
-            type="com.sendi.deliveredrobot.model.ExplantionNameModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -196,7 +193,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@{data.name}"
                         android:textColor="@color/white"
                         android:textSize="40sp"
                         tools:ignore="HardcodedText" />

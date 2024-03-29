@@ -9,6 +9,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -44,6 +45,7 @@ class ExplainingTask (
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         ROSHelper.navigateTo(taskModel!!.location!!)
+        taskModel?.bill?.executeNextTask()
         DialogHelper.loadingDialog.dismiss()
 
     }
