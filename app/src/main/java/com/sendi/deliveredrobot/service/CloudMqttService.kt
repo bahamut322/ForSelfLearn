@@ -194,7 +194,7 @@ class CloudMqttService : Service() {
         override fun connectComplete(reconnect: Boolean, serverURI: String?) {
             LogUtil.i("MQTT:X8连接完成")
             RobotStatus.mqttConnected = true
-            Thread {
+            thread {
                 UpdateReturn().assignment()
                 try {
                     var mqttToken: IMqttToken?
@@ -209,7 +209,7 @@ class CloudMqttService : Service() {
                 } catch (e: MqttException) {
                     e.printStackTrace()
                 }
-            }.start()
+            }
         }
 
         override fun connectionLost(arg0: Throwable) {

@@ -16,6 +16,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
+import kotlin.concurrent.thread
 
 
 /**
@@ -177,16 +178,18 @@ class DeliverMqttService : Service() {
         }
 
         override fun connectComplete(reconnect: Boolean, serverURI: String?) {
-            LogUtil.i("MQTT:送物连接完成")
-            try {
-                mqttAndroidClient_deliver?.subscribe(
-                    "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
+            thread {
+                LogUtil.i("MQTT:送物连接完成")
+                try {
+                    mqttAndroidClient_deliver?.subscribe(
+                        "$RESPONSE_TOPIC_DELIVER/${RobotStatus.SERIAL_NUMBER}",
 //                    "$RESPONSE_TOPIC/#",
-                    2
-                ) //订阅主题，参数：主题、服务质量
-                RobotStatus.mqttConnected = true
-            } catch (e: MqttException) {
-                e.printStackTrace()
+                        2
+                    ) //订阅主题，参数：主题、服务质量
+                    RobotStatus.mqttConnected = true
+                } catch (e: MqttException) {
+                    e.printStackTrace()
+                }
             }
         }
 
