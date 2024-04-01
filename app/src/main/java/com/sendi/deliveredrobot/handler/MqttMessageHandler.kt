@@ -160,7 +160,7 @@ object MqttMessageHandler {
                         // 数据保存成功
                         RobotStatus.newUpdate.postValue(2)
                         Log.d("TAG", "receive: 讲解配置数据保存成功")
-                        UpdateReturn().method()
+                        UpdateReturn.method()
                     } else {
                         // 数据保存失败
                         Log.d("TAG", "receive: 讲解配置数据保存失败")
@@ -407,17 +407,17 @@ object MqttMessageHandler {
                         Table_Robot_Config()
                     //更新数据——基础设置
                     val values = ContentValues()
-                    values.put("robotmode", UpdateReturn().audioName(robotConfig.audioType!!))
+                    values.put("robotmode", UpdateReturn.audioName(robotConfig.audioType!!))
                     val whereArgs = arrayOf(QuerySql.QueryBasicId().toString() + "")
                     UpDataSQL.update("table_basic", values, "id = ?", whereArgs)
                     //单独处理女声
                     if (robotConfig.audioType == 0) {
-                        UpdateReturn().randomVoice(
+                        UpdateReturn.randomVoice(
                             1,
                             QuerySql.QueryBasic().speechSpeed.toString()
                         )
                     } else {
-                        UpdateReturn().randomVoice(
+                        UpdateReturn.randomVoice(
                             robotConfig.audioType,
                             QuerySql.QueryBasic().speechSpeed.toString()
                         )
@@ -687,9 +687,9 @@ object MqttMessageHandler {
 
     private fun updateConfig(boolean: Boolean = true) {
         if (!boolean) {
-            UpdateReturn().settingMap()
+            UpdateReturn.settingMap()
         }
-        UpdateReturn().method(boolean)
+        UpdateReturn.method(boolean)
     }
 
     fun FileName(url: String): String {
@@ -715,7 +715,7 @@ object MqttMessageHandler {
     fun compareArrays(sdcardFile: String?, needDownload: String?): List<String?>? {
         val sameName = SameName()
         val sdcardPic = selectImagePath(sdcardFile)
-        val download = UpdateReturn().splitStr(needDownload!!)
+        val download = UpdateReturn.splitStr(needDownload!!)
         // 比较两个数组
         val commonFiles = sdcardPic.mapNotNull { it?.substringAfterLast('/') }
             .intersect(download.mapNotNull { it?.substringAfterLast('/') })
@@ -738,7 +738,7 @@ object MqttMessageHandler {
         Log.d("compareArrays", "需要下载的的文件: ${sameName.SameTwo}")
 
         for (i in sameName.SameOne!!.indices) {
-            UpdateReturn().deleteFolderFile(sameName.SameOne!![i], true)
+            UpdateReturn.deleteFolderFile(sameName.SameOne!![i], true)
         }
         return sameName.SameTwo
     }

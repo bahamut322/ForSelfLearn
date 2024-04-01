@@ -157,7 +157,7 @@ class BusinessIngFragment : Fragment() {
                 ReportDataHelper.reportTaskDto(
                     TaskModel(endTarget = "定点导购", taskId = taskId),
                     TaskStageEnum.BusinessIngTask,
-                    UpdateReturn().taskDto()
+                    UpdateReturn.taskDto()
                 )
             }
         }
@@ -299,7 +299,7 @@ class BusinessIngFragment : Fragment() {
         processClickDialog?.continueBtn?.setOnClickListener {
             processClickDialog?.dismiss()
             viewModel!!.countDownTimer!!.resume()
-            UpdateReturn().resume()
+            UpdateReturn.resume()
         }
     }
 
@@ -312,7 +312,7 @@ class BusinessIngFragment : Fragment() {
             ReportDataHelper.reportTaskDto(
                 TaskModel(endTarget = "定点导购", taskId = taskId),
                 TaskStageEnum.EarlyFinishBusinessTask,
-                UpdateReturn().taskDto()
+                UpdateReturn.taskDto()
             )
 
             when (actionData!!.actionType) {
@@ -336,7 +336,7 @@ class BusinessIngFragment : Fragment() {
                     ReportDataHelper.reportTaskDto(
                         TaskModel(endTarget = "定点导购", taskId = taskId),
                         TaskStageEnum.FinishBusinessTask,
-                        UpdateReturn().taskDto()
+                        UpdateReturn.taskDto()
                     )
 
                 }

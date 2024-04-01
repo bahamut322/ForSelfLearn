@@ -195,7 +195,7 @@ class CloudMqttService : Service() {
             LogUtil.i("MQTT:X8连接完成")
             RobotStatus.mqttConnected = true
             Thread {
-                UpdateReturn().assignment()
+                UpdateReturn.assignment()
                 try {
                     var mqttToken: IMqttToken?
                     do {

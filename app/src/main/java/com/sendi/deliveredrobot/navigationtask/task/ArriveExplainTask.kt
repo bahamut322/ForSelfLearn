@@ -76,7 +76,7 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                         LogUtil.i("结束 ${taskModel?.endTarget?:""} 到点播报（MP3）")
                         MediaStatusManager.stopMediaPlay(false)
                     }
-                    MediaPlayerHelper.getInstance().play(route!!.walkvoice)
+                    MediaPlayerHelper.getInstance().play(route!!.explanationvoice)
                 } catch (ignored: Exception) {
                     LogUtil.i("异常 ${taskModel?.endTarget?:""} 到点播报（MP3）")
                 }

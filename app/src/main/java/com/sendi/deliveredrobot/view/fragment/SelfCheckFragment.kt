@@ -215,7 +215,7 @@ class SelfCheckFragment : Fragment() {
                             thread.start()
                         }
                     }
-                    UpdateReturn().assignment()
+                    UpdateReturn.assignment()
                     if (RobotStatus.bootLocation != null) {
                         //设置floor_id
                         val floorId = RobotStatus.bootLocation?.floorName?.hashCode() ?: -1
@@ -399,7 +399,7 @@ class SelfCheckFragment : Fragment() {
     private fun selectFunction() {
         //判断数据长度来，判断全选是否勾选一个功能
 //        Looper.prepare()
-        UpdateReturn().deleteDirectory(Universal.AppVersion)
+        UpdateReturn.deleteDirectory(Universal.AppVersion)
         when (FunctionSkip.selectFunction()) {
             //智能引领
             0 -> {

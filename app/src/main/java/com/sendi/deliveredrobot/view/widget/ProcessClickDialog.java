@@ -65,7 +65,7 @@ public class ProcessClickDialog extends Dialog {
         }
         otherBtn = findViewById(R.id.otherBtn);
         continueBtn.setOnClickListener(view -> {
-            new UpdateReturn().resume();
+            UpdateReturn.INSTANCE.resume();
             dismiss();
         });
     }
@@ -98,7 +98,7 @@ public class ProcessClickDialog extends Dialog {
                 // 倒计时结束
                 LogUtil.INSTANCE.i(this+"倒计时结束");
                     dismiss();
-                    new UpdateReturn().resume();
+                    UpdateReturn.INSTANCE.resume();
             }
 
             @Override
@@ -142,7 +142,7 @@ public class ProcessClickDialog extends Dialog {
         BaiduTTSHelper.getInstance().pause();
         startCountdown(countdownTime); // 使用成员变量中的时间值
         mTimer.start();
-        new UpdateReturn().pause();
+        UpdateReturn.INSTANCE.pause();
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

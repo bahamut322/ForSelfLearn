@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,33 +38,25 @@ import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.ExplainManager;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.model.ExplainStatusModel;
-import com.sendi.deliveredrobot.model.ExplantionNameModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.TopLevelConfig;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.PlaceholderEnum;
-import com.sendi.deliveredrobot.service.TaskStageEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
-import com.sendi.deliveredrobot.view.widget.Advance;
 import com.sendi.deliveredrobot.view.widget.ChangingOverDialog;
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog;
-import com.sendi.deliveredrobot.view.widget.MediaStatusManager;
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
 import com.sendi.deliveredrobot.view.widget.Stat;
 import com.sendi.deliveredrobot.view.widget.TaskNext;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import cn.hutool.core.util.EnumUtil;
 
 /**
  * @author swn
@@ -147,6 +138,7 @@ public class StartExplainFragment extends Fragment {
         changingOverDialog = new ChangingOverDialog(getContext());
         processClickDialog.setCountdownTime(QuerySql.QueryBasic().getExplainWhetherTime());
         init();
+        //todo delete start 倒计时3s监听逻辑
         TaskNext.setOnChangeListener(() -> {
             if (Objects.equals(TaskNext.getToDo(), "1")) {
                 changingOverDialog.dismiss();
@@ -154,6 +146,7 @@ public class StartExplainFragment extends Fragment {
                 processClickDialog.dismiss();
             }
         });
+        //todo delete end
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
                 isButtonClickable = false;
@@ -172,7 +165,7 @@ public class StartExplainFragment extends Fragment {
 
                     MediaPlayerHelper.getInstance().stop();
                     nextTaskToDo = false;
-                    binding.acceptstationTv.stopPlay();
+                    binding.acceptStationTv.stopPlay();
 
                     BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
                     viewModel.finishTask();
@@ -202,7 +195,7 @@ public class StartExplainFragment extends Fragment {
 //                }
                 MediaPlayerHelper.getInstance().stop();
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-                binding.acceptstationTv.stopPlay();
+                binding.acceptStationTv.stopPlay();
                 viewModel.nextTask(true);
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
@@ -240,13 +233,13 @@ public class StartExplainFragment extends Fragment {
                     BaiduTTSHelper.getInstance().pause();
                     MediaPlayerHelper.getInstance().pause();
                     binding.pauseBtn.setText("继续讲解");
-                    binding.PauseTV.setVisibility(View.VISIBLE);
+                    binding.pauseTV.setVisibility(View.VISIBLE);
                 } else {
                     // 偶数次点击，执行恢复操作
                     Universal.speaking = false;
                     BaiduTTSHelper.getInstance().resume();
                     MediaPlayerHelper.getInstance().resume();
-                    binding.PauseTV.setVisibility(View.GONE);
+                    binding.pauseTV.setVisibility(View.GONE);
                     binding.pauseBtn.setText("暂停讲解");
                 }
                 new Handler().postDelayed(() -> {
@@ -385,12 +378,13 @@ public class StartExplainFragment extends Fragment {
                                     LogUtil.INSTANCE.i("当前页数: " + page);
                                     LogUtil.INSTANCE.i("当前进度: " + currentTextProgress);
                                     LogUtil.INSTANCE.i("当前内容: " + currentText);
-                                    binding.acceptstationTv.setText(currentText, currentTextProgress);
+                                    binding.acceptStationTv.setText(currentText, currentTextProgress);
                                 }
                                 break;
                             }
                             case ExplainStatusModel.TYPE_MP3:{
                                 binding.contentLin.setVisibility(View.GONE);
+                                binding.pauseBtn.setVisibility(View.GONE);
                                 break;
                             }
                         }
@@ -603,7 +597,7 @@ public class StartExplainFragment extends Fragment {
                 //  2、看看有没有必要替换放弃 TTSProgressHandlerImpl，替换成SpeakHelper.INSTANCE.speakUserCallback
                 //
                 //这段你别问我哈，公司没钱。用短语音识别去读长语音，还要过渡显示，更过分的还要翻页诶。我也没办法，只能这样做，我也看不懂了。
-                if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty() && array) {
+//                if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty() && array) {
 //                    beforePage = 0;
 //                    binding.pauseBtn.setVisibility(View.VISIBLE);
 //                    try {
@@ -661,34 +655,34 @@ public class StartExplainFragment extends Fragment {
 //                        }
 //
 //                    });
-                } else if (!mData.get(position).getExplanationvoice().isEmpty() && array) {
-                    binding.contentLin.setVisibility(View.GONE);
-                    binding.pauseBtn.setVisibility(View.GONE);
-                    try {
-                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
-                    } catch (Exception e) {
-                        Log.d("TAG", "上报StartArrayBroadcast: " + e);
-                    }
-                    MediaPlayerHelper.getInstance().play(mData.get(position).getExplanationvoice());
-                    MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
-                        LogUtil.INSTANCE.i("到点音频播放：currentPosition: " + currentPosition + ",totalDuration: " + totalDuration);
-//                        if ((totalDuration - currentPosition) <= 500 && isMethodExecuted) {
-                        if ((totalDuration - currentPosition) <= 500) {
-                            try {
-//                                isMethodExecuted = false;
-                                MediaPlayerHelper.getInstance().stop();
-                                viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
-                            } catch (Exception e) {
-                                Log.d("TAG", "到点音频播放异常: " + e);
-                            }
-                            Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-                        }
-                    });
-                } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().length() == 0 && array) {
-                    binding.pauseBtn.setVisibility(View.GONE);
-//                    isMethodExecuted = false;
-                    Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-                }
+//                } else if (!mData.get(position).getExplanationvoice().isEmpty() && array) {
+//                    binding.contentLin.setVisibility(View.GONE);
+//                    binding.pauseBtn.setVisibility(View.GONE);
+//                    try {
+//                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
+//                    } catch (Exception e) {
+//                        Log.d("TAG", "上报StartArrayBroadcast: " + e);
+//                    }
+//                    MediaPlayerHelper.getInstance().play(mData.get(position).getExplanationvoice());
+//                    MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
+//                        LogUtil.INSTANCE.i("到点音频播放：currentPosition: " + currentPosition + ",totalDuration: " + totalDuration);
+////                        if ((totalDuration - currentPosition) <= 500 && isMethodExecuted) {
+//                        if ((totalDuration - currentPosition) <= 500) {
+//                            try {
+////                                isMethodExecuted = false;
+//                                MediaPlayerHelper.getInstance().stop();
+//                                viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
+//                            } catch (Exception e) {
+//                                Log.d("TAG", "到点音频播放异常: " + e);
+//                            }
+//                            Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
+//                        }
+//                    });
+//                } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().length() == 0 && array) {
+//                    binding.pauseBtn.setVisibility(View.GONE);
+////                    isMethodExecuted = false;
+//                    Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
+//                }
                 // todo delete end
             });
         } catch (Exception e) {
@@ -712,7 +706,7 @@ public class StartExplainFragment extends Fragment {
 //                }
                 MediaPlayerHelper.getInstance().stop();
                 viewModel.finishTask();
-                binding.acceptstationTv.stopPlay();
+                binding.acceptStationTv.stopPlay();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
                 BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
@@ -730,7 +724,7 @@ public class StartExplainFragment extends Fragment {
             beforePage = -1;
             MediaPlayerHelper.getInstance().stop();
 //            isMethodExecuted = false;
-            binding.acceptstationTv.stopPlay();
+            binding.acceptStationTv.stopPlay();
             viewModel.nextTask(false);
             processClickDialog.dismiss();
 
@@ -750,7 +744,7 @@ public class StartExplainFragment extends Fragment {
         BaiduTTSHelper.getInstance().pause();
         changingOverDialog.show();
         if (!array) {
-            new UpdateReturn().pause();
+            UpdateReturn.INSTANCE.pause();
         }
         ChangePointGridViewAdapter adapter = new ChangePointGridViewAdapter(requireActivity(), ExplainManager.INSTANCE.getRoutes(), BillManager.INSTANCE.currentBill().endTarget());
         changingOverDialog.pointGV.setAdapter(adapter);
@@ -761,16 +755,16 @@ public class StartExplainFragment extends Fragment {
             }
             changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
-            changingOverDialog.Sure.setOnClickListener(v -> {
+            changingOverDialog.ensure.setOnClickListener(v -> {
                 BaiduTTSHelper.getInstance().stop();
                 Universal.taskNum = 0;
                 beforePage = -1;
                 MediaPlayerHelper.getInstance().stop();
-                binding.acceptstationTv.stopPlay();
+                binding.acceptStationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName(), pointArray);
                 changingOverDialog.dismiss();
             });
-            changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
+            changingOverDialog.cancel.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
         });
         changingOverDialog.returnImg.setOnClickListener(v1 -> {
             changingOverDialog.dismiss();
@@ -780,7 +774,7 @@ public class StartExplainFragment extends Fragment {
             }
             Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
             if (!array) {
-                new UpdateReturn().resume();
+                UpdateReturn.INSTANCE.resume();
             }
         });
     }

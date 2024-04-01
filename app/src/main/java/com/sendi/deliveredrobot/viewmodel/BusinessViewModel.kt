@@ -119,7 +119,7 @@ class BusinessViewModel : ViewModel() {
                     ReportDataHelper.reportTaskDto(
                         TaskModel(endTarget = "定点导购",taskId = taskId),
                         TaskStageEnum.FinishBusinessTask,
-                        UpdateReturn().taskDto()
+                        UpdateReturn.taskDto()
                     )
                 } else {
                     TaskNext.setToDo("1")

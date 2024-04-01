@@ -147,7 +147,7 @@ class BusinessFragment : BaseFragment() {
                         reportTaskDto(
                             TaskModel(endTarget = "定点导购",taskId = taskId),
                             TaskStageEnum.ALLStartTask,
-                            UpdateReturn().taskDto()
+                            UpdateReturn.taskDto()
                         )
                     } else {
                         Universal.shoppingName = shoppingActionList[position].name

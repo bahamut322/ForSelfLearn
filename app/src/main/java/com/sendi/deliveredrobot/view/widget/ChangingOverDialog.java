@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -27,7 +26,7 @@ public class ChangingOverDialog extends Dialog {
     public ImageView returnImg;
     public ConstraintLayout dialog_button;
     public TextView askTv;
-    public Button Sure, No;
+    public Button ensure, cancel;
 
     public ChangingOverDialog(Context context) {
         super(context, R.style.Dialog);
@@ -43,8 +42,8 @@ public class ChangingOverDialog extends Dialog {
         returnImg = findViewById(R.id.returnImg);
         dialog_button = findViewById(R.id.dialog_button);
         askTv = findViewById(R.id.askTv);
-        Sure = findViewById(R.id.Yes_Exit);
-        No = findViewById(R.id.No_Exit);
+        ensure = findViewById(R.id.Yes_Exit);
+        cancel = findViewById(R.id.No_Exit);
         dialog_button.setVisibility(View.GONE);
     }
 
@@ -64,7 +63,7 @@ public class ChangingOverDialog extends Dialog {
         super.show();
         Universal.changing = true;
         dialog_button.setVisibility(View.GONE);
-        new UpdateReturn().pause();
+        UpdateReturn.INSTANCE.pause();
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

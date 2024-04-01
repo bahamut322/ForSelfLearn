@@ -254,7 +254,7 @@ class StartExplainViewModel : ViewModel() {
                 )?.currentTask()
             )?.taskModel(),
             enum,
-            UpdateReturn().taskDto()
+            UpdateReturn.taskDto()
         )
 
     }
@@ -283,7 +283,7 @@ class StartExplainViewModel : ViewModel() {
             Universal.taskNum = 0
             if (!array) {
                 Universal.nextPointGo = 1
-                UpdateReturn().stop()
+                UpdateReturn.stop()
             }
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)

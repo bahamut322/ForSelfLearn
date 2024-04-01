@@ -181,7 +181,7 @@ class MqttService : Service() {
         }
 
         override fun connectComplete(reconnect: Boolean, serverURI: String?) {
-            Thread { UpdateReturn().assignment() }.start()
+            Thread { UpdateReturn.assignment() }.start()
             LogUtil.i("MQTT:通用订阅连接成功 ")
             try {
                 mqttAndroidClient?.subscribe(
