@@ -306,7 +306,7 @@ class BusinessIngFragment : Fragment() {
     //二次确认
     private fun secondRecognition() {
         finishTaskDialog?.show()
-        finishTaskDialog?.YesExit?.setOnClickListener {
+        finishTaskDialog?.confirmBtn?.setOnClickListener {
             viewModel!!.countDownTimer!!.cancel()
             //中断导购上报
             ReportDataHelper.reportTaskDto(
@@ -342,7 +342,7 @@ class BusinessIngFragment : Fragment() {
                 }
             }
         }
-        finishTaskDialog?.NoExit?.setOnClickListener {
+        finishTaskDialog?.cancelBtn?.setOnClickListener {
             viewModel!!.countDownTimer!!.resume()
             finishTaskDialog?.dismiss()
         }

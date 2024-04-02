@@ -114,7 +114,7 @@ class GreetFragment : Fragment() {
     //二次确认
     private fun secondRecognition() {
         finishTaskDialog?.show()
-        finishTaskDialog?.YesExit?.setOnClickListener {
+        finishTaskDialog?.confirmBtn?.setOnClickListener {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //返回
@@ -122,7 +122,7 @@ class GreetFragment : Fragment() {
             BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
 
         }
-        finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+        finishTaskDialog?.cancelBtn?.setOnClickListener { finishTaskDialog?.dismiss() }
     }
     override fun onStop() {
         //释放人脸识别资源

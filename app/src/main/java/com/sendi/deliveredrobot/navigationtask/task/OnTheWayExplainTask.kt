@@ -61,9 +61,10 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                     route!!.routename,
                     "智能讲解"
                 )
-                SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
+                SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback {
                     override fun speakAllFinish() {
                         // 2.监听途径播报进度，如果播报完成，则设置finished为true
+                        SpeakHelper.releaseUserCallback()
                         LogUtil.i("结束 ${taskModel?.endTarget?:""} 途径播报（文本）")
                         finishExplain()
                     }
@@ -71,7 +72,7 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                     override fun progressChange(utteranceId: String, progress: Int) {
                         // do nothing
                     }
-                }
+                })
                 SpeakHelper.speakWithoutStop(text)
             }
             if (!route!!.walkvoice.isNullOrEmpty()) {

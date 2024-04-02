@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.model;
 
-import androidx.annotation.NonNull;
-
 public class MyResultModel {
 
     /**

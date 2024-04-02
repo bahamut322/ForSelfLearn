@@ -55,8 +55,9 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                     route?.routename,
                     "智能讲解"
                 )
-                SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
+                SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback {
                     override fun speakAllFinish() {
+                        SpeakHelper.releaseUserCallback()
                         taskModel?.bill?.executeNextTask()
                         LogUtil.i("结束 ${taskModel?.endTarget?:""} 到点播报（文本）")
                     }
@@ -64,7 +65,7 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                     override fun progressChange(utteranceId: String, progress: Int) {
                         notifyFragmentUpdate(progress)
                     }
-                }
+                })
                 SpeakHelper.speakWithoutStop(text)
             }
             if (!route!!.explanationvoice.isNullOrEmpty()) {

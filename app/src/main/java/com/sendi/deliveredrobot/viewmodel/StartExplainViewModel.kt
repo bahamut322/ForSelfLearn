@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
@@ -53,6 +54,7 @@ class StartExplainViewModel : ViewModel() {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
+            SpeakHelper.stop()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)
@@ -60,11 +62,11 @@ class StartExplainViewModel : ViewModel() {
     }
 
     fun recombine(selectName: String, array: Boolean) {
-        if (mData == null) return
+        if (inForListData() == null) return
         var position = 0
         Universal.selectMapPoint = true
-        for (i in mData!!.indices) {
-            if (mData!![i]?.name == selectName) {
+        for (i in inForListData()!!.indices) {
+            if (inForListData()!![i]?.name == selectName) {
                 Log.d("TAG", "onClick: $i")
                 position = i
                 break
@@ -74,28 +76,29 @@ class StartExplainViewModel : ViewModel() {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
-            BillManager.billList().clear()
-            BaiduTTSHelper.getInstance().stop()
+            BillManager.clearBillList()
+            SpeakHelper.stop()
+//            BaiduTTSHelper.getInstance().stop()
 //            Universal.Model = "结束讲解"
 
             LogUtil.i("选择地点的索引：$position")
 //            for (index in position until mData!!.size) {
-            for (index in position until mData!!.size) {
+            for (index in position until inForListData()!!.size) {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
                 val bill = ExplanationBill.createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
-            if (!array) {
+//            if (!array) {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-            }
+//            }
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
-            if (array) {
-                BillManager.currentBill()?.executeNextTask()
-            }
+//            if (array) {
+//                BillManager.currentBill()?.executeNextTask()
+//            }
         }
     }
 

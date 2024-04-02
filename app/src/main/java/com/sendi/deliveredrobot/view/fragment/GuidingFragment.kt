@@ -252,7 +252,7 @@ class GuidingFragment : Fragment() {
     //二次确认
     private fun secondRecognition() {
         finishTaskDialog?.show()
-        finishTaskDialog?.YesExit?.setOnClickListener {
+        finishTaskDialog?.confirmBtn?.setOnClickListener {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //中断提示
@@ -262,7 +262,7 @@ class GuidingFragment : Fragment() {
             //返回
             viewModel!!.finishTask()
         }
-        finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+        finishTaskDialog?.cancelBtn?.setOnClickListener { finishTaskDialog?.dismiss() }
     }
 
     override fun onDestroy() {

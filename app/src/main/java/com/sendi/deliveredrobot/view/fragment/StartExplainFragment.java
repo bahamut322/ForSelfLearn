@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.ExplainManager;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.ExplainStatusModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.model.TopLevelConfig;
@@ -71,7 +72,6 @@ public class StartExplainFragment extends Fragment {
     private BaseViewModel baseViewModel;
     private ProcessClickDialog processClickDialog;
     private ChangingOverDialog changingOverDialog;
-    private int beforePage = -1;
     boolean nextTaskToDo = true;
     Handler handler;
     private View rootView;
@@ -154,24 +154,23 @@ public class StartExplainFragment extends Fragment {
                 BaiduTTSHelper.getInstance().pause();
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
-                finishTaskDialog.YesExit.setOnClickListener(v1 -> {
+                finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
                     processClickDialog.dismiss();
                     finishTaskDialog.dismiss();
                     Universal.explainTextLength = -1;
-                    beforePage = -1;
                     //返回
                     Universal.taskNum = 0;
-                    BaiduTTSHelper.getInstance().stop();
+//                    BaiduTTSHelper.getInstance().stop();
 
                     MediaPlayerHelper.getInstance().stop();
                     nextTaskToDo = false;
-                    binding.acceptStationTv.stopPlay();
-
+//                    binding.acceptStationTv.stopPlay();
+                    SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
                     BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
                     viewModel.finishTask();
                 });
 
-                finishTaskDialog.NoExit.setOnClickListener(v12 -> {
+                finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
                     if (clickCount % 2 != 1) {
                         BaiduTTSHelper.getInstance().resume();
                     }
@@ -195,7 +194,7 @@ public class StartExplainFragment extends Fragment {
 //                }
                 MediaPlayerHelper.getInstance().stop();
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-                binding.acceptStationTv.stopPlay();
+//                binding.acceptStationTv.stopPlay();
                 viewModel.nextTask(true);
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
@@ -291,7 +290,6 @@ public class StartExplainFragment extends Fragment {
                         int position = it.getPosition();
                         itemTarget = position;
                         scrollToCenter(position);
-                        beforePage = -1;
                         break;
                     }
                     case ExplainStatusModel.STATUS_ON_THE_WAY_PROCESS:{
@@ -375,9 +373,9 @@ public class StartExplainFragment extends Fragment {
                                     int page = progress / 135;
                                     int currentTextProgress = progress % 135;
                                     String currentText = currentTextQueue.get(page);
-                                    LogUtil.INSTANCE.i("当前页数: " + page);
-                                    LogUtil.INSTANCE.i("当前进度: " + currentTextProgress);
-                                    LogUtil.INSTANCE.i("当前内容: " + currentText);
+//                                    LogUtil.INSTANCE.i("当前页数: " + page);
+//                                    LogUtil.INSTANCE.i("当前进度: " + currentTextProgress);
+//                                    LogUtil.INSTANCE.i("当前内容: " + currentText);
                                     binding.acceptStationTv.setText(currentText, currentTextProgress);
                                 }
                                 break;
@@ -457,9 +455,11 @@ public class StartExplainFragment extends Fragment {
      */
     private void scrollToCenter(int position) {
         position = Math.max(position, 0);
-        position = Math.min(position, mAdapter.getItemCount() - 1);
+        position = Math.min(position, ExplainManager.INSTANCE.getRoutes().size() - 1);
         binding.pointList.scrollToPosition(position);
-        mAdapter.setSelectPosition(position);
+        if (mAdapter != null) {
+            mAdapter.setSelectPosition(position);
+        }
     }
 
 
@@ -694,8 +694,7 @@ public class StartExplainFragment extends Fragment {
         processClickDialog.show();
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
-            finishTaskDialog.YesExit.setOnClickListener(v12 -> {
-                array = false;
+            finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
                 //返回
                 Universal.taskNum = 0;
 //                isMethodExecuted = false;
@@ -706,13 +705,13 @@ public class StartExplainFragment extends Fragment {
 //                }
                 MediaPlayerHelper.getInstance().stop();
                 viewModel.finishTask();
-                binding.acceptStationTv.stopPlay();
+//                binding.acceptStationTv.stopPlay();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
                 BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
                 //                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
             });
-            finishTaskDialog.NoExit.setOnClickListener(v1 -> finishTaskDialog.dismiss());
+            finishTaskDialog.cancelBtn.setOnClickListener(v1 -> finishTaskDialog.dismiss());
 
         });
         processClickDialog.nextBtn.setOnClickListener(v -> {
@@ -721,10 +720,9 @@ public class StartExplainFragment extends Fragment {
 //            if (Universal.taskQueue != null) {
 //                Universal.taskQueue.clear();
 //            }
-            beforePage = -1;
             MediaPlayerHelper.getInstance().stop();
 //            isMethodExecuted = false;
-            binding.acceptStationTv.stopPlay();
+//            binding.acceptStationTv.stopPlay();
             viewModel.nextTask(false);
             processClickDialog.dismiss();
 
@@ -750,17 +748,16 @@ public class StartExplainFragment extends Fragment {
         changingOverDialog.pointGV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         changingOverDialog.pointGV.setOnItemClickListener((parent, view, position, id) -> {
-            if (position == itemTarget) {
-                return;
-            }
+//            if (position == itemTarget) {
+//                return;
+//            }
             changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
             changingOverDialog.ensure.setOnClickListener(v -> {
-                BaiduTTSHelper.getInstance().stop();
+//                BaiduTTSHelper.getInstance().stop();
                 Universal.taskNum = 0;
-                beforePage = -1;
                 MediaPlayerHelper.getInstance().stop();
-                binding.acceptStationTv.stopPlay();
+//                binding.acceptStationTv.stopPlay();
                 viewModel.recombine(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName(), pointArray);
                 changingOverDialog.dismiss();
             });

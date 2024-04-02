@@ -18,7 +18,7 @@ object RobotStatus {
     var SERIAL_NUMBER = "" //序列号
     const val CALL_LIFT_AND_MOVE_TIMES = 10 //重试电梯次数阈值
     const val RETRY_DOCK_MAX_TIMES = 3
-    const val LOW_POWER_VALUE = 10 // 低电量阈值
+    const val LOW_POWER_VALUE = 0 // 低电量阈值
     const val SHUT_DOWN_VALUE = 5 // 低电量阈值
     var callLiftAndMoveTimes = 0       //重试电梯次数
     var callingLift = false //正在呼叫电梯
@@ -69,7 +69,6 @@ object RobotStatus {
     var sdScreenStatus: Int? = 0 // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾 6:轻应用
     var selectRouteMapItemId  = -1//选择的item的id
     var pointItemIndex = -1//选择item中的列表的索引
-    var targetName : MutableLiveData<String?> = MutableLiveData()
     var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
     var arrayPointExplain : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var ttsIsPlaying = false //百度语音播放状态

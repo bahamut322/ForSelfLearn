@@ -99,7 +99,14 @@ object SpeakHelper {
                     BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
                 } else {
                     RobotStatus.ttsIsPlaying = false
-                    speakUserCallback?.speakAllFinish()
+                    utteranceId.isNotEmpty().let {
+                        try {
+                            utteranceId.toLong()
+                            speakUserCallback?.speakAllFinish()
+                        } catch (e: Exception) {
+
+                        }
+                    }
                     resetStartId()
                 }
             } else {
@@ -108,9 +115,24 @@ object SpeakHelper {
             }
         }else{
             RobotStatus.ttsIsPlaying = false
-            speakUserCallback?.speakAllFinish()
+            utteranceId.isNotEmpty().let {
+                try {
+                    utteranceId.toLong()
+                    speakUserCallback?.speakAllFinish()
+                } catch (e: Exception) {
+
+                }
+            }
             resetStartId()
         }
+    }
+
+    fun setUserCallback(callback: SpeakUserCallback){
+        speakUserCallback = callback
+    }
+
+    fun releaseUserCallback(){
+        speakUserCallback = null
     }
 
     private fun playFirst(){
