@@ -60,14 +60,13 @@ object FaceRecognition {
 //    private var speakNum = 0
     private var canSendData = true
     private var doubleString: ArrayList<Table_Face?> = ArrayList()
-    private val isProcessing = AtomicBoolean(false)
+    private var isProcessing:AtomicBoolean? = null
     private val faceHttpJsonParams = JSONObject()
     private val faceIdentifyJsonParams = JSONObject()
-    private val faceScope = CoroutineScope(Dispatchers.Default + Job())
-    private var manager =
-        MyApplication.instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    private val channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
-    private var shouldExecute = true // 控制方法是否执行的标志
+    private var faceScope: CoroutineScope? = null
+    private var manager = MyApplication.instance!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    private var channel: Channel<ByteArray>? = null
+    private var shouldExecute:Boolean = true // 控制方法是否执行的标志
     val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Rect::class.java, RectDeserializer())
         .create()
@@ -80,11 +79,11 @@ object FaceRecognition {
     private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
     private val newUpdateMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
     private val checkFaceObserver = { value: Int ->
-        if (value == 1 && isProcessing.compareAndSet(false, true)) {
-            faceScope.launch {
+        if (value == 1 && isProcessing?.compareAndSet(false, true) == true) {
+            faceScope?.launch {
                 delay(5000)
 //                speakNum = 0  // 将speakNum设置为0
-                isProcessing.set(false) // 处理完成，重置标志
+                isProcessing?.set(false) // 处理完成，重置标志
             }
         }
     }
@@ -102,8 +101,14 @@ object FaceRecognition {
         height: Int = 600,
         needEtiquette: Boolean = false
     ) {
+        channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
+        isProcessing = AtomicBoolean(false)
+        shouldExecute = true
+        faceScope = CoroutineScope(Dispatchers.Default + Job())
+        RobotStatus.identifyFaceSpeak.postValue(1)
         thread {
             LogUtil.i("人脸识别初始化")
+            canSendData = true
             shouldExecute = true
             var cameraIds = arrayOfNulls<String>(0)
             try {
@@ -136,7 +141,7 @@ object FaceRecognition {
             c?.setPreviewCallbackWithBuffer { data: ByteArray, _: Camera? ->
                 if (data.isNotEmpty() && canSendData) {
                     canSendData = false
-                    channel.trySend(data) // 将数据发送到Channel
+                    channel?.trySend(data) // 将数据发送到Channel
                 }
                 c?.addCallbackBuffer(buffer)
             }
@@ -146,17 +151,19 @@ object FaceRecognition {
             }
             identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak, checkFaceObserver)
             // 启动一个单独的协程来处理数据
-            faceScope.launch {
-                for (data in channel) { // 从Channel中接收数据
-                    try {
+            faceScope?.launch {
+                if (channel != null) {
+                    for (data in channel!!) { // 从Channel中接收数据
+                        try {
 //                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
-                        val bm = decodeByteArrayToBitmap(data, width, height)
-                        if (bm != null) {
-                            faceHttp(extractFeature, bm, needEtiquette)
-                            FaceDataListener.setFaceBit(bm)
-                            bm.recycle()
+                            val bm = decodeByteArrayToBitmap(data, width, height)
+                            if (bm != null) {
+                                faceHttp(extractFeature, bm, needEtiquette)
+                                FaceDataListener.setFaceBit(bm)
+                                bm.recycle()
+                            }
+                        } catch (_: Exception) {
                         }
-                    } catch (_: Exception) {
                     }
                 }
             }
@@ -295,7 +302,7 @@ object FaceRecognition {
     private fun checkFaceSpeak(
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (RobotStatus.identifyFaceSpeak.value == 1 && !isProcessing.get() && shouldExecute) {
+        if (RobotStatus.identifyFaceSpeak.value == 1 && !(isProcessing?.get() == true && shouldExecute)) {
 //            speakNum = 1
             RobotStatus.identifyFaceSpeak.value = 0 //在百度TTS中设置为0不及时
             BaiduTTSHelper.getInstance().speak(speak, "")
@@ -450,8 +457,8 @@ object FaceRecognition {
             LogUtil.i("人脸识别销毁")
             // 取消所有协程任务
             shouldExecute = false
-            faceScope.cancel()
-            channel.close()
+            faceScope?.cancel()
+            channel?.close()
             // 停止预览
             c?.stopPreview()
             // 移除预览回调
