@@ -61,7 +61,7 @@ class StartExplainViewModel : ViewModel() {
         }
     }
 
-    fun recombine(selectName: String, array: Boolean) {
+    fun recombine(selectName: String) {
         if (inForListData() == null) return
         var position = 0
         Universal.selectMapPoint = true
@@ -283,7 +283,6 @@ class StartExplainViewModel : ViewModel() {
         mainScope.launch {
             countDownTimer?.pause()
             BillManager.currentBill()?.executeNextTask()
-            Universal.taskNum = 0
             if (!array) {
                 Universal.nextPointGo = 1
                 UpdateReturn.stop()

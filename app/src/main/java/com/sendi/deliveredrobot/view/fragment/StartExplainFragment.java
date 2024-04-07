@@ -77,9 +77,6 @@ public class StartExplainFragment extends Fragment {
     private View rootView;
 //    private static boolean isMethodExecuted = false;
     private int itemTarget;
-    Boolean pointArray = false;
-    boolean array = false;
-    ConstraintLayout.LayoutParams layoutParams;
     private boolean isButtonClickable = true;
     int clickCount = 0;
     private FinishTaskDialog finishTaskDialog;
@@ -159,7 +156,6 @@ public class StartExplainFragment extends Fragment {
                     finishTaskDialog.dismiss();
                     Universal.explainTextLength = -1;
                     //返回
-                    Universal.taskNum = 0;
 //                    BaiduTTSHelper.getInstance().stop();
 
                     MediaPlayerHelper.getInstance().stop();
@@ -208,7 +204,6 @@ public class StartExplainFragment extends Fragment {
                 isButtonClickable = false;
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 changeDialog(true);
-                pointArray = true;
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
@@ -546,157 +541,12 @@ public class StartExplainFragment extends Fragment {
 
     }
 
-    private void arrayToDo(ArrayList<MyResultModel> mData, int position) {
-        try {
-            LogUtil.INSTANCE.d("到点讲解：" + Universal.selectMapPoint);
-            if (Universal.selectMapPoint) {
-                return;
-            }
-//            array = true;
-//            Universal.explainTextLength = -1;
-//            RobotStatus.INSTANCE.getProgress().setValue(0);
-//            nextTaskToDo = true;
-            requireActivity().runOnUiThread(() -> {
-                // 在执行后台任务之前执行，通常用于初始化操作
-                // todo delete start
-//                binding.parentCon.setClickable(false);
-//                binding.contentLin.setVisibility(View.VISIBLE);
-//                binding.contentCL.setVisibility(View.VISIBLE);
-//                binding.parentCon.setBackgroundResource(R.drawable.bg);
-//                if (BillManager.INSTANCE.billList().size() == 1) {
-//                    binding.nextTaskBtn.setVisibility(View.GONE);
-//                } else {
-//                    binding.nextTaskBtn.setVisibility(View.VISIBLE);
-//                }
-//                binding.statusTv.setText("正在讲解:");
-//                binding.nowExplanation.setText(mData.get(position).getName());
-//
-//                if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == TopLevelConfig.TYPE_EXPRESSION) {
-//                    binding.finishBtn.setEnabled(false);
-//                    binding.changingOver.setEnabled(false);
-//                    binding.nextTaskBtn.setEnabled(false);
-//                    binding.argPic.setVisibility(View.VISIBLE);
-//                    Glide.with(requireActivity()).load(QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_arrivePic()).placeholder(R.drawable.ic_warming).into(binding.argPic);
-//                } else {
-//                    binding.finishBtn.setEnabled(true);
-//                    binding.changingOver.setEnabled(true);
-//                    binding.nextTaskBtn.setEnabled(true);
-//                    binding.argPic.setVisibility(View.GONE);
-//                    try {
-//                        binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(mData.get(position).getTouch_imagefile(), mData.get(position).getTouch_pictype(), mData.get(position).getTouch_picplaytime()));
-//                        layoutThis(mData.get(position).getTouch_picplaytime(), mData.get(position).getTouch_imagefile(), mData.get(position).getTouch_type(), mData.get(position).getTouch_textposition(), mData.get(position).getTouch_fontlayout(), mData.get(position).getTouch_fontcontent().toString(), mData.get(position).getTouch_fontbackground(), mData.get(position).getTouch_fontcolor().toString(), (int) mData.get(position).getTouch_fontsize(), mData.get(position).getTouch_pictype());
-//                    } catch (Exception e) {
-//                        Log.d("TAG", "onBindViewHolder: " + e);
-//                    }
-//
-//                }
-                // todo delete end
-
-                // todo delete start
-                //  1、改造SongLyricTextView，去除内置动画，只根据传入的index绘制即可
-                //  2、看看有没有必要替换放弃 TTSProgressHandlerImpl，替换成SpeakHelper.INSTANCE.speakUserCallback
-                //
-                //这段你别问我哈，公司没钱。用短语音识别去读长语音，还要过渡显示，更过分的还要翻页诶。我也没办法，只能这样做，我也看不懂了。
-//                if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty() && array) {
-//                    beforePage = 0;
-//                    binding.pauseBtn.setVisibility(View.VISIBLE);
-//                    try {
-//                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
-//                    } catch (Exception e) {
-//                        Log.d("TAG", "上报StartArrayBroadcast: " + e);
-//                    }
-//                    binding.pointName.setText(mData.get(position).getName());
-//                    LogUtil.INSTANCE.i("到点讲解文字:" + mData.get(position).getExplanationtext());
-//
-//                    List<String> textEqually = viewModel.splitString(mData.get(position).getExplanationtext(), 135);
-//                    //页数（AtomicInteger为了线程安全咯）
-//                    AtomicInteger page = new AtomicInteger(textEqually.size());
-////                Log.d("TAG", "内容列表长度: " + page + "当前内容：" + textEqually.get(beforePage));
-//                    //显示第一页
-//                    binding.acceptstationTv.setText(PlaceholderEnum.Companion.replaceText(textEqually.get(beforePage),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
-//                    LogUtil.INSTANCE.i("当前页数: " + beforePage);
-//                    //将第一页的内容再次等分成BaiduTTS可以朗读的范围
-//                    BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(mData.get(position).getExplanationtext(),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
-//
-//                    RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
-//                        if (nextTaskToDo) {
-//                            LogUtil.INSTANCE.i("当前进度: " + (integer - ((beforePage) * 135)));
-//                            try {
-//                                binding.acceptstationTv.startPlayLine(
-//                                        (integer - ((beforePage) * 135)),
-//                                        textEqually.get(beforePage).length(),
-//                                        ((long) QuerySql.QueryBasic().getSpeechSpeed() * textEqually.get(beforePage).length()) * 1000);
-//                            } catch (Exception e) {
-//                                Log.d("TAG", "进度越界啦: " + e);
-//                            }
-//                        }
-//                        if (beforePage > -1 && integer >= ((beforePage + 1) * 135) && integer != 0) {
-//                            nextTaskToDo = false;
-//                            if (beforePage <= page.get() - 1) {
-//                                RobotStatus.INSTANCE.getProgress().postValue(0);
-//                                beforePage++;
-//                                binding.acceptstationTv.setText(PlaceholderEnum.Companion.replaceText(textEqually.get(beforePage),"",mData.get(position).getName(),mData.get(position).getRoutename(),"智能讲解"));
-//                                nextTaskToDo = true;
-//                            }
-//                        }
-//                        if (beforePage == (page.get() - 1)  && integer == Universal.explainTextLength) {
-//                            LogUtil.INSTANCE.d("Tips: 讲解内容完成,进入倒计时");
-//                            viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
-//                            binding.acceptstationTv.stopPlay();
-//                            Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-////                            if (Universal.taskQueue != null) {
-////                                Universal.taskQueue.clear();
-////                            }
-//                            //恢复视频声音
-//                            MediaStatusManager.stopMediaPlay(false);
-////                            isMethodExecuted = false;
-//                            beforePage = -1;
-//                            page.set(0);
-//                        }
-//
-//                    });
-//                } else if (!mData.get(position).getExplanationvoice().isEmpty() && array) {
-//                    binding.contentLin.setVisibility(View.GONE);
-//                    binding.pauseBtn.setVisibility(View.GONE);
-//                    try {
-//                        viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
-//                    } catch (Exception e) {
-//                        Log.d("TAG", "上报StartArrayBroadcast: " + e);
-//                    }
-//                    MediaPlayerHelper.getInstance().play(mData.get(position).getExplanationvoice());
-//                    MediaPlayerHelper.getInstance().setOnProgressListener((currentPosition, totalDuration) -> {
-//                        LogUtil.INSTANCE.i("到点音频播放：currentPosition: " + currentPosition + ",totalDuration: " + totalDuration);
-////                        if ((totalDuration - currentPosition) <= 500 && isMethodExecuted) {
-//                        if ((totalDuration - currentPosition) <= 500) {
-//                            try {
-////                                isMethodExecuted = false;
-//                                MediaPlayerHelper.getInstance().stop();
-//                                viewModel.getTask(TaskStageEnum.FinishArrayBroadcast);
-//                            } catch (Exception e) {
-//                                Log.d("TAG", "到点音频播放异常: " + e);
-//                            }
-//                            Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-//                        }
-//                    });
-//                } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().length() == 0 && array) {
-//                    binding.pauseBtn.setVisibility(View.GONE);
-////                    isMethodExecuted = false;
-//                    Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
-//                }
-                // todo delete end
-            });
-        } catch (Exception e) {
-            Log.d("TAG", "onBindViewHolder: " + e);
-        }
-    }
-
     private void processDialog() {
         processClickDialog.show();
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
             finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
                 //返回
-                Universal.taskNum = 0;
 //                isMethodExecuted = false;
                 Universal.explainTextLength = -1;
                 //删除讲解队列
@@ -731,7 +581,6 @@ public class StartExplainFragment extends Fragment {
             processClickDialog.dismiss();
 //            isMethodExecuted = false;
             changeDialog(false);
-            pointArray = false;
         });
 
     }
@@ -748,17 +597,16 @@ public class StartExplainFragment extends Fragment {
         changingOverDialog.pointGV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         changingOverDialog.pointGV.setOnItemClickListener((parent, view, position, id) -> {
-//            if (position == itemTarget) {
-//                return;
-//            }
+            if (position == itemTarget) {
+                return;
+            }
             changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
             changingOverDialog.ensure.setOnClickListener(v -> {
 //                BaiduTTSHelper.getInstance().stop();
-                Universal.taskNum = 0;
                 MediaPlayerHelper.getInstance().stop();
 //                binding.acceptStationTv.stopPlay();
-                viewModel.recombine(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName(), pointArray);
+                viewModel.recombine(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
                 changingOverDialog.dismiss();
             });
             changingOverDialog.cancel.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
@@ -774,11 +622,6 @@ public class StartExplainFragment extends Fragment {
                 UpdateReturn.INSTANCE.resume();
             }
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     /**
@@ -804,6 +647,7 @@ public class StartExplainFragment extends Fragment {
         String fontColor = route.getTouch_fontcolor();
         int fontSize = route.getTouch_fontsize();
         int picType = route.getTouch_pictype();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) binding.verticalTV.getLayoutParams();
         switch (type) {
             case 1:
             case 2:
@@ -815,7 +659,6 @@ public class StartExplainFragment extends Fragment {
                 break;
             case 6:
                 binding.pointImage.setVisibility(View.GONE);
-                layoutParams = (ConstraintLayout.LayoutParams) binding.verticalTV.getLayoutParams();
                 if (textPosition == 0) {
                     binding.horizontalTV.setGravity(Gravity.CENTER);//居中
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
@@ -834,7 +677,6 @@ public class StartExplainFragment extends Fragment {
             case 7:
                 //读取文件
                 binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(file, picType, picPlayTime));
-                layoutParams = (ConstraintLayout.LayoutParams) binding.verticalTV.getLayoutParams();
                 if (textPosition == 0) {
                     binding.horizontalTV.setGravity(Gravity.CENTER);//居中
                     textLayoutThis(fontLayout, fontContent, fontBackGround, fontColor, fontSize);
