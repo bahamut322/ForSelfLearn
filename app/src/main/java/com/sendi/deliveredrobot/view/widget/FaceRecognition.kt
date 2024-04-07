@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Table_Face
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.interfaces.FaceDataListener
 import com.sendi.deliveredrobot.model.FaceModel
 import com.sendi.deliveredrobot.model.RectDeserializer
@@ -78,15 +79,7 @@ object FaceRecognition {
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
     private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
     private val newUpdateMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
-    private val checkFaceObserver = { value: Int ->
-        if (value == 1 && isProcessing?.compareAndSet(false, true) == true) {
-            faceScope?.launch {
-                delay(5000)
-//                speakNum = 0  // 将speakNum设置为0
-                isProcessing?.set(false) // 处理完成，重置标志
-            }
-        }
-    }
+    private const val DELAY_TIME = 1000 * 10L
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -109,7 +102,6 @@ object FaceRecognition {
         thread {
             LogUtil.i("人脸识别初始化")
             canSendData = true
-            shouldExecute = true
             var cameraIds = arrayOfNulls<String>(0)
             try {
                 cameraIds = manager.cameraIdList
@@ -149,7 +141,15 @@ object FaceRecognition {
                 Log.d(TAG, "suerFaceInit: 获取数据")
                 doubleString = QuerySql.faceMessage()
             }
-            identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak, checkFaceObserver)
+            identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak) { value: Int ->
+                if (value == 1 && isProcessing?.compareAndSet(false, true) == true) {
+                    faceScope?.launch {
+                        delay(DELAY_TIME)
+//                speakNum = 0  // 将speakNum设置为0
+                        isProcessing?.set(false) // 处理完成，重置标志
+                    }
+                }
+            }
             // 启动一个单独的协程来处理数据
             faceScope?.launch {
                 if (channel != null) {
@@ -302,7 +302,7 @@ object FaceRecognition {
     private fun checkFaceSpeak(
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (RobotStatus.identifyFaceSpeak.value == 1 && !(isProcessing?.get() == true && shouldExecute)) {
+        if (RobotStatus.identifyFaceSpeak.value == 1 && isProcessing?.get() != true && shouldExecute) {
 //            speakNum = 1
             RobotStatus.identifyFaceSpeak.value = 0 //在百度TTS中设置为0不及时
             BaiduTTSHelper.getInstance().speak(speak, "")
@@ -451,6 +451,7 @@ object FaceRecognition {
      * 销毁
      */
     fun onDestroy() {
+        SpeakHelper.stop()
         newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
         identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
         if (null != c) {
