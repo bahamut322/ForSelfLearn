@@ -18,7 +18,7 @@ enum class ASROrNlpModelTypeEnum(private var code: String) {
             }
         var answerPriority: Array<String>? = null
         private fun splitPriority(voiceRecordType: String): Array<String> {
-            return voiceRecordType.split(pattern).toTypedArray()
+            return voiceRecordType.split(pattern).filter { it.isNotEmpty() }.toTypedArray()
         }
     }
 }
