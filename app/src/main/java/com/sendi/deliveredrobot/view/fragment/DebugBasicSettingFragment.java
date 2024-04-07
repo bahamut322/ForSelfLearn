@@ -65,6 +65,7 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.expressionCB.setChecked(settingData.getExpression());//是否开启表情
         binding.cbEtiquette.setChecked(settingData.getEtiquette());//是否开启礼仪迎宾
         binding.cbIntelligent.setChecked(settingData.getIntelligent());//是否开启智能语音
+        binding.conversation.setChecked(false);//是否开启智能问答
         binding.oneKeyCallPhone.setChecked(settingData.getOneKeyCallPhone() == 1);//是否开启一键呼叫电话
         String defaultValue = settingData.getDefaultValue();
         if (defaultValue != null) {
@@ -72,7 +73,7 @@ public class DebugBasicSettingFragment extends Fragment {
                 check(defaultValue.split(" ")[i]);
             }
             //判断数据长度来，判断全选是否勾选
-            if (defaultValue.split(" ").length == 5 && binding.oneKeyCallPhone.isChecked()) {
+            if (defaultValue.split(" ").length == 6 && binding.oneKeyCallPhone.isChecked()) {
                 binding.all.setChecked(true);
             }
         }
@@ -89,6 +90,7 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.EtiquetteWelcome.setOnCheckedChangeListener(boxCheckListener);
         binding.application.setOnCheckedChangeListener(boxCheckListener);
         binding.oneKeyCallPhone.setOnCheckedChangeListener(boxCheckListener);
+        binding.conversation.setOnCheckedChangeListener(boxCheckListener);
         //动画选择
         binding.expressionCB.setOnCheckedChangeListener((compoundButton, b) -> values.put("expression", BooleanToInt(b)));
         binding.cbIntelligent.setOnCheckedChangeListener((compoundButton, b) -> values.put("intelligent", BooleanToInt(b)));
@@ -148,6 +150,7 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.EtiquetteWelcome.setChecked(all.isChecked());
             binding.application.setChecked(all.isChecked());
             binding.oneKeyCallPhone.setChecked(all.isChecked());
+            binding.conversation.setChecked(all.isChecked());
         }
     }
 
@@ -157,7 +160,7 @@ public class DebugBasicSettingFragment extends Fragment {
             if (!isChecked) {
                 binding.all.setChecked(false);
             }
-            if (binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked() && binding.oneKeyCallPhone.isChecked()) {
+            if (binding.leaderShip.isChecked() && binding.explanation.isChecked() && binding.application.isChecked() && binding.business.isChecked() && binding.EtiquetteWelcome.isChecked() && binding.oneKeyCallPhone.isChecked() && binding.conversation.isChecked()) {
                 binding.all.setChecked(true);
             }
             Log.d(TAG, "onCheckedChanged: 点击");
@@ -176,6 +179,9 @@ public class DebugBasicSettingFragment extends Fragment {
             }
             if (binding.EtiquetteWelcome.isChecked()) {
                 stringBuffer.append("礼仪迎宾 ");
+            }
+            if (binding.conversation.isChecked()) {
+                stringBuffer.append("智能问答 ");
             }
             values.put("defaultvalue", stringBuffer.toString());
             if (binding.oneKeyCallPhone.isChecked()) {

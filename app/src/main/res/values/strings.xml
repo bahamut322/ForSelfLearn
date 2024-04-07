@@ -517,5 +517,6 @@
     <string name="wakeUpWord">%唤醒词%</string>
     <string name="faceName">%人脸姓名%</string>
     <string name="one_key_call_phone">一键呼叫</string>
+    <string name="conversation">智能问答</string>
 
 </resources>

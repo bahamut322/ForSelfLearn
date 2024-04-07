@@ -4,7 +4,7 @@ import org.litepal.annotation.Column;
 
 public class BasicModel {
 
-    private String defaultValue = "智能引领 智能讲解 更多服务 业务办理 礼仪迎宾 ";//首页功能显示
+    private String defaultValue = "智能引领 智能讲解 更多服务 业务办理 礼仪迎宾 智能问答";//首页功能显示
     private int id;
     private String robotMode;//机器人音色
     private Boolean Intelligent;//智能语音

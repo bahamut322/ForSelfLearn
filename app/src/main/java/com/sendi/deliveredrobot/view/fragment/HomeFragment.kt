@@ -583,7 +583,9 @@ class HomeFragment : BaseFragment(), IMainView {
                 homeFragmentNavigateToFragment(R.id.appContentFragment)
             }
 
-            "智能问答" -> Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+            "智能问答" -> {
+                homeFragmentNavigateToFragment(R.id.conversationFragment)
+            }
 
             "业务办理" -> {
                 if (RobotStatus.batteryStateNumber.value == false) {
