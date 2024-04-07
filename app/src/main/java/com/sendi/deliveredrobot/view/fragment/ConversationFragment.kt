@@ -76,6 +76,7 @@ class ConversationFragment : Fragment() {
     private var aiuiListener: AIUIListener? = null
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
+    private val resumeSpeakText = Placeholder.replaceText("%唤醒词%在呢，请问您有什么问题？%唤醒词%可以为您解答")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -360,6 +361,7 @@ class ConversationFragment : Fragment() {
                 startTime = System.currentTimeMillis()
             }
         }
+        SpeakHelper.speak(resumeSpeakText)
 
     }
     override fun onStart() {
