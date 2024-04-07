@@ -36,7 +36,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.xutils.common.Callback
 import org.xutils.common.Callback.CommonCallback
@@ -61,7 +60,6 @@ object FaceRecognition {
 //    private var speakNum = 0
     private var canSendData = true
     private var doubleString: ArrayList<Table_Face?> = ArrayList()
-    private var isProcessing:AtomicBoolean? = null
     private val faceHttpJsonParams = JSONObject()
     private val faceIdentifyJsonParams = JSONObject()
     private var faceScope: CoroutineScope? = null
@@ -79,7 +77,8 @@ object FaceRecognition {
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
     private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
     private val newUpdateMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
-    private const val DELAY_TIME = 1000 * 10L
+    private const val DELAY_TIME = 1000 * 10L * 1000
+    private var lastSpeakTime: Long? = null
 
     /**
      * @param extractFeature True代表获取人脸特征，默认为True
@@ -94,8 +93,8 @@ object FaceRecognition {
         height: Int = 600,
         needEtiquette: Boolean = false
     ) {
-        channel = Channel<ByteArray>(capacity = Channel.CONFLATED) // 限制 Channel 大小
-        isProcessing = AtomicBoolean(false)
+        lastSpeakTime = 0L
+        channel = Channel(capacity = Channel.CONFLATED) // 限制 Channel 大小
         shouldExecute = true
         faceScope = CoroutineScope(Dispatchers.Default + Job())
         RobotStatus.identifyFaceSpeak.postValue(1)
@@ -142,12 +141,8 @@ object FaceRecognition {
                 doubleString = QuerySql.faceMessage()
             }
             identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak) { value: Int ->
-                if (value == 1 && isProcessing?.compareAndSet(false, true) == true) {
-                    faceScope?.launch {
-                        delay(DELAY_TIME)
-//                speakNum = 0  // 将speakNum设置为0
-                        isProcessing?.set(false) // 处理完成，重置标志
-                    }
+                if (value == 1) {
+                    lastSpeakTime = System.currentTimeMillis()
                 }
             }
             // 启动一个单独的协程来处理数据
@@ -302,10 +297,16 @@ object FaceRecognition {
     private fun checkFaceSpeak(
         speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        if (RobotStatus.identifyFaceSpeak.value == 1 && isProcessing?.get() != true && shouldExecute) {
+        synchronized(this){
+            if (shouldExecute && RobotStatus.identifyFaceSpeak.value == 1) {
 //            speakNum = 1
-            RobotStatus.identifyFaceSpeak.value = 0 //在百度TTS中设置为0不及时
-            BaiduTTSHelper.getInstance().speak(speak, "")
+                RobotStatus.identifyFaceSpeak.postValue(0) //在百度TTS中设置为0不及时
+                val currentTime = System.currentTimeMillis()
+                if (lastSpeakTime != null && currentTime - lastSpeakTime!! > DELAY_TIME) {
+                    BaiduTTSHelper.getInstance().speak(speak, "")
+                }
+//            BaiduTTSHelper.getInstance().speak(speak, "")
+            }
         }
     }
 
