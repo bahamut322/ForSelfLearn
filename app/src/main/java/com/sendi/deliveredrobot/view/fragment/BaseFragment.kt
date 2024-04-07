@@ -16,6 +16,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import kotlin.concurrent.thread
 
 open class BaseFragment: Fragment(){
@@ -110,6 +111,7 @@ open class BaseFragment: Fragment(){
     protected fun quitFragment(){
         thread {
             LogUtil.i("quitFragment")
+            FaceRecognition.onDestroy()
             if (EngineConstants.isRecording) {
                 stopRecord()
             }
