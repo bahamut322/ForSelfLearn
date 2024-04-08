@@ -317,7 +317,7 @@
                         android:letterSpacing="0.2"
                         android:lineSpacingMultiplier="1.0"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sp_24"
+                        android:textSize="@dimen/sp_30"
                         app:layout_constraintBottom_toBottomOf="@+id/view26"
                         app:layout_constraintEnd_toEndOf="@+id/view26"
                         tools:ignore="HardcodedText" />
