@@ -34,6 +34,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -453,8 +454,10 @@ object FaceRecognition {
      */
     fun onDestroy() {
         SpeakHelper.stop()
-        newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
-        identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
+        MainScope().launch(Dispatchers.Main) {
+            newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
+            identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
+        }
         if (null != c) {
             thread {
                 LogUtil.i("人脸识别销毁")
