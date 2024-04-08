@@ -147,6 +147,7 @@ class SettingHomeFragment : Fragment() {
                 }
                 //智能问答
                 2->{
+                    controller!!.navigate(R.id.conversationFragment)
                     Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
                     LogUtil.i("智能问答")
                 }
