@@ -792,19 +792,19 @@ public class StartExplainFragment extends Fragment {
             if (position == itemTarget) {
                 return;
             }
-            changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
+//            changingOverDialog.dialog_button.setVisibility(View.VISIBLE);
             changingOverDialog.askTv.setText(Objects.requireNonNull(viewModel.inForListData()).get(position).getName());
-            changingOverDialog.Sure.setOnClickListener(v -> {
-                BaiduTTSHelper.getInstance().stop();
-                Universal.taskNum = 0;
-                beforePage = -1;
-                Universal.progress = 0;
-                MediaPlayerHelper.getInstance().stop();
-                binding.acceptstationTv.stopPlay();
-                viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
-                changingOverDialog.dismiss();
-            });
-            changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
+//            changingOverDialog.Sure.setOnClickListener(v -> {
+            BaiduTTSHelper.getInstance().stop();
+            Universal.taskNum = 0;
+            beforePage = -1;
+            Universal.progress = 0;
+            MediaPlayerHelper.getInstance().stop();
+            binding.acceptstationTv.stopPlay();
+            viewModel.recombine(Objects.requireNonNull(viewModel.inForListData()).get(position).getName(), pointArray);
+            changingOverDialog.dismiss();
+//            });
+//            changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
         });
         changingOverDialog.returnImg.setOnClickListener(v1 -> {
             changingOverDialog.dismiss();
