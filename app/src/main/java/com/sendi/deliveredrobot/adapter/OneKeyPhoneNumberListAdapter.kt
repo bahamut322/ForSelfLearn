@@ -9,6 +9,8 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.holder.LaserListHolder
 import com.sendi.deliveredrobot.holder.OneKeyPhoneNumberListHolder
 import com.sendi.deliveredrobot.model.OneKeyCallPhoneModel
+import com.sendi.deliveredrobot.model.PhoneConfigModel
+import com.sendi.deliveredrobot.model.RobotConfig
 import com.sendi.deliveredrobot.room.entity.QuerySubMapEntity
 
 /**
@@ -17,11 +19,11 @@ import com.sendi.deliveredrobot.room.entity.QuerySubMapEntity
  *   @describe: 电话列表adapter
  */
 class OneKeyPhoneNumberListAdapter : RecyclerView.Adapter<OneKeyPhoneNumberListHolder>() {
-    var data: List<OneKeyCallPhoneModel> = ArrayList()
+    var data: List<PhoneConfigModel> = ArrayList()
 
     @SuppressLint("NotifyDataSetChanged")
     @JvmName("setData1")
-    fun setData(data: List<OneKeyCallPhoneModel>) {
+    fun setData(data: List<PhoneConfigModel>) {
         this.data = data
         notifyDataSetChanged()
     }

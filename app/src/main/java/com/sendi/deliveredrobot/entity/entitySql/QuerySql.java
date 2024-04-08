@@ -369,6 +369,7 @@ public class QuerySql {
                 robotConfigModel.setChargePointName(cursor.getString(cursor.getColumnIndex("chargepointname")));
                 robotConfigModel.setWaitingPointName(cursor.getString(cursor.getColumnIndex("waitingpointname")));
                 robotConfigModel.setSlogan((cursor.getString(cursor.getColumnIndex("slogan"))) != null ? (cursor.getString(cursor.getColumnIndex("slogan"))) : "欢迎使用多功能服务机器人");
+                robotConfigModel.setPhoneConfigJsonArray(cursor.getString(cursor.getColumnIndex("phone_config_json_array")));
             } while (cursor.moveToNext());
             cursor.close();
         }

@@ -136,7 +136,7 @@ class InteractionMqtt {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
-                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MqttMessageHandler.fileName(picfile[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -182,7 +182,7 @@ class InteractionMqtt {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/big/",
-                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MqttMessageHandler.fileName(picfile[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -220,7 +220,7 @@ class InteractionMqtt {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + picfile[i],
                                     Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/touch/",
-                                    MqttMessageHandler.FileName(picfile[i]!!),
+                                    MqttMessageHandler.fileName(picfile[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -251,14 +251,14 @@ class InteractionMqtt {
                     //行走中
                     if (action.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
                         tableTouchScreen.touch_walkPic =
-                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
+                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.fileName(
                                 action.touchScreenConfig!!.argPicGroup!!.walkPic!!
                             )
                         Thread {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + action.touchScreenConfig!!.argPicGroup!!.walkPic,
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/",
-                                MqttMessageHandler.FileName(action.touchScreenConfig!!.argPicGroup!!.walkPic!!),
+                                MqttMessageHandler.fileName(action.touchScreenConfig!!.argPicGroup!!.walkPic!!),
                                 MyApplication.listener
                             )
                         }.start()
@@ -268,14 +268,14 @@ class InteractionMqtt {
                     //被阻挡
                     if (action.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
                         tableTouchScreen.touch_blockPic =
-                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
+                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.fileName(
                                 action.touchScreenConfig!!.argPicGroup!!.blockPic!!
                             )
                         Thread {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + action.touchScreenConfig!!.argPicGroup!!.blockPic!!,
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/",
-                                MqttMessageHandler.FileName(action.touchScreenConfig!!.argPicGroup!!.blockPic!!),
+                                MqttMessageHandler.fileName(action.touchScreenConfig!!.argPicGroup!!.blockPic!!),
                                 MyApplication.listener
                             )
                         }.start()
@@ -286,14 +286,14 @@ class InteractionMqtt {
                     //到点
                     if (action.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
                         tableTouchScreen.touch_arrivePic =
-                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
+                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.fileName(
                                 action.touchScreenConfig!!.argPicGroup!!.arrivePic!!
                             )
                         Thread {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + action.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/",
-                                MqttMessageHandler.FileName(action.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
+                                MqttMessageHandler.fileName(action.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
                                 MyApplication.listener
                             )
                         }.start()
@@ -304,14 +304,14 @@ class InteractionMqtt {
                     //返回
                     if (action.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
                         tableTouchScreen.touch_overTaskPic =
-                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.FileName(
+                            Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/" + MqttMessageHandler.fileName(
                                 action.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
                             )
                         Thread {
                             DownloadBill.getInstance().addTask(
                                 action.touchScreenConfig!!.argPicGroup!!.overTaskPic!!,
                                 Universal.robotFile + "shopping/" + action.rootMapName + "/" + action.name + "/group/",
-                                MqttMessageHandler.FileName(action.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
+                                MqttMessageHandler.fileName(action.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
                                 MyApplication.listener
                             )
                         }.start()
@@ -423,7 +423,7 @@ class InteractionMqtt {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + backPic[i],
                                     Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch",
-                                    MqttMessageHandler.FileName(backPic[i]!!),
+                                    MqttMessageHandler.fileName(backPic[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -462,7 +462,7 @@ class InteractionMqtt {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + walkMp3[i],
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                        MqttMessageHandler.FileName(walkMp3[i]!!),
+                                        MqttMessageHandler.fileName(walkMp3[i]!!),
                                         MyApplication.listener
                                     )
                                 }
@@ -488,7 +488,7 @@ class InteractionMqtt {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + explanationMp3[i],
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/mp3",
-                                        MqttMessageHandler.FileName(explanationMp3[i]!!),
+                                        MqttMessageHandler.fileName(explanationMp3[i]!!),
                                         MyApplication.listener
                                     )
                                 }
@@ -527,7 +527,7 @@ class InteractionMqtt {
                                         DownloadBill.getInstance().addTask(
                                             Universal.pathDownload + bigPic[i],
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                            MqttMessageHandler.FileName(bigPic[i]!!),
+                                            MqttMessageHandler.fileName(bigPic[i]!!),
                                             MyApplication.listener
                                         )
                                     }
@@ -576,7 +576,7 @@ class InteractionMqtt {
                                         DownloadBill.getInstance().addTask(
                                             Universal.pathDownload + argVideoName[i],
                                             Universal.robotFile + route.rootMapName + "/" + route.routeName + "/big/" + point.name,
-                                            MqttMessageHandler.FileName(argVideoName[i]!!),
+                                            MqttMessageHandler.fileName(argVideoName[i]!!),
                                             MyApplication.listener
                                         )
                                     }
@@ -619,7 +619,7 @@ class InteractionMqtt {
                                             DownloadBill.getInstance().addTask(
                                                 Universal.pathDownload + touchFileName[i],
                                                 Universal.robotFile + route.rootMapName + "/" + route.routeName + "/touch/" + point.name,
-                                                MqttMessageHandler.FileName(touchFileName[i]!!),
+                                                MqttMessageHandler.fileName(touchFileName[i]!!),
                                                 MyApplication.listener
                                             )
                                         }
@@ -651,14 +651,14 @@ class InteractionMqtt {
                             //行走中
                             if (point.touchScreenConfig.argPicGroup.walkPic != "") {
                                 tableTouchScreen.touch_walkPic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.fileName(
                                         point.touchScreenConfig.argPicGroup.walkPic!!
                                     )
                                 Thread {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + point.touchScreenConfig.argPicGroup.walkPic,
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                        MqttMessageHandler.FileName(point.touchScreenConfig.argPicGroup.walkPic),
+                                        MqttMessageHandler.fileName(point.touchScreenConfig.argPicGroup.walkPic),
                                         MyApplication.listener
                                     )
                                 }.start()
@@ -668,14 +668,14 @@ class InteractionMqtt {
                             //被阻挡
                             if (point.touchScreenConfig.argPicGroup.blockPic != "") {
                                 tableTouchScreen.touch_blockPic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.fileName(
                                         point.touchScreenConfig.argPicGroup.blockPic!!
                                     )
                                 Thread {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + point.touchScreenConfig.argPicGroup.blockPic,
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                        MqttMessageHandler.FileName(point.touchScreenConfig.argPicGroup.blockPic),
+                                        MqttMessageHandler.fileName(point.touchScreenConfig.argPicGroup.blockPic),
                                         MyApplication.listener
                                     )
                                 }.start()
@@ -686,14 +686,14 @@ class InteractionMqtt {
                             //到点
                             if (point.touchScreenConfig.argPicGroup.arrivePic != "") {
                                 tableTouchScreen.touch_arrivePic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.fileName(
                                         point.touchScreenConfig.argPicGroup.arrivePic!!
                                     )
                                 Thread {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + point.touchScreenConfig.argPicGroup.arrivePic,
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                        MqttMessageHandler.FileName(point.touchScreenConfig.argPicGroup.arrivePic),
+                                        MqttMessageHandler.fileName(point.touchScreenConfig.argPicGroup.arrivePic),
                                         MyApplication.listener
                                     )
                                 }.start()
@@ -704,14 +704,14 @@ class InteractionMqtt {
                             //返回
                             if (point.touchScreenConfig.argPicGroup.overTaskPic != "") {
                                 tableTouchScreen.touch_overTaskPic =
-                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.FileName(
+                                    Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/" + MqttMessageHandler.fileName(
                                         point.touchScreenConfig.argPicGroup.overTaskPic!!
                                     )
                                 Thread {
                                     DownloadBill.getInstance().addTask(
                                         Universal.pathDownload + point.touchScreenConfig.argPicGroup.overTaskPic,
                                         Universal.robotFile + route.rootMapName + "/" + route.routeName + "/group/",
-                                        MqttMessageHandler.FileName(point.touchScreenConfig.argPicGroup.overTaskPic),
+                                        MqttMessageHandler.fileName(point.touchScreenConfig.argPicGroup.overTaskPic),
                                         MyApplication.listener
                                     )
                                 }.start()
@@ -881,7 +881,7 @@ class InteractionMqtt {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "GuidePic/foundation/big/",
-                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MqttMessageHandler.fileName(picfile[i]!!),
                             MyApplication.listener
                         )
                     }
@@ -928,7 +928,7 @@ class InteractionMqtt {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "GuidePic/foundation/big/",
-                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MqttMessageHandler.fileName(picfile[i]!!),
                             MyApplication.listener
                         )
                     }
@@ -965,7 +965,7 @@ class InteractionMqtt {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "GuidePic/foundation/touch/",
-                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MqttMessageHandler.fileName(picfile[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -996,14 +996,14 @@ class InteractionMqtt {
                 //行走中
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
                     tableTouchScreen.touch_walkPic =
-                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.fileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic,
                             Universal.robotFile + "GuidePic/foundation/group/",
-                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!),
+                            MqttMessageHandler.fileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.walkPic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1013,14 +1013,14 @@ class InteractionMqtt {
                 //被阻挡
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
                     tableTouchScreen.touch_blockPic =
-                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.fileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!,
                             Universal.robotFile + "GuidePic/foundation/group/",
-                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!),
+                            MqttMessageHandler.fileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.blockPic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1031,14 +1031,14 @@ class InteractionMqtt {
                 //到点
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
                     tableTouchScreen.touch_arrivePic =
-                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.fileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
                             Universal.robotFile + "GuidePic/foundation/group/",
-                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
+                            MqttMessageHandler.fileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1049,14 +1049,14 @@ class InteractionMqtt {
                 //返回
                 if (guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
                     tableTouchScreen.touch_overTaskPic =
-                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "GuidePic/foundation/group/" + MqttMessageHandler.fileName(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!,
                             Universal.robotFile + "GuidePic/foundation/group/",
-                            MqttMessageHandler.FileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
+                            MqttMessageHandler.fileName(guideFoundation.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1115,7 +1115,7 @@ class InteractionMqtt {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "replyGreet/big/",
-                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MqttMessageHandler.fileName(picfile[i]!!),
                             MyApplication.listener
                         )
                     }
@@ -1162,7 +1162,7 @@ class InteractionMqtt {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + picfile[i],
                             Universal.robotFile + "replyGreet/big/",
-                            MqttMessageHandler.FileName(picfile[i]!!),
+                            MqttMessageHandler.fileName(picfile[i]!!),
                             MyApplication.listener
                         )
                     }
@@ -1200,7 +1200,7 @@ class InteractionMqtt {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + picfile[i],
                                 Universal.robotFile + "replyGreet/touch/",
-                                MqttMessageHandler.FileName(picfile[i]!!),
+                                MqttMessageHandler.fileName(picfile[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -1231,14 +1231,14 @@ class InteractionMqtt {
                 //行走中
                 if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic != "") {
                     tableTouchScreen.touch_walkPic =
-                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.fileName(
                             replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic,
                             Universal.robotFile + "replyGreet/group/",
-                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic!!),
+                            MqttMessageHandler.fileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.walkPic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1248,14 +1248,14 @@ class InteractionMqtt {
                 //被阻挡
                 if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic != "") {
                     tableTouchScreen.touch_blockPic =
-                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.fileName(
                             replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!,
                             Universal.robotFile + "replyGreet/group/",
-                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!),
+                            MqttMessageHandler.fileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.blockPic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1266,14 +1266,14 @@ class InteractionMqtt {
                 //到点
                 if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic != "") {
                     tableTouchScreen.touch_arrivePic =
-                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.fileName(
                             replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             Universal.pathDownload + replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!,
                             Universal.robotFile + "replyGreet/group/",
-                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
+                            MqttMessageHandler.fileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.arrivePic!!),
                             MyApplication.listener
                         )
                     }.start()
@@ -1284,14 +1284,14 @@ class InteractionMqtt {
                 //返回
                 if (replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic != "") {
                     tableTouchScreen.touch_overTaskPic =
-                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.FileName(
+                        Universal.robotFile + "replyGreet/group/" + MqttMessageHandler.fileName(
                             replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!
                         )
                     Thread {
                         DownloadBill.getInstance().addTask(
                             replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!,
                             Universal.robotFile + "replyGreet/group/",
-                            MqttMessageHandler.FileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
+                            MqttMessageHandler.fileName(replyGreetGson.touchScreenConfig!!.argPicGroup!!.overTaskPic!!),
                             MyApplication.listener
                         )
                     }.start()

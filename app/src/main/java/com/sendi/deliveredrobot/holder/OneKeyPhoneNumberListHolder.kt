@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.model.OneKeyCallPhoneModel
+import com.sendi.deliveredrobot.model.PhoneConfigModel
 
 /**
  *   @author: heky
@@ -22,15 +23,15 @@ import com.sendi.deliveredrobot.model.OneKeyCallPhoneModel
 class OneKeyPhoneNumberListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val textViewName: TextView = itemView.findViewById(R.id.tv_name)
     private val textViewNumber: TextView = itemView.findViewById(R.id.tv_number)
-    var data: OneKeyCallPhoneModel? = null
+    var data: PhoneConfigModel? = null
         set(value) {
             field = value
-            textViewName.text = value?.name?:""
-            textViewNumber.text = value?.number?:""
+            textViewName.text = value?.remarks?:""
+            textViewNumber.text = value?.phone?:""
             itemView.setOnClickListener {
                 val intent = Intent(Intent.ACTION_CALL)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                val data = Uri.parse("tel:${value?.number?:""}")
+                val data = Uri.parse("tel:${value?.phone?:""}")
                 intent.setData(data)
                 ContextCompat.startActivity(MyApplication.context, intent, Bundle())
             }

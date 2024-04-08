@@ -11,6 +11,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.adapter.OneKeyPhoneNumberListAdapter
 import com.sendi.deliveredrobot.model.OneKeyCallPhoneModel
+import com.sendi.deliveredrobot.model.PhoneConfigModel
 
 class OneKeyCallPhoneDialog(
     context: Context,
@@ -19,7 +20,6 @@ class OneKeyCallPhoneDialog(
 ) : HideNavigationBarDialog(context = context, themeResId = themeResId, needBlur = needBlur) {
     private var constraintLayoutClose: ConstraintLayout? = null
     private var recyclerViewPhoneNumber: RecyclerView? = null
-    private var phoneNumberList: List<OneKeyCallPhoneModel>? = null
     init {
         val mWindowWidth: Int
         val mWindowHeight: Int
@@ -32,18 +32,10 @@ class OneKeyCallPhoneDialog(
                 dismiss()
             }
         }
-        phoneNumberList = ArrayList<OneKeyCallPhoneModel>().apply {
-            add(OneKeyCallPhoneModel("社区居委会1", "(020)83368771"))
-            add(OneKeyCallPhoneModel("社区居委会2", "(020)83179130"))
-//            add("18925090633")
-        }
         recyclerViewPhoneNumber = dialogView.findViewById(R.id.recycler_view_phone_number)
         recyclerViewPhoneNumber?.apply {
             layoutManager = LinearLayoutManager(MyApplication.instance)
             adapter = OneKeyPhoneNumberListAdapter()
-                .apply {
-                    setData(phoneNumberList!!)
-                }
         }
         mWindowWidth = displayMetrics.widthPixels
         mWindowHeight = displayMetrics.heightPixels
@@ -53,5 +45,9 @@ class OneKeyCallPhoneDialog(
                 mWindowHeight
             )
         )
+    }
+
+    fun setData(phoneNumberList: List<PhoneConfigModel>){
+        (recyclerViewPhoneNumber?.adapter as OneKeyPhoneNumberListAdapter).setData(phoneNumberList)
     }
 }

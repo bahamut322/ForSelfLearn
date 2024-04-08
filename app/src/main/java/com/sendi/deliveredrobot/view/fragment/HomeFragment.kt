@@ -5,21 +5,34 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.google.gson.Gson
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
-import com.sendi.deliveredrobot.helpers.*
+import com.sendi.deliveredrobot.helpers.BasicSettingHelper
+import com.sendi.deliveredrobot.helpers.CommonHelper
+import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.model.PhoneConfigModel
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.*
+import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GoUsherPointBillFactory
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.RobotStatus.passWordToSetting
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.utils.AppUtils
@@ -31,10 +44,19 @@ import com.sendi.deliveredrobot.view.widget.ExpireDeadlineDialog
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.view.widget.OneKeyCallPhoneDialog
-import com.sendi.deliveredrobot.viewmodel.*
-import kotlinx.coroutines.*
+import com.sendi.deliveredrobot.viewmodel.BasicSettingViewModel
+import com.sendi.deliveredrobot.viewmodel.DateViewModel
+import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
+import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import kotlin.concurrent.thread
 
 
@@ -53,9 +75,6 @@ class HomeFragment : BaseFragment(), IMainView {
     private var rescolors: Array<String>? = null
     private var mPresenter: MainPresenter? = null
 
-    //    private val faceViewModel: FaceViewModel? by viewModels({ requireActivity() })
-    private val viewModelSetting by viewModels<SettingViewModel>({ requireActivity() })
-
     @SuppressLint("SimpleDateFormat")
     private val sdf = SimpleDateFormat("HH:mm")
     private val dayOfWeekChinese =
@@ -66,6 +85,8 @@ class HomeFragment : BaseFragment(), IMainView {
     private var shoppingName = ""
     private val queryBasic = QuerySql.QueryBasic()
     private var oneKeyCallPhoneDialog: OneKeyCallPhoneDialog? = null
+    private val robotConfig = QuerySql.robotConfig()
+    private val gson = Gson()
 
     override fun onResume() {
         super.onResume()
@@ -90,9 +111,9 @@ class HomeFragment : BaseFragment(), IMainView {
     }
 
     override fun showTipsView() {
-        LogUtil.i("当前在主页面${QuerySql.robotConfig().sleepTime}分钟无操作->待机页面")
+        LogUtil.i("当前在主页面${robotConfig.sleepTime}分钟无操作->待机页面")
         fromeSettingDialog!!.dismiss()
-        if (QuerySql.robotConfig().sleep == 1) {
+        if (robotConfig.sleep == 1) {
             try {
                 homeFragmentNavigateToFragment(R.id.action_homeFragment_to_standbyFragment)
             } catch (_: Exception) {
@@ -188,8 +209,8 @@ class HomeFragment : BaseFragment(), IMainView {
         RobotStatus.shoppingConfigList!!.observe(viewLifecycleOwner) {
             showFunction(true)
         }
-        binding.sloganName.text = QuerySql.robotConfig().slogan
-        LogUtil.d("当前待机时间：" + QuerySql.robotConfig().sleepTime)
+        binding.sloganName.text = robotConfig.slogan
+        LogUtil.d("当前待机时间：" + robotConfig.sleepTime)
         //通过观察者模式观察弹窗触摸
         RobotStatus.onTouch.observe(viewLifecycleOwner) {
             if (RobotStatus.onTouch.value == true) {
@@ -264,8 +285,18 @@ class HomeFragment : BaseFragment(), IMainView {
             setOnClickListener {
                 if (oneKeyCallPhoneDialog == null) {
                     oneKeyCallPhoneDialog = OneKeyCallPhoneDialog(requireContext())
+                    val list =  gson.fromJson(robotConfig.phoneConfigJsonArray, Array<PhoneConfigModel>::class.java)
+                    oneKeyCallPhoneDialog!!.setData(list.toList())
                 }
                 oneKeyCallPhoneDialog?.show()
+            }
+        }
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
+            binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
+            binding.sloganName.text = it.slogan ?: getString(R.string.Welcome_used)
+            it.phoneConfig?.let { phoneConfig ->
+                val list =  gson.fromJson(phoneConfig.toString(), Array<PhoneConfigModel>::class.java)
+                oneKeyCallPhoneDialog?.setData(list.toList())
             }
         }
         //启动定位
@@ -545,10 +576,6 @@ class HomeFragment : BaseFragment(), IMainView {
             binding.groupOneKeyCall.visibility = View.VISIBLE
         }else{
             binding.groupOneKeyCall.visibility = View.GONE
-        }
-        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
-            binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
-            binding.sloganName.text = it.slogan ?: getString(R.string.Welcome_used)
         }
     }
 

@@ -1,5 +1,7 @@
 package com.sendi.deliveredrobot.entity;
 
+import com.sendi.deliveredrobot.model.RobotConfig;
+
 import org.litepal.crud.LitePalSupport;
 
 //机器人默认配置数据库
@@ -18,6 +20,8 @@ public class Table_Robot_Config extends LitePalSupport {
     private String chargePointName;//充电桩点名称
     private String waitingPointName;//待命点名称
     private String slogan = "欢迎使用多功能服务机器人";//机器人标语
+
+    private String phoneConfigJsonArray;//手机配置json,因为手机号码配置数量少，且关联性弱，这里考虑直接存储json
 
     public String getChargePointName() {
         return chargePointName;
@@ -123,4 +127,11 @@ public class Table_Robot_Config extends LitePalSupport {
         this.slogan = slogan;
     }
 
+    public String getPhoneConfigJsonArray() {
+        return phoneConfigJsonArray;
+    }
+
+    public void setPhoneConfigJsonArray(String phoneConfigJsonArray) {
+        this.phoneConfigJsonArray = phoneConfigJsonArray;
+    }
 }

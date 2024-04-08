@@ -196,7 +196,7 @@ public class Table_Big_Screen extends LitePalSupport {
                     DownloadBill.getInstance().addTask(
                             Universal.pathDownload + fileList.get(i),
                             storagePath,
-                            MqttMessageHandler.INSTANCE.FileName(fileList.get(i)),
+                            MqttMessageHandler.INSTANCE.fileName(fileList.get(i)),
                             MyApplication.Companion.getListener()
                     );
                 }

@@ -1,7 +1,7 @@
 package com.sendi.deliveredrobot.model
 
-import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import java.util.*
+import com.google.gson.JsonArray
+import java.util.Date
 
 /**
  * @author swn
@@ -36,5 +36,11 @@ data class RobotConfig(
 //待命点
     val waitingPointName: String? = "",
     val argConfig: TopLevelConfig?,
-    val slogan : String? = "欢迎使用多功能服务机器人"
+    val slogan : String? = "欢迎使用多功能服务机器人",
+    val phoneConfig: JsonArray? = null
+)
+
+data class PhoneConfigModel(
+    val phone: String? = "",
+    val remarks: String? = "",
 )

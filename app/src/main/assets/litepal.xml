@@ -3,7 +3,7 @@
     <!--数据库名称-->
     <dbname value="multifunction" />
     <!--数据库版本-->
-    <version value="10" />
+    <version value="11" />
     <!--指定路径-->
     <storage value="/database" />
     <!--映射模型-->

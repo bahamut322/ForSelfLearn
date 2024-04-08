@@ -140,8 +140,7 @@ object MqttMessageHandler {
                 "replyExplanationConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解配置信息")
-                    LogUtil.d("obtain: 收到讲解配置信息")
-                    val gson = Gson()
+                    LogUtil.i("收到讲解配置信息")
                     val explainConfig = gson.fromJson(message, ExplainConfig::class.java)
                     deleteAll(Table_Explain_Config::class.java)
                     RobotStatus.explainConfig = explainConfig
@@ -159,23 +158,22 @@ object MqttMessageHandler {
                     if (tableExplainConfig.save()) {
                         // 数据保存成功
                         RobotStatus.newUpdate.postValue(2)
-                        Log.d("TAG", "receive: 讲解配置数据保存成功")
+                        LogUtil.i("讲解配置数据保存成功")
                         UpdateReturn().method()
                     } else {
                         // 数据保存失败
-                        Log.d("TAG", "receive: 讲解配置数据保存失败")
+                        LogUtil.i("讲解配置数据保存失败")
                     }
                 }
                 //广告配置
                 "replyAdvertisementConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
-                    val gson = Gson()
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
                     deleteAll(Table_Advertising::class.java)
 //                    deleteFiles(File(Universal.advertisement))
 //                    advFile = null
                     ToastUtil.show("收到广告配置")
-                    LogUtil.d("收到广告配置")
+                    LogUtil.i("收到广告配置")
                     val tableAdvertising =
                         Table_Advertising()
                     //创建文件的方法
@@ -192,7 +190,7 @@ object MqttMessageHandler {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + advPics[i],
                                 Universal.advertisement,
-                                FileName(advPics[i]!!),
+                                fileName(advPics[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -224,7 +222,7 @@ object MqttMessageHandler {
                             DownloadBill.getInstance().addTask(
                                 Universal.pathDownload + advVideoFile[i],
                                 Universal.advertisement,
-                                FileName(advVideoFile[i]!!),
+                                fileName(advVideoFile[i]!!),
                                 MyApplication.listener
                             )
                         }
@@ -234,14 +232,14 @@ object MqttMessageHandler {
                             advertisingConfig.argConfig.argVideo.videoLayOut!!
                     }
                     if (advertisingConfig.argConfig.argRadio != null) {
-                        LogUtil.d("广告配置收到了argRadio,提示暂无此配置")
+                        LogUtil.i("广告配置收到了argRadio,提示暂无此配置")
                     }
                     if (advertisingConfig.argConfig.argPicGroup != null) {
-                        LogUtil.d("广告配置收到了argPicGroup,提示暂无此配置")
+                        LogUtil.i("广告配置收到了argPicGroup,提示暂无此配置")
                     }
                     if (tableAdvertising.save()) {
                         // 数据保存成功
-                        Log.d("TAG", "receive: 广告配置数据保存成功")
+                        LogUtil.i("广告配置数据保存成功")
                         RobotStatus.newUpdate.postValue(1)
                         updateConfig()
                     } else {
@@ -264,8 +262,8 @@ object MqttMessageHandler {
                 }
                 "replyShoppingGuideConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
-                    val gson = Gson()
                     ToastUtil.show("收到导购配置")
+                    LogUtil.i("收到导购配置")
                     val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
                     RobotStatus.shoppingConfigList?.value = shoppingConfig
                     deleteAll(Table_Shopping_Config::class.java)
@@ -279,22 +277,23 @@ object MqttMessageHandler {
                         // 数据保存成功
                         RobotStatus.newUpdate.postValue(2)
                         Log.d("TAG", "云平台下发导购配置保存成功")
+                        LogUtil.i("云平台下发导购配置保存成功")
                     } else {
                         // 数据保存失败
-                        Log.d("TAG", "云平台下发导购配置数据保存失败")
+                        LogUtil.i("云平台下发导购配置数据保存失败")
                     }
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解路线配置")
+                    LogUtil.i("收到讲解路线配置")
                     InteractionMqtt().explainType(message)
                 }
 
                 //机器人门岗配置
                 "replyGateConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
-                    val gson = Gson()
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
                     deleteAll(Table_Reply_Gate::class.java)
                     //提交到数据库
@@ -302,7 +301,7 @@ object MqttMessageHandler {
                     //创建文件的方法
                     createFolder()
                     ToastUtil.show("收到新的门岗配置信息")
-                    Log.d(ContentValues.TAG, "obtain: 收到新的门岗配置信息")
+                    LogUtil.i("收到新的门岗配置信息")
                     val tableReplyGate =
                         Table_Reply_Gate()
                     tableReplyGate.temperatureThreshold = gatekeeper.temperatureThreshold!!
@@ -313,7 +312,6 @@ object MqttMessageHandler {
                     tableReplyGate.bigScreenType = gatekeeper.argConfig!!.type!!
                     if (gatekeeper.argConfig.screen == 1) {
                         if (gatekeeper.argConfig.argPic != null) {
-                            println("收到：argPic")
                             val pics = compareArrays(
                                 Universal.Secondary,
                                 gatekeeper.argConfig.argPic.pics
@@ -322,7 +320,7 @@ object MqttMessageHandler {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + pics[i],
                                     Universal.Secondary,
-                                    FileName(pics[i]!!),
+                                    fileName(pics[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -333,7 +331,6 @@ object MqttMessageHandler {
                                 gatekeeper.argConfig.argPic.picPlayTime
                         }
                         if (gatekeeper.argConfig.argFont != null) {
-                            println("收到：argFont")
                             tableReplyGate.fontContent =
                                 gatekeeper.argConfig.argFont.fontContent
                             tableReplyGate.fontColor = gatekeeper.argConfig.argFont.fontColor
@@ -346,7 +343,6 @@ object MqttMessageHandler {
                                 gatekeeper.argConfig.argFont.textPosition
                         }
                         if (gatekeeper.argConfig.argVideo != null) {
-                            println("收到：argVideo")
                             val videoFile = compareArrays(
                                 Universal.Secondary,
                                 gatekeeper.argConfig.argVideo.videos
@@ -355,7 +351,7 @@ object MqttMessageHandler {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videoFile[i],
                                     Universal.Secondary,
-                                    FileName(videoFile[i]!!),
+                                    fileName(videoFile[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -365,28 +361,25 @@ object MqttMessageHandler {
                                 gatekeeper.argConfig.argVideo.videoLayOut!!
                         }
                         if (gatekeeper.argConfig.argRadio != null) {
-                            println("收到：argRadio 暂无")
                         }
                         if (gatekeeper.argConfig.argPicGroup != null) {
-                            println("收到 argPicGroup")
                         }
                     }
                     if (tableReplyGate.save()) {
                         // 数据保存成功
-                        Log.d("TAG", "receive: 机器人门岗配置数据保存成功")
+                        LogUtil.i("机器人门岗配置数据保存成功")
                         updateConfig()
                     } else {
                         // 数据保存失败
-                        Log.d("TAG", "receive: 机器人门岗配置数据保存失败")
+                        LogUtil.i("机器人门岗配置数据保存失败")
                     }
                 }
 
                 //机器人配置
                 "replyRobotConfig" -> {
                     if (RobotStatus.batteryStateNumber.value == false) return
-                    val gson = Gson()
                     ToastUtil.show("收到机器人配置")
-                    Log.d(ContentValues.TAG, "obtain: 收到新的机器人配置信息")
+                    LogUtil.i("收到机器人配置")
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
                     RobotStatus.robotConfig?.value = robotConfig
                     val currentConfig: Table_Robot_Config? = robotConfig()
@@ -435,6 +428,7 @@ object MqttMessageHandler {
                     tableRobotConfig.waitingPointName = robotConfig.waitingPointName
                     tableRobotConfig.chargePointName = robotConfig.chargePointName
                     tableRobotConfig.slogan = robotConfig.slogan
+                    tableRobotConfig.phoneConfigJsonArray = robotConfig.phoneConfig?.toString()
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")
@@ -448,7 +442,7 @@ object MqttMessageHandler {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
                                     Universal.Standby,
-                                    FileName(videos[i]!!),
+                                    fileName(videos[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -469,7 +463,7 @@ object MqttMessageHandler {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
                                     Universal.Standby,
-                                    FileName(videos[i]!!),
+                                    fileName(videos[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -489,7 +483,7 @@ object MqttMessageHandler {
                                 DownloadBill.getInstance().addTask(
                                     Universal.pathDownload + videos[i],
                                     Universal.Standby,
-                                    FileName(videos[i]!!),
+                                    fileName(videos[i]!!),
                                     MyApplication.listener
                                 )
                             }
@@ -692,7 +686,7 @@ object MqttMessageHandler {
         UpdateReturn().method(boolean)
     }
 
-    fun FileName(url: String): String {
+    fun fileName(url: String): String {
         return url.substring(url.lastIndexOf("/") + 1)
     }
 
