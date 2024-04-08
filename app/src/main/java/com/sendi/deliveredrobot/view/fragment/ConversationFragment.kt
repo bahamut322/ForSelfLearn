@@ -354,7 +354,7 @@ class ConversationFragment : Fragment() {
                 }
                 initSDK()
                 startRecord()
-                Thread.sleep(1000)
+                Thread.sleep(2000)
                 DialogHelper.loadingDialog.dismiss()
             }
             SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
