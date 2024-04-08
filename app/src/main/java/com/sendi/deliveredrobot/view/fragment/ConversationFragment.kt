@@ -541,6 +541,8 @@ class ConversationFragment : Fragment() {
         binding?.linearLayoutConversation?.apply {
             val linearLayoutCompat = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_left_2, null) as LinearLayoutCompat
+            val textView = linearLayoutCompat.findViewById<TextView>(R.id.tv_content)
+            textView.text = AI_XIAO_YUE_DEFAULT_ANSWER
             val emptyView2 = View(requireContext()).apply {
                 layoutParams = LinearLayoutCompat.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -648,7 +650,6 @@ class ConversationFragment : Fragment() {
                 when (finalAnswer.answerType) {
                      ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode() -> {
                          startTTS(AI_XIAO_YUE_DEFAULT_ANSWER)
-                         addAnswer2(AI_XIAO_YUE_DEFAULT_ANSWER)
                          addAnswer3()
                      }
                 }
