@@ -456,18 +456,20 @@ object FaceRecognition {
         newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
         identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
         if (null != c) {
-            LogUtil.i("人脸识别销毁")
-            // 取消所有协程任务
-            shouldExecute = false
-            faceScope?.cancel()
-            channel?.close()
-            // 停止预览
-            c?.stopPreview()
-            // 移除预览回调
-            c?.setPreviewCallbackWithBuffer(null)
-            // 释放相机资源
-            c?.release()
-            c = null
+            thread {
+                LogUtil.i("人脸识别销毁")
+                // 取消所有协程任务
+                shouldExecute = false
+                faceScope?.cancel()
+                channel?.close()
+                // 停止预览
+                c?.stopPreview()
+                // 移除预览回调
+                c?.setPreviewCallbackWithBuffer(null)
+                // 释放相机资源
+                c?.release()
+                c = null
+            }
         }
     }
 }

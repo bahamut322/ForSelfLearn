@@ -36,7 +36,7 @@ open class BaseFragment: Fragment(){
         }
         DialogHelper.loadingDialog.show()
         thread {
-            Thread.sleep(500)
+            Thread.sleep(1000)
             if(!isResumed) {
                 DialogHelper.loadingDialog.dismiss()
                 return@thread

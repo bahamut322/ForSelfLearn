@@ -33,6 +33,7 @@ import com.sendi.deliveredrobot.enum.ASROrNlpModelTypeEnum
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.model.ConversationAnswerModel
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.Placeholder
@@ -61,13 +62,17 @@ import kotlin.coroutines.suspendCoroutine
  * @description 人机对话fragment
  */
 class ConversationFragment : Fragment() {
+    companion object{
+        private val AI_XIAO_YUE_DEFAULT_ANSWER = "如需获取更多服务，可微信扫描以下二维码，添加艾小越微信号获取更多帮助。"
+    }
+
     var binding: FragmentConversationBinding? = null
     val mainScope = MainScope()
     lateinit var timer: Timer
     private var startTime: Long = 0
     private var totalHeight: Int = 0
     private var talkingView: LinearLayoutCompat? = null
-    private val hashMap = HashMap<String, Array<String?>?>()
+    private val hashMap = HashMap<String, Array<ConversationAnswerModel?>?>()
     private var answerPriority: Array<String>? = ASROrNlpModelTypeEnum.answerPriority // 优先级，下标越小优先级越高
     private var waitTalk = true
 //    private val defaultAnswer = "我没明白您的意思，可以换个方式提问吗？"
@@ -147,9 +152,16 @@ class ConversationFragment : Fragment() {
                             val cntJson = JSONObject(json)
                             val text = cntJson.getJSONObject("text")
                             //识别结果
-                            val asrResult = StreamingAsrUtil.processIATResult(text)
-                            if (!asrResult.isNullOrEmpty()) {
-                                addQuestionView(asrResult, talkingView)
+                            val asrResult: String
+                            try {
+                                asrResult = StreamingAsrUtil.processIATResult(text)
+                                if (!asrResult.isNullOrEmpty()) {
+                                    addQuestionView(asrResult, talkingView)
+                                }
+                            }catch (e:NullPointerException){
+                                LogUtil.i("nlp结果为null")
+                                addQuestionView("语音解析异常，请重试", talkingView)
+                                return@AIUIListener
                             }
                             //最终识别结果
                             if (text.getBoolean("ls")) {
@@ -213,13 +225,7 @@ class ConversationFragment : Fragment() {
                                 val answer = "${nlpResult.getJSONObject("answer")["text"]}"
                                 val sid = nlpResult.getString("sid")
                                 if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
-                                    val finalAnswer = findFinalAnswer(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
-                                    if (finalAnswer != null) {
-                                        startTTS(finalAnswer)
-                                        mainScope.launch {
-                                            addAnswer2(finalAnswer)
-                                        }
-                                    }
+                                    findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
                                 }
                             } catch (e: JSONException) {
                                 LogUtil.i("nlpResult异常")
@@ -341,7 +347,7 @@ class ConversationFragment : Fragment() {
                         else -> {}
                     }
                 }
-                Thread.sleep(500)
+                Thread.sleep(1000)
                 if(!isResumed){
                     DialogHelper.loadingDialog.dismiss()
                     return@thread
@@ -531,6 +537,41 @@ class ConversationFragment : Fragment() {
         }
     }
 
+    private suspend fun addAnswer3() {
+        binding?.linearLayoutConversation?.apply {
+            val linearLayoutCompat = LayoutInflater.from(requireContext())
+                .inflate(R.layout.layout_conversation_text_view_left_2, null) as LinearLayoutCompat
+            val emptyView2 = View(requireContext()).apply {
+                layoutParams = LinearLayoutCompat.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 96)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                addView(linearLayoutCompat)
+                addView(emptyView2)
+                linearLayoutCompat.post {
+                    linearLayoutCompat.layoutParams = LinearLayoutCompat.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        gravity = Gravity.START
+                        linearLayoutCompat.visibility = View.VISIBLE
+//                                        setMargins(0,0,0,96)
+                    }
+                    totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
+                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                }
+                emptyView2.post {
+                    totalHeight += (linearLayoutCompat.measuredHeight + 96 * 3)
+                    binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
+                }
+            }
+        }
+    }
+
     private suspend fun questionAiXiaoYue(
         conversation: String,
         sid: String
@@ -554,7 +595,7 @@ class ConversationFragment : Fragment() {
      *              如果当前没有答案，如果 < index 存在未返回，则缓存当前未无答案，否则往后遍历，如果未遇到未返回，则使用首个答案，如果遇到队列末尾，则输出一个默认语句；如果遇到未返回，则缓存当前为无答案。
      *
      */
-    private fun findFinalAnswer(sid: String, answerType: String, answer: String): String? {
+    private fun findFinalAnswer(sid: String, answerType: String, answer: String): ConversationAnswerModel? {
         val cacheAnswers = hashMap[sid] ?: return null
         val index = findPriorityIndex(answerType)
         if (index == -1) return null
@@ -563,47 +604,54 @@ class ConversationFragment : Fragment() {
                 val cache = cacheAnswers[i]
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = answer
+                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
             }
-            var latterAnswer: String? = null
+            var latterAnswer: ConversationAnswerModel? = null
             for (i in index + 1 until cacheAnswers.size) {
                 val cache = cacheAnswers[i]
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = answer
+                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
-                if (cache.isNotEmpty()) {
+                if (cache.answer.isNotEmpty()) {
                     latterAnswer = cache
                     break
                 }
             }
             // 使用当前答案，并从集合中清除此项
             hashMap[sid] = null
-            return latterAnswer ?: defaultAnswer
+            return latterAnswer ?: ConversationAnswerModel(answerType = ASROrNlpModelTypeEnum.AIUI.getCode(), answer = defaultAnswer)
         } else {
             for (i in 0 until index) {
                 val cache = cacheAnswers[i]
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = answer
+                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
             }
             // 使用当前答案，并从集合中清除此项
             hashMap[sid] = null
-            return answer
+            return ConversationAnswerModel(answerType = answerType, answer = answer)
         }
     }
 
     private fun findFinalAnswerAndStartTTS(sid: String, answerType: String, answer: String) {
         val finalAnswer = findFinalAnswer(sid, answerType, answer)
         if (finalAnswer != null) {
-            startTTS(finalAnswer)
+            startTTS(finalAnswer.answer)
             mainScope.launch {
-                addAnswer2(finalAnswer)
+                addAnswer2(finalAnswer.answer)
+                when (finalAnswer.answerType) {
+                     ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode() -> {
+                         startTTS(AI_XIAO_YUE_DEFAULT_ANSWER)
+                         addAnswer2(AI_XIAO_YUE_DEFAULT_ANSWER)
+                         addAnswer3()
+                     }
+                }
             }
         }
     }

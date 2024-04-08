@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="invisible"
+    tools:visibility="visible">
+
+    <View
+        android:id="@+id/view_head"
+        android:layout_width="@dimen/dp_88"
+        android:layout_height="@dimen/dp_88"
+        android:background="@drawable/ic_head_robot"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linear_layout_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_solid_5a5582_border_878cf8_bottom_left"
+        android:layout_marginStart="@dimen/dp_24"
+        android:padding="@dimen/dp_20"
+        android:orientation="vertical">
+        <View
+            android:id="@+id/tv_content"
+            android:layout_width="@dimen/dp_160"
+            android:layout_height="@dimen/dp_160"
+            android:background="@drawable/ic_aixiaoyue_qrcode"
+            android:gravity="start"
+            tools:text="测试text" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

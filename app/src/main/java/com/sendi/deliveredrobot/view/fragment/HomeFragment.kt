@@ -756,7 +756,6 @@ class HomeFragment : BaseFragment(), IMainView {
     }
 
     private fun homeFragmentNavigateToFragment(actionId: Int) {
-        FaceRecognition.onDestroy()
         navigateToFragment(actionId)
     }
 }

@@ -300,6 +300,7 @@ WHERE
     AND map_point.type IN (${PointType.USHER_POINT})
     """
     )
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     fun selectGreetPoint(name: String): QueryPointEntity?
 
     /**
