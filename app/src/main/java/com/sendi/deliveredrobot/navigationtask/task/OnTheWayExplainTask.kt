@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import android.util.Log
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ExplainManager
@@ -15,7 +16,9 @@ import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MediaStatusManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * @author heky
@@ -47,7 +50,9 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
             ExplainManager.secondScreenModel(route)
             status = ExplainStatusModel.STATUS_ON_THE_WAY_PROCESS
             if(route!!.walktext.isNullOrEmpty() && route!!.walkvoice.isNullOrEmpty()){
-                finished = true
+                finishExplain()
+                DialogHelper.loadingDialog.dismiss()
+                LogUtil.i("walktext和walkvoice为空")
                 return
             }
             if (!route!!.walktext.isNullOrEmpty()) {

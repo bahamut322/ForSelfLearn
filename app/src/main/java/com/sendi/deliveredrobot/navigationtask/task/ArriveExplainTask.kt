@@ -31,6 +31,7 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
             val bill = taskModel.bill as ExplainTaskBill
             route = bill.route
             position = bill.position
+            LogUtil.i("到点讲解任务position：$position")
         }
     }
     override fun configEnum(): TaskStageEnum {
@@ -42,6 +43,7 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
             notifyFragmentUpdate()
             status = ExplainStatusModel.STATUS_ARRIVE_PROCESS
             if(route!!.explanationtext.isNullOrEmpty() && route!!.explanationvoice.isNullOrEmpty()){
+                taskModel?.bill?.executeNextTask()
                 return
             }
             if (!route!!.explanationtext.isNullOrEmpty()) {
@@ -73,13 +75,14 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                 try {
                     LogUtil.i("开始 ${taskModel?.endTarget?:""} 到点播报（MP3）")
                     MediaPlayerHelper.getInstance().setOnCompletionListener {
-                        // 2.监听途径播报进度，如果播报完成，则设置finished为true
                         LogUtil.i("结束 ${taskModel?.endTarget?:""} 到点播报（MP3）")
                         MediaStatusManager.stopMediaPlay(false)
+                        taskModel?.bill?.executeNextTask()
                     }
                     MediaPlayerHelper.getInstance().play(route!!.explanationvoice)
                 } catch (ignored: Exception) {
                     LogUtil.i("异常 ${taskModel?.endTarget?:""} 到点播报（MP3）")
+                    taskModel?.bill?.executeNextTask()
                 }
             }
         }else{

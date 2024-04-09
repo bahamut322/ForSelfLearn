@@ -11,6 +11,7 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
 import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskTypeEnum
+import org.xutils.common.util.LogUtil
 import java.util.*
 
 /**
@@ -65,9 +66,11 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                 val onTheWayExplainTask = (currentTask as OnTheWayExplainTask)
                 if (onTheWayExplainTask.oneWayExplainFinish()) {
                     // 途径讲解完成
+                    LogUtil.i("途径讲解完成")
                     super.executeNextTask()
                 }else{
                     // 途径讲解未完成，通知页面更新，等待讲解完成
+                    LogUtil.i("途径讲解未完成，通知页面更新，等待讲解完成")
                     onTheWayExplainTask.notifyFragmentUpdate()
                 }
             }

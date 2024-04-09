@@ -8,6 +8,8 @@ import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.Advance
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -54,31 +56,33 @@ object ExplainManager {
         return fileList
     }
 
-    fun secondScreenModel(route: MyResultModel?) {
-        var file = ""
-        if (route?.big_videofile != null) {
-            file = route.big_videofile.toString()
-        } else if (route?.big_imagefile != null) {
-            file = route.big_imagefile.toString()
-        }
-        SecondScreenManageHelper.refreshSecondScreen(
-            SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
-                picPlayTime = route?.big_picplaytime,
-                file = file,
-                type = route?.big_type ?: 0,
-                textPosition = route?.big_textposition,
-                fontLayout = route?.big_fontlayout,
-                fontContent = route?.big_fontcontent?.toString(),
-                fontBackGround = route?.big_fontbackground?.toString(),
-                fontColor = route?.big_fontcolor?.toString(),
-                fontSize = route?.big_fontsize,
-                picType = route?.big_pictype,
-                videolayout = route?.videolayout,
-                videoAudio = route?.big_videoaudio,
-                false
+    suspend fun secondScreenModel(route: MyResultModel?) {
+        withContext(Dispatchers.Main){
+            var file = ""
+            if (route?.big_videofile != null) {
+                file = route.big_videofile.toString()
+            } else if (route?.big_imagefile != null) {
+                file = route.big_imagefile.toString()
+            }
+            SecondScreenManageHelper.refreshSecondScreen(
+                SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
+                    picPlayTime = route?.big_picplaytime,
+                    file = file,
+                    type = route?.big_type ?: 0,
+                    textPosition = route?.big_textposition,
+                    fontLayout = route?.big_fontlayout,
+                    fontContent = route?.big_fontcontent?.toString(),
+                    fontBackGround = route?.big_fontbackground?.toString(),
+                    fontColor = route?.big_fontcolor?.toString(),
+                    fontSize = route?.big_fontsize,
+                    picType = route?.big_pictype,
+                    videolayout = route?.videolayout,
+                    videoAudio = route?.big_videoaudio,
+                    false
+                )
             )
-        )
-        LogUtil.i("图片位置：${route?.big_imagefile?.toString()}")
+            LogUtil.i("图片位置：${route?.big_imagefile?.toString()}")
+        }
     }
 
     fun splitString(input: String, length: Int): List<String> {

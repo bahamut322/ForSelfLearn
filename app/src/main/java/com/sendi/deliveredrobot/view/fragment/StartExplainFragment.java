@@ -318,6 +318,7 @@ public class StartExplainFragment extends Fragment {
                     }
                     case ExplainStatusModel.STATUS_ARRIVE_BEFORE:{
                         LogUtil.INSTANCE.i("STATUS_ARRIVE_BEFORE");
+                        currentTextQueue = null;
                         binding.parentCon.setClickable(false);
                         binding.contentLin.setVisibility(View.VISIBLE);
                         binding.contentCL.setVisibility(View.VISIBLE);
