@@ -3,7 +3,6 @@ package com.sendi.deliveredrobot.navigationtask
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_SEND
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
@@ -53,7 +52,7 @@ class RemoteOrderSendBill(private val taskModel: TaskModel?, private val type: I
             }
         }
         taskQueue.addAll(recreateQueue(taskModel))
-        IdleGateDataHelper.reportIdleGateCount(0)
+//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }

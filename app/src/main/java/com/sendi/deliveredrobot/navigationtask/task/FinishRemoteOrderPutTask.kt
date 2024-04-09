@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
 import com.sendi.deliveredrobot.service.TaskDto
@@ -65,8 +64,8 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {
-                        IdleGateDataHelper.addCount()
-                        IdleGateDataHelper.reportIdleGateCount()
+//                        IdleGateDataHelper.addCount()
+//                        IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin1.value.previousRemoteOrderPutFinished = true
                         viewModelBin1.value.previousRemoteOrderSendFinished = true
 //                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
@@ -86,8 +85,8 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {
-                        IdleGateDataHelper.addCount()
-                        IdleGateDataHelper.reportIdleGateCount()
+//                        IdleGateDataHelper.addCount()
+//                        IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin2.value.previousRemoteOrderPutFinished = true
                         viewModelBin2.value.previousRemoteOrderSendFinished = true
 //                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))

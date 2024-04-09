@@ -74,7 +74,9 @@ public enum TaskStageEnum {
     BusinessIngTask("导购中",78),
     BusinessArriveTask("导购到达",79),
     EarlyFinishBusinessTask("中断导购", 80),
-    FinishBusinessTask("导购结束",1);
+    FinishBusinessTask("导购结束",1),
+
+    StandStillTask("讲解结束原地待命",81);
 
     private final String name;
 

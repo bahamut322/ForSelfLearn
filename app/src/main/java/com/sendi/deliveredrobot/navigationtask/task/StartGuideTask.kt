@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_GUIDE
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -33,7 +32,7 @@ class StartGuideTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_GUIDE
-        IdleGateDataHelper.reportIdleGateCount()
+//        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         mainScope.launch {
             taskModel?.bill?.executeNextTask()

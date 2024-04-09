@@ -25,7 +25,6 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.BasicSettingHelper
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.model.PhoneConfigModel
@@ -188,7 +187,7 @@ class HomeFragment : BaseFragment(), IMainView {
                 }
             }
         }
-        IdleGateDataHelper.reportIdleGateCount()
+//        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun onStop() {

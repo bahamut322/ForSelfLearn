@@ -3,14 +3,20 @@ package com.sendi.deliveredrobot.navigationtask
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_SEND
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
-import com.sendi.deliveredrobot.navigationtask.task.*
+import com.sendi.deliveredrobot.navigationtask.task.CallRoomFinishTask
+import com.sendi.deliveredrobot.navigationtask.task.CallRoomTask
+import com.sendi.deliveredrobot.navigationtask.task.FinishSendTask
+import com.sendi.deliveredrobot.navigationtask.task.JudgeFloorTask
+import com.sendi.deliveredrobot.navigationtask.task.OutDockTask
+import com.sendi.deliveredrobot.navigationtask.task.SendingTask
+import com.sendi.deliveredrobot.navigationtask.task.StartDoubleSendTask
 import com.sendi.deliveredrobot.service.DoorEnum
 import com.sendi.deliveredrobot.service.TaskIdGenerator
 import com.sendi.deliveredrobot.service.TaskTypeEnum
-import java.util.*
+import java.util.Date
+import java.util.LinkedList
 
 /**
  * @author heky
@@ -54,7 +60,7 @@ class DoubleDifferentSendTaskBillOne(private val taskModel: TaskModel?, date: Da
             }
         }
         taskQueue.addAll(recreateQueue(taskModel))
-        IdleGateDataHelper.reportIdleGateCount(0)
+//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }

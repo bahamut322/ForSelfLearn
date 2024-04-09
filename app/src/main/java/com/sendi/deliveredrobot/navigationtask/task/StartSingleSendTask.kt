@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_SEND
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -33,8 +32,8 @@ class StartSingleSendTask(taskModel: TaskModel, needReportData: Boolean = true):
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_SEND
 
-        IdleGateDataHelper.minusCount()
-        IdleGateDataHelper.reportIdleGateCount()
+//        IdleGateDataHelper.minusCount()
+//        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

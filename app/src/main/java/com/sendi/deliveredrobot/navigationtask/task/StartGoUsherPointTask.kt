@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_WELCOME
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
@@ -32,7 +31,7 @@ class StartGoUsherPointTask(taskModel: TaskModel, needReportData: Boolean = true
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_WELCOME
-        IdleGateDataHelper.reportIdleGateCount(0)
+//        IdleGateDataHelper.reportIdleGateCount(0)
 //        TaskQueue.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

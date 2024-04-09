@@ -20,18 +20,7 @@ class AllFinishTask(taskModel: TaskModel, needReportData: Boolean = true) : Abst
     }
 
     override suspend fun execute() {
-        judgeNeedPhone()
         resetRobotStatus()
-//        if (RobotStatus.autoCruise) {
-//            virtualTaskExecute()
-//            if (TopicHandler.navController.currentDestination?.label == "homeFragment") {
-//                //自动巡航
-//                if (TaskQueues.autoCruiseQueue.size > 0) {
-//                    TaskQueues.queue.addAll(TaskQueues.autoCruiseQueue)
-//                    TaskQueues.executeNextTask()
-//                }
-//            }
-//        }
     }
 
     private fun resetRobotStatus() {
@@ -41,38 +30,5 @@ class AllFinishTask(taskModel: TaskModel, needReportData: Boolean = true) : Abst
             RobotStatus.currentStatus = TYPE_IDLE
         }
         BillManager.removeBill(taskModel?.bill)
-    }
-
-    /**
-     * @describe 是否需要打电话通知前台有仓未取物
-     */
-    private fun judgeNeedPhone() {
-        val needPhone = (!viewModelBin1.value.previousTaskFinished
-                || !viewModelBin2.value.previousTaskFinished
-                || !viewModelBin1.value.previousRemoteOrderSendFinished
-                || !viewModelBin2.value.previousRemoteOrderSendFinished)
-        if (needPhone) {
-            val message = when {
-                !viewModelBin1.value.previousTaskFinished && !viewModelBin2.value.previousTaskFinished -> "${viewModelBin1.value.place.value}${viewModelBin2.value.place.value}"
-                !viewModelBin1.value.previousRemoteOrderSendFinished && !viewModelBin2.value.previousRemoteOrderSendFinished -> "${viewModelBin1.value.remoteOrderModel?.to?.pointName ?: ""}${viewModelBin2.value.remoteOrderModel?.to?.pointName ?: ""}"
-                !viewModelBin1.value.previousTaskFinished && !viewModelBin2.value.previousRemoteOrderSendFinished -> "${viewModelBin1.value.place.value}${viewModelBin2.value.remoteOrderModel?.to?.pointName ?: ""}"
-                !viewModelBin1.value.previousRemoteOrderSendFinished && !viewModelBin2.value.previousTaskFinished -> "${viewModelBin1.value.remoteOrderModel?.to?.pointName ?: ""}${viewModelBin2.value.place.value}"
-                !viewModelBin1.value.previousTaskFinished -> viewModelBin1.value.place.value
-                !viewModelBin2.value.previousTaskFinished -> viewModelBin2.value.place.value
-                !viewModelBin1.value.previousRemoteOrderSendFinished -> viewModelBin1.value.remoteOrderModel?.to?.pointName
-                    ?: ""
-                !viewModelBin2.value.previousRemoteOrderSendFinished -> viewModelBin2.value.remoteOrderModel?.to?.pointName
-                    ?: ""
-                else -> ""
-            }
-            //通知前台
-            CloudMqttService.publish(
-                PhoneCallModel(
-                    number = message ?: "",
-                    note = "6",
-                    floor = RobotStatus.currentLocation?.floorName ?: "1"
-                ).toString()
-            )
-        }
     }
 }

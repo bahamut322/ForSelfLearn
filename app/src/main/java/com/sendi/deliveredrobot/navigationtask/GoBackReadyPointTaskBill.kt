@@ -4,7 +4,6 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.TYPE_GO_BACK
-import com.sendi.deliveredrobot.helpers.IdleGateDataHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
@@ -32,7 +31,7 @@ class GoBackReadyPointTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskMod
     }
 
     override suspend fun exception() {
-        IdleGateDataHelper.reportIdleGateCount(0)
+//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         earlyFinish()
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
