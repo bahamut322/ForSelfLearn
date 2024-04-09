@@ -88,7 +88,6 @@ class PlanSettingFragment : Fragment() {
         //回桩
         binding.returnBlack.apply {
             setOnClickListener {
-                DialogHelper.loadingDialog.show()
                 BillManager.clearBillList()
                 CoroutineScope(Dispatchers.Default).launch{
                     val bill = GoBackTaskBillFactory.createBill(TaskModel())

@@ -29,7 +29,7 @@ class ReadyForTaskFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        SpeakHelper.speak(getString(R.string.i_ready_to_work_excuse_me))
+        SpeakHelper.speakWithoutStop(getString(R.string.i_ready_to_work_excuse_me))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

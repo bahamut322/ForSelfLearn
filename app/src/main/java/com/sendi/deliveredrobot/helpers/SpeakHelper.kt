@@ -46,6 +46,7 @@ object SpeakHelper {
         }
     }
 
+
     fun speakWithoutStop(msg: String) {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
