@@ -69,6 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class StartExplainFragment extends Fragment {
 
+    private final static int TEXT_SPLIT_LENGTH = 90;
     FragmentStartExplantionBinding binding;
     NavController controller;
     private MAdapter mAdapter;
@@ -645,7 +646,7 @@ public class StartExplainFragment extends Fragment {
                     binding.pointName.setText(mData.get(position).getName());
                     LogUtil.INSTANCE.i("到点讲解文字:" + mData.get(position).getExplanationtext());
 
-                    List<String> textEqually = viewModel.splitString(mData.get(position).getExplanationtext(), 135);
+                    List<String> textEqually = viewModel.splitString(mData.get(position).getExplanationtext(), TEXT_SPLIT_LENGTH);
                     //页数（AtomicInteger为了线程安全咯）
                     AtomicInteger page = new AtomicInteger(textEqually.size());
 //                Log.d("TAG", "内容列表长度: " + page + "当前内容：" + textEqually.get(beforePage));
@@ -657,17 +658,17 @@ public class StartExplainFragment extends Fragment {
 
                     RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                         if (nextTaskToDo) {
-                            LogUtil.INSTANCE.i("当前进度: " + (integer - ((beforePage) * 135)));
+                            LogUtil.INSTANCE.i("当前进度: " + (integer - ((beforePage) * TEXT_SPLIT_LENGTH)));
                             try {
                                 binding.acceptstationTv.startPlayLine(
-                                        (integer - ((beforePage) * 135)),
+                                        (integer - ((beforePage) * TEXT_SPLIT_LENGTH)),
                                         textEqually.get(beforePage).length(),
                                         ((long) QuerySql.QueryBasic().getSpeechSpeed() * textEqually.get(beforePage).length()) * 1000);
                             } catch (Exception e) {
                                 Log.d("TAG", "进度越界啦: " + e);
                             }
                         }
-                        if (beforePage > -1 && integer >= ((beforePage + 1) * 135) && integer != 0) {
+                        if (beforePage > -1 && integer >= ((beforePage + 1) * TEXT_SPLIT_LENGTH) && integer != 0) {
                             Log.i("TAG", "页数, progress：" + beforePage + ";进度:" + integer + "当前进度：" + Universal.progress);
                             nextTaskToDo = false;
                             if (beforePage <= page.get() - 1) {
