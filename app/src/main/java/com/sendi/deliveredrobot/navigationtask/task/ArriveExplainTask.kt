@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import android.os.Looper
 import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
@@ -14,7 +15,9 @@ import com.sendi.deliveredrobot.service.PlaceholderEnum.Companion.replaceText
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MediaStatusManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * @author heky
@@ -79,8 +82,12 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                         MediaStatusManager.stopMediaPlay(false)
                         taskModel?.bill?.executeNextTask()
                     }
-                    MediaPlayerHelper.getInstance().play(route!!.explanationvoice)
+                    withContext(Dispatchers.Main){
+                        MediaPlayerHelper.getInstance().play(route!!.explanationvoice)
+                        notifyFragmentUpdate()
+                    }
                 } catch (ignored: Exception) {
+                    ignored.printStackTrace()
                     LogUtil.i("异常 ${taskModel?.endTarget?:""} 到点播报（MP3）")
                     taskModel?.bill?.executeNextTask()
                 }

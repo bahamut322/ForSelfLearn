@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
+import android.os.Looper
 import android.util.Log
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.helpers.DialogHelper
@@ -90,7 +91,9 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                         MediaStatusManager.stopMediaPlay(false)
                         finishExplain()
                     }
-                    MediaPlayerHelper.getInstance().play(route!!.walkvoice)
+                    withContext(Dispatchers.Main){
+                        MediaPlayerHelper.getInstance().play(route!!.walkvoice)
+                    }
                 } catch (ignored: Exception) {
                     LogUtil.i("异常 ${taskModel?.endTarget?:""} 途径播报（MP3）")
                     finishExplain()

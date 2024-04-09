@@ -22,6 +22,8 @@ public class MediaPlayerHelper {
     private Handler mHandler;
     private OnProgressListener mOnProgressListener;
 
+    private MediaPlayer.OnCompletionListener mOnCompletionListener;
+
     private MediaPlayerHelper() {
         // 私有构造函数，防止外部实例化
     }
@@ -34,9 +36,7 @@ public class MediaPlayerHelper {
     }
 
     public void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.setOnCompletionListener(listener);
-        }
+        mOnCompletionListener = listener;
     }
 
     public void play(String fileName) {
@@ -45,6 +45,9 @@ public class MediaPlayerHelper {
             MediaStatusManager.stopMediaPlay(true);
             releaseMediaPlayer(); // 释放之前的 MediaPlayer
             mMediaPlayer = new MediaPlayer();
+            if (mOnCompletionListener != null) {
+                mMediaPlayer.setOnCompletionListener(mOnCompletionListener);
+            }
             try {
                 if (fileName != null) {
                     new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
