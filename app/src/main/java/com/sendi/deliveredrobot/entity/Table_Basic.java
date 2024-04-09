@@ -64,6 +64,8 @@ public class Table_Basic extends LitePalSupport {
 
     @Column(defaultValue = "1")
     private int oneKeyCallPhone = 1;//一键呼叫电话 0、不开启 1、开启
+    @Column(defaultValue = "0")
+    private int explainFinishedNotGoBack = 0;//讲解结束不返回 0、返回 1、不返回
 
 
     public int getId() {
@@ -280,5 +282,13 @@ public class Table_Basic extends LitePalSupport {
     public int getOneKeyCallPhone() {
         return oneKeyCallPhone;
     }
+
+    public void setExplainFinishedNotGoBack(int explainFinishedNotGoBack) {
+        this.explainFinishedNotGoBack = explainFinishedNotGoBack;
+    }
+    public int getExplainFinishedNotGoBack() {
+        return explainFinishedNotGoBack;
+    }
+
 }
 

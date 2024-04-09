@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.model;
 
-import org.litepal.annotation.Column;
-
 public class BasicModel {
 
     private String defaultValue = "智能引领 智能讲解 更多服务 业务办理 礼仪迎宾 智能问答";//首页功能显示
@@ -31,6 +29,8 @@ public class BasicModel {
     private boolean businessInterrupt = true;//导购过程中允许打断
     private int businessWhetherTime = 30;//打断任务暂停时间
     private int oneKeyCallPhone = 1;//一键呼叫电话 0、不开启 1、开启
+
+    private int explainFinishedNotGoBack = 0;//讲解结束不返回 0、返回 1、不返回
 
 
     public String getDefaultValue() {
@@ -246,5 +246,13 @@ public class BasicModel {
     }
     public int getOneKeyCallPhone() {
         return oneKeyCallPhone;
+    }
+
+    public int getExplainFinishedNotGoBack() {
+        return explainFinishedNotGoBack;
+    }
+
+    public void setExplainFinishedNotGoBack(int explainFinishedNotGoBack) {
+        this.explainFinishedNotGoBack = explainFinishedNotGoBack;
     }
 }

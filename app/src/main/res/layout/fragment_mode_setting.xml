@@ -190,7 +190,7 @@
                 <View
                     android:id="@+id/view11"
                     android:layout_width="@dimen/dp_1010"
-                    android:layout_height="@dimen/dp_370"
+                    android:layout_height="@dimen/dp_456"
                     android:layout_marginTop="24dp"
                     android:background="@drawable/setting_item_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -198,17 +198,40 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView27" />
 
                 <TextView
-                    android:id="@+id/Speed_explanation_tv"
+                    android:id="@+id/text_view_explain_finish_not_go_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
                     android:layout_marginTop="@dimen/dp_44"
                     android:alpha="0.7"
-                    android:text="@string/Speed_explanation"
+                    android:text="@string/explain_finish_no_go_back"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_24"
                     app:layout_constraintStart_toStartOf="@+id/view11"
                     app:layout_constraintTop_toTopOf="@+id/view11" />
+
+                <CheckBox
+                    android:id="@+id/check_box_explain_finish_not_go_back"
+                    android:layout_width="@dimen/dp_56"
+                    android:layout_height="@dimen/dp_32"
+                    android:layout_marginEnd="@dimen/dp_32"
+                    android:button="@drawable/selector_switch_track"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_view_explain_finish_not_go_back"
+                    app:layout_constraintEnd_toEndOf="@+id/view11"
+                    app:layout_constraintTop_toTopOf="@+id/text_view_explain_finish_not_go_back" />
+
+                <TextView
+                    android:id="@+id/Speed_explanation_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="@dimen/dp_76"
+                    android:alpha="0.7"
+                    android:text="@string/Speed_explanation"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_24"
+                    app:layout_constraintStart_toStartOf="@+id/view11"
+                    app:layout_constraintTop_toBottomOf="@+id/text_view_explain_finish_not_go_back" />
 
                 <TextView
                     android:id="@+id/textView"
@@ -479,7 +502,7 @@
                     android:id="@+id/textView37"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_94"
+                    android:layout_marginTop="@dimen/dp_76"
                     android:alpha="0.7"
                     android:text="@string/allowed"
                     android:textColor="@color/white"
@@ -501,7 +524,7 @@
                     android:id="@+id/textView38"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_92"
+                    android:layout_marginTop="@dimen/dp_76"
                     android:alpha="0.7"
                     android:text="@string/Task_Touch"
                     android:textColor="@color/white"

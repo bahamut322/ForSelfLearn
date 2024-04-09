@@ -1,8 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +19,7 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.databinding.FragmentModeSettingBinding;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.UpDataSQL;
+import com.sendi.deliveredrobot.model.BasicModel;
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel;
 
 import java.util.Objects;
@@ -52,6 +51,7 @@ public class ModeSettingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         values = new ContentValues();
         viewModel = new ViewModelProvider(this).get(SettingViewModel.class);
+        BasicModel settingData = viewModel.settingData();
         //引领速度
         binding.LeadingSpeed.setRange(0.3f, 1.2f, 1);
         //去往讲解点速度
@@ -72,50 +72,51 @@ public class ModeSettingFragment extends Fragment {
 
 
         //讲解结束方式判断
-        if (viewModel.settingData().getExplanationFinish() == 0) {
+        if (settingData.getExplanationFinish() == 0) {
             binding.AgainCB.setChecked(true);
-        } else if (viewModel.settingData().getExplanationFinish() == 1){
+        } else if (settingData.getExplanationFinish() == 1){
             binding.otherCB.setChecked(true);
-        }else if (viewModel.settingData().getExplanationFinish() == 2){
+        }else if (settingData.getExplanationFinish() == 2){
             binding.otherCB.setChecked(true);
             binding.AgainCB.setChecked(true);
         }
         //测温模式选择判断
-        if (viewModel.settingData().getTempMode() == 0) {
+        if (settingData.getTempMode() == 0) {
             binding.singleTemp.setChecked(true);
         } else {
             binding.multipleTemp.setChecked(true);
         }
         //异常警告方式判断
-        if (Objects.equals(viewModel.settingData().getError(), "1")) {
+        if (Objects.equals(settingData.getError(), "1")) {
             binding.followNearby.setChecked(true);
         } else {
             binding.Announcements.setChecked(true);
         }
-        if (viewModel.settingData().getUnArrive() == 0) {
+        if (settingData.getUnArrive() == 0) {
             binding.skip.setChecked(true);
         } else {
             binding.repeat.setChecked(true);
         }
         //巡逻方式判断
-        if ( viewModel.settingData().getPatrolContent()!= null) {
-            for (int i = 0; i < viewModel.settingData().getPatrolContent().split(" ").length; i++) {
-                check(viewModel.settingData().getPatrolContent().split(" ")[i]);
+        if ( settingData.getPatrolContent()!= null) {
+            for (int i = 0; i < settingData.getPatrolContent().split(" ").length; i++) {
+                check(settingData.getPatrolContent().split(" ")[i]);
             }
         }
-        binding.suspension.setCur(viewModel.settingData().getPatrolStayTime());
-        binding.patrolSpeed.setCur(viewModel.settingData().getPatrolSpeed());
-        binding.etiquette.setChecked(viewModel.settingData().getIdentifyVip());
-        binding.InterruptionExplanation.setChecked(viewModel.settingData().getExplainInterrupt());
-        binding.interruptionBusiness.setChecked(viewModel.settingData().getBusinessInterrupt());
-        binding.VoiceAnnouncements.setChecked(viewModel.settingData().getVoiceAnnouncements());
-        binding.LeadingSpeed.setCur(viewModel.settingData().getLeadingSpeed());
-        binding.ExplanationSpeed.setCur(viewModel.settingData().getGoExplanationPoint());
-        binding.businessSpeed.setCur(viewModel.settingData().getGoBusinessPoint());
-//        binding.explain.setCur(viewModel.settingData().getSpeechSpeed());
-        binding.stay.setCur(viewModel.settingData().getStayTime());
-        binding.BreakTask.setCur(viewModel.settingData().getExplainWhetherTime());
-        binding.timeBusiness.setCur(viewModel.settingData().getBusinessWhetherTime());
+        binding.suspension.setCur(settingData.getPatrolStayTime());
+        binding.patrolSpeed.setCur(settingData.getPatrolSpeed());
+        binding.etiquette.setChecked(settingData.getIdentifyVip());
+        binding.InterruptionExplanation.setChecked(settingData.getExplainInterrupt());
+        binding.interruptionBusiness.setChecked(settingData.getBusinessInterrupt());
+        binding.VoiceAnnouncements.setChecked(settingData.getVoiceAnnouncements());
+        binding.LeadingSpeed.setCur(settingData.getLeadingSpeed());
+        binding.ExplanationSpeed.setCur(settingData.getGoExplanationPoint());
+        binding.businessSpeed.setCur(settingData.getGoBusinessPoint());
+//        binding.explain.setCur(settingData.getSpeechSpeed());
+        binding.stay.setCur(settingData.getStayTime());
+        binding.BreakTask.setCur(settingData.getExplainWhetherTime());
+        binding.timeBusiness.setCur(settingData.getBusinessWhetherTime());
+        binding.checkBoxExplainFinishNotGoBack.setChecked(settingData.getExplainFinishedNotGoBack() == 1);
 
 
         //VIP人脸识别
@@ -244,6 +245,13 @@ public class ModeSettingFragment extends Fragment {
         binding.tempDetection.setOnCheckedChangeListener((buttonView, isChecked) -> binding.tempDetection.setChecked(isChecked));
         //巡逻内容：人脸识别
         binding.faceRecognition.setOnCheckedChangeListener((buttonView, isChecked) -> binding.faceRecognition.setChecked(isChecked));
+        binding.checkBoxExplainFinishNotGoBack.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                values.put("explainfinishednotgoback",1);
+            }else {
+                values.put("explainfinishednotgoback",0);
+            }
+        });
     }
 
     //解析StringBuffer中的数据用来保存勾选

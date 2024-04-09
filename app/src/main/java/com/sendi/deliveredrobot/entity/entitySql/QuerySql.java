@@ -319,6 +319,7 @@ public class QuerySql {
                 model.setBusinessInterrupt(businessInterrupt);
                 model.setExpression(Expression);
                 model.setOneKeyCallPhone(cursor.getInt(cursor.getColumnIndex("onekeycallphone")));
+                model.setExplainFinishedNotGoBack(cursor.getInt(cursor.getColumnIndex("explainfinishednotgoback")));
             } while (cursor.moveToNext());
             cursor.close();
         }

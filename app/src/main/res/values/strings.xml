@@ -518,5 +518,6 @@
     <string name="faceName">%人脸姓名%</string>
     <string name="one_key_call_phone">一键呼叫</string>
     <string name="conversation">智能问答</string>
+    <string name="explain_finish_no_go_back">讲解结束不返回充电桩</string>
 
 </resources>

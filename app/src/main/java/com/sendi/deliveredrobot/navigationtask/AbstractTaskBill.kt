@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelLazy
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
 import com.sendi.deliveredrobot.room.PointType
@@ -103,8 +104,13 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
             }else{
                 val taskId = BillManager.currentBill()?.taskId()?:""
                 BillManager.removeBill()
-                val needGoBack = false
-                if (needGoBack) {
+                val notGoBack = QuerySql.QueryBasic().explainFinishedNotGoBack == 1
+                if (notGoBack) {
+                    val bill = StandStillBillFactory.createBill(TaskModel(
+                        taskId = taskId
+                    ))
+                    BillManager.addAllAtIndex(bill)
+                }else{
                     val readyPoint = dao.queryReadyPoint()
                     when (readyPoint?.type) {
                         PointType.CHARGE_POINT -> {
@@ -119,11 +125,6 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
                             BillManager.addAllAtIndex(bill)
                         }
                     }
-                }else{
-                    val bill = StandStillBillFactory.createBill(TaskModel(
-                        taskId = taskId
-                    ))
-                    BillManager.addAllAtIndex(bill)
                 }
             }
             BillManager.currentBill()?.executeNextTask()
