@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_BUNDLE
+import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.constants.InputPasswordFromType
 import java.text.SimpleDateFormat
 import java.util.Date

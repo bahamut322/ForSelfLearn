@@ -92,7 +92,7 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
                     })
                 }
             }
-            UpdateReturn().method()
+            UpdateReturn.method()
             taskModel?.bill?.executeNextTask()
     }
 }

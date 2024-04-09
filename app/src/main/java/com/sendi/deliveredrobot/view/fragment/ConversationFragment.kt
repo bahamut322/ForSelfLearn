@@ -35,7 +35,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.ConversationAnswerModel
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.SpanUtils
@@ -75,7 +75,7 @@ class ConversationFragment : Fragment() {
     private var answerPriority: Array<String>? = ASROrNlpModelTypeEnum.answerPriority // 优先级，下标越小优先级越高
     private var waitTalk = true
 //    private val defaultAnswer = "我没明白您的意思，可以换个方式提问吗？"
-    private val defaultAnswer = Placeholder.replaceText("%唤醒词%未听请您说的话，可以再说一遍吗？")
+    private val defaultAnswer = PlaceholderEnum.replaceText("%唤醒词%未听请您说的话，可以再说一遍吗？")
     private val pattern = "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     private var aiuiListener: AIUIListener? = null
     private var recorder: AudioRecorder? = null

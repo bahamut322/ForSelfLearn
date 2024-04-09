@@ -746,8 +746,6 @@ public class StartExplainFragment extends Fragment {
             BaiduTTSHelper.getInstance().resume();
         }
         Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
-        if (!array) {
-            new UpdateReturn().resume();
-        }
+        UpdateReturn.INSTANCE.resume();
     }
 }
