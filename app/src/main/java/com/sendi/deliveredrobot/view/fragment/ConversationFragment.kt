@@ -1,7 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -51,7 +50,6 @@ import java.nio.charset.StandardCharsets
 import java.util.Date
 import java.util.Random
 import java.util.Timer
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.thread
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -63,7 +61,8 @@ import kotlin.coroutines.suspendCoroutine
  */
 class ConversationFragment : Fragment() {
     companion object{
-        private val AI_XIAO_YUE_DEFAULT_ANSWER = "如需获取更多服务，可微信扫描以下二维码，添加艾小越微信号获取更多帮助。"
+        private const val AI_XIAO_YUE_DEFAULT_ANSWER = "如需获取更多服务，可微信扫描以下二维码，添加艾小越微信号获取更多帮助。"
+        private const val RESUME_SPEAK_TEXT = "我在，请问您有什么问题？"
     }
 
     var binding: FragmentConversationBinding? = null
@@ -81,7 +80,7 @@ class ConversationFragment : Fragment() {
     private var aiuiListener: AIUIListener? = null
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
-    private val resumeSpeakText = Placeholder.replaceText("%唤醒词%在呢，请问您有什么问题？%唤醒词%可以为您解答")
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -156,6 +155,7 @@ class ConversationFragment : Fragment() {
                             try {
                                 asrResult = StreamingAsrUtil.processIATResult(text)
                                 if (!asrResult.isNullOrEmpty()) {
+                                    DialogHelper.loadingDialog.show()
                                     addQuestionView(asrResult, talkingView)
                                 }
                             }catch (e:NullPointerException){
@@ -368,7 +368,7 @@ class ConversationFragment : Fragment() {
                 startTime = System.currentTimeMillis()
             }
         }
-        SpeakHelper.speak(resumeSpeakText)
+        SpeakHelper.speak(RESUME_SPEAK_TEXT)
 
     }
     override fun onStart() {
@@ -645,6 +645,7 @@ class ConversationFragment : Fragment() {
     private fun findFinalAnswerAndStartTTS(sid: String, answerType: String, answer: String) {
         val finalAnswer = findFinalAnswer(sid, answerType, answer)
         if (finalAnswer != null) {
+            DialogHelper.loadingDialog.dismiss()
             startTTS(finalAnswer.answer)
             mainScope.launch {
                 addAnswer2(finalAnswer.answer)
