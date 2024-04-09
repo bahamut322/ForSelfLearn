@@ -12,14 +12,20 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentSettingPlanBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
+import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoBackTaskBillFactory
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FaceImageDialog
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * @Author Swn
@@ -82,9 +88,13 @@ class PlanSettingFragment : Fragment() {
         //回桩
         binding.returnBlack.apply {
             setOnClickListener {
-                val bill = GoBackTaskBillFactory.createBill(TaskModel())
-                BillManager.addAllAtIndex(bill)
-                BillManager.currentBill()?.executeNextTask()
+                DialogHelper.loadingDialog.show()
+                BillManager.clearBillList()
+                CoroutineScope(Dispatchers.Default).launch{
+                    val bill = GoBackTaskBillFactory.createBill(TaskModel())
+                    BillManager.addAllLast(bill)
+                    ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                }
             }
         }
         //返回主页面

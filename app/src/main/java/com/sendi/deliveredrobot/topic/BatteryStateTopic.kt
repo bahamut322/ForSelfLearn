@@ -132,6 +132,7 @@ object BatteryStateTopic {
                         val billList = GoBackTaskBillFactory.createBill(taskModel = TaskModel())
                         BillManager.addAllAtIndex(billList)
                         DialogHelper.lowPowerGoBack.show()
+                        ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                         return@launch
                     }
 
