@@ -47,6 +47,7 @@ class MyCountDownTimer(
     }
 
     fun resume() {
+        // todo 有问题 是否应该判断是否已经暂停
         if (isStarted) {
             isPaused = false
             start()

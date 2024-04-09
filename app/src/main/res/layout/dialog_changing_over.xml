@@ -16,6 +16,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <TextView
+        android:id="@+id/textViewReturn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="@dimen/text_letter_space"
+        android:text="@string/home_page"
+        android:textColor="@color/color_4D6FBE"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/returnImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toEndOf="@+id/returnImg"
+        app:layout_constraintTop_toTopOf="@+id/returnImg"
+        tools:targetApi="lollipop" />
+
     <TextView
         android:id="@+id/textView56"
         android:layout_width="wrap_content"

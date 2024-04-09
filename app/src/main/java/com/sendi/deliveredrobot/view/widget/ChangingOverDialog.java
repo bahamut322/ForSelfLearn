@@ -29,6 +29,8 @@ public class ChangingOverDialog extends Dialog {
     public TextView askTv;
     public Button Sure, No;
 
+    public TextView textViewReturn;
+
     public ChangingOverDialog(Context context) {
         super(context, R.style.Dialog);
         this.context = context;
@@ -45,6 +47,7 @@ public class ChangingOverDialog extends Dialog {
         askTv = findViewById(R.id.askTv);
         Sure = findViewById(R.id.Yes_Exit);
         No = findViewById(R.id.No_Exit);
+        textViewReturn = findViewById(R.id.textViewReturn);
         dialog_button.setVisibility(View.GONE);
     }
 

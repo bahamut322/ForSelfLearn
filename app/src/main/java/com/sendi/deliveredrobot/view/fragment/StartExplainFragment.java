@@ -237,7 +237,7 @@ public class StartExplainFragment extends Fragment {
             processDialog();
         });
         //暂停讲解
-        binding.PauseBtn.setOnClickListener(v -> {
+        binding.pauseBtn.setOnClickListener(v -> {
             clickCount++;
             if (isButtonClickable) {
                 isButtonClickable = false;
@@ -246,7 +246,7 @@ public class StartExplainFragment extends Fragment {
                     // 奇数次点击，执行暂停操作
                     BaiduTTSHelper.getInstance().pause();
                     MediaPlayerHelper.getInstance().pause();
-                    binding.PauseBtn.setText("继续讲解");
+                    binding.pauseBtn.setText("继续讲解");
                     binding.PauseTV.setVisibility(View.VISIBLE);
                 } else {
                     // 偶数次点击，执行恢复操作
@@ -254,7 +254,7 @@ public class StartExplainFragment extends Fragment {
                     BaiduTTSHelper.getInstance().resume();
                     MediaPlayerHelper.getInstance().resume();
                     binding.PauseTV.setVisibility(View.GONE);
-                    binding.PauseBtn.setText("暂停讲解");
+                    binding.pauseBtn.setText("暂停讲解");
                 }
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
@@ -448,7 +448,7 @@ public class StartExplainFragment extends Fragment {
                         RobotStatus.INSTANCE.getArrayPointExplain().observe(getViewLifecycleOwner(), integer1 -> RobotStatus.INSTANCE.getProgress().observe(getViewLifecycleOwner(), integer -> {
                             LogUtil.INSTANCE.i("是否到点：" + integer1 + ",讲解进度：" + integer + "," + Universal.ExplainLength);
                             if (integer1 == 1 && !array && integer != Universal.ExplainLength) {
-                                binding.PauseBtn.setVisibility(View.GONE);
+                                binding.pauseBtn.setVisibility(View.GONE);
                                 mHandler.post(() -> {
                                     if (QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type() == 4) {
                                         binding.argPic.setVisibility(View.VISIBLE);
@@ -636,7 +636,7 @@ public class StartExplainFragment extends Fragment {
                 //这段你别问我哈，公司没钱。用短语音识别去读长语音，还要过渡显示，更过分的还要翻页诶。我也没办法，只能这样做，我也看不懂了。
                 if (mData.get(position).getExplanationtext() != null && !mData.get(position).getExplanationtext().isEmpty() && array) {
                     beforePage = 0;
-                    binding.PauseBtn.setVisibility(View.VISIBLE);
+                    binding.pauseBtn.setVisibility(View.VISIBLE);
                     try {
                         viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
                     } catch (Exception e) {
@@ -696,7 +696,7 @@ public class StartExplainFragment extends Fragment {
                     });
                 } else if (!mData.get(position).getExplanationvoice().isEmpty() && array) {
                     binding.contentLin.setVisibility(View.GONE);
-                    binding.PauseBtn.setVisibility(View.GONE);
+                    binding.pauseBtn.setVisibility(View.GONE);
                     try {
                         viewModel.getTask(TaskStageEnum.StartArrayBroadcast);
                     } catch (Exception e) {
@@ -718,7 +718,7 @@ public class StartExplainFragment extends Fragment {
                         }
                     });
                 } else if (mData.get(position).getExplanationvoice().isEmpty() && mData.get(position).getExplanationtext().length() == 0 && array) {
-                    binding.PauseBtn.setVisibility(View.GONE);
+                    binding.pauseBtn.setVisibility(View.GONE);
 //                    isMethodExecuted = false;
                     Objects.requireNonNull(viewModel.getCountDownTimer()).startCountDown();
                 }
@@ -807,15 +807,10 @@ public class StartExplainFragment extends Fragment {
 //            changingOverDialog.No.setOnClickListener(v -> changingOverDialog.dialog_button.setVisibility(View.GONE));
         });
         changingOverDialog.returnImg.setOnClickListener(v1 -> {
-            changingOverDialog.dismiss();
-            if (clickCount % 2 != 1) {
-                MediaPlayerHelper.getInstance().resume();
-                BaiduTTSHelper.getInstance().resume();
-            }
-            Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
-            if (!array) {
-                new UpdateReturn().resume();
-            }
+            returnFunction();
+        });
+        changingOverDialog.textViewReturn.setOnClickListener(v1 -> {
+            returnFunction();
         });
     }
 
@@ -970,4 +965,18 @@ public class StartExplainFragment extends Fragment {
         }
     }
 
+    /**
+     * @description: 返回功能
+     */
+    private void returnFunction() {
+        changingOverDialog.dismiss();
+        if (clickCount % 2 != 1) {
+            MediaPlayerHelper.getInstance().resume();
+            BaiduTTSHelper.getInstance().resume();
+        }
+        Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
+        if (!array) {
+            new UpdateReturn().resume();
+        }
+    }
 }
