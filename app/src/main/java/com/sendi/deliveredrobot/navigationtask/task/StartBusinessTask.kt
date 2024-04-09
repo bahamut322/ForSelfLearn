@@ -31,7 +31,6 @@ class StartBusinessTask (taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_BUSINESS
-//        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

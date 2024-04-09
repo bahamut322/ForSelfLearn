@@ -29,7 +29,7 @@ import com.sendi.deliveredrobot.model.FaceModel
 import com.sendi.deliveredrobot.model.RectDeserializer
 import com.sendi.deliveredrobot.model.Similarity
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -296,7 +296,7 @@ object FaceRecognition {
      * 人脸播报
      */
     private fun checkFaceSpeak(
-        speak: String = Placeholder.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
+        speak: String = PlaceholderEnum.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
         synchronized(this){
             if (shouldExecute && RobotStatus.identifyFaceSpeak.value == 1) {
@@ -392,7 +392,7 @@ object FaceRecognition {
 
             if (correspondingValues.isNotEmpty()) {
                 checkFaceSpeak(
-                    Placeholder.replaceText(
+                    PlaceholderEnum.replaceText(
                         QuerySql.selectGreetConfig().vipPrompt,
                         name = correspondingValues
                     )

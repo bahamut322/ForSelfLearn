@@ -40,7 +40,7 @@ class ChangePointGridViewAdapter(private val context: Context, private val items
 
         holder.itemTextView.text = items?.get(position)!!.name
         if (holder.itemTextView.text == nameString){
-            holder.itemTextView.isEnabled = false;
+            holder.itemTextView.isEnabled = false
             holder.itemTextView.isClickable = false
             holder.itemTextView.setBackgroundResource(R.drawable.bg_button_1)
             holder.itemCon.isEnabled = false

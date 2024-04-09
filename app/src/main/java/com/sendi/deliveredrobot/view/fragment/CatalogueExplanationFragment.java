@@ -26,7 +26,7 @@ import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.MyResultModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.service.Placeholder;
+import com.sendi.deliveredrobot.service.PlaceholderEnum;
 import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 
 import java.util.List;

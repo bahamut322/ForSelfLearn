@@ -21,15 +21,15 @@ public class TTSProgressHandlerImpl implements TTSProgressHandler {
             //首先规避一下重复数
             if (progress == previousProgress) {
                 LogUtil.INSTANCE.d("生成了重复数");
-            } else if (Universal.ExplainSpeak.size() != 0) {
+            } else if (Universal.explainSpeak.size() != 0) {
                 //当TTS的播放进度和列表第一项相等的时候
-                if (progress == Universal.ExplainSpeak.get(0)) {
-                    Universal.taskNum += Universal.ExplainSpeak.get(0);
+                if (progress == Universal.explainSpeak.get(0)) {
+                    Universal.taskNum += Universal.explainSpeak.get(0);
                     Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
                     RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum);
-                    Universal.ExplainSpeak.remove(0);
+                    Universal.explainSpeak.remove(0);
                 } else {
-                    if (progress != Universal.ExplainSpeak.get(0)) {
+                    if (progress != Universal.explainSpeak.get(0)) {
                         Log.d(TAG, "当前朗读完的item的总算" + Universal.taskNum);
                         RobotStatus.INSTANCE.getProgress().postValue(Universal.taskNum + progress);
                     }
@@ -38,7 +38,7 @@ public class TTSProgressHandlerImpl implements TTSProgressHandler {
             LogUtil.INSTANCE.d(" BaiduTTS播放进度：" + progress
                     + "播放总进度：" + RobotStatus.INSTANCE.getProgress().getValue()
                     + " 当前朗读完的item的总算：" + Universal.taskNum
-                    + " 播放目标进度：" + Universal.ExplainLength
+                    + " 播放目标进度：" + Universal.explainTextLength
             );
             previousProgress = progress; // 更新前一次的 progress，避重
         }

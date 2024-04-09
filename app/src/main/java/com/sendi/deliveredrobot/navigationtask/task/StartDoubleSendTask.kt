@@ -32,9 +32,6 @@ class StartDoubleSendTask(taskModel: TaskModel, needReportData: Boolean = true):
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_SEND
-//        IdleGateDataHelper.minusCount()
-//        IdleGateDataHelper.minusCount()
-//        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

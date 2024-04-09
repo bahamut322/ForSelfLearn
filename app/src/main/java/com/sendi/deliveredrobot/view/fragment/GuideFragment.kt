@@ -27,7 +27,7 @@ import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.QueryPointEntity
-import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.FromeSettingDialog
 import com.sendi.deliveredrobot.viewmodel.BusinessViewModel
@@ -89,7 +89,7 @@ class GuideFragment : BaseFragment() {
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         updateDataAndRefreshList()
         viewModel!!.restoreVideo(viewLifecycleOwner)
-        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGuideFouConfig().firstPrompt!!, business = "智能引领"))
+        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGuideFouConfig().firstPrompt!!, business = "智能引领"))
 
 //        viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
 //        UpdateReturn().method()

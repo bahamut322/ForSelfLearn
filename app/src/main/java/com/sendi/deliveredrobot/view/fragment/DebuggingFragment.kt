@@ -126,7 +126,7 @@ class DebuggingFragment : Fragment() {
 
         binding.llayoutReturn.apply {
             setOnClickListener {
-                UpdateReturn().method()
+                UpdateReturn.method()
                 controller!!.navigate(R.id.action_debuggingFragment_to_settingHomeFragment)
 
             }

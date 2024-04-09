@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
-import com.sendi.deliveredrobot.view.widget.Order;
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager;
 
 import java.io.IOException;
 
@@ -22,6 +22,8 @@ public class MediaPlayerHelper {
     private Handler mHandler;
     private OnProgressListener mOnProgressListener;
 
+    private MediaPlayer.OnCompletionListener mOnCompletionListener;
+
     private MediaPlayerHelper() {
         // 私有构造函数，防止外部实例化
     }
@@ -33,20 +35,24 @@ public class MediaPlayerHelper {
         return instance;
     }
 
-    public void play(String fileName, String FLage) {
+    public void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
+        mOnCompletionListener = listener;
+    }
+
+    public void play(String fileName) {
         new Handler().postDelayed(() -> {
             // 要延迟执行的方法
-            Order.setFlage(FLage);
+            MediaStatusManager.stopMediaPlay(true);
             releaseMediaPlayer(); // 释放之前的 MediaPlayer
             mMediaPlayer = new MediaPlayer();
+            if (mOnCompletionListener != null) {
+                mMediaPlayer.setOnCompletionListener(mOnCompletionListener);
+            }
             try {
                 if (fileName != null) {
                     new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                     mMediaPlayer.setDataSource(fileName);
-                    mMediaPlayer.setOnPreparedListener(mp -> {
-                        mp.start();
-                        startProgressUpdate();
-                    });
+                    mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
                     mMediaPlayer.prepareAsync();
                 }
             } catch (IOException e) {
@@ -69,7 +75,7 @@ public class MediaPlayerHelper {
             mMediaPlayer.seekTo(currentPosition);
             mMediaPlayer.start();
             isPaused = false;
-            Order.setFlage("1");
+            MediaStatusManager.stopMediaPlay(true);
         }
     }
 
@@ -112,7 +118,7 @@ public class MediaPlayerHelper {
                 try {
                     if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
                         stopProgressUpdate();
-                        Order.setFlage("0");
+                        MediaStatusManager.stopMediaPlay(false);
                     }
                 } catch (Exception ignored) {
                 }

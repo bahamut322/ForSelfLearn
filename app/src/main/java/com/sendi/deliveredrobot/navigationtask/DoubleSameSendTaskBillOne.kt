@@ -57,7 +57,6 @@ class DoubleSameSendTaskBillOne(private val taskModel: TaskModel?, date: Date): 
             }
         }
         taskQueue.addAll(recreateQueue(taskModel))
-//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }

@@ -16,9 +16,9 @@ import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.service.Placeholder
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
-import com.sendi.deliveredrobot.view.widget.Order
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import com.sendi.deliveredrobot.viewmodel.GreetViewModel
@@ -63,7 +63,7 @@ class GoingGreetFragment : Fragment() {
             pointName = pointName.toList().joinToString(" ")
             binding.goingPoint.text = String.format(getString(R.string.business_going), pointName)
         }
-        BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().firstPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
+        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().firstPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
 
         viewModel!!.greetBigScreenModel(QuerySql.selectGreetConfig()?.bigScreenConfig)
         //暂停
@@ -89,7 +89,7 @@ class GoingGreetFragment : Fragment() {
         MainScope().launch {
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
         }
-        finishTaskDialog?.YesExit?.setOnClickListener {
+        finishTaskDialog?.confirmBtn?.setOnClickListener {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //返回
@@ -99,12 +99,12 @@ class GoingGreetFragment : Fragment() {
                 }
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
                 TaskNext.setToDo("0")
-                Order.setFlage("0")
+                MediaStatusManager.stopMediaPlay(false)
                 RobotStatus.arrayPointExplain.postValue(0)
             }
-            BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
+            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
         }
-        finishTaskDialog?.NoExit?.setOnClickListener {
+        finishTaskDialog?.cancelBtn?.setOnClickListener {
             MainScope().launch {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
             }

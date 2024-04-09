@@ -43,7 +43,6 @@ class GuideTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
     }
 
     override suspend fun exception() {
-//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         earlyFinish()
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)

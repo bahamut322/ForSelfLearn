@@ -52,7 +52,6 @@ class RemoteOrderSendBill(private val taskModel: TaskModel?, private val type: I
             }
         }
         taskQueue.addAll(recreateQueue(taskModel))
-//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }

@@ -9,6 +9,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -35,9 +36,6 @@ class ExplainingTask (
             LogUtil.e(MyApplication.instance!!.getString(R.string.db_query_point_is_null))
             return
         }
-        withContext(Dispatchers.Main){
-            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
-        }
         MyApplication.instance!!.sendBroadcast(Intent().apply {
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, navigateId)
@@ -47,7 +45,12 @@ class ExplainingTask (
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         ROSHelper.navigateTo(taskModel!!.location!!)
+        taskModel?.bill?.executeNextTask()
         DialogHelper.loadingDialog.dismiss()
 
+    }
+
+    fun test(): Boolean{
+        return true
     }
 }

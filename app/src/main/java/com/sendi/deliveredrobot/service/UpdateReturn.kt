@@ -10,11 +10,11 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
-import com.sendi.deliveredrobot.entity.Table_map_revise
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.Table_Reply_Gate
 import com.sendi.deliveredrobot.entity.Table_Robot_Config
+import com.sendi.deliveredrobot.entity.Table_map_revise
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
@@ -26,10 +26,8 @@ import com.sendi.deliveredrobot.model.Point
 import com.sendi.deliveredrobot.model.ReplyQaConfigModel
 import com.sendi.deliveredrobot.model.UploadMapDataModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTaskBill
-import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.Vire
-import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.room.dao.DebugDao
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
@@ -54,7 +52,7 @@ import kotlin.collections.component2
 import kotlin.collections.set
 
 
-class UpdateReturn {
+object UpdateReturn {
 
     private var timeStampReplyGateConfig: Long? = null
     private var timeStampRobotConfigSql: Long? = null
@@ -451,7 +449,6 @@ class UpdateReturn {
                     }
                 }
             } catch (e: java.lang.Exception) {
-                // TODO Auto-generated catch block
                 e.printStackTrace()
             }
         }
@@ -491,7 +488,7 @@ class UpdateReturn {
 
     fun settingMap(batteryState: Boolean = false) {
         mainScope.launch(Dispatchers.Default) {
-            UpdateReturn().mapSetting(batteryState)
+            mapSetting(batteryState)
             this@launch.cancel()
         }
     }

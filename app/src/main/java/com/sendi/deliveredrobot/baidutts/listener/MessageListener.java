@@ -12,9 +12,7 @@ import com.sendi.deliveredrobot.helpers.AudioMngHelper;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
-import com.sendi.deliveredrobot.view.widget.Order;
-
-import java.util.Objects;
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager;
 
 /**
  * SpeechSynthesizerListener 简单地实现，仅仅记录日志
@@ -80,7 +78,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         }
         RobotStatus.INSTANCE.getIdentifyFaceSpeak().postValue(0);
         RobotStatus.INSTANCE.setTtsIsPlaying(true);
-        Order.setFlage("1");
+        MediaStatusManager.stopMediaPlay(true);
     }
 
     /**
@@ -126,7 +124,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         //观察utteranceId为0的语音是否朗读完毕，之后继续朗读其他语音
         if (utteranceId.equals("0")) {
             //恢复视频声音
-            Order.setFlage("0");
+            MediaStatusManager.stopMediaPlay(false);
             RobotStatus.INSTANCE.getIdentifyFaceSpeak().postValue(1);
         }
 //        RobotStatus.INSTANCE.getProgress().observeForever(integer -> {

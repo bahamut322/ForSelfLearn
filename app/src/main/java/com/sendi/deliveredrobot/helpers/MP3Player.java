@@ -1,21 +1,12 @@
 package com.sendi.deliveredrobot.helpers;
 
-import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.os.Handler;
-
-import com.sendi.deliveredrobot.view.widget.Order;
 
 import java.io.IOException;
 
-import android.os.Message;
 
-
-import android.media.MediaPlayer;
-import android.os.Handler;
 import android.os.Looper;
-
-import java.io.IOException;
 
 /**
  * @author swn

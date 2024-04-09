@@ -64,7 +64,7 @@ class SongLyricTextView @JvmOverloads constructor(
             return
         }
         // 是否是播放状态
-        if (isPlaying) {
+//        if (isPlaying) {
             path.reset()
             val lineCount = layout.lineCount
             val content = text.toString()
@@ -101,7 +101,7 @@ class SongLyricTextView @JvmOverloads constructor(
             canvas.clipPath(path)
             mPaint.color = playColor
             layout.draw(canvas)
-        }
+//        }
     }
 
     /**
@@ -131,6 +131,11 @@ class SongLyricTextView @JvmOverloads constructor(
         isPlaying = false
         animator.cancel()
         invalidate()
+    }
+
+    fun setText(text: CharSequence?, endIndex: Int) {
+        consumeWidth = mPaint.measureText(text?.substring(0,endIndex))
+        super.setText(text)
     }
 
 }

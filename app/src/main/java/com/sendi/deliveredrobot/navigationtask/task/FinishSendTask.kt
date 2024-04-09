@@ -22,7 +22,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
                 viewModelBin1.value.resetBill()
                 taskDto.status = when(viewModelBin1.value.previousTaskFinished){
                     true -> {
-//                        IdleGateDataHelper.addCount()
                         1
                     }
                     false -> {
@@ -39,7 +38,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
                 viewModelBin2.value.resetBill()
                 taskDto.status = when(viewModelBin2.value.previousTaskFinished){
                     true -> {
-//                        IdleGateDataHelper.addCount()
                         1
                     }
                     false -> {
@@ -55,7 +53,6 @@ class FinishSendTask(taskModel: TaskModel, var exceptioned:Boolean = false, need
         taskDto.apply {
             mileage = RobotMileageHelper.robotMileage()
         }
-//        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun configEnum(): TaskStageEnum {

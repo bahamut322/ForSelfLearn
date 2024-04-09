@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
@@ -66,7 +65,7 @@ public class ProcessClickDialog extends Dialog {
         }
         otherBtn = findViewById(R.id.otherBtn);
         continueBtn.setOnClickListener(view -> {
-            new UpdateReturn().resume();
+            UpdateReturn.INSTANCE.resume();
             dismiss();
         });
     }
@@ -99,7 +98,7 @@ public class ProcessClickDialog extends Dialog {
                 // 倒计时结束
                 LogUtil.INSTANCE.i(this+"倒计时结束");
                     dismiss();
-                    new UpdateReturn().resume();
+                    UpdateReturn.INSTANCE.resume();
             }
 
             @Override
@@ -114,7 +113,7 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     protected void onStop() {
-        Universal.Process = false;
+        Universal.process = false;
         if (mTimer!=null) {
             mTimer.stop();
         }
@@ -123,7 +122,7 @@ public class ProcessClickDialog extends Dialog {
 
     @Override
     public void dismiss() {
-        Universal.Process = false;
+        Universal.process = false;
         if (mTimer!=null) {
             mTimer.stop();
         }
@@ -138,12 +137,12 @@ public class ProcessClickDialog extends Dialog {
     public void show( ) {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Universal.Process = true;
+        Universal.process = true;
         MediaPlayerHelper.getInstance().pause();
         BaiduTTSHelper.getInstance().pause();
         startCountdown(countdownTime); // 使用成员变量中的时间值
         mTimer.start();
-        new UpdateReturn().pause();
+        UpdateReturn.INSTANCE.pause();
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

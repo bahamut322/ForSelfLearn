@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -27,7 +26,7 @@ public class ChangingOverDialog extends Dialog {
     public ImageView returnImg;
     public ConstraintLayout dialog_button;
     public TextView askTv;
-    public Button Sure, No;
+    public Button ensure, cancel;
 
     public TextView textViewReturn;
 
@@ -45,16 +44,15 @@ public class ChangingOverDialog extends Dialog {
         returnImg = findViewById(R.id.returnImg);
         dialog_button = findViewById(R.id.dialog_button);
         askTv = findViewById(R.id.askTv);
-        Sure = findViewById(R.id.Yes_Exit);
-        No = findViewById(R.id.No_Exit);
+        ensure = findViewById(R.id.Yes_Exit);
+        cancel = findViewById(R.id.No_Exit);
         textViewReturn = findViewById(R.id.textViewReturn);
         dialog_button.setVisibility(View.GONE);
     }
 
     @Override
     public void dismiss() {
-        Log.d("TAG", "dismiss: dialog");
-        Universal.Changing = false;
+        Universal.changing = false;
         Universal.explainUnSpeak = false;
         super.dismiss();
     }
@@ -66,10 +64,9 @@ public class ChangingOverDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Log.d("TAG", "show: dialog");
-        Universal.Changing = true;
+        Universal.changing = true;
         dialog_button.setVisibility(View.GONE);
-        new UpdateReturn().pause();
+        UpdateReturn.INSTANCE.pause();
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

@@ -39,7 +39,6 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_GUIDE
-//        IdleGateDataHelper.reportIdleGateCount()
 //        withContext(Dispatchers.Main){
 //            RobotStatus.targetName?.postValue(taskModel?.location?.pointName?:"")
 //

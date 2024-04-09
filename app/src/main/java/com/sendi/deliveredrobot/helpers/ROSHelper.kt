@@ -63,7 +63,7 @@ object ROSHelper {
                 response = rosResult.response as ManageResponse
                 val msg = when (response?.result) {
                     1 -> {
-                        if (status == 3 && !Universal.speakIng){
+                        if (status == 3 && !Universal.speaking){
                             MediaPlayerHelper.getInstance().resume()
                             BaiduTTSHelper.getInstance().resume()
                         }

@@ -92,7 +92,7 @@ object SecondScreenManageHelper {
                         Universal.fontSize,
                         Universal.picTypeNum,
                         Universal.TempVideoLayout,
-                        Universal.AllvideoAudio,
+                        Universal.allVideoAudio,
                         false
                     )
                 } else {

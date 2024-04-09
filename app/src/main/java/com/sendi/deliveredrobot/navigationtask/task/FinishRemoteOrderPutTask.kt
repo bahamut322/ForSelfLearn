@@ -64,8 +64,6 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {
-//                        IdleGateDataHelper.addCount()
-//                        IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin1.value.previousRemoteOrderPutFinished = true
                         viewModelBin1.value.previousRemoteOrderSendFinished = true
 //                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))
@@ -85,8 +83,6 @@ class FinishRemoteOrderPutTask(taskModel: TaskModel, val type: Int, var exceptio
                         BillManager.addAllAtIndex(tempList, 1)
                     }
                     false -> {
-//                        IdleGateDataHelper.addCount()
-//                        IdleGateDataHelper.reportIdleGateCount()
                         viewModelBin2.value.previousRemoteOrderPutFinished = true
                         viewModelBin2.value.previousRemoteOrderSendFinished = true
 //                        TaskQueues.queue.add(0,AllFinishSendTask(taskModel = taskModel!!))

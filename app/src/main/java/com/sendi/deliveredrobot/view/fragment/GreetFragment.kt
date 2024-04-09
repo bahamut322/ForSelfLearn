@@ -17,8 +17,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
-import com.sendi.deliveredrobot.service.Placeholder
-import com.sendi.deliveredrobot.service.UpdateReturn
+import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
@@ -57,7 +56,7 @@ class GreetFragment : Fragment() {
         actionData = QuerySql.selectGreetConfig()
 
         RobotStatus.progress.observe(viewLifecycleOwner) {
-            if (it == Universal.ExplainLength || Universal.ExplainLength != -1) {
+            if (it == Universal.explainTextLength || Universal.explainTextLength != -1) {
                 Log.d("tag", "onViewCreated:  迎宾到达进行")
                 if (arrayFacePoint == 0) {
                     FaceRecognition.suerFaceInit(
@@ -115,15 +114,15 @@ class GreetFragment : Fragment() {
     //二次确认
     private fun secondRecognition() {
         finishTaskDialog?.show()
-        finishTaskDialog?.YesExit?.setOnClickListener {
+        finishTaskDialog?.confirmBtn?.setOnClickListener {
             processClickDialog?.dismiss()
             finishTaskDialog?.dismiss()
             //返回
             BillManager.currentBill()?.executeNextTask()
-            BaiduTTSHelper.getInstance().speaks(Placeholder.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
+            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
 
         }
-        finishTaskDialog?.NoExit?.setOnClickListener { finishTaskDialog?.dismiss() }
+        finishTaskDialog?.cancelBtn?.setOnClickListener { finishTaskDialog?.dismiss() }
     }
     override fun onStop() {
         //释放人脸识别资源

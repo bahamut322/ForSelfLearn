@@ -20,8 +20,8 @@ import com.sendi.deliveredrobot.entity.Universal;
 public class FinishTaskDialog extends Dialog {
 
     public Context context;
-    public Button YesExit;
-    public Button NoExit;
+    public Button confirmBtn;
+    public Button cancelBtn;
 
     public FinishTaskDialog(Context context) {
         super(context, R.style.Dialog);
@@ -35,8 +35,8 @@ public class FinishTaskDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_finish_task);
 
-        NoExit = findViewById(R.id.cancelBtn1);
-        YesExit = findViewById(R.id.submitBtn1);
+        cancelBtn = findViewById(R.id.cancelBtn1);
+        confirmBtn = findViewById(R.id.submitBtn1);
 
     }
 
@@ -44,7 +44,7 @@ public class FinishTaskDialog extends Dialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        Universal.Finish = false;
+        Universal.finish = false;
     }
 
     /**
@@ -54,7 +54,7 @@ public class FinishTaskDialog extends Dialog {
     public void show() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        Universal.Finish = true;
+        Universal.finish = true;
         fullScreenImmersive(getWindow().getDecorView());
         this.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);//设置全屏
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);

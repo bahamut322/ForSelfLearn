@@ -113,7 +113,7 @@
 
     <fragment
         android:id="@+id/explanArriveFragment"
-        android:name="com.sendi.deliveredrobot.view.fragment.ExplanArriveFragment"
+        android:name="com.sendi.deliveredrobot.view.fragment.ExplainArriveFragment"
         android:label="fragment_explan_arrive"
         tools:layout="@layout/fragment_explan_arrive">
         <action

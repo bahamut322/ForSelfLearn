@@ -357,7 +357,7 @@ class ConversationFragment : Fragment() {
                 Thread.sleep(2000)
                 DialogHelper.loadingDialog.dismiss()
             }
-            SpeakHelper.speakUserCallback = object : SpeakHelper.SpeakUserCallback {
+            SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback {
                 override fun speakAllFinish() {
                     LogUtil.i("tts:播放完成")
                     AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
@@ -367,7 +367,7 @@ class ConversationFragment : Fragment() {
             override fun progressChange(utteranceId: String, progress: Int) {
                 startTime = System.currentTimeMillis()
             }
-        }
+        })
         SpeakHelper.speak(RESUME_SPEAK_TEXT)
 
     }

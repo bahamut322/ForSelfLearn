@@ -52,7 +52,6 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
             }
         }
         taskQueue.addAll(recreateQueue(taskModel))
-//        IdleGateDataHelper.reportIdleGateCount(0)
         RobotStatus.currentStatus = TYPE_EXCEPTION
         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
     }
@@ -61,10 +60,6 @@ class RemoteOrderPutBill(private val taskModel: TaskModel?): AbstractTaskBill(ta
         val tempList = LinkedList<AbstractTask>()
 //        mutex.withLock {
         DialogHelper.loadingDialog.show()
-//        if (!IdleGateDataHelper.minusCount()){
-//            DialogHelper.loadingDialog.dismiss()
-//            return tempList
-//        }
         val bin1 = with(viewModelBin1.value){
             val result = previousTaskFinished /*&& previousRemoteOrderPutFinished*/ && previousRemoteOrderSendFinished && !hasBill()
             if(result){

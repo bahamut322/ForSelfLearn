@@ -32,7 +32,6 @@ class StartGuideTask(taskModel: TaskModel) : AbstractTask(taskModel) {
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_GUIDE
-//        IdleGateDataHelper.reportIdleGateCount()
 //        TaskQueues.executeNextTask()
         mainScope.launch {
             taskModel?.bill?.executeNextTask()

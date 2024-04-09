@@ -46,7 +46,6 @@ object SafeStateTopic {
                         //播报语音音量
                         MediaPlayerHelper.getInstance().pause()
                         BaiduTTSHelper.getInstance().pause()
-//                        IdleGateDataHelper.reportIdleGateCount(0)
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_PRESSED
                         }
@@ -79,11 +78,10 @@ object SafeStateTopic {
                     } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
-                        if (!Universal.speakIng && !Universal.Process && !Universal.Changing && !Universal.Finish) {
+                        if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
                             MediaPlayerHelper.getInstance().resume()
                             BaiduTTSHelper.getInstance().resume()
                         }
-//                        IdleGateDataHelper.reportIdleGateCount()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED
                         }
@@ -99,7 +97,6 @@ object SafeStateTopic {
 
                             else -> RobotStatus.currentStatus = previousStatus
                         }
-//                        IdleGateDataHelper.reportIdleGateCount()
                         if (safeStateListener == null) {
                             when (RobotStatus.manageStatus) {
                                 RobotCommand.MANAGE_STATUS_STOP -> {

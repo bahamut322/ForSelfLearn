@@ -28,7 +28,7 @@ import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
-import com.sendi.deliveredrobot.view.widget.Order
+import com.sendi.deliveredrobot.view.widget.MediaStatusManager
 import com.sendi.deliveredrobot.view.widget.TaskNext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -82,10 +82,10 @@ class BusinessViewModel : ViewModel() {
     fun restoreVideo(owner: LifecycleOwner) {
         // 创建一个观察者
         val observer = Observer<Int> {
-            if (it == Universal.ExplainLength) {
+            if (it == Universal.explainTextLength) {
                 LogUtil.i("恢复视频声音")
                 // 恢复视频声音
-                Order.setFlage("0")
+                MediaStatusManager.stopMediaPlay(false)
             }
         }
         // 检查是否已经添加了观察者
@@ -113,14 +113,13 @@ class BusinessViewModel : ViewModel() {
             onFinish = {
                 RobotStatus.progress.postValue(0)
                 hasArrive = false
-                RobotStatus.ready.postValue(0)
                 if (type == 1) {
                     pageJump(controller)
                     //上报定点任务流程结束
                     ReportDataHelper.reportTaskDto(
                         TaskModel(endTarget = "定点导购",taskId = taskId),
                         TaskStageEnum.FinishBusinessTask,
-                        UpdateReturn().taskDto()
+                        UpdateReturn.taskDto()
                     )
                 } else {
                     TaskNext.setToDo("1")
@@ -141,7 +140,7 @@ class BusinessViewModel : ViewModel() {
 
 //            BaiduTTSHelper.getInstance().stop()
             TaskNext.setToDo("0")
-            Order.setFlage("0")
+            MediaStatusManager.stopMediaPlay(false)
             RobotStatus.arrayPointExplain.postValue(0)
         }
     }

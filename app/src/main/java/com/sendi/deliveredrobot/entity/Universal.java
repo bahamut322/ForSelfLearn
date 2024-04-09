@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import androidx.lifecycle.MutableLiveData;
 
 import com.sendi.deliveredrobot.BuildConfig;
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.navigationtask.TaskQueues;
 
 import java.io.File;
@@ -72,7 +71,6 @@ public class Universal {
     public static String POST_IDENTIFY = "http://192.168.73.204:5005/get_similarity";
 
 
-    //TODO 门岗管理
     //副屏轮播间隔时间
     public static int picPlayTime = 3;
     //副屏视频是否播放声音
@@ -109,11 +107,9 @@ public class Universal {
     public static MutableLiveData<Boolean> mapType = new MutableLiveData<>(false);
     //密码
     public static String password;
-    //播放进度
-    public static int progress = 0;
     //观察当前在第几个队列
     public static int taskNum = 0;
-    public static int ExplainLength = -1;
+    public static int explainTextLength = -1;
     public static String lastValue = null;
     public static boolean selectMapPoint = false;
     public static boolean twice = false;
@@ -122,14 +118,14 @@ public class Universal {
     public static int nextPointGo = 0;
     public static int speakInt = 0;
 
-    public static int AllvideoAudio = 0;
+    public static int allVideoAudio = 0;
     public static TaskQueues<String> taskQueue;
-    public static List<Integer> ExplainSpeak = new ArrayList<>();
+    public static List<Integer> explainSpeak = new ArrayList<>();
     //用来判断按下急停之后暂停讲解的状态
-    public static Boolean speakIng = false;//观察页面按钮暂停
-    public static Boolean Process = false;
-    public static Boolean Changing = false;
-    public static Boolean Finish = false;
+    public static Boolean speaking = false;//观察页面按钮暂停
+    public static Boolean process = false;
+    public static Boolean changing = false;
+    public static Boolean finish = false;
     //用来处理按下点击暂停。并且急停之后，再松开，会顶着暂停页面走
     public static boolean explainUnSpeak = false;
     public static String shoppingName = "";

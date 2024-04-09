@@ -53,8 +53,6 @@ class FinishRemoteOrderSendTask(taskModel: TaskModel, val type: Int, var excepti
                 viewModelBin1.value.resetBill()
                 when (viewModelBin1.value.previousRemoteOrderSendFinished) {
                     true -> {
-//                        IdleGateDataHelper.addCount()
-//                        IdleGateDataHelper.reportIdleGateCount()
                     }// 成功
                     false -> {
                         // 失败
@@ -66,8 +64,6 @@ class FinishRemoteOrderSendTask(taskModel: TaskModel, val type: Int, var excepti
                 when (viewModelBin2.value.previousRemoteOrderSendFinished) {
                     true -> {
                         // 成功
-//                        IdleGateDataHelper.addCount()
-//                        IdleGateDataHelper.reportIdleGateCount()
                     }
                     false -> {
                         // 失败

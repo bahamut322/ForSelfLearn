@@ -8,9 +8,12 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
@@ -51,18 +54,19 @@ class StartExplainViewModel : ViewModel() {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
+            SpeakHelper.stop()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 
-    fun recombine(selectName: String, array: Boolean) {
-        if (mData == null) return
+    fun recombine(selectName: String) {
+        if (inForListData() == null) return
         var position = 0
         Universal.selectMapPoint = true
-        for (i in mData!!.indices) {
-            if (mData!![i]?.name == selectName) {
+        for (i in inForListData()!!.indices) {
+            if (inForListData()!![i]?.name == selectName) {
                 Log.d("TAG", "onClick: $i")
                 position = i
                 break
@@ -72,41 +76,29 @@ class StartExplainViewModel : ViewModel() {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
             }
-            BillManager.billList().clear()
-            BaiduTTSHelper.getInstance().stop()
+            BillManager.clearBillList()
+            SpeakHelper.stop()
+//            BaiduTTSHelper.getInstance().stop()
 //            Universal.Model = "结束讲解"
 
             LogUtil.i("选择地点的索引：$position")
 //            for (index in position until mData!!.size) {
-            for (index in position until mData!!.size) {
+            for (index in position until inForListData()!!.size) {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
                 val bill = ExplanationBill.createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
-            if (!array) {
+//            if (!array) {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
-            }
+//            }
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
-            if (array) {
-                BillManager.currentBill()?.executeNextTask()
-            }
-        }
-    }
-
-
-    fun pause() {
-        mainScope.launch {
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-        }
-    }
-
-    fun resume() {
-        mainScope.launch {
-            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+//            if (array) {
+//                BillManager.currentBill()?.executeNextTask()
+//            }
         }
     }
 
@@ -125,7 +117,6 @@ class StartExplainViewModel : ViewModel() {
             onFinish = {
                 RobotStatus.progress.postValue(0)
                 TaskNext.setToDo("1")
-                RobotStatus.ready.postValue(0)
             }
         )
     }
@@ -134,10 +125,11 @@ class StartExplainViewModel : ViewModel() {
      * 路径加入列队方法
      */
     fun start() {
-        if (mData == null) return
+        if (inForListData().isNullOrEmpty()) return
+        ExplainManager.routes = inForListData()
         BillManager.billList().clear()
         mainScope.launch(Dispatchers.Default) {
-            for (data in mData!!) {
+            for (data in inForListData()!!) {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(data?.name?:""),
                 )
@@ -146,10 +138,9 @@ class StartExplainViewModel : ViewModel() {
                 BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
             }
-            RobotStatus.ready.postValue(0)
             BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)
-            if (mData!!.size != BillManager.billList().size){
+            if (inForListData()!!.size != BillManager.billList().size){
                 LogUtil.d("正在重新添加："+ BillManager.billList().size)
                 start()
             }
@@ -266,7 +257,7 @@ class StartExplainViewModel : ViewModel() {
                 )?.currentTask()
             )?.taskModel(),
             enum,
-            UpdateReturn().taskDto()
+            UpdateReturn.taskDto()
         )
 
     }
@@ -292,11 +283,9 @@ class StartExplainViewModel : ViewModel() {
         mainScope.launch {
             countDownTimer?.pause()
             BillManager.currentBill()?.executeNextTask()
-            Universal.progress = 0
-            Universal.taskNum = 0
             if (!array) {
                 Universal.nextPointGo = 1
-                UpdateReturn().stop()
+                UpdateReturn.stop()
             }
             TaskNext.setToDo("0")
             RobotStatus.arrayPointExplain.postValue(0)
@@ -307,45 +296,32 @@ class StartExplainViewModel : ViewModel() {
         mainScope.cancel()
     }
 
-    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
-        var file = ""
-        if (mData[position]!!.big_videofile !=null){
-            file = mData[position]!!.big_videofile.toString()
-        }else if (mData[position]!!.big_imagefile !=null){
-            file = mData[position]!!.big_imagefile.toString()
-        }
-        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
-            picPlayTime = mData[position]?.big_picplaytime ,
-            file = file,
-            type = mData[position]?.big_type?: 0,
-            textPosition = mData[position]?.big_textposition,
-            fontLayout = mData[position]?.big_fontlayout,
-            fontContent = mData[position]?.big_fontcontent?.toString(),
-            fontBackGround = mData[position]?.big_fontbackground?.toString(),
-            fontColor = mData[position]?.big_fontcolor?.toString(),
-            fontSize = mData[position]?.big_fontsize,
-            picType = mData[position]?.big_pictype,
-            videolayout = mData[position]?.videolayout,
-            videoAudio = mData[position]?.big_videoaudio,
-            false
-        ))
-        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
-    }
+//    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
+//        var file = ""
+//        if (mData[position]!!.big_videofile !=null){
+//            file = mData[position]!!.big_videofile.toString()
+//        }else if (mData[position]!!.big_imagefile !=null){
+//            file = mData[position]!!.big_imagefile.toString()
+//        }
+//        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
+//            picPlayTime = mData[position]?.big_picplaytime ,
+//            file = file,
+//            type = mData[position]?.big_type?: 0,
+//            textPosition = mData[position]?.big_textposition,
+//            fontLayout = mData[position]?.big_fontlayout,
+//            fontContent = mData[position]?.big_fontcontent?.toString(),
+//            fontBackGround = mData[position]?.big_fontbackground?.toString(),
+//            fontColor = mData[position]?.big_fontcolor?.toString(),
+//            fontSize = mData[position]?.big_fontsize,
+//            picType = mData[position]?.big_pictype,
+//            videolayout = mData[position]?.videolayout,
+//            videoAudio = mData[position]?.big_videoaudio,
+//            false
+//        ))
+//        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
+//    }
 
-    fun splitString(input: String, length: Int): List<String> {
-        val result: MutableList<String> = ArrayList()
-        var startIndex = 0
-        while (startIndex < input.length) {
-            var endIndex = startIndex + length
-            if (endIndex > input.length) {
-                endIndex = input.length
-            }
-            val substring = input.substring(startIndex, endIndex)
-            result.add(substring)
-            startIndex = endIndex
-        }
-        return result
-    }
+
 }
 
 

@@ -88,7 +88,6 @@ class ReadyingFragment : Fragment() {
                 mainScope.launch {
                     if (ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)) {
                         timer?.cancel()
-//                        binding.motionLayoutGuiding.transitionToState(R.id.state2)
                     } else {
                         ToastUtil.show("继续失败，请重试")
                     }

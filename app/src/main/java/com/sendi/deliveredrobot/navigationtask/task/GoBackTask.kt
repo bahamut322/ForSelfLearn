@@ -14,7 +14,6 @@ class GoBackTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstrac
 
     override suspend fun beforeReportData(taskDto: TaskDto) {
         RobotStatus.currentStatus = TYPE_GO_BACK
-//        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun configEnum(): TaskStageEnum {

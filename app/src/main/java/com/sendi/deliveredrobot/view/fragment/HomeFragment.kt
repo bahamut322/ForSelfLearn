@@ -65,8 +65,6 @@ import kotlin.concurrent.thread
 class HomeFragment : BaseFragment(), IMainView {
     private lateinit var binding: FragmentHomeBinding
     private val basicSettingViewModel: BasicSettingViewModel? by viewModels({ requireActivity() })
-    private val viewModelBin1 by viewModels<SendPlaceBin1ViewModel>({ requireActivity() })
-    private val viewModelBin2 by viewModels<SendPlaceBin2ViewModel>({ requireActivity() })
     private val dateViewModel by viewModels<DateViewModel>({ requireActivity() })
     private lateinit var mainScope: CoroutineScope
     private var localDays: Int = Int.MIN_VALUE //记录上一次获取的使用剩余天数
@@ -152,25 +150,6 @@ class HomeFragment : BaseFragment(), IMainView {
         super.onStart()
         mainScope = MainScope()
         resetConfig()
-        //弹出送物任务提示窗
-        val message = when {
-            (!viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished)) && (!viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished)) -> resources.getString(
-                R.string.bin_1_bin_2_not_take
-            )
-
-            !viewModelBin1.previousTaskFinished || (viewModelBin1.previousRemoteOrderPutFinished && !viewModelBin1.previousRemoteOrderSendFinished) -> resources.getString(
-                R.string.bin_1_not_take
-            )
-
-            !viewModelBin2.previousTaskFinished || (viewModelBin2.previousRemoteOrderPutFinished && !viewModelBin2.previousRemoteOrderSendFinished) -> resources.getString(
-                R.string.bin_2_not_take
-            )
-
-            else -> ""
-        }
-        if (!TextUtils.isEmpty(message)) {
-            remindDialog = DialogHelper.getRemindDialog(message).apply { show() }
-        }
         //查询使用期限
 //        CloudMqttService.publish(RequestTenancyModel().toString())
         RobotStatus.tenancy.observe(viewLifecycleOwner) {
@@ -187,7 +166,6 @@ class HomeFragment : BaseFragment(), IMainView {
                 }
             }
         }
-//        IdleGateDataHelper.reportIdleGateCount()
     }
 
     override fun onStop() {

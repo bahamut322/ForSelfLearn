@@ -347,7 +347,7 @@ class InteractionMqtt {
         if (QuerySql.queryTime(routeList[0].routeName) != routeList[0].timeStamp && isExist) {
             //删除对应文件夹
             if (routeList[0].timeStamp <= 0) {
-                UpdateReturn().deleteDirectory((File(Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName)))
+                UpdateReturn.deleteDirectory((File(Universal.robotFile + routeList[0].rootMapName + "/" + routeList[0].routeName)))
 //                            deleteFolderFile(
 //                                (),
 //                                true

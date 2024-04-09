@@ -39,10 +39,10 @@ object DockStateTopic {
                             BillManager.currentBill()?.executeNextTask()
                         }
                         //设置当前位置
-                        UpdateReturn().mapSetting(true)
+                        UpdateReturn.mapSetting(true)
                         RobotStatus.batteryStateNumber.postValue(true)
                         DialogHelper.briefingDialog.dismiss()
-                        UpdateReturn().method()
+                        UpdateReturn.method()
                         "充电中"
                     }
 

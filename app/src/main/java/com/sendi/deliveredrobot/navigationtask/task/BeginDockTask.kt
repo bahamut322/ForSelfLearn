@@ -32,7 +32,7 @@ class BeginDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abst
 
     override suspend fun execute() {
         RobotStatus.docking = true
-        Universal.ExplainLength = -1
+        Universal.explainTextLength = -1
         MyApplication.instance!!.sendBroadcast(
             Intent().apply {
                 action = ACTION_NAVIGATE

@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="data"
-            type="com.sendi.deliveredrobot.model.ExplantionNameModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -165,6 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pointList"
                 app:layout_constraintTop_toTopOf="parent">
@@ -195,12 +193,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@{data.name}"
                         android:textColor="@color/white"
                         android:textSize="40sp"
                         tools:ignore="HardcodedText" />
                     <TextView
-                        android:id="@+id/PauseTV"
+                        android:id="@+id/pauseTV"
                         android:layout_width="@dimen/dp_204"
                         android:layout_height="@dimen/dp_72"
                         android:layout_marginEnd="@dimen/dp_32"
@@ -210,7 +207,8 @@
                         android:text="@string/already_explain"
                         android:visibility="gone"
                         android:textColor="@color/white"
-                        android:textSize="32sp" />
+                        android:textSize="32sp"
+                        tools:visibility="visible"/>
 
                 </LinearLayout>
 
@@ -302,13 +300,13 @@
                         android:layout_marginBottom="@dimen/dp_24"
                         android:alpha="0.7"
                         android:background="@color/white"
-                        app:layout_constraintBottom_toTopOf="@+id/acceptstationTv"
-                        app:layout_constraintEnd_toEndOf="@+id/acceptstationTv"
-                        app:layout_constraintStart_toStartOf="@+id/acceptstationTv" />
+                        app:layout_constraintBottom_toTopOf="@+id/accept_station_tv"
+                        app:layout_constraintEnd_toEndOf="@+id/accept_station_tv"
+                        app:layout_constraintStart_toStartOf="@+id/accept_station_tv" />
 
 
                     <com.sendi.deliveredrobot.view.widget.SongLyricTextView
-                        android:id="@+id/acceptstationTv"
+                        android:id="@+id/accept_station_tv"
                         android:layout_width="368dp"
                         android:layout_height="@dimen/dp_345"
                         android:layout_marginEnd="@dimen/dp_26"
@@ -354,7 +352,7 @@
                         android:textSize="32sp" />
 
                     <Button
-                        android:id="@+id/ChangingOver"
+                        android:id="@+id/changingOver"
                         android:layout_width="@dimen/dp_204"
                         android:layout_height="@dimen/dp_72"
                         android:layout_marginEnd="@dimen/dp_32"

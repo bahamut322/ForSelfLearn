@@ -1,7 +1,5 @@
 package com.sendi.deliveredrobot.model;
 
-import androidx.annotation.NonNull;
-
 public class MyResultModel {
 
     /**
@@ -66,13 +64,13 @@ public class MyResultModel {
     private String big_videofile;
     private int big_textposition;
     private String touch_fontbackground;
-    private Object touch_fontcontent;
+    private String touch_fontcontent;
     private int touch_pictype;
     private int touch_picplaytime;
     private int touch_fontlayout;
     private String touch_imagefile;
-    private Object touch_fontcolor;
-    private Object touch_fontsize;
+    private String touch_fontcolor;
+    private int touch_fontsize;
     private int touch_type;
     private int touch_textposition;
     private String touch_walkPic;
@@ -322,11 +320,11 @@ public class MyResultModel {
         this.touch_fontbackground = touch_fontbackground;
     }
 
-    public Object getTouch_fontcontent() {
+    public String getTouch_fontcontent() {
         return touch_fontcontent;
     }
 
-    public void setTouch_fontcontent(Object touch_fontcontent) {
+    public void setTouch_fontcontent(String touch_fontcontent) {
         this.touch_fontcontent = touch_fontcontent;
     }
 
@@ -362,19 +360,19 @@ public class MyResultModel {
         this.touch_imagefile = touch_imagefile;
     }
 
-    public Object getTouch_fontcolor() {
+    public String getTouch_fontcolor() {
         return touch_fontcolor;
     }
 
-    public void setTouch_fontcolor(Object touch_fontcolor) {
+    public void setTouch_fontcolor(String touch_fontcolor) {
         this.touch_fontcolor = touch_fontcolor;
     }
 
-    public Object getTouch_fontsize() {
+    public int getTouch_fontsize() {
         return touch_fontsize;
     }
 
-    public void setTouch_fontsize(Object touch_fontsize) {
+    public void setTouch_fontsize(int touch_fontsize) {
         this.touch_fontsize = touch_fontsize;
     }
 

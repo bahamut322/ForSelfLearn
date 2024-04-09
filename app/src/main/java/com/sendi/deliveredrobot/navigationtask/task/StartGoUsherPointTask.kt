@@ -31,7 +31,6 @@ class StartGoUsherPointTask(taskModel: TaskModel, needReportData: Boolean = true
 
     override suspend fun execute() {
         RobotStatus.currentStatus = TYPE_WELCOME
-//        IdleGateDataHelper.reportIdleGateCount(0)
 //        TaskQueue.executeNextTask()
         taskModel?.bill?.executeNextTask()
     }

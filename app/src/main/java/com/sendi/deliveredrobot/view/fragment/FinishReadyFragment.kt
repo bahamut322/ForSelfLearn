@@ -88,7 +88,7 @@ class FinishReadyFragment : Fragment() {
                     Toast.makeText(context, "请勾选主页面功能模块", Toast.LENGTH_SHORT).show()
                 }
             }
-            UpdateReturn().method()
+            UpdateReturn.method()
 //            MyApplication.instance!!.sendBroadcast(
 //                Intent().apply {
 //                    action = ACTION_NAVIGATE

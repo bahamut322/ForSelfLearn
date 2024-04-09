@@ -102,7 +102,7 @@ public class AdvanceVideoView extends RelativeLayout {
         mediaPlayer1 = new MediaPlayer();
         videoView.setOnPreparedListener(mediaPlayer -> {
             mediaPlayer1 = mediaPlayer;
-            if (Universal.AllvideoAudio == 1) {
+            if (Universal.allVideoAudio == 1) {
                 new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                 mediaPlayer.setVolume(1, 1);
             } else {
@@ -126,7 +126,7 @@ public class AdvanceVideoView extends RelativeLayout {
     public void mediaRestart() {
         if (videoView != null && videoView.isPlaying()) {
             Log.d("TAG", "setVideo: 调节声音大小");
-            if (Universal.AllvideoAudio == 1) {
+            if (Universal.allVideoAudio == 1) {
                 new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
                 mediaPlayer1.setVolume(1, 1);
             } else {

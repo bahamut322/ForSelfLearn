@@ -8,6 +8,7 @@ import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.MainScope
 import java.util.LinkedList
 
@@ -27,12 +28,23 @@ object SpeakHelper {
         }
 
         override fun progressChange(utteranceId: String, progress: Int) {
-            speakUserCallback?.progressChange(utteranceId, progress)
+            var actualProgress = progress
+            if (startId != null) {
+                try {
+                    val offset = (utteranceId.toLong()) - (startId as Long)
+                    actualProgress = (offset * 60 + progress).toInt()
+                }catch (e: ClassCastException){
+                    LogUtil.e("utteranceId转换异常")
+                }
+            }
+            speakUserCallback?.progressChange(utteranceId, actualProgress)
         }
     }
     var id: Long = 0
 
     var speakUserCallback: SpeakUserCallback? = null
+
+    var startId: Long? = null // 用于记录speakWithoutStop时的开始id
 
     fun speak(msg: String) {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
@@ -52,6 +64,7 @@ object SpeakHelper {
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
 //            mainScope.launch(Dispatchers.IO) {
+            startId = id
             var result = msg
             if(result.length > 60){
                 while(result.length > 60){
@@ -87,7 +100,15 @@ object SpeakHelper {
                     BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
                 } else {
                     RobotStatus.ttsIsPlaying = false
-                    speakUserCallback?.speakAllFinish()
+                    utteranceId.isNotEmpty().let {
+                        try {
+                            utteranceId.toLong()
+                            speakUserCallback?.speakAllFinish()
+                        } catch (e: Exception) {
+
+                        }
+                    }
+                    resetStartId()
                 }
             } else {
                 list.pop()
@@ -95,14 +116,34 @@ object SpeakHelper {
             }
         }else{
             RobotStatus.ttsIsPlaying = false
-            speakUserCallback?.speakAllFinish()
+            utteranceId.isNotEmpty().let {
+                try {
+                    utteranceId.toLong()
+                    speakUserCallback?.speakAllFinish()
+                } catch (e: Exception) {
+
+                }
+            }
+            resetStartId()
         }
+    }
+
+    fun setUserCallback(callback: SpeakUserCallback){
+        speakUserCallback = callback
+    }
+
+    fun releaseUserCallback(){
+        speakUserCallback = null
     }
 
     private fun playFirst(){
         if(list.size > 0){
             BaiduTTSHelper.getInstance().speak(list.first.content, list.first.id)
         }
+    }
+
+    private fun resetStartId(){
+        startId = null
     }
 
     interface SpeakCallback {
