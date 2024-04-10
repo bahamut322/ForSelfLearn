@@ -145,17 +145,19 @@ public class StartExplainFragment extends Fragment {
         });
         //todo delete end
         finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
-            processClickDialog.dismiss();
-            finishTaskDialog.dismiss();
+            finishTaskDialog.confirmBtn.setEnabled(false);
             Universal.explainTextLength = -1;
             MediaPlayerHelper.getInstance().stop();
             nextTaskToDo = false;
             SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
             SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
             viewModel.finishTask();
+            processClickDialog.dismiss();
+            finishTaskDialog.dismiss();
         });
 
         finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
+            finishTaskDialog.cancelBtn.setEnabled(false);
             if (clickCount % 2 != 1) {
                 BaiduTTSHelper.getInstance().resume();
             }
@@ -165,37 +167,51 @@ public class StartExplainFragment extends Fragment {
         });
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
+                binding.finishBtn.setEnabled(false);
+                binding.finishBtn.setClickable(false);
                 isButtonClickable = false;
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 BaiduTTSHelper.getInstance().pause();
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
+                finishTaskDialog.confirmBtn.setEnabled(true);
+                finishTaskDialog.cancelBtn.setEnabled(true);
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
+                    binding.finishBtn.setEnabled(true);
+                    binding.finishBtn.setClickable(true);
                     isButtonClickable = true;
                 }, 4000); // 设置延迟时间，避免按钮重复点击
             }
         });
         binding.nextTaskBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
+                binding.nextTaskBtn.setEnabled(false);
+                binding.nextTaskBtn.setClickable(false);
                 isButtonClickable = false;
                 DialogHelper.loadingDialog.show();
                 viewModel.nextTask();
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
+                    binding.nextTaskBtn.setEnabled(true);
+                    binding.nextTaskBtn.setClickable(true);
                     isButtonClickable = true;
                 }, 4000); // 设置延迟时间，避免按钮重复点击
             }
         });
         binding.changingOver.setOnClickListener(v -> {
             if (isButtonClickable) {
+                binding.changingOver.setEnabled(false);
+                binding.changingOver.setClickable(false);
                 isButtonClickable = false;
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
                 changeDialog(true);
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
+                    binding.changingOver.setEnabled(true);
+                    binding.changingOver.setClickable(true);
                     isButtonClickable = true;
                 }, 4000); // 设置延迟时间，避免按钮重复点击
             }
@@ -209,6 +225,8 @@ public class StartExplainFragment extends Fragment {
         binding.pauseBtn.setOnClickListener(v -> {
             clickCount++;
             if (isButtonClickable) {
+                binding.pauseBtn.setEnabled(false);
+                binding.pauseBtn.setClickable(false);
                 isButtonClickable = false;
                 if (clickCount % 2 == 1) {
                     Universal.speaking = true;
@@ -227,6 +245,8 @@ public class StartExplainFragment extends Fragment {
                 }
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
+                    binding.pauseBtn.setEnabled(true);
+                    binding.pauseBtn.setClickable(true);
                     isButtonClickable = true;
                 }, 1000); // 设置延迟时间，避免按钮重复点击
             }
@@ -536,6 +556,7 @@ public class StartExplainFragment extends Fragment {
     private void processDialog() {
         processClickDialog.show();
         finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
+            finishTaskDialog.confirmBtn.setClickable(false);
             Universal.explainTextLength = -1;
             MediaPlayerHelper.getInstance().stop();
             viewModel.finishTask();
@@ -544,9 +565,15 @@ public class StartExplainFragment extends Fragment {
             SpeakHelper.INSTANCE.releaseUserCallback();
             SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
         });
-        finishTaskDialog.cancelBtn.setOnClickListener(v1 -> finishTaskDialog.dismiss());
+        finishTaskDialog.cancelBtn.setOnClickListener(v1 -> {
+                    finishTaskDialog.cancelBtn.setClickable(false);
+                    finishTaskDialog.dismiss();
+                }
+        );
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
+            finishTaskDialog.confirmBtn.setClickable(true);
+            finishTaskDialog.cancelBtn.setClickable(true);
         });
         processClickDialog.nextBtn.setOnClickListener(v -> {
             viewModel.nextTask();

@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.viewmodel
 
+import android.app.Dialog
 import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
@@ -47,6 +49,7 @@ class StartExplainViewModel : ViewModel() {
     }
 
     fun finishTask() {
+        DialogHelper.loadingDialog.show()
         mainScope.launch {
             for (iTaskBill in BillManager.billList()) {
                 iTaskBill.earlyFinish()
@@ -59,6 +62,7 @@ class StartExplainViewModel : ViewModel() {
 
     fun recombine(selectName: String) {
         if (inForListData() == null) return
+        DialogHelper.loadingDialog.show()
         var position = 0
         Universal.selectMapPoint = true
         for (i in inForListData()!!.indices) {
@@ -274,6 +278,7 @@ class StartExplainViewModel : ViewModel() {
 
     //下一个任务
     fun nextTask() {
+        DialogHelper.loadingDialog.show()
         mainScope.launch {
             MediaPlayerHelper.getInstance().stop()
             SpeakHelper.stop()
