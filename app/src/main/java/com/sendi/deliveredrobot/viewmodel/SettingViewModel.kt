@@ -50,6 +50,9 @@ class SettingViewModel : ViewModel() {
     }
     fun isNumCharOne(num:Int): Boolean {
         val file = File(Universal.SelfCheck)
+        if (!file.exists()) {
+            return false
+        }
         val inputStream = FileInputStream(file)
         val bufferedReader = BufferedReader(InputStreamReader(inputStream))
         val stringBuilder = StringBuilder()
