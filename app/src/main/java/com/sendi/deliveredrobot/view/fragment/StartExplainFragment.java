@@ -151,7 +151,7 @@ public class StartExplainFragment extends Fragment {
             MediaPlayerHelper.getInstance().stop();
             nextTaskToDo = false;
             SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
-            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+            SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
             viewModel.finishTask();
         });
 
@@ -539,7 +539,8 @@ public class StartExplainFragment extends Fragment {
             viewModel.finishTask();
             processClickDialog.dismiss();
             finishTaskDialog.dismiss();
-            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+            SpeakHelper.INSTANCE.releaseUserCallback();
+            SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
         });
         finishTaskDialog.cancelBtn.setOnClickListener(v1 -> finishTaskDialog.dismiss());
         processClickDialog.finishBtn.setOnClickListener(v -> {

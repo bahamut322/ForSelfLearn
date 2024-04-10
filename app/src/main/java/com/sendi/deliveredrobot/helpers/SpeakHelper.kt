@@ -31,8 +31,11 @@ object SpeakHelper {
             var actualProgress = progress
             if (startId != null) {
                 try {
-                    val offset = (utteranceId.toLong()) - (startId as Long)
-                    actualProgress = (offset * 60 + progress).toInt()
+                    val utteranceIdTrans = (utteranceId.toLongOrNull())
+                    if (utteranceIdTrans != null) {
+                        val offset = utteranceIdTrans - (startId as Long)
+                        actualProgress = (offset * 60 + progress).toInt()
+                    }
                 }catch (e: ClassCastException){
                     LogUtil.e("utteranceId转换异常")
                 }
