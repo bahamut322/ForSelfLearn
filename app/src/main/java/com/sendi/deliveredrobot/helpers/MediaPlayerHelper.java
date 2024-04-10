@@ -80,15 +80,8 @@ public class MediaPlayerHelper {
     }
 
     public void stop() {
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                releaseMediaPlayer();
-                stopProgressUpdate();
-            }
-        }.start();
-
+        releaseMediaPlayer();
+        stopProgressUpdate();
     }
 
     private void releaseMediaPlayer() {
