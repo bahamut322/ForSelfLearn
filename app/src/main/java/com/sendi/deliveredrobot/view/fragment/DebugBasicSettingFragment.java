@@ -65,7 +65,6 @@ public class DebugBasicSettingFragment extends Fragment {
         binding.expressionCB.setChecked(settingData.getExpression());//是否开启表情
         binding.cbEtiquette.setChecked(settingData.getEtiquette());//是否开启礼仪迎宾
         binding.cbIntelligent.setChecked(settingData.getIntelligent());//是否开启智能语音
-        binding.conversation.setChecked(false);//是否开启智能问答
         binding.oneKeyCallPhone.setChecked(settingData.getOneKeyCallPhone() == 1);//是否开启一键呼叫电话
         String defaultValue = settingData.getDefaultValue();
         if (defaultValue != null) {
@@ -215,8 +214,9 @@ public class DebugBasicSettingFragment extends Fragment {
             binding.business.setChecked(true);
         } else if ("礼仪迎宾".equals(checkName)) {
             binding.EtiquetteWelcome.setChecked(true);
+        } else if ("智能问答".equals(checkName)) {
+            binding.conversation.setChecked(true);
         }
-
     }
 
     @SuppressLint("NewApi")
