@@ -114,7 +114,7 @@ class StartExplainViewModel : ViewModel() {
 //                }
             },
             onFinish = {
-                RobotStatus.progress.postValue(-1)
+                RobotStatus.progress.postValue(0)
                 TaskNext.setToDo("1")
             }
         )

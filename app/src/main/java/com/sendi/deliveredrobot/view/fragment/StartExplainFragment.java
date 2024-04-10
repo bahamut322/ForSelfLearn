@@ -144,29 +144,28 @@ public class StartExplainFragment extends Fragment {
             }
         });
         //todo delete end
-        finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
-            finishTaskDialog.confirmBtn.setEnabled(false);
-            Universal.explainTextLength = -1;
-            MediaPlayerHelper.getInstance().stop();
-            nextTaskToDo = false;
-            SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
-            SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
-            viewModel.finishTask();
-            processClickDialog.dismiss();
-            finishTaskDialog.dismiss();
-        });
-
-        finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
-            finishTaskDialog.cancelBtn.setEnabled(false);
-            if (clickCount % 2 != 1) {
-                BaiduTTSHelper.getInstance().resume();
-            }
-            MediaPlayerHelper.getInstance().resume();
-            Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
-            finishTaskDialog.dismiss();
-        });
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
+                finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
+                    finishTaskDialog.confirmBtn.setEnabled(false);
+                    Universal.explainTextLength = -1;
+                    MediaPlayerHelper.getInstance().stop();
+                    nextTaskToDo = false;
+                    SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
+                    SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+                    viewModel.finishTask();
+                    processClickDialog.dismiss();
+                    finishTaskDialog.dismiss();
+                });
+                finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
+                    finishTaskDialog.cancelBtn.setEnabled(false);
+                    if (clickCount % 2 != 1) {
+                        BaiduTTSHelper.getInstance().resume();
+                    }
+                    MediaPlayerHelper.getInstance().resume();
+                    Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
+                    finishTaskDialog.dismiss();
+                });
                 binding.finishBtn.setEnabled(false);
                 binding.finishBtn.setClickable(false);
                 isButtonClickable = false;
@@ -555,23 +554,23 @@ public class StartExplainFragment extends Fragment {
 
     private void processDialog() {
         processClickDialog.show();
-        finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
-            finishTaskDialog.confirmBtn.setClickable(false);
-            Universal.explainTextLength = -1;
-            MediaPlayerHelper.getInstance().stop();
-            viewModel.finishTask();
-            processClickDialog.dismiss();
-            finishTaskDialog.dismiss();
-            SpeakHelper.INSTANCE.releaseUserCallback();
-            SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
-        });
-        finishTaskDialog.cancelBtn.setOnClickListener(v1 -> {
-                    finishTaskDialog.cancelBtn.setClickable(false);
-                    finishTaskDialog.dismiss();
-                }
-        );
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
+            finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
+                finishTaskDialog.confirmBtn.setClickable(false);
+                Universal.explainTextLength = -1;
+                viewModel.finishTask();
+                MediaPlayerHelper.getInstance().stop();
+                processClickDialog.dismiss();
+                finishTaskDialog.dismiss();
+                SpeakHelper.INSTANCE.releaseUserCallback();
+                SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+            });
+            finishTaskDialog.cancelBtn.setOnClickListener(v1 -> {
+                        finishTaskDialog.cancelBtn.setClickable(false);
+                        finishTaskDialog.dismiss();
+                    }
+            );
             finishTaskDialog.confirmBtn.setClickable(true);
             finishTaskDialog.cancelBtn.setClickable(true);
         });

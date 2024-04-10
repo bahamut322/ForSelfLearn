@@ -50,6 +50,7 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                 break
             }
         }
+        currentTask = null
         BillManager.clearBill(this)
     }
 

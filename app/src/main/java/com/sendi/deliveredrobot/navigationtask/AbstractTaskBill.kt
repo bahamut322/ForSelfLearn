@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.navigationtask
 
+import android.util.Log
 import androidx.lifecycle.ViewModelLazy
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
@@ -9,6 +10,7 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.task.*
 import com.sendi.deliveredrobot.room.PointType
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin1ViewModel
 import com.sendi.deliveredrobot.viewmodel.SendPlaceBin2ViewModel
 import java.util.*
@@ -103,7 +105,7 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
             tempTask?.taskExecute()
         }else{
             if(BillManager.billList().size > 1){
-                BillManager.removeBill()
+                BillManager.removeBill(this)
             }else{
                 val taskId = BillManager.currentBill()?.taskId()?:""
                 val currentBillIsExplainTaskBill = BillManager.currentBill() is ExplainTaskBill
