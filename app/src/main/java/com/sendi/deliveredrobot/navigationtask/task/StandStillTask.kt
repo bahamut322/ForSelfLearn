@@ -35,6 +35,7 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
     }
 
     override suspend fun execute() {
+        RobotStatus.batteryStateNumber.postValue(true)
         RobotStatus.selectRouteMapItemId = -1
         Universal.businessTask = null
             val navigateId  = when (FunctionSkip.selectFunction()) {
