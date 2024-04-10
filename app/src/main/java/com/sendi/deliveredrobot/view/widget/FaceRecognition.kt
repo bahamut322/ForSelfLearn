@@ -77,7 +77,6 @@ object FaceRecognition {
     private val typeToken: Type = object : TypeToken<List<Double>>() {}.type
     @SuppressLint("StaticFieldLeak")
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
-    private var newUpdateMediatorLiveData: MediatorLiveData<Int>? = null
     private const val DELAY_TIME = 10
     private var lastSpeakTime: Long? = null
 
@@ -98,7 +97,6 @@ object FaceRecognition {
         channel = Channel(capacity = Channel.CONFLATED) // 限制 Channel 大小
         shouldExecute = true
         faceScope = CoroutineScope(Dispatchers.Default + Job())
-        newUpdateMediatorLiveData = MediatorLiveData<Int>()
         thread {
             LogUtil.i("人脸识别初始化")
             canSendData = true
@@ -137,16 +135,6 @@ object FaceRecognition {
                 }
                 c?.addCallbackBuffer(buffer)
             }
-            newUpdateMediatorLiveData?.addSource(RobotStatus.newUpdate){
-                Log.d(TAG, "suerFaceInit: 获取数据")
-                doubleString = QuerySql.faceMessage()
-            }
-//            identifyMediatorLiveData?.addSource(RobotStatus.identifyFaceSpeak) { value: Int ->
-////                if (value == 1) {
-//                    Log.i(TAG, "语音完成")
-//                    lastSpeakTime = System.currentTimeMillis()
-////                }
-//            }
             // 启动一个单独的协程来处理数据
             faceScope?.launch {
                 if (channel != null) {
@@ -454,10 +442,6 @@ object FaceRecognition {
      */
     fun onDestroy() {
         SpeakHelper.stop()
-        MainScope().launch(Dispatchers.Main) {
-            newUpdateMediatorLiveData?.removeSource(RobotStatus.newUpdate)
-            newUpdateMediatorLiveData = null
-        }
         if (null != c) {
             thread {
                 LogUtil.i("人脸识别销毁")
@@ -478,5 +462,10 @@ object FaceRecognition {
 
     fun refreshLastSpeakTime(){
         lastSpeakTime = System.currentTimeMillis()
+    }
+
+    fun refreshDoubleString(){
+//        Log.d(TAG, "suerFaceInit: 获取数据")
+        doubleString = QuerySql.faceMessage()
     }
 }

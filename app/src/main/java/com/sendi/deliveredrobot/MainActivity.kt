@@ -45,6 +45,7 @@ import com.sendi.deliveredrobot.utils.AppUtils
 import com.sendi.deliveredrobot.utils.FileUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import com.sendi.deliveredrobot.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -440,6 +441,7 @@ MainActivity : BaseActivity(), OnWifiChangeListener, OnWifiConnectListener,
             if (it == 3) {
                 SecondScreenManageHelper.refreshSecondScreen( null)
             }
+            FaceRecognition.refreshDoubleString()
         }
     }
 }
