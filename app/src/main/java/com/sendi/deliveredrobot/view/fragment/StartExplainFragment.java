@@ -144,6 +144,25 @@ public class StartExplainFragment extends Fragment {
             }
         });
         //todo delete end
+        finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
+            processClickDialog.dismiss();
+            finishTaskDialog.dismiss();
+            Universal.explainTextLength = -1;
+            MediaPlayerHelper.getInstance().stop();
+            nextTaskToDo = false;
+            SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
+            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+            viewModel.finishTask();
+        });
+
+        finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
+            if (clickCount % 2 != 1) {
+                BaiduTTSHelper.getInstance().resume();
+            }
+            MediaPlayerHelper.getInstance().resume();
+            Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
+            finishTaskDialog.dismiss();
+        });
         binding.finishBtn.setOnClickListener(v -> {
             if (isButtonClickable) {
                 isButtonClickable = false;
@@ -151,30 +170,6 @@ public class StartExplainFragment extends Fragment {
                 BaiduTTSHelper.getInstance().pause();
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
-                finishTaskDialog.confirmBtn.setOnClickListener(v1 -> {
-                    processClickDialog.dismiss();
-                    finishTaskDialog.dismiss();
-                    Universal.explainTextLength = -1;
-                    //返回
-//                    BaiduTTSHelper.getInstance().stop();
-
-                    MediaPlayerHelper.getInstance().stop();
-                    nextTaskToDo = false;
-//                    binding.acceptStationTv.stopPlay();
-                    SpeakHelper.INSTANCE.releaseUserCallback(); // 释放任务链中设置的回调
-                    BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
-                    viewModel.finishTask();
-                });
-
-                finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
-                    if (clickCount % 2 != 1) {
-                        BaiduTTSHelper.getInstance().resume();
-                    }
-                    MediaPlayerHelper.getInstance().resume();
-                    Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
-                    finishTaskDialog.dismiss();
-                });
-
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
                     isButtonClickable = true;
@@ -185,13 +180,7 @@ public class StartExplainFragment extends Fragment {
             if (isButtonClickable) {
                 isButtonClickable = false;
                 DialogHelper.loadingDialog.show();
-//                if (Universal.taskQueue != null) {
-//                    Universal.taskQueue.clear();
-//                }
-                MediaPlayerHelper.getInstance().stop();
-                Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-//                binding.acceptStationTv.stopPlay();
-                viewModel.nextTask(true);
+                viewModel.nextTask();
                 processClickDialog.dismiss();
                 new Handler().postDelayed(() -> {
                     // 恢复按钮可点击状态
@@ -544,43 +533,25 @@ public class StartExplainFragment extends Fragment {
 
     private void processDialog() {
         processClickDialog.show();
+        finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
+            Universal.explainTextLength = -1;
+            MediaPlayerHelper.getInstance().stop();
+            viewModel.finishTask();
+            processClickDialog.dismiss();
+            finishTaskDialog.dismiss();
+            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
+        });
+        finishTaskDialog.cancelBtn.setOnClickListener(v1 -> finishTaskDialog.dismiss());
         processClickDialog.finishBtn.setOnClickListener(v -> {
             finishTaskDialog.show();
-            finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
-                //返回
-//                isMethodExecuted = false;
-                Universal.explainTextLength = -1;
-                //删除讲解队列
-//                if (Universal.taskQueue != null) {
-//                    Universal.taskQueue.clear();
-//                }
-                MediaPlayerHelper.getInstance().stop();
-                viewModel.finishTask();
-//                binding.acceptStationTv.stopPlay();
-                processClickDialog.dismiss();
-                finishTaskDialog.dismiss();
-                BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
-                //                viewModel.splitTextByPunctuation(QuerySql.QueryExplainConfig().getInterruptionText());
-            });
-            finishTaskDialog.cancelBtn.setOnClickListener(v1 -> finishTaskDialog.dismiss());
-
         });
         processClickDialog.nextBtn.setOnClickListener(v -> {
-            //删除讲解队列
-//            Universal.Model = "切换下一个点";
-//            if (Universal.taskQueue != null) {
-//                Universal.taskQueue.clear();
-//            }
-            MediaPlayerHelper.getInstance().stop();
-//            isMethodExecuted = false;
-//            binding.acceptStationTv.stopPlay();
-            viewModel.nextTask(false);
+            viewModel.nextTask();
             processClickDialog.dismiss();
 
         });
         processClickDialog.otherBtn.setOnClickListener(v -> {
             processClickDialog.dismiss();
-//            isMethodExecuted = false;
             changeDialog(false);
         });
 

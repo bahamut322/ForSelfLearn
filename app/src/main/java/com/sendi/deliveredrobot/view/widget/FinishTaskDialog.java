@@ -26,6 +26,10 @@ public class FinishTaskDialog extends Dialog {
     public FinishTaskDialog(Context context) {
         super(context, R.style.Dialog);
         this.context = context;
+        setContentView(R.layout.dialog_finish_task);
+        cancelBtn = findViewById(R.id.cancelBtn1);
+        confirmBtn = findViewById(R.id.submitBtn1);
+
 //        init(context);
     }
 
@@ -33,11 +37,6 @@ public class FinishTaskDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_finish_task);
-
-        cancelBtn = findViewById(R.id.cancelBtn1);
-        confirmBtn = findViewById(R.id.submitBtn1);
-
     }
 
 

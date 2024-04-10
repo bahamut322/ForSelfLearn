@@ -5,17 +5,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ExplainManager
+import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
-import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
-import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.model.MyResultModel
-import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.ExplanationBill
@@ -57,7 +54,6 @@ class StartExplainViewModel : ViewModel() {
             SpeakHelper.stop()
             ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
-            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 
@@ -94,7 +90,6 @@ class StartExplainViewModel : ViewModel() {
                 ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
 //            }
             TaskNext.setToDo("0")
-            RobotStatus.arrayPointExplain.postValue(0)
             Universal.selectMapPoint = false
 //            if (array) {
 //                BillManager.currentBill()?.executeNextTask()
@@ -278,50 +273,20 @@ class StartExplainViewModel : ViewModel() {
     }
 
     //下一个任务
-    fun nextTask(array: Boolean) {
-//        UpdateReturn().stop()
+    fun nextTask() {
         mainScope.launch {
+            MediaPlayerHelper.getInstance().stop()
+            SpeakHelper.stop()
             countDownTimer?.pause()
-            BillManager.currentBill()?.executeNextTask()
-            if (!array) {
-                Universal.nextPointGo = 1
-                UpdateReturn.stop()
-            }
+            BillManager.currentBill()?.earlyFinish()
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
             TaskNext.setToDo("0")
-            RobotStatus.arrayPointExplain.postValue(0)
         }
     }
 
     fun cancelMainScope() {
         mainScope.cancel()
     }
-
-//    fun secondScreenModel(position: Int, mData: ArrayList<MyResultModel?>) {
-//        var file = ""
-//        if (mData[position]!!.big_videofile !=null){
-//            file = mData[position]!!.big_videofile.toString()
-//        }else if (mData[position]!!.big_imagefile !=null){
-//            file = mData[position]!!.big_imagefile.toString()
-//        }
-//        SecondScreenManageHelper.refreshSecondScreen(SecondScreenManageHelper.STATE_EXPLAIN, SecondModel(
-//            picPlayTime = mData[position]?.big_picplaytime ,
-//            file = file,
-//            type = mData[position]?.big_type?: 0,
-//            textPosition = mData[position]?.big_textposition,
-//            fontLayout = mData[position]?.big_fontlayout,
-//            fontContent = mData[position]?.big_fontcontent?.toString(),
-//            fontBackGround = mData[position]?.big_fontbackground?.toString(),
-//            fontColor = mData[position]?.big_fontcolor?.toString(),
-//            fontSize = mData[position]?.big_fontsize,
-//            picType = mData[position]?.big_pictype,
-//            videolayout = mData[position]?.videolayout,
-//            videoAudio = mData[position]?.big_videoaudio,
-//            false
-//        ))
-//        LogUtil.i("图片位置：${mData[position]!!.big_imagefile?.toString()}")
-//    }
-
-
 }
 
 

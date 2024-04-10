@@ -31,18 +31,16 @@ class ArrayPointExplainTask(var status: Int = 1, taskModel: TaskModel) : Abstrac
 
     override suspend fun execute() {
         LogUtil.i("TODO 到达讲解点")
-        if (Universal.nextPointGo == 0) {
+//        if (Universal.nextPointGo == 0) {
             LogUtil.i("TODO 到达讲解点通知")
-            RobotStatus.arrayPointExplain.postValue(1)
             TaskNext.setOnChangeListener {
                 if (TaskNext.getToDo() == "1") {
                     LogUtil.i("TODO 到达讲解点${TaskNext.getToDo()}")
                     BillManager.currentBill()?.executeNextTask()
                     TaskNext.setToDo("0")
-                    RobotStatus.arrayPointExplain.postValue(0)
                 }
             }
-        }
-        Universal.nextPointGo = 0
+//        }
+//        Universal.nextPointGo = 0
     }
 }
