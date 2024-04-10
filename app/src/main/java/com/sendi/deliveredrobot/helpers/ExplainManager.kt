@@ -18,6 +18,7 @@ import java.io.File
  * @description 途径播报管理类
  */
 object ExplainManager {
+    const val TEXT_SPLIT_LENGTH = 80
     var routes: ArrayList<MyResultModel?>? = null
     val explainStatusModel = MutableLiveData<ExplainStatusModel?>(null)
 
@@ -85,11 +86,11 @@ object ExplainManager {
         }
     }
 
-    fun splitString(input: String, length: Int): List<String> {
+    fun splitString(input: String): List<String> {
         val result: MutableList<String> = ArrayList()
         var startIndex = 0
         while (startIndex < input.length) {
-            var endIndex = startIndex + length
+            var endIndex = startIndex + TEXT_SPLIT_LENGTH
             if (endIndex > input.length) {
                 endIndex = input.length
             }

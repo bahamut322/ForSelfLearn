@@ -351,12 +351,12 @@ public class StartExplainFragment extends Fragment {
                                             route.getName(),
                                             route.getRoutename(),
                                             "智能讲解");
-                                    currentTextQueue = ExplainManager.INSTANCE.splitString(text, 135);
+                                    currentTextQueue = ExplainManager.INSTANCE.splitString(text);
                                 }
                                 int progress = it.getTextProgress();
                                 if (progress > -1) {
-                                    int page = progress / 135;
-                                    int currentTextProgress = progress % 135;
+                                    int page = progress / ExplainManager.TEXT_SPLIT_LENGTH;
+                                    int currentTextProgress = progress % ExplainManager.TEXT_SPLIT_LENGTH;
                                     String currentText = currentTextQueue.get(page);
 //                                    LogUtil.INSTANCE.i("当前页数: " + page);
 //                                    LogUtil.INSTANCE.i("当前进度: " + currentTextProgress);
