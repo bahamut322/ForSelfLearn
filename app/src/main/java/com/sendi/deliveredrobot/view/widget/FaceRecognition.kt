@@ -10,6 +10,7 @@ import android.graphics.YuvImage
 import android.hardware.Camera
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
+import android.os.SystemClock
 import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.MediatorLiveData
@@ -76,9 +77,7 @@ object FaceRecognition {
     private val typeToken: Type = object : TypeToken<List<Double>>() {}.type
     @SuppressLint("StaticFieldLeak")
     private val faceHttpParams = RequestParams(Universal.POST_FAST) // 替换为你的API端点URL
-    private val identifyMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
-    private val newUpdateMediatorLiveData: MediatorLiveData<Int> = MediatorLiveData()
-    private const val DELAY_TIME = 1000 * 10L * 1000
+    private const val DELAY_TIME = 10
     private var lastSpeakTime: Long? = null
 
     /**
@@ -98,7 +97,6 @@ object FaceRecognition {
         channel = Channel(capacity = Channel.CONFLATED) // 限制 Channel 大小
         shouldExecute = true
         faceScope = CoroutineScope(Dispatchers.Default + Job())
-        RobotStatus.identifyFaceSpeak.postValue(1)
         thread {
             LogUtil.i("人脸识别初始化")
             canSendData = true
@@ -136,15 +134,6 @@ object FaceRecognition {
                     channel?.trySend(data) // 将数据发送到Channel
                 }
                 c?.addCallbackBuffer(buffer)
-            }
-            newUpdateMediatorLiveData.addSource(RobotStatus.newUpdate){
-                Log.d(TAG, "suerFaceInit: 获取数据")
-                doubleString = QuerySql.faceMessage()
-            }
-            identifyMediatorLiveData.addSource(RobotStatus.identifyFaceSpeak) { value: Int ->
-                if (value == 1) {
-                    lastSpeakTime = System.currentTimeMillis()
-                }
             }
             // 启动一个单独的协程来处理数据
             faceScope?.launch {
@@ -219,7 +208,6 @@ object FaceRecognition {
         // 发送POST请求
         x.http().post(faceHttpParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
-//                Log.d(TAG, "收到人脸检测数据：$result")
                 val faceModelList: List<FaceModel> = gson.fromJson(result, listType)
                 FaceDataListener.setFaceModels(faceModelList)
                 // Update data
@@ -298,15 +286,15 @@ object FaceRecognition {
     private fun checkFaceSpeak(
         speak: String = PlaceholderEnum.replaceText(QuerySql.selectGreetConfig().strangerPrompt)
     ) {
-        synchronized(this){
-            if (shouldExecute && RobotStatus.identifyFaceSpeak.value == 1) {
-//            speakNum = 1
-                RobotStatus.identifyFaceSpeak.postValue(0) //在百度TTS中设置为0不及时
-                val currentTime = System.currentTimeMillis()
-                if (lastSpeakTime != null && currentTime - lastSpeakTime!! > DELAY_TIME) {
-                    BaiduTTSHelper.getInstance().speak(speak, "")
+        if (shouldExecute) {
+            val currentTime = System.currentTimeMillis()
+            if (lastSpeakTime != null) {
+                val timeOffset = (currentTime - lastSpeakTime!!) / 1000
+//                Log.i(TAG, "人脸识别播报时间差：$timeOffset")
+                if (timeOffset > DELAY_TIME) {
+                    lastSpeakTime = currentTime
+                    BaiduTTSHelper.getInstance().speak(speak, "0")
                 }
-//            BaiduTTSHelper.getInstance().speak(speak, "")
             }
         }
     }
@@ -454,10 +442,6 @@ object FaceRecognition {
      */
     fun onDestroy() {
         SpeakHelper.stop()
-        MainScope().launch(Dispatchers.Main) {
-            newUpdateMediatorLiveData.removeSource(RobotStatus.newUpdate)
-            identifyMediatorLiveData.removeSource(RobotStatus.identifyFaceSpeak)
-        }
         if (null != c) {
             thread {
                 LogUtil.i("人脸识别销毁")
@@ -474,5 +458,14 @@ object FaceRecognition {
                 c = null
             }
         }
+    }
+
+    fun refreshLastSpeakTime(){
+        lastSpeakTime = System.currentTimeMillis()
+    }
+
+    fun refreshDoubleString(){
+//        Log.d(TAG, "suerFaceInit: 获取数据")
+        doubleString = QuerySql.faceMessage()
     }
 }
