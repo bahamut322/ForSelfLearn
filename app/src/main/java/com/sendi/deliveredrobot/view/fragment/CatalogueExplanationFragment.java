@@ -64,6 +64,7 @@ public class CatalogueExplanationFragment extends BaseFragment {
             quitFragment();
             viewModel.start();
             Universal.twice = true;
+            SpeakHelper.INSTANCE.stop();
             SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
