@@ -57,7 +57,7 @@ public class MyResultModel {
     private int big_picplaytime;
     private int big_videoaudio;
     private int big_fontlayout;
-    private Object big_imagefile;
+    private String  big_imagefile;
     private Object big_fontcolor;
     private int big_fontsize;
     private int big_type;
@@ -264,11 +264,11 @@ public class MyResultModel {
         this.big_fontlayout = big_fontlayout;
     }
 
-    public Object getBig_imagefile() {
+    public String getBig_imagefile() {
         return big_imagefile;
     }
 
-    public void setBig_imagefile(Object big_imagefile) {
+    public void setBig_imagefile(String big_imagefile) {
         this.big_imagefile = big_imagefile;
     }
 

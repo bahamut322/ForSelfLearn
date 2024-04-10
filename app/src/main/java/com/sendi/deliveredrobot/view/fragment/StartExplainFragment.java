@@ -283,7 +283,7 @@ public class StartExplainFragment extends Fragment {
                         } else {
                             binding.argPic.setVisibility(View.GONE);
                             try {
-                                binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(BaseViewModel.getFilesAllName(route.getTouch_imagefile()).get(0), 2, 3));
+//                                binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(BaseViewModel.getFilesAllName(route.getTouch_imagefile()).get(0), 2, 3));
                                 layoutThis(route);
                             } catch (Exception e) {
                                 LogUtil.INSTANCE.e("途径播报异常: " + e);
@@ -331,7 +331,7 @@ public class StartExplainFragment extends Fragment {
                             binding.nextTaskBtn.setEnabled(true);
                             binding.argPic.setVisibility(View.GONE);
                             try {
-                                binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(route.getTouch_imagefile(), route.getTouch_pictype(), route.getTouch_picplaytime()));
+//                                binding.pointImage.setData(ExplainManager.INSTANCE.getFilesAllName(route.getTouch_imagefile(), route.getTouch_pictype(), route.getTouch_picplaytime()));
                                 layoutThis(route);
                             } catch (Exception e) {
                                 Log.d("TAG", "onBindViewHolder: " + e);
@@ -357,11 +357,13 @@ public class StartExplainFragment extends Fragment {
                                 if (progress > -1) {
                                     int page = progress / ExplainManager.TEXT_SPLIT_LENGTH;
                                     int currentTextProgress = progress % ExplainManager.TEXT_SPLIT_LENGTH;
-                                    String currentText = currentTextQueue.get(page);
+                                    if (page < currentTextQueue.size()) {
+                                        String currentText = currentTextQueue.get(page);
 //                                    LogUtil.INSTANCE.i("当前页数: " + page);
 //                                    LogUtil.INSTANCE.i("当前进度: " + currentTextProgress);
 //                                    LogUtil.INSTANCE.i("当前内容: " + currentText);
-                                    binding.acceptStationTv.setText(currentText, currentTextProgress);
+                                        binding.acceptStationTv.setText(currentText, currentTextProgress);
+                                    }
                                 }
                                 break;
                             }
