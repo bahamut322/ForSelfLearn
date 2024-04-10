@@ -106,9 +106,10 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
                 BillManager.removeBill()
             }else{
                 val taskId = BillManager.currentBill()?.taskId()?:""
+                val currentBillIsExplainTaskBill = BillManager.currentBill() is ExplainTaskBill
                 BillManager.removeBill()
                 val notGoBack = QuerySql.QueryBasic().explainFinishedNotGoBack == 1
-                if (notGoBack) {
+                if (notGoBack && currentBillIsExplainTaskBill){
                     val bill = StandStillBillFactory.createBill(TaskModel(
                         taskId = taskId
                     ))
