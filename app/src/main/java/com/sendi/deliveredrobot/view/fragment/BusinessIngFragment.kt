@@ -192,13 +192,13 @@ class BusinessIngFragment : Fragment() {
                         viewModel!!.hasArrive = true
                         MediaStatusManager.stopMediaPlay(false)
                         LogUtil.i("到点，并任务执行完毕")
-                        RobotStatus.progress.value = 0
+                        RobotStatus.progress.postValue(-1)
                         arriveSpeak(actionData?.arriveText!!)
                     } else if (actionData?.moveText.isNullOrEmpty() && arrayPoint == 1 && !viewModel!!.hasArrive) {
                         viewModel!!.hasArrive = true
                         MediaStatusManager.stopMediaPlay(false)
                         LogUtil.i("到点，并任务执行完毕")
-                        RobotStatus.progress.value = 0
+                        RobotStatus.progress.postValue(-1)
                         arriveSpeak(actionData?.arriveText!!)
                     } else if (progress == Universal.explainTextLength && arrayPoint != 1) {
                         LogUtil.i("未到点，但播报任务完毕")

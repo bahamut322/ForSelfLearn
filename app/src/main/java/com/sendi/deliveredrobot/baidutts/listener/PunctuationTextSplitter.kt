@@ -15,7 +15,7 @@ class PunctuationTextSplitter : TextSplitter {
         Universal.taskNum = 0
         BaiduTTSHelper.getInstance().stop()
         Universal.explainSpeak = ArrayList()
-        RobotStatus.progress.postValue(0)
+        RobotStatus.progress.postValue(-1)
         if (Universal.explainSpeak != null) {
             Universal.explainSpeak.clear()
         }

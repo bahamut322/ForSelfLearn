@@ -111,7 +111,7 @@ class BusinessViewModel : ViewModel() {
 
             },
             onFinish = {
-                RobotStatus.progress.postValue(0)
+                RobotStatus.progress.postValue(-1)
                 hasArrive = false
                 if (type == 1) {
                     pageJump(controller)

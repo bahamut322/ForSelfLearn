@@ -148,13 +148,13 @@ class GuidingFragment : Fragment() {
         mediatorLiveData.observe(viewLifecycleOwner) { (arrayPointObserver, progressObserver) ->
             if (progressObserver == Universal.explainTextLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
-                RobotStatus.progress.value = 0
+                RobotStatus.progress.postValue(-1)
                 MediaStatusManager.stopMediaPlay(false)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
             } else if (actionData?.movePrompt.isNullOrEmpty() && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
-                RobotStatus.progress.value = 0
+                RobotStatus.progress.postValue(-1)
                 MediaStatusManager.stopMediaPlay(false)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
@@ -213,7 +213,7 @@ class GuidingFragment : Fragment() {
         } else {
             binding.motionLayoutGuideArrive.visibility = View.VISIBLE
         }
-        RobotStatus.progress.postValue(0)
+        RobotStatus.progress.postValue(-1)
         BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText!!,pointName =pointName , business = "智能引领"))
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText.isEmpty() && viewModel!!.hasArrive) {
@@ -221,7 +221,7 @@ class GuidingFragment : Fragment() {
             mainScope.launch {
                 BillManager.currentBill()?.executeNextTask()
             }
-            RobotStatus.progress.postValue(0)
+            RobotStatus.progress.postValue(-1)
             MediaStatusManager.stopMediaPlay(false)
             viewModel!!.hasArrive = false
         }
@@ -231,7 +231,7 @@ class GuidingFragment : Fragment() {
                 mainScope.launch {
                     BillManager.currentBill()?.executeNextTask()
                 }
-                RobotStatus.progress.postValue(0)
+                RobotStatus.progress.postValue(-1)
                 MediaStatusManager.stopMediaPlay(false)
                 viewModel!!.hasArrive = false
             }

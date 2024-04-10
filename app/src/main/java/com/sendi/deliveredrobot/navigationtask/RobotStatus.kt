@@ -69,7 +69,7 @@ object RobotStatus {
     var sdScreenStatus: Int? = 0 // 0:空闲 1:测温 2:讲解 3:引领 4:导购 5:迎宾 6:轻应用
     var selectRouteMapItemId  = -1//选择的item的id
     var pointItemIndex = -1//选择item中的列表的索引
-    var progress : MutableLiveData<Int> = MutableLiveData(0)//文字朗读进度
+    var progress : MutableLiveData<Int> = MutableLiveData(-1)//文字朗读进度
     var arrayPointExplain : MutableLiveData<Int> = MutableLiveData()//记录是否到点
     var ttsIsPlaying = false //百度语音播放状态
         set(value) {
