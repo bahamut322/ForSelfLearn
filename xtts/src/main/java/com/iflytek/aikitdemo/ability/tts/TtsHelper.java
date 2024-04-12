@@ -363,6 +363,7 @@ public class TtsHelper implements SynthesisCallback {
             if (track != null) {
                 if (track.getPlayState() == 3) {
                     track.write(buffer, offset, length);
+                    callBack.onAbilityResult("");
                 }
             }
             if (fileHandler != null) {

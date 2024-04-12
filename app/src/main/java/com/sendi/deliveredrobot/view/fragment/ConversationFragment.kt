@@ -30,6 +30,7 @@ import com.iflytek.vtncaetest.utils.ErrorCode
 import com.iflytek.vtncaetest.utils.FileUtil
 import com.iflytek.vtncaetest.utils.StreamingAsrUtil
 import com.iflytek.vtncaetest.utils.senselessWordUtil
+import com.qmuiteam.qmui.kotlin.sp
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
@@ -679,15 +680,19 @@ class ConversationFragment : Fragment() {
         if (finalAnswer != null) {
             DialogHelper.loadingDialog.dismiss()
             aiSoundHelper?.setVCN(vcn)
-            startTTS(finalAnswer.answer)
             mainScope.launch {
                 addAnswer2(finalAnswer.answer)
+                val finalAnswerStr :String
                 when (finalAnswer.answerType) {
                      ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode() -> {
-//                         startTTS(AI_XIAO_YUE_DEFAULT_ANSWER)
+                         finalAnswerStr = "${finalAnswer.answer},$AI_XIAO_YUE_DEFAULT_ANSWER"
                          addAnswer3()
                      }
+                    else -> {
+                        finalAnswerStr = finalAnswer.answer
+                    }
                 }
+                startTTS(finalAnswerStr)
             }
         }
     }
@@ -706,12 +711,16 @@ class ConversationFragment : Fragment() {
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
         aiSoundHelper?.apply {
-            AudioMngHelper(requireContext()).setVoice100(50)
-            val speed = basicModel?.speechSpeed?.times(6.6f)?.toInt()?:50
+            AudioMngHelper(requireContext()).setVoice100(65)
+            var speed = basicModel?.speechSpeed?.times(7f)?.toInt()?:50
+            speed = speed.let {
+                if(it > 100) 100
+                else it
+            }
             setSpeed(speed)
             setVolume(basicModel?.voiceVolume?:50)
             setPitch(50)
-            speechText(text)
+            speechText(text.replace(Regex(pattern),""))
         }
     }
 
@@ -820,7 +829,9 @@ class ConversationFragment : Fragment() {
                     LogUtil.i("xtts开始合成数据")
                 }
 
-                override fun onAbilityResult(result: String) {}
+                override fun onAbilityResult(result: String) {
+                    startTime = System.currentTimeMillis()
+                }
 
                 override fun onAbilityError(code: Int, error: Throwable?) {
                     LogUtil.i("xtts合成失败:${error?.message}")

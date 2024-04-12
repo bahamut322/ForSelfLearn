@@ -72,7 +72,6 @@ public class TtsEngine implements AiListener {
                                 float progress = (cacheTotalLength - queue.size()) * 1f / cacheTotalLength;
                                 if (progress > 0) {
                                     TtsEngine.this.isSpeaking = true;
-//                                    Log.d(TAG, "progress:" + (int)(418 * progress));
                                     if(progress == 1){
                                         Log.d(TAG, "total length:" + cacheTotalLength );
                                     }
