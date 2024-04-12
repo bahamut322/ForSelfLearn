@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.iflytek.aiui.AIUIAgent
 import com.iflytek.aiui.AIUIConstant
 import com.iflytek.aiui.AIUIEvent
 import com.iflytek.aiui.AIUIListener
+import com.iflytek.vtncaetest.StreamingAsrModel
 import com.iflytek.vtncaetest.engine.AiuiEngine
 import com.iflytek.vtncaetest.engine.EngineConstants
 import com.iflytek.vtncaetest.recorder.AudioRecorder
@@ -39,6 +41,7 @@ import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.BasicModel
 import com.sendi.deliveredrobot.model.ConversationAnswerModel
+import com.sendi.deliveredrobot.model.ConversationModel
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
@@ -77,11 +80,11 @@ class ConversationFragment : Fragment() {
     private var startTime: Long = 0
     private var totalHeight: Int = 0
     private var talkingView: LinearLayoutCompat? = null
-    private val hashMap = HashMap<String, Array<ConversationAnswerModel?>?>()
+    private val hashMap = HashMap<String, Array<ConversationModel>?>()
     private var answerPriority: Array<String>? = ASROrNlpModelTypeEnum.answerPriority // 优先级，下标越小优先级越高
     private var waitTalk = true
 //    private val defaultAnswer = "我没明白您的意思，可以换个方式提问吗？"
-    private val defaultAnswer = PlaceholderEnum.replaceText("%唤醒词%未听请您说的话，可以再说一遍吗？")
+    private val defaultAnswer = PlaceholderEnum.replaceText("%唤醒词%未听清您说的话，可以再说一遍吗？")
     private val pattern = "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     private var aiuiListener: AIUIListener? = null
     private var recorder: AudioRecorder? = null
@@ -164,12 +167,12 @@ class ConversationFragment : Fragment() {
                             val cntJson = JSONObject(json)
                             val text = cntJson.getJSONObject("text")
                             //识别结果
-                            val asrResult: String
+                            val streamingAsrModel: StreamingAsrModel
                             try {
-                                asrResult = StreamingAsrUtil.processIATResult(text)
-                                if (!asrResult.isNullOrEmpty()) {
+                                streamingAsrModel = StreamingAsrUtil.processIATResult(text)
+                                if (!streamingAsrModel.asrResult.isNullOrEmpty()) {
                                     DialogHelper.loadingDialog.show()
-                                    addQuestionView(asrResult, talkingView)
+                                    addQuestionView(streamingAsrModel.asrResult, talkingView)
                                 }
                             }catch (e:NullPointerException){
                                 LogUtil.i("nlp结果为null")
@@ -178,13 +181,20 @@ class ConversationFragment : Fragment() {
                             }
                             //最终识别结果
                             if (text.getBoolean("ls")) {
-                                LogUtil.i("识别结果=$asrResult")
+                                LogUtil.i("识别结果=${streamingAsrModel.asrResult}")
                                 //sid是每次交互的id，提供给讯飞可以查云端音频和结果
                                 val sid = event.data.getString("sid")
                                 LogUtil.i("sid=$sid")
                                 hashMap[sid?:""] = when(answerPriority == null){
                                     true -> null
-                                    false -> arrayOfNulls(answerPriority!!.size)
+                                    false -> {
+                                        val array = Array(answerPriority!!.size){
+                                            ConversationModel(
+                                                streamingAsrModel = streamingAsrModel
+                                            )
+                                        }
+                                        array
+                                    }
                                 }
                                 mainScope.launch(Dispatchers.IO) {
 //                                    val test1 = test1()
@@ -192,7 +202,7 @@ class ConversationFragment : Fragment() {
 //                                    val test2 = test2()
 //                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_2.getCode(),test2)
                                     if (answerPriority?.contains(ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode()) == true) {
-                                        val answerAiXiaoYue = questionAiXiaoYue(asrResult, sid?:"")
+                                        val answerAiXiaoYue = questionAiXiaoYue(streamingAsrModel.asrResult, sid?:"")
                                         findFinalAnswerAndStartTTS(
                                             sid?:"",
                                             ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode(),
@@ -213,9 +223,11 @@ class ConversationFragment : Fragment() {
                                 }
                                 result
                             } ?: return@AIUIListener
+                            val cntJson = JSONObject(json)
+                            val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
                             try {
-                                val cntJson = JSONObject(json)
-                                val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
+//                                val cntJson = JSONObject(json)
+//                                val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
                                 //nlp无结果不处理
                                 //如果只判断asr结果中的无意义词，若nlp先返回就可能被错误判断为无意义词
                                 val asrResult = nlpResult.getString("text")
@@ -225,11 +237,11 @@ class ConversationFragment : Fragment() {
                                     LogUtil.i("无意义词不处理")
 //                                    AiuiEngine.MSG_reset_wakeup()
                                     //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
-                                    val answer = "无匹配结果，请换个方式提问"
-                                    startTTS(answer)
-                                    mainScope.launch {
-                                        addAnswer2(answer)
-                                    }
+//                                    DialogHelper.loadingDialog.dismiss()
+//                                    startTTS(defaultAnswer)
+//                                    mainScope.launch {
+//                                        addAnswer2(defaultAnswer)
+//                                    }
                                     return@AIUIListener
                                 }
                                 LogUtil.i("nlp result :$nlpResult")
@@ -241,6 +253,8 @@ class ConversationFragment : Fragment() {
                                     findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
                                 }
                             } catch (e: JSONException) {
+                                val sid = nlpResult.getString("sid")
+                                findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),defaultAnswer)
                                 LogUtil.i("nlpResult异常")
                             }
                         } else if (event.info.contains("\"sub\":\"tpp")) {
@@ -617,19 +631,19 @@ class ConversationFragment : Fragment() {
         if (index == -1) return null
         if (answer.isEmpty()) {
             for (i in 0 until index) {
-                val cache = cacheAnswers[i]
+                val cache = cacheAnswers[i].conversationAnswerModel
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
+                    cacheAnswers[index].conversationAnswerModel = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
             }
             var latterAnswer: ConversationAnswerModel? = null
             for (i in index + 1 until cacheAnswers.size) {
-                val cache = cacheAnswers[i]
+                val cache = cacheAnswers[i].conversationAnswerModel
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
+                    cacheAnswers[index].conversationAnswerModel = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
                 if (cache.answer.isNotEmpty()) {
@@ -642,10 +656,10 @@ class ConversationFragment : Fragment() {
             return latterAnswer ?: ConversationAnswerModel(answerType = ASROrNlpModelTypeEnum.AIUI.getCode(), answer = defaultAnswer)
         } else {
             for (i in 0 until index) {
-                val cache = cacheAnswers[i]
+                val cache = cacheAnswers[i].conversationAnswerModel
                 if (cache == null) {
                     // 如果存在未返回，则缓存当前答案
-                    cacheAnswers[index] = ConversationAnswerModel(answerType = answerType, answer = answer)
+                    cacheAnswers[index].conversationAnswerModel = ConversationAnswerModel(answerType = answerType, answer = answer)
                     return null
                 }
             }
@@ -656,15 +670,21 @@ class ConversationFragment : Fragment() {
     }
 
     private fun findFinalAnswerAndStartTTS(sid: String, answerType: String, answer: String) {
+        val vcn = when (hashMap[sid]?.get(0)?.streamingAsrModel?.language) {
+            StreamingAsrUtil.MANDARIN -> "xiaoyan"
+            StreamingAsrUtil.GUANGDONG -> "xiaomei"
+            else -> "xiaomei"
+        }
         val finalAnswer = findFinalAnswer(sid, answerType, answer)
         if (finalAnswer != null) {
             DialogHelper.loadingDialog.dismiss()
+            aiSoundHelper?.setVCN(vcn)
             startTTS(finalAnswer.answer)
             mainScope.launch {
                 addAnswer2(finalAnswer.answer)
                 when (finalAnswer.answerType) {
                      ASROrNlpModelTypeEnum.AI_XIAO_YUE.getCode() -> {
-                         startTTS(AI_XIAO_YUE_DEFAULT_ANSWER)
+//                         startTTS(AI_XIAO_YUE_DEFAULT_ANSWER)
                          addAnswer3()
                      }
                 }
@@ -685,15 +705,8 @@ class ConversationFragment : Fragment() {
 //            params.append(",volume=55")
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
-
-        val vcn = when (random.nextInt(2)) {
-            0 -> "xiaoyan"
-            1 -> "xiaomei"
-            else -> "xiaoyan"
-        }
         aiSoundHelper?.apply {
             AudioMngHelper(requireContext()).setVoice100(50)
-            setVCN(vcn)
             val speed = basicModel?.speechSpeed?.times(6.6f)?.toInt()?:50
             setSpeed(speed)
             setVolume(basicModel?.voiceVolume?:50)
