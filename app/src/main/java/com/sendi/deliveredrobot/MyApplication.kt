@@ -3,7 +3,9 @@ package com.sendi.deliveredrobot
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
 import android.util.Log
+import com.iflytek.aikitdemo.ability.IFlytekAbilityManager
 import com.iflytek.vtncaetest.ContextHolder
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
@@ -39,6 +41,10 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        //初始化讯飞SDK start
+        com.iflytek.aikitdemo.ContextHolder.CONTEXT = this
+        IFlytekAbilityManager.getInstance().initializeSdk(this)
+        //初始化讯飞SDK end
         ContextHolder.setContext(this)
         context = baseContext
         x.Ext.init(this)//初始化xUtils3

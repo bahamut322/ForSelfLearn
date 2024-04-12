@@ -11,6 +11,9 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.iflytek.aikitdemo.ability.AbilityCallback
+import com.iflytek.aikitdemo.ability.AbilityConstant
+import com.iflytek.aikitdemo.ability.tts.TtsHelper
 import com.iflytek.aiui.AIUIAgent
 import com.iflytek.aiui.AIUIConstant
 import com.iflytek.aiui.AIUIEvent
@@ -80,7 +83,12 @@ class ConversationFragment : Fragment() {
     private var aiuiListener: AIUIListener? = null
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
+    private var aiSoundHelper: TtsHelper? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initXTTS()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -671,7 +679,8 @@ class ConversationFragment : Fragment() {
 //            //音量，取值范围[0,100]
 //            params.append(",volume=55")
 //            AiuiEngine.TTS_start(text, params)
-        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
+//        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
+        aiSoundHelper?.speechText(text)
     }
 
     private fun initSDK() {
@@ -765,5 +774,36 @@ class ConversationFragment : Fragment() {
 
     fun test2(): String{
         return "test2"
+    }
+
+    private fun initXTTS() {
+        aiSoundHelper = TtsHelper().apply {
+            val callback = object : AbilityCallback {
+
+                override fun onAbilityBegin() {
+                    LogUtil.i("xtts开始合成数据")
+                }
+
+                override fun onAbilityResult(result: String) {}
+
+                override fun onAbilityError(code: Int, error: Throwable?) {
+                    LogUtil.i("xtts合成失败:${error?.message}")
+                }
+
+                override fun onAbilityEnd() {
+                    LogUtil.i("xtts播放结束=====\n")
+                    SpeakHelper.speakUserCallback?.speakAllFinish()
+                    if (aiSoundHelper != null) {
+                        aiSoundHelper!!.stop()
+                    }
+                }
+            }
+            setVCN("xiaomei")
+            setSpeed(50)
+            setVolume(50)
+            setPitch(50)
+            onCreate(AbilityConstant.XTTS_ID, callback)
+        }
+
     }
 }

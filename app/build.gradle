@@ -162,4 +162,10 @@ dependencies {
         exclude group: 'com.alibaba', module: 'fastjson'
     }
     implementation 'org.xutils:xutils:3.9.0'
+    implementation (project(path: ':xtts')){
+        exclude group: 'androidx.core'
+        exclude group: 'androidx.appcompat'
+        exclude group: 'com.squareup.okio'
+        exclude group: 'org.jetbrains.kotlin'
+    }
 }
