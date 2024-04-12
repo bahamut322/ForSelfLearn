@@ -1,14 +1,16 @@
 plugins {
     id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
-    compileSdk 30
+    compileSdk 33
     defaultConfig {
 //        applicationId "com.iflytek.vtncaetest"
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -34,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly fileTree(dir: 'libs', include: ['*.jar','*.aar'])
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
 //    implementation 'com.google.android.material:material:1.5.0'
@@ -45,7 +47,7 @@ dependencies {
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     // okio
     implementation "com.squareup.okio:okio:2.9.0"
-    implementation files('libs/AIKit.aar')
+//    compile files('libs/AIKit.aar')
 //    implementation "androidx.multidex:multidex:2.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
 }
