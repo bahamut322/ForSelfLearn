@@ -31,10 +31,13 @@ import com.iflytek.vtncaetest.utils.senselessWordUtil
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.enum.ASROrNlpModelTypeEnum
+import com.sendi.deliveredrobot.helpers.AudioMngHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ReplyQaConfigHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
+import com.sendi.deliveredrobot.model.BasicModel
 import com.sendi.deliveredrobot.model.ConversationAnswerModel
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -84,9 +87,11 @@ class ConversationFragment : Fragment() {
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
     private var aiSoundHelper: TtsHelper? = null
+    private var basicModel: BasicModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        basicModel = QuerySql.QueryBasic()
         initXTTS()
     }
 
@@ -680,7 +685,21 @@ class ConversationFragment : Fragment() {
 //            params.append(",volume=55")
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
-        aiSoundHelper?.speechText(text)
+
+        val vcn = when (random.nextInt(2)) {
+            0 -> "xiaoyan"
+            1 -> "xiaomei"
+            else -> "xiaoyan"
+        }
+        aiSoundHelper?.apply {
+            AudioMngHelper(requireContext()).setVoice100(50)
+            setVCN(vcn)
+            val speed = basicModel?.speechSpeed?.times(6.6f)?.toInt()?:50
+            setSpeed(speed)
+            setVolume(basicModel?.voiceVolume?:50)
+            setPitch(50)
+            speechText(text)
+        }
     }
 
     private fun initSDK() {
@@ -760,6 +779,7 @@ class ConversationFragment : Fragment() {
             //销毁aiui
             AiuiEngine.destroy()
             SpeakHelper.stop()
+            aiSoundHelper?.stop()
             LogUtil.i("conversation quitFragment is done")
         }
     }
@@ -777,6 +797,9 @@ class ConversationFragment : Fragment() {
     }
 
     private fun initXTTS() {
+        if (aiSoundHelper != null) {
+            aiSoundHelper!!.release()
+        }
         aiSoundHelper = TtsHelper().apply {
             val callback = object : AbilityCallback {
 
@@ -798,10 +821,6 @@ class ConversationFragment : Fragment() {
                     }
                 }
             }
-            setVCN("xiaomei")
-            setSpeed(50)
-            setVolume(50)
-            setPitch(50)
             onCreate(AbilityConstant.XTTS_ID, callback)
         }
 
