@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.view.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.iflytek.aiui.AIUIConstant
 import com.iflytek.aiui.AIUIEvent
 import com.iflytek.aiui.AIUIListener
 import com.iflytek.vtncaetest.StreamingAsrModel
+import com.iflytek.vtncaetest.VoiceManager
 import com.iflytek.vtncaetest.engine.AiuiEngine
 import com.iflytek.vtncaetest.engine.EngineConstants
 import com.iflytek.vtncaetest.recorder.AudioRecorder
@@ -92,11 +94,13 @@ class ConversationFragment : Fragment() {
     private var mAIUIAgent: AIUIAgent? = null
     private var aiSoundHelper: TtsHelper? = null
     private var basicModel: BasicModel? = null
+    private var voiceManager: VoiceManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         basicModel = QuerySql.QueryBasic()
         initXTTS()
+        voiceManager = VoiceManager()
     }
 
     override fun onCreateView(
@@ -176,7 +180,7 @@ class ConversationFragment : Fragment() {
                                     addQuestionView(streamingAsrModel.asrResult, talkingView)
                                 }
                             }catch (e:NullPointerException){
-                                LogUtil.i("nlp结果为null")
+                                LogUtil.i("iat结果为null")
                                 addQuestionView("语音解析异常，请重试", talkingView)
                                 return@AIUIListener
                             }
@@ -217,47 +221,48 @@ class ConversationFragment : Fragment() {
                                 }
                             }
                         } else if (event.info.contains("\"sub\":\"nlp")) {
-                            val json = event.data.getByteArray("0").let {
-                                val result = when (it == null) {
-                                    true -> null
-                                    false -> String(it, StandardCharsets.UTF_8)
-                                }
-                                result
-                            } ?: return@AIUIListener
-                            val cntJson = JSONObject(json)
-                            val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
-                            try {
-//                                val cntJson = JSONObject(json)
-//                                val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
-                                //nlp无结果不处理
-                                //如果只判断asr结果中的无意义词，若nlp先返回就可能被错误判断为无意义词
-                                val asrResult = nlpResult.getString("text")
-                                EngineConstants.meaningful = senselessWordUtil.isMeaningful_filter1word(asrResult)
-                                //无意义词不处理
-                                if (!EngineConstants.meaningful) {
-                                    LogUtil.i("无意义词不处理")
-//                                    AiuiEngine.MSG_reset_wakeup()
-                                    //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
-//                                    DialogHelper.loadingDialog.dismiss()
-//                                    startTTS(defaultAnswer)
-//                                    mainScope.launch {
-//                                        addAnswer2(defaultAnswer)
-//                                    }
-                                    return@AIUIListener
-                                }
-                                LogUtil.i("nlp result :$nlpResult")
-//                                AiuiEngine.MSG_reset_wakeup()
-                                //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
-                                val answer = "${nlpResult.getJSONObject("answer")["text"]}"
-                                val sid = nlpResult.getString("sid")
-                                if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
-                                    findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
-                                }
-                            } catch (e: JSONException) {
-                                val sid = nlpResult.getString("sid")
-                                findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),defaultAnswer)
-                                LogUtil.i("nlpResult异常")
-                            }
+                            voiceManager?.processResult(event)
+//                            val json = event.data.getByteArray("0").let {
+//                                val result = when (it == null) {
+//                                    true -> null
+//                                    false -> String(it, StandardCharsets.UTF_8)
+//                                }
+//                                result
+//                            } ?: return@AIUIListener
+//                            LogUtil.i(json)
+//                            val cntJson = JSONObject(json)
+//                            val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
+//                            val sid = nlpResult.getString("sid")
+//                            try {
+////                                val cntJson = JSONObject(json)
+////                                val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
+//                                //nlp无结果不处理
+//                                //如果只判断asr结果中的无意义词，若nlp先返回就可能被错误判断为无意义词
+//                                val asrResult = nlpResult.getString("text")
+//                                EngineConstants.meaningful = senselessWordUtil.isMeaningful_filter1word(asrResult)
+//                                //无意义词不处理
+//                                if (!EngineConstants.meaningful) {
+//                                    LogUtil.i("无意义词不处理")
+////                                    AiuiEngine.MSG_reset_wakeup()
+//                                    //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
+////                                    DialogHelper.loadingDialog.dismiss()
+////                                    startTTS(defaultAnswer)
+////                                    mainScope.launch {
+////                                        addAnswer2(defaultAnswer)
+////                                    }
+//                                    return@AIUIListener
+//                                }
+//                                LogUtil.i("nlp result :$nlpResult")
+////                                AiuiEngine.MSG_reset_wakeup()
+//                                //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
+//                                val answer = "${nlpResult.getJSONObject("answer")["text"]}"
+//                                if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
+//                                    findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
+//                                }
+//                            } catch (e: JSONException) {
+//                                findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),defaultAnswer)
+//                                LogUtil.i("nlpResult异常")
+//                            }
                         } else if (event.info.contains("\"sub\":\"tpp")) {
                             val json = event.data.getByteArray("0").let {
                                 val result = when (it == null) {
@@ -711,7 +716,7 @@ class ConversationFragment : Fragment() {
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
         aiSoundHelper?.apply {
-            AudioMngHelper(requireContext()).setVoice100(65)
+            AudioMngHelper(requireContext()).setVoice100(30)
             var speed = basicModel?.speechSpeed?.times(7f)?.toInt()?:50
             speed = speed.let {
                 if(it > 100) 100
@@ -731,7 +736,7 @@ class ConversationFragment : Fragment() {
         //注意事项2: 获取的值要保持稳定，否则会重复授权，浪费授权量
         EngineConstants.serialNumber = "sendi-${RobotStatus.SERIAL_NUMBER}"
         // 初始化AIUI(识别+语义+合成）
-        mAIUIAgent = AiuiEngine.getInstance(aiuiListener, "cfg/aiui.cfg")
+        mAIUIAgent = AiuiEngine.getInstance(aiuiListener, "cfg/aiui_phone.cfg")
         if (mAIUIAgent != null) {
             LogUtil.i("AIUI初始化成功")
         } else {
@@ -849,4 +854,7 @@ class ConversationFragment : Fragment() {
         }
 
     }
+
+
+
 }
