@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
@@ -76,15 +77,16 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
             myHolder.textViewPointName.visibility = View.GONE
             Glide.with(context)
                 .load(imageUrl)
-                .apply(
-                    RequestOptions()
-                        .placeholder(R.drawable.img_strat_explation) // 设置占位图
-                        .priority((Priority.HIGH))//优先级设置最高
-                        .error(R.drawable.img_strat_explation)//设置错误视图
-                )
+//                .apply(
+//                    RequestOptions()
+                .placeholder(R.drawable.img_strat_explation) // 设置占位图
+//                        .transform(GranularRoundedCorners(24f,24f,0f,0f))
+//                        .priority((Priority.HIGH))//优先级设置最高
+//                )
+                .transform(GranularRoundedCorners(12f,12f,0f,0f))
                 .skipMemoryCache(true) // 跳过内存缓存
                 .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
-                .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
+//                .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
                 .into(myHolder.imageId)
         }
         return view!!

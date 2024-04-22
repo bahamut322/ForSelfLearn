@@ -16,29 +16,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.sendi.deliveredrobot.view.widget.RoundImageView
+        <ImageView
             android:id="@+id/ivGuideRound"
             android:layout_width="@dimen/dp_248"
-            android:layout_height="@dimen/dp_200"
-            tools:src="@tools:sample/avatars"
+            android:layout_height="@dimen/dp_160"
             android:scaleType="fitXY"
             android:visibility="gone"
             tools:visibility="gone"/>
         <TextView
             android:id="@+id/tv_point_name"
-            android:background="@drawable/shape_gradient_ff1da8fe_ff295dd2_corners_12dp"
+            android:background="@drawable/shape_gradient_ff1da8fe_ff266edc_corners_12dp"
             android:layout_width="@dimen/dp_248"
-            android:layout_height="@dimen/dp_200"
+            android:layout_height="@dimen/dp_160"
             android:visibility="gone"
             android:textColor="@color/color_E5FFFFFF"
             android:gravity="center"
             tools:visibility="visible"
-
+            tools:text="1234"
+            tools:textSize="64sp"
             />
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="@dimen/dp_248"
-            android:translationY="-48dp"
             android:layout_height="48dp"
             android:background="@drawable/guide_select_tv_bg"
             android:gravity="center"

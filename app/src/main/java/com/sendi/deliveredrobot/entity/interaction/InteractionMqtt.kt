@@ -814,21 +814,27 @@ class InteractionMqtt {
                 //创建文件夹
                 MqttMessageHandler.openFile(Universal.robotFile + "GuidePic/" + points!!.pointName + "/")
                 guidePointPicDB.pointName = points.pointName
-                guidePointPicDB.guidePicUrl =
+                val url = if (points.guidePicUrl.isNullOrEmpty()) {
+                    ""
+                }else {
                     Universal.robotFile + "GuidePic/" + points.pointName + "/" + "test.${
                         fileName(points.guidePicUrl!!)
                     }"
+                }
+                guidePointPicDB.guidePicUrl = url
                 guidePointPicDB.pointTimeStamp = points.pointTimeStamp
                 guidePointPicDB.mapTimeStamp = maps.mapTimeStamp
                 guidePointPicDB.mapName = maps.mapName
                 pointList.add(guidePointPicDB)
-                thread {
-                    DownloadBill.getInstance().addTask(
-                        Universal.pathDownload + points.guidePicUrl,
-                        Universal.robotFile + "GuidePic/" + points.pointName + "/",
-                        "test.${fileName(points.guidePicUrl!!)}",
-                        MyApplication.listener
-                    )
+                if (url.isNotEmpty()) {
+                    thread {
+                        DownloadBill.getInstance().addTask(
+                            Universal.pathDownload + points.guidePicUrl,
+                            Universal.robotFile + "GuidePic/" + points.pointName + "/",
+                            "test.${fileName(points.guidePicUrl!!)}",
+                            MyApplication.listener
+                        )
+                    }
                 }
                 guideConfigDB.pointList = pointList
 
