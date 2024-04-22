@@ -96,9 +96,9 @@ abstract class AbstractTaskBill(private val taskModel: TaskModel?): ITaskBill {
     override fun executeNextTask() {
         //急停按下则不执行任务
         if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
-        if (this !is StandStillTaskBill) {
-            RobotStatus.batteryStateNumber.postValue(false)
-        }
+//        if (this !is StandStillTaskBill) {
+//            RobotStatus.batteryStateNumber.postValue(false)
+//        }
         if (hasRemain()) {
             val tempTask = nextTask()
             currentTask = tempTask

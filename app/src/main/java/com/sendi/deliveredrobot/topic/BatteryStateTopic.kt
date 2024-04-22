@@ -50,12 +50,12 @@ object BatteryStateTopic {
                         // 切换到充电状态
                         LogUtil.i("正在充电")
                         withContext(Dispatchers.Main){
-                            RobotStatus.chargeStatus.value = true
+                            RobotStatus.chargeStatus.postValue(true)
                         }
-                        if (RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER) {
-                            LogUtil.i( "开机检测充电桩状态: true")
-                            RobotStatus.batteryStateNumber.postValue(true)
-                        }
+//                        if (RobotStatus.adapterState.value!! != SafeState.TYPE_ADAPTER) {
+//                            LogUtil.i( "开机检测充电桩状态: true")
+//                            RobotStatus.batteryStateNumber.postValue(true)
+//                        }
 //                        RobotStatus.currentStatus = TYPE_CHARGING
                         RobotStatus.odomPose = ROSHelper.getOdomPose()
                         //自检状态下直接返回
@@ -80,9 +80,9 @@ object BatteryStateTopic {
                     } else {
                         // 切换到非充电状态
                         LogUtil.i("退出充电")
-                        RobotStatus.batteryStateNumber.postValue(false)
+//                        RobotStatus.batteryStateNumber.postValue(false)
                         withContext(Dispatchers.Main){
-                            RobotStatus.chargeStatus.value = false
+                            RobotStatus.chargeStatus.postValue(false)
                         }
                         if (RobotStatus.currentStatus == TYPE_CHARGING) {
                             RobotStatus.currentStatus = TYPE_IDLE

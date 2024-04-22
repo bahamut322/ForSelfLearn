@@ -127,7 +127,7 @@ class BusinessFragment : BaseFragment() {
         //item点击
         binding.businessGv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                if (RobotStatus.batteryStateNumber.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
+                if (RobotStatus.chargeStatus.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
                     DialogHelper.briefingDialog.show()
                 }else {
                     LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")

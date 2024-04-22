@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.TYPE_STAND_STILL
 import com.sendi.deliveredrobot.databinding.FragmentHomeBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.BasicSettingHelper
@@ -562,7 +563,8 @@ class HomeFragment : BaseFragment(), IMainView {
     private fun itemOnclickListen(Onclick: String?) {
         when (Onclick) {
             "智能引领" -> {
-                if (RobotStatus.batteryStateNumber.value == false) {
+                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
+//                if (RobotStatus.batteryStateNumber.value == false) {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
@@ -571,7 +573,7 @@ class HomeFragment : BaseFragment(), IMainView {
             }
 
             "智能讲解" -> {
-                if (RobotStatus.batteryStateNumber.value == false) {
+                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
@@ -592,7 +594,7 @@ class HomeFragment : BaseFragment(), IMainView {
             }
 
             "业务办理" -> {
-                if (RobotStatus.batteryStateNumber.value == false) {
+                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
@@ -602,7 +604,7 @@ class HomeFragment : BaseFragment(), IMainView {
             }
 
             "礼仪迎宾" -> {
-                if (RobotStatus.batteryStateNumber.value == false) {
+                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {

@@ -52,7 +52,7 @@ class BrieFingDialog (
     private fun setDate(){
         textViewDate.text = sdf.format(Date())
         val robotConfig = QuerySql.robotConfig()
-        if (RobotStatus.batteryStateNumber.value == false) {
+        if (RobotStatus.chargeStatus.value == false) {
             textTip.text = "请把我推到充电桩后再操作"
         } else if (robotConfig.chargePointName.isNullOrEmpty()) {
             textTip.text = "请到管理平台设置充电点"

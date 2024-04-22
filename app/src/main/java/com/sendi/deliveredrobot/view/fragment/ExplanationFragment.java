@@ -144,7 +144,7 @@ public class ExplanationFragment extends BaseFragment {
     private void findView() {
         ExplantionAdapter.OnItemClickListener listener = (position, routeMap) -> {
             Universal.lastValue = null;
-            if (Boolean.FALSE.equals(RobotStatus.INSTANCE.getBatteryStateNumber().getValue()) || QuerySql.robotConfig().getChargePointName().isEmpty() || QuerySql.robotConfig().getWaitingPointName().isEmpty()) {
+            if (Boolean.FALSE.equals(RobotStatus.INSTANCE.getChargeStatus().getValue()) || QuerySql.robotConfig().getChargePointName().isEmpty() || QuerySql.robotConfig().getWaitingPointName().isEmpty()) {
                 DialogHelper.briefingDialog.show();
             } else {
                 scrollToCenter(position);

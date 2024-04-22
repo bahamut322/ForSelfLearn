@@ -114,7 +114,7 @@ class GuideFragment : BaseFragment() {
         //item点击
         binding.GvGuideList.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                if (RobotStatus.batteryStateNumber.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
+                if (RobotStatus.chargeStatus.value == false || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
                     DialogHelper.briefingDialog.show()
                 } else {
                     BaiduTTSHelper.getInstance().stop()

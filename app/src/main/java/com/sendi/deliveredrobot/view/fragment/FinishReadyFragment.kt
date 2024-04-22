@@ -48,7 +48,7 @@ class FinishReadyFragment : Fragment() {
         Universal.businessTask = null
         MainScope().launch {
             virtualTaskExecute(2, "到达待命点")
-            RobotStatus.batteryStateNumber.value = true
+//            RobotStatus.batteryStateNumber.value = true
             when (FunctionSkip.selectFunction()) {
                 //智能引领
                 0 -> {

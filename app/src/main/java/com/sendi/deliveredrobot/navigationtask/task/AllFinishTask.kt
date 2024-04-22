@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.navigationtask.task
 
 import com.sendi.deliveredrobot.TYPE_CHARGING
 import com.sendi.deliveredrobot.TYPE_IDLE
+import com.sendi.deliveredrobot.TYPE_STAND_STILL
 import com.sendi.deliveredrobot.model.PhoneCallModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.*
@@ -26,8 +27,10 @@ class AllFinishTask(taskModel: TaskModel, needReportData: Boolean = true) : Abst
     private fun resetRobotStatus() {
         RobotStatus.lowPowerBacking = false
         //机器人状态置为空闲
-        if (RobotStatus.currentStatus != TYPE_CHARGING) {
-            RobotStatus.currentStatus = TYPE_IDLE
+        if (taskModel?.bill !is StandStillTaskBill) {
+            if (RobotStatus.currentStatus != TYPE_CHARGING) {
+                RobotStatus.currentStatus = TYPE_IDLE
+            }
         }
         BillManager.removeBill(taskModel?.bill)
     }

@@ -1,12 +1,12 @@
 package com.sendi.deliveredrobot.topic
 
-import android.util.Log
 import chassis_msgs.DockState
-import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
-import com.sendi.deliveredrobot.navigationtask.*
+import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GoBackTaskBill
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.task.BeginDockTask
 import com.sendi.deliveredrobot.ros.dto.RosResult
 import com.sendi.deliveredrobot.service.UpdateReturn
@@ -40,7 +40,7 @@ object DockStateTopic {
                         }
                         //设置当前位置
                         UpdateReturn.mapSetting(true)
-                        RobotStatus.batteryStateNumber.postValue(true)
+//                        RobotStatus.batteryStateNumber.postValue(true)
                         DialogHelper.briefingDialog.dismiss()
                         UpdateReturn.method()
                         "充电中"

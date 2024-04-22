@@ -255,7 +255,8 @@ object CheckSelfHelper {
         }
 
         if (checkSelfComplete) {
-            if (RobotStatus.batteryStateNumber.value == true) {
+            if (RobotStatus.currentStatus == TYPE_IDLE || RobotStatus.currentStatus == TYPE_CHARGING){
+//            if (RobotStatus.batteryStateNumber.value == true) {
                 UpdateReturn.mapSetting(true)
                 UpdateReturn.method(false)
             }

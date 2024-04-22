@@ -10,6 +10,7 @@ import com.sendi.deliveredrobot.NAVIGATE_TO_HOME
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.TYPE_CHARGING
 import com.sendi.deliveredrobot.TYPE_IDLE
+import com.sendi.deliveredrobot.TYPE_STAND_STILL
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.model.PhoneCallModel
@@ -35,7 +36,8 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
     }
 
     override suspend fun execute() {
-        RobotStatus.batteryStateNumber.postValue(true)
+//        RobotStatus.batteryStateNumber.postValue(true)
+        RobotStatus.currentStatus = TYPE_STAND_STILL
         RobotStatus.selectRouteMapItemId = -1
         Universal.businessTask = null
             val navigateId  = when (FunctionSkip.selectFunction()) {
