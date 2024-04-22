@@ -1,9 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,8 +29,6 @@ import com.iflytek.vtncaetest.utils.CopyAssetsUtils
 import com.iflytek.vtncaetest.utils.ErrorCode
 import com.iflytek.vtncaetest.utils.FileUtil
 import com.iflytek.vtncaetest.utils.StreamingAsrUtil
-import com.iflytek.vtncaetest.utils.senselessWordUtil
-import com.qmuiteam.qmui.kotlin.sp
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
@@ -56,7 +52,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 import java.util.Date
@@ -221,7 +216,13 @@ class ConversationFragment : Fragment() {
                                 }
                             }
                         } else if (event.info.contains("\"sub\":\"nlp")) {
-                            voiceManager?.processResult(event)
+                            val sid = event.data.getString("sid", "")
+                            val answer = voiceManager?.processNlpResult(event)
+                            if (answer != null) {
+                                if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
+                                    findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
+                                }
+                            }
 //                            val json = event.data.getByteArray("0").let {
 //                                val result = when (it == null) {
 //                                    true -> null
