@@ -167,6 +167,7 @@ class ConversationFragment : Fragment() {
                                 result
                             } ?: return@AIUIListener
                             val cntJson = JSONObject(json)
+                            LogUtil.i(cntJson.toString())
                             val text = cntJson.getJSONObject("text")
                             //识别结果
                             val streamingAsrModel: StreamingAsrModel

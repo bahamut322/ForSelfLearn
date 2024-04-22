@@ -30,7 +30,7 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
     inner class MyHolder {
         lateinit var imageId : ImageView
         lateinit var text : TextView
-        lateinit var mRelative : ConstraintLayout
+        lateinit var textViewPointName: TextView
     }
 
     @SuppressLint("InflateParams")
@@ -44,29 +44,49 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
             view = LayoutInflater.from(context).inflate(R.layout.guide_select_item,null)
             myHolder.imageId = view.findViewById(R.id.ivGuideRound)
             myHolder.text = view.findViewById(R.id.tv_name)
-            myHolder.mRelative = view.findViewById(R.id.CLayout)
+            myHolder.textViewPointName = view.findViewById(R.id.tv_point_name)
             view.tag = myHolder
         }else{
             view = convertView
             myHolder = view.tag as MyHolder
         }
-
         myHolder.text.text = datas[position].pointName
         val guideConfigList = QuerySql.selectGuideConfig(QuerySql.robotConfig().mapName, datas[position].pointName)
         val imageUrl: String? = guideConfigList.firstOrNull()?.guidePicUrl
-        Glide.with(context)
-            .load(imageUrl ?: R.drawable.img_strat_explation)
-            .apply(
-                RequestOptions()
-                    .placeholder(R.drawable.img_strat_explation) // 设置占位图
-                    .priority((Priority.HIGH))//优先级设置最高
-                    .error(R.drawable.img_strat_explation)//设置错误视图
-            )
-            .skipMemoryCache(true) // 跳过内存缓存
-            .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
-            .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
-            .into(myHolder.imageId)
-
+        if (imageUrl.isNullOrEmpty()) {
+            myHolder.imageId.visibility = View.GONE
+            myHolder.textViewPointName.apply{
+                visibility = View.VISIBLE
+                val endSubStringIndex = if((datas[position].pointName?.length ?: 0) > 4){
+                    4
+                }else{
+                    datas[position].pointName?.length ?: 0
+                }
+                text = datas[position].pointName?.substring(0, endSubStringIndex)
+                textSize = when(endSubStringIndex){
+                    1 -> 64f
+                    2 -> 56f
+                    3 -> 56f
+                    4 -> 48f
+                    else -> 48f
+                }
+            }
+        } else {
+            myHolder.imageId.visibility = View.VISIBLE
+            myHolder.textViewPointName.visibility = View.GONE
+            Glide.with(context)
+                .load(imageUrl)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.img_strat_explation) // 设置占位图
+                        .priority((Priority.HIGH))//优先级设置最高
+                        .error(R.drawable.img_strat_explation)//设置错误视图
+                )
+                .skipMemoryCache(true) // 跳过内存缓存
+                .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
+                .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
+                .into(myHolder.imageId)
+        }
         return view!!
     }
 

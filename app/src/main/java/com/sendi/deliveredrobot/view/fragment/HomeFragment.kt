@@ -563,13 +563,13 @@ class HomeFragment : BaseFragment(), IMainView {
     private fun itemOnclickListen(Onclick: String?) {
         when (Onclick) {
             "智能引领" -> {
-                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
+//                if(RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL){
 //                if (RobotStatus.batteryStateNumber.value == false) {
-                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
-                    DialogHelper.briefingDialog.show()
-                } else {
+//                    Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
+//                    DialogHelper.briefingDialog.show()
+//                } else {
                     homeFragmentNavigateToFragment(R.id.action_homeFragment_to_guideFragment)
-                }
+//                }
             }
 
             "智能讲解" -> {
