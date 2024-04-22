@@ -42,7 +42,9 @@ import com.sendi.deliveredrobot.model.BasicModel
 import com.sendi.deliveredrobot.model.ConversationAnswerModel
 import com.sendi.deliveredrobot.model.ConversationModel
 import com.sendi.deliveredrobot.model.GetVFFileToTextModel
+import com.sendi.deliveredrobot.model.QueryIntentModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.service.CloudMqttService
 import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -197,6 +199,7 @@ class ConversationFragment : Fragment() {
                                     }
                                 }
                                 mainScope.launch(Dispatchers.IO) {
+                                    questionSendi(streamingAsrModel.asrResult, System.currentTimeMillis())
 //                                    val test1 = test1()
 //                                    findFinalAnswerAndStartTTS(sid?:"", ASROrNlpModelTypeEnum.TEST_1.getCode(),test1)
 //                                    val test2 = test2()
@@ -438,6 +441,9 @@ class ConversationFragment : Fragment() {
                 linearLayoutCompat.setOnClickListener {
                     AiuiEngine.MSG_sendTextForNlp(text, "main")
                     addQuestionView(text)
+                    mainScope.launch(Dispatchers.Default) {
+                        questionSendi(text, System.currentTimeMillis())
+                    }
                 }
                 myFlowLayout.addView(linearLayoutCompat)
             }
@@ -606,6 +612,17 @@ class ConversationFragment : Fragment() {
                     binding?.scrollViewConversation?.smoothScrollTo(0, totalHeight)
                 }
             }
+        }
+    }
+
+    private suspend fun questionSendi(question: String, questionNumber: Long) {
+        withContext(Dispatchers.IO) {
+            CloudMqttService.publish(
+                QueryIntentModel(
+                    questionContent = question,
+                    questionNumber = questionNumber
+                ).toString()
+            )
         }
     }
 
