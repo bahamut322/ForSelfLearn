@@ -22,6 +22,8 @@ public class Table_Robot_Config extends LitePalSupport {
     private String slogan = "欢迎使用多功能服务机器人";//机器人标语
 
     private String phoneConfigJsonArray;//手机配置json,因为手机号码配置数量少，且关联性弱，这里考虑直接存储json
+    private String logoConfigJson; //logo配置json,因为logo配置仅有一条，这里考虑直接存储json，不另外开张表
+
 
     public String getChargePointName() {
         return chargePointName;
@@ -133,5 +135,13 @@ public class Table_Robot_Config extends LitePalSupport {
 
     public void setPhoneConfigJsonArray(String phoneConfigJsonArray) {
         this.phoneConfigJsonArray = phoneConfigJsonArray;
+    }
+
+    public String getLogoConfigJson() {
+        return logoConfigJson;
+    }
+
+    public void setLogoConfigJson(String logoConfigJson) {
+        this.logoConfigJson = logoConfigJson;
     }
 }

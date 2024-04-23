@@ -25,25 +25,53 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/slogan_name" />
 
-        <ImageView
-            android:id="@+id/imageViewSetting"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginStart="@dimen/dp_52"
-            android:layout_marginTop="@dimen/dp_57"
-            android:src="@drawable/setting_svg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_32"
-            android:src="@drawable/timeoclick_svg"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewSetting"
-            app:layout_constraintStart_toEndOf="@+id/imageViewSetting"
-            app:layout_constraintTop_toTopOf="@+id/imageViewSetting" />
+            android:layout_marginTop="@dimen/dp_64"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/text_view_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_E5FFFFFF"
+                android:textSize="@dimen/sp_32"
+                android:visibility="gone"
+                tools:text="无限集团有限公司"/>
+
+            <ImageView
+                android:id="@+id/image_view_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:contentDescription="@string/image_description"/>
+
+            <ImageView
+                android:id="@+id/imageViewSetting"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginStart="@dimen/dp_16"
+                android:src="@drawable/setting_svg"
+                android:contentDescription="@string/image_description" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginStart="@dimen/dp_16"
+                android:src="@drawable/timeoclick_svg"
+                android:contentDescription="@string/image_description"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/slogan_name"

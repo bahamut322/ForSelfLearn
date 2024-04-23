@@ -32,18 +32,19 @@ class ReadyForTaskFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        speakText = if (BillManager.currentBill() is GoBackTaskBill) {
-            getString(R.string.retry_dock)
-        }else{
-            getString(R.string.i_ready_to_work_excuse_me)
-        }
-        SpeakHelper.speakWithoutStop(speakText)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         binding.bottomAlarmTextViewReadyForTask.apply {
+            speakText = if (BillManager.currentBill() is GoBackTaskBill) {
+                getString(R.string.retry_dock)
+            }else{
+                getString(R.string.i_ready_to_work_excuse_me)
+            }
+            SpeakHelper.speakWithoutStop(speakText)
             bottomAlarmText1 = speakText
         }
         binding.motionLayoutReadyForTask.apply {

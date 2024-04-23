@@ -384,6 +384,7 @@ object MqttMessageHandler {
                     ToastUtil.show("收到机器人配置")
                     LogUtil.i("收到机器人配置")
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
+                    LogUtil.i(robotConfig.toString())
                     RobotStatus.robotConfig?.value = robotConfig
                     val currentConfig: Table_Robot_Config? = robotConfig()
                     if (currentConfig != null) {
@@ -432,6 +433,7 @@ object MqttMessageHandler {
                     tableRobotConfig.chargePointName = robotConfig.chargePointName
                     tableRobotConfig.slogan = robotConfig.slogan
                     tableRobotConfig.phoneConfigJsonArray = robotConfig.phoneConfig?.toString()
+                    tableRobotConfig.logoConfigJson = robotConfig.logoConfig?.toString()
                     if (robotConfig.argConfig.screen == 0) {
                         if (robotConfig.argConfig.argPic != null) {
                             println("收到：argPic")

@@ -37,10 +37,28 @@ data class RobotConfig(
     val waitingPointName: String? = "",
     val argConfig: TopLevelConfig?,
     val slogan : String? = "欢迎使用多功能服务机器人",
-    val phoneConfig: JsonArray? = null
+    val phoneConfig: JsonArray? = null,
+    var logoConfig: LogoConfig? = null
 )
 
 data class PhoneConfigModel(
     val phone: String? = "",
     val remarks: String? = "",
 )
+
+data class LogoConfig(
+    val isOpenLogo:Int,
+    val robotCopyWriting: String?,
+    val robotLogo: String?
+){
+    companion object{
+        const val IS_OPEN_LOGO_TYPE_DEFAULT = 0
+        const val IS_OPEN_LOGO_TYPE_IMAGE = 1
+        const val IS_OPEN_LOGO_TYPE_TEXT = 2
+    }
+    override fun toString(): String {
+        return """
+            {"isOpenLogo":$isOpenLogo,"robotCopyWriting":"${robotCopyWriting?:""}","robotLogo":"${robotLogo?:""}"}
+            """.trimIndent()
+    }
+}

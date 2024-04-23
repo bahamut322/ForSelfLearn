@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -16,7 +17,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
@@ -28,6 +34,7 @@ import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.model.LogoConfig
 import com.sendi.deliveredrobot.model.PhoneConfigModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -269,12 +276,19 @@ class HomeFragment : BaseFragment(), IMainView {
                 oneKeyCallPhoneDialog?.show()
             }
         }
-        RobotStatus.robotConfig?.observe(viewLifecycleOwner) {
+        if (!robotConfig.logoConfigJson.isNullOrEmpty()) {
+            val logoConfig = gson.fromJson(robotConfig.logoConfigJson, LogoConfig::class.java)
+            handleLogoConfig(logoConfig)
+        }
+        RobotStatus.robotConfig?.observe(viewLifecycleOwner) { it ->
             binding.textView61.text = String.format(getString(R.string.ask), it.wakeUpWord)
             binding.sloganName.text = it.slogan ?: getString(R.string.Welcome_used)
             it.phoneConfig?.let { phoneConfig ->
                 val list =  gson.fromJson(phoneConfig.toString(), Array<PhoneConfigModel>::class.java)
                 oneKeyCallPhoneDialog?.setData(list.toList())
+            }
+            it.logoConfig?.let { logoConfig ->
+                handleLogoConfig(logoConfig)
             }
         }
         //启动定位
@@ -763,5 +777,65 @@ class HomeFragment : BaseFragment(), IMainView {
 
     private fun homeFragmentNavigateToFragment(actionId: Int) {
         navigateToFragment(actionId)
+    }
+
+    private fun handleLogoConfig(logoConfig: LogoConfig){
+        when (logoConfig.isOpenLogo) {
+            LogoConfig.IS_OPEN_LOGO_TYPE_DEFAULT -> {
+                binding.imageViewLogo.also { imageViewLogo ->
+                    val drawableSDLogo =
+                        ContextCompat.getDrawable(requireContext(), R.drawable.ic_sendi_logo)
+                    drawableSDLogo?.apply {
+                        val drawableWidth = intrinsicWidth
+                        val ratio = drawableWidth * 1f / intrinsicHeight
+                        imageViewLogo.apply {
+                            layoutParams = imageViewLogo.layoutParams.apply {
+                                width = (40 * ratio).toInt()
+                                height = 40
+                            }
+                            background = drawableSDLogo
+                            visibility = View.VISIBLE
+                            binding.textViewLogo.visibility = View.GONE
+                        }
+
+                    }
+                }
+            }
+
+            LogoConfig.IS_OPEN_LOGO_TYPE_IMAGE -> {
+                binding.imageViewLogo.also { imageViewLogo ->
+                    Glide.with(imageViewLogo)
+                        .load("${BuildConfig.HTTP_HOST}${logoConfig.robotLogo}")
+                        .into(object : SimpleTarget<Drawable>() {
+                            override fun onResourceReady(
+                                p0: Drawable,
+                                p1: Transition<in Drawable>?
+                            ) {
+                                p0.apply {
+                                    val drawableWidth = intrinsicWidth
+                                    val ratio = drawableWidth * 1f / intrinsicHeight
+                                    imageViewLogo.apply {
+                                        layoutParams = imageViewLogo.layoutParams.apply {
+                                            width = (40 * ratio).toInt()
+                                            height = 40
+                                        }
+                                        visibility = View.VISIBLE
+                                        binding.textViewLogo.visibility = View.GONE
+                                    }
+                                    imageViewLogo.background = p0
+                                }
+                            }
+                        })
+                }
+            }
+
+            LogoConfig.IS_OPEN_LOGO_TYPE_TEXT -> {
+                binding.textViewLogo.apply {
+                    text = logoConfig.robotCopyWriting
+                    visibility = View.VISIBLE
+                    binding.imageViewLogo.visibility = View.GONE
+                }
+            }
+        }
     }
 }
