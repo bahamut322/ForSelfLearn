@@ -5,6 +5,7 @@ import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -18,6 +19,7 @@ class ExplainArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
     }
 
     override suspend fun execute() {
+        DialogHelper.loadingDialog.show()
         if (BillManager.billList().size<=1) {
             LogUtil.i("all讲解任务结束")
             MyApplication.instance?.sendBroadcast(Intent().apply {
@@ -27,5 +29,6 @@ class ExplainArriveTask(taskModel: TaskModel) : AbstractTask(taskModel) {
         }
         virtualTaskExecute(2, "讲解到达")
         taskModel?.bill?.executeNextTask()
+        DialogHelper.loadingDialog.dismiss()
     }
 }
