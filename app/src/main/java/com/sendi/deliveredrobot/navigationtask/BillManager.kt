@@ -34,14 +34,24 @@ object BillManager {
     fun removeBill(bill: ITaskBill? = null): ITaskBill? {
         return when (bill == null) {
             true -> billList.remove()
-            false -> billList.removeAt(billList.indexOf(bill))
+            false -> {
+                val index = billList.indexOf(bill)
+                when(index > -1){
+                    true -> billList.removeAt(index)
+                    false -> null
+                }
+            }
         }
     }
 
     fun clearBill(bill: ITaskBill? = null){
         when (bill == null) {
             true -> currentBill()?.removeAll()
-            false -> billList[billList.indexOf(bill)].removeAll()
+            false -> {
+                val index = billList.indexOf(bill)
+                if(index < 0) return
+                billList[index].removeAll()
+            }
         }
     }
 
