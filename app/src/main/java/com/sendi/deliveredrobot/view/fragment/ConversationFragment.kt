@@ -22,6 +22,8 @@ import com.iflytek.vtncaetest.StreamingAsrModel
 import com.iflytek.vtncaetest.VoiceManager
 import com.iflytek.vtncaetest.engine.AiuiEngine
 import com.iflytek.vtncaetest.engine.EngineConstants
+import com.iflytek.vtncaetest.engine.WakeupEngine
+import com.iflytek.vtncaetest.engine.WakeupListener
 import com.iflytek.vtncaetest.recorder.AudioRecorder
 import com.iflytek.vtncaetest.recorder.RecorderFactory
 import com.iflytek.vtncaetest.recorder.SystemRecorder
@@ -87,6 +89,7 @@ class ConversationFragment : Fragment() {
     private val defaultAnswer = PlaceholderEnum.replaceText("%唤醒词%未听清您说的话，可以再说一遍吗？")
     private val pattern = "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     private var aiuiListener: AIUIListener? = null
+    private var wakeupListener: WakeupListener? = null
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
     private var aiSoundHelper: TtsHelper? = null
@@ -131,6 +134,16 @@ class ConversationFragment : Fragment() {
                 LogUtil.i("conversation initSDK")
                 // 资源拷贝
                 CopyAssetsUtils.portingFile(MyApplication.context)
+                /**
+                 * 唤醒回调
+                 */
+                wakeupListener =
+                    WakeupListener { angle: Int, beam: Int, score: Int, keyWord: String ->
+                        //唤醒时停止播放tts
+                        SpeakHelper.speakUserCallback?.speakAllFinish()
+                        LogUtil.i("唤醒成功,angle:$angle beam:$beam score=$score")
+                        LogUtil.i("唤醒词$keyWord")
+                    }
                 aiuiListener = AIUIListener { event: AIUIEvent ->
                     when (event.eventType) {
                         AIUIConstant.EVENT_CONNECTED_TO_SERVER -> {
@@ -227,47 +240,6 @@ class ConversationFragment : Fragment() {
                                     findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
                                 }
                             }
-//                            val json = event.data.getByteArray("0").let {
-//                                val result = when (it == null) {
-//                                    true -> null
-//                                    false -> String(it, StandardCharsets.UTF_8)
-//                                }
-//                                result
-//                            } ?: return@AIUIListener
-//                            LogUtil.i(json)
-//                            val cntJson = JSONObject(json)
-//                            val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
-//                            val sid = nlpResult.getString("sid")
-//                            try {
-////                                val cntJson = JSONObject(json)
-////                                val nlpResult = cntJson.getJSONObject("intent") ?: return@AIUIListener
-//                                //nlp无结果不处理
-//                                //如果只判断asr结果中的无意义词，若nlp先返回就可能被错误判断为无意义词
-//                                val asrResult = nlpResult.getString("text")
-//                                EngineConstants.meaningful = senselessWordUtil.isMeaningful_filter1word(asrResult)
-//                                //无意义词不处理
-//                                if (!EngineConstants.meaningful) {
-//                                    LogUtil.i("无意义词不处理")
-////                                    AiuiEngine.MSG_reset_wakeup()
-//                                    //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
-////                                    DialogHelper.loadingDialog.dismiss()
-////                                    startTTS(defaultAnswer)
-////                                    mainScope.launch {
-////                                        addAnswer2(defaultAnswer)
-////                                    }
-//                                    return@AIUIListener
-//                                }
-//                                LogUtil.i("nlp result :$nlpResult")
-////                                AiuiEngine.MSG_reset_wakeup()
-//                                //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
-//                                val answer = "${nlpResult.getJSONObject("answer")["text"]}"
-//                                if(answerPriority?.contains(ASROrNlpModelTypeEnum.AIUI.getCode()) == true){
-//                                    findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),answer)
-//                                }
-//                            } catch (e: JSONException) {
-//                                findFinalAnswerAndStartTTS(sid, ASROrNlpModelTypeEnum.AIUI.getCode(),defaultAnswer)
-//                                LogUtil.i("nlpResult异常")
-//                            }
                         } else if (event.info.contains("\"sub\":\"tpp")) {
                             val json = event.data.getByteArray("0").let {
                                 val result = when (it == null) {
@@ -292,7 +264,7 @@ class ConversationFragment : Fragment() {
                         LogUtil.i(
                             """解决方案:${ErrorCode.getError(event.arg1)}错误解决详情参考：https://www.yuque.com/iflyaiui/zzoolv/igbuol"""
                         )
-                        AiuiEngine.MSG_reset_wakeup()
+//                        AiuiEngine.MSG_reset_wakeup()
                         //在线语义结果,rc=0语义理解成功，rc≠0语义理解失败
                         val answer =
                             "发生异常，请重试...（错误码:${event.arg1} 错误信息:${event.info}）"
@@ -398,7 +370,8 @@ class ConversationFragment : Fragment() {
             SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback {
                 override fun speakAllFinish() {
                     LogUtil.i("tts:播放完成")
-                    AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
+                    SystemRecorder.AUDIO_TYPE_ASR = true
+//                    AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
                     talkingView = null
                 }
 
@@ -541,7 +514,7 @@ class ConversationFragment : Fragment() {
 
     private suspend fun addAnswer2(conversation: String) {
         LogUtil.i("回复--->$conversation")
-        AiuiEngine.MSG_reset_wakeup()
+//        AiuiEngine.MSG_reset_wakeup()
         binding?.linearLayoutConversation?.apply {
             val linearLayoutCompat = LayoutInflater.from(requireContext())
                 .inflate(R.layout.layout_conversation_text_view_left, null) as LinearLayoutCompat
@@ -579,6 +552,9 @@ class ConversationFragment : Fragment() {
         }
     }
 
+    /**
+     * @description 带二维码的item
+     */
     private suspend fun addAnswer3() {
         binding?.linearLayoutConversation?.apply {
             val linearLayoutCompat = LayoutInflater.from(requireContext())
@@ -746,6 +722,7 @@ class ConversationFragment : Fragment() {
             setPitch(50)
             speechText(text.replace(Regex(pattern),""))
         }
+        SystemRecorder.AUDIO_TYPE_ASR = false
     }
 
     private fun initSDK() {
@@ -761,9 +738,15 @@ class ConversationFragment : Fragment() {
         } else {
             LogUtil.i("AIUI初始化失败")
         }
-
         //对音频的处理为不降噪唤醒直接送去识别，只保留1声道音频,
         SystemRecorder.AUDIO_TYPE_ASR = true
+        //初始化wakeupEngine(降噪+唤醒)
+        val initResult = WakeupEngine.getInstance(wakeupListener)
+        if (initResult == 0) {
+            LogUtil.i("wakeupEngine初始化成功")
+        } else {
+            LogUtil.i("wakeupEngine初始化失败")
+        }
         //初始化录音
         if (recorder == null) {
             recorder = RecorderFactory.getRecorder()
@@ -822,8 +805,14 @@ class ConversationFragment : Fragment() {
                 aiuiListener = null
             }
             SystemRecorder.AUDIO_TYPE_ASR = false
+            //销毁唤醒引擎
+            WakeupEngine.destroy()
             //销毁aiui
             AiuiEngine.destroy()
+            //销毁aiui
+            if (wakeupListener != null) {
+                wakeupListener = null
+            }
             SpeakHelper.stop()
             aiSoundHelper?.stop()
             LogUtil.i("conversation quitFragment is done")
