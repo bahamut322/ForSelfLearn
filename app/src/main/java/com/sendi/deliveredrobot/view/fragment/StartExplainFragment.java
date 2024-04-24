@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.RobotCommand;
 import com.sendi.deliveredrobot.adapter.ChangePointGridViewAdapter;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentStartExplantionBinding;
@@ -37,6 +38,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.ExplainManager;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.ExplainStatusModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
@@ -45,12 +47,14 @@ import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.PlaceholderEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
+import com.sendi.deliveredrobot.topic.SafeStateTopic;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.ChangingOverDialog;
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog;
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
 import com.sendi.deliveredrobot.view.widget.Stat;
+import com.sendi.deliveredrobot.view.widget.TaskArray;
 import com.sendi.deliveredrobot.view.widget.TaskNext;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
@@ -58,6 +62,11 @@ import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import chassis_msgs.SafeState;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.EmptyCoroutineContext;
 
 /**
  * @author swn
@@ -703,9 +712,9 @@ public class StartExplainFragment extends Fragment {
             //显示内容
             binding.horizontalTV.setText(baseViewModel.getLength(fontContent));
             //背景颜色&图片
-            binding.horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            binding.horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround));
             //文字颜色
-            binding.horizontalTV.setTextColor(Color.parseColor(fontColor + ""));
+            binding.horizontalTV.setTextColor(Color.parseColor(fontColor));
             //字体大小
             if (fontSize == 1) {
                 binding.horizontalTV.setTextSize(30);
@@ -722,9 +731,9 @@ public class StartExplainFragment extends Fragment {
             //显示内容
             binding.verticalTV.setText(fontContent);
             //背景颜色
-            binding.verticalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            binding.verticalTV.setBackgroundColor(Color.parseColor(fontBackGround));
             //文字颜色
-            binding.verticalTV.setTextColor(Color.parseColor(fontColor + ""));
+            binding.verticalTV.setTextColor(Color.parseColor(fontColor));
             //字体大小
             if (fontSize == 1) {
                 binding.verticalTV.setTextSize(30);

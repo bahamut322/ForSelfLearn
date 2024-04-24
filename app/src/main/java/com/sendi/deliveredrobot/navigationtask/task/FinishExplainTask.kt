@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 
 /**
@@ -33,6 +34,7 @@ class FinishExplainTask (var status:Int = 1, taskModel: TaskModel, needReportDat
     }
 
     override suspend fun execute() {
+        SafeStateTopic.resetSafeStateListener()
         BillManager.currentBill()?.executeNextTask()
     }
 }
