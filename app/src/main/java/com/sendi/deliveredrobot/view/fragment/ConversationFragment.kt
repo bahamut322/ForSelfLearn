@@ -51,6 +51,7 @@ import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.SpanUtils
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -140,9 +141,8 @@ class ConversationFragment : Fragment() {
                 wakeupListener =
                     WakeupListener { angle: Int, beam: Int, score: Int, keyWord: String ->
                         //唤醒时停止播放tts
+                        aiSoundHelper?.stop()
                         SpeakHelper.speakUserCallback?.speakAllFinish()
-                        LogUtil.i("唤醒成功,angle:$angle beam:$beam score=$score")
-                        LogUtil.i("唤醒词$keyWord")
                     }
                 aiuiListener = AIUIListener { event: AIUIEvent ->
                     when (event.eventType) {
@@ -371,7 +371,6 @@ class ConversationFragment : Fragment() {
                 override fun speakAllFinish() {
                     LogUtil.i("tts:播放完成")
                     SystemRecorder.AUDIO_TYPE_ASR = true
-//                    AiuiEngine.MSG_wakeup(EngineConstants.WAKEUPTYPE_VOICE)
                     talkingView = null
                 }
 
@@ -711,7 +710,7 @@ class ConversationFragment : Fragment() {
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
         aiSoundHelper?.apply {
-            AudioMngHelper(requireContext()).setVoice100(30)
+            AudioMngHelper(requireContext()).setVoice100(50)
             var speed = basicModel?.speechSpeed?.times(7f)?.toInt()?:50
             speed = speed.let {
                 if(it > 100) 100

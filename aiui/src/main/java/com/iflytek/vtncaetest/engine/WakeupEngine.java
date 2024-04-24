@@ -130,7 +130,7 @@ public class WakeupEngine {
                     }
                 }
                 //音频送给识别引擎，格式：16k 16bit 1声道
-                AiuiEngine.MSG_writeAudio(asrAudio);
+//                AiuiEngine.MSG_writeAudio(asrAudio);
             }
         }
 
