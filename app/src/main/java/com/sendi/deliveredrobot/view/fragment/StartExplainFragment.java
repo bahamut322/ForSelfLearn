@@ -47,14 +47,12 @@ import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.PlaceholderEnum;
 import com.sendi.deliveredrobot.service.UpdateReturn;
-import com.sendi.deliveredrobot.topic.SafeStateTopic;
 import com.sendi.deliveredrobot.utils.CenterItemUtils;
 import com.sendi.deliveredrobot.utils.LogUtil;
 import com.sendi.deliveredrobot.view.widget.ChangingOverDialog;
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog;
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog;
 import com.sendi.deliveredrobot.view.widget.Stat;
-import com.sendi.deliveredrobot.view.widget.TaskArray;
 import com.sendi.deliveredrobot.view.widget.TaskNext;
 import com.sendi.deliveredrobot.viewmodel.BaseViewModel;
 import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
@@ -62,11 +60,6 @@ import com.sendi.deliveredrobot.viewmodel.StartExplainViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import chassis_msgs.SafeState;
-import kotlin.coroutines.Continuation;
-import kotlin.coroutines.CoroutineContext;
-import kotlin.coroutines.EmptyCoroutineContext;
 
 /**
  * @author swn
@@ -225,9 +218,11 @@ public class StartExplainFragment extends Fragment {
             }
         });
         binding.parentCon.setOnClickListener(v -> {
-            Log.d("TAG", "onViewCreated: 点击");
-            Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-            processDialog();
+//            Log.d("TAG", "onViewCreated: 点击");
+            if (RobotStatus.INSTANCE.getManageStatus() != RobotCommand.MANAGE_STATUS_STOP) {
+                Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
+                processDialog();
+            }
         });
         //暂停讲解
         binding.pauseBtn.setOnClickListener(v -> {
@@ -504,7 +499,7 @@ public class StartExplainFragment extends Fragment {
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
                     RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
-                    DialogHelper.loadingDialog.dismiss();
+//                    DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
                     binding.goingName.setText(ExplainManager.INSTANCE.getRoutes().get(position).getName());
 //                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
