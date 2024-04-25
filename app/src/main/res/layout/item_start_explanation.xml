@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    tools:background="#666"
+    >
 
     <RelativeLayout
         android:id="@+id/rlTimeline"
@@ -14,7 +16,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#000"
+        >
 
         <ImageView
             android:id="@+id/tvTopLine"
@@ -28,16 +32,10 @@
             android:id="@+id/tvDot"
             android:layout_width="12dp"
             android:layout_height="12dp"
+            android:translationY="-6dp"
             android:layout_below="@id/tvTopLine"
             android:layout_centerHorizontal="true"
             android:background="@drawable/lline_dot_normal" />
-
-        <!--        <TextView-->
-        <!--            android:layout_width="4dp"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:layout_below="@id/tvDot"-->
-        <!--            android:layout_centerHorizontal="true"-->
-        <!--            android:background="#999" />-->
     </RelativeLayout>
 
 
@@ -45,13 +43,21 @@
         android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="你好"
+        android:maxWidth="@dimen/dp_120"
         android:layout_gravity="bottom"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_24"
         android:layout_marginStart="@dimen/dp_5"
+        android:ellipsize="end"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/rlTimeline"
-        app:layout_constraintStart_toEndOf="@+id/rlTimeline" />
+        app:layout_constraintStart_toEndOf="@+id/rlTimeline"
+        tools:text="你好你好你好你好"
+        />
 
     <!--        <TextView-->
         <!--            android:id="@+id/tvAcceptStation"-->

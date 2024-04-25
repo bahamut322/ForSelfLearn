@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -492,6 +493,9 @@ public class StartExplainFragment extends Fragment {
                 AnimationDrawable animationDrawable = (AnimationDrawable) vh.tvTopLine.getDrawable();
                 animationDrawable.start();
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
+                    vh.tv.setHorizontallyScrolling(true);
+                    vh.tv.setFocusable(true);
+                    vh.tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
                     RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
@@ -517,6 +521,9 @@ public class StartExplainFragment extends Fragment {
                     }
             } else {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
+                vh.tv.setHorizontallyScrolling(false);
+                vh.tv.setFocusable(false);
+                vh.tv.setEllipsize(TextUtils.TruncateAt.END);
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first);
             }
             vh.tv.setText(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
