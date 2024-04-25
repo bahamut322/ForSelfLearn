@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout_container"
+    android:layout_width="@dimen/dp_312"
+    android:layout_height="432dp"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:layout_marginStart="@dimen/dp_16"
+    android:layout_marginEnd="@dimen/dp_16"
+    tools:background="@drawable/item2">
+
+    <View
+        android:id="@+id/view_icon"
+        android:layout_width="@dimen/dp_184"
+        android:layout_height="@dimen/dp_184"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_64"
+        tools:background="@drawable/leadership_svg"
+        />
+
+    <TextView
+        android:id="@+id/text_view_main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_42"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_32"
+        tools:text="智能引领"
+        />
+
+    <TextView
+        android:id="@+id/text_view_sub_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_12"
+        android:alpha="0.4"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_22"
+        tools:text="GUIDANCE"/>
+</LinearLayout>

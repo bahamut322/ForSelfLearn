@@ -31,6 +31,43 @@
             android:textColor="@color/white"
             android:textSize="@dimen/sp_42"
             android:gravity="center"
-            android:text="返回中....."/>
+            android:text="@string/go_back_2"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutPause"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/constraintLayoutPause"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayoutPause"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayoutPause"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayoutPause">
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupGoBacking"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="imageViewGoBack,goBackTv"
+            android:visibility="gone"
+            tools:visibility="gone"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="constraintLayoutPause"
+            tools:visibility="visible"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
