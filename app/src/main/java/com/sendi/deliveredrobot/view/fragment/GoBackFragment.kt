@@ -1,14 +1,14 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.view.marginTop
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -17,13 +17,19 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.ToastUtil
-import kotlinx.coroutines.*
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import okhttp3.internal.notify
+import java.util.Date
+import java.util.Timer
+import java.util.TimerTask
 
 class GoBackFragment : Fragment() {
     private lateinit var binding: FragmentGoBackBinding
@@ -33,6 +39,14 @@ class GoBackFragment : Fragment() {
     private val columnMaxButtonSize = 2
     private val viewHeight = 432
     private val viewWidth = 336
+    private var timer: Timer? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var remainSeconds = 30
+        set(value) = if(value < 0){
+            field = 30
+        }else{
+            field = value
+        }
     private var practicalSize = 1
         set(value) = if(value > totalSize) {
             field = 1
@@ -125,9 +139,26 @@ class GoBackFragment : Fragment() {
             practicalSize++
             val views = arrangeButtonPosition(calculateButtonPosition(totalSize = totalSize, practicalSize = practicalSize, columnMaxButtonSize = columnMaxButtonSize), columnMaxButtonSize = columnMaxButtonSize)
             for ((index, s) in res.withIndex()) {
-                views[index].apply {
-                    calculateAndSetViewParams(s, this)
+                if(views.size > index){
+                    views[index].apply {
+                        calculateAndSetViewParams(s, this)
+                    }
                 }
+            }
+        }
+        binding.imageViewGoBack.apply {
+            setOnClickListener {
+                binding.groupGoBacking.visibility = View.GONE
+                binding.groupGoBackPause.visibility = View.VISIBLE
+                showGroupGoBackPause()
+            }
+        }
+        binding.textViewReturn.run {
+            setOnClickListener {
+                binding.groupGoBacking.visibility = View.VISIBLE
+                binding.groupGoBackPause.visibility = View.GONE
+                timer?.cancel()
+                remainSeconds = 30
             }
         }
     }
@@ -142,9 +173,9 @@ class GoBackFragment : Fragment() {
      * @return Pair<bigButtonSize, smallButtonSize>
      */
     private fun calculateButtonPosition(
-        totalSize: Int = 6,
+        totalSize: Int,
         practicalSize: Int,
-        columnMaxButtonSize: Int = 2): Pair<Int, Int> {
+        columnMaxButtonSize: Int): Pair<Int, Int> {
         val bigButtonSize: Int
         val smallButtonSize: Int
         if(totalSize % practicalSize != 0) {
@@ -302,5 +333,18 @@ class GoBackFragment : Fragment() {
                 R.drawable.leadership_svg
             }
         }
+    }
+
+    private fun showGroupGoBackPause(){
+        timer = Timer()
+        timer?.schedule(object : TimerTask(){
+            override fun run() {
+                val spannableString = CommonHelper.getTimeSpan(remainSeconds--, 1.6f)
+                handler.post {
+                    binding.textViewSeconds.text = spannableString
+                }
+            }
+        }, Date(), 1000L)
+
     }
 }

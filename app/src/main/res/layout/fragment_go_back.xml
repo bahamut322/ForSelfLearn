@@ -41,16 +41,19 @@
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
             <TextView
+                android:id="@+id/text_view_i_can_serve_you"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="36dp"
+                android:layout_marginBottom="26dp"
                 android:text="@string/i_can_offer_this_service"
-                android:textSize="@dimen/sp_48"
                 android:textColor="@color/color_E5FFFFFF"
+                android:textSize="@dimen/sp_48"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayoutButtons"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayoutPause"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayoutPause"
@@ -68,8 +71,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayoutPause"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayoutPause"
                 app:layout_constraintTop_toTopOf="@+id/constraintLayoutPause"
-                app:layout_constraintVertical_bias="1.0">
-            </LinearLayout>
+                app:layout_constraintVertical_bias="1.0"/>
 
             <ImageView
                 android:id="@+id/imageView8"
@@ -78,44 +80,78 @@
                 android:layout_marginStart="@dimen/dp_48"
                 android:layout_marginBottom="@dimen/dp_28"
                 android:src="@drawable/horn_svg"
+                android:contentDescription="@string/image_description"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/textView61"
-                android:text="@{@string/ask(wakeUpName.robotConfig().wakeUpWord)}"
-                android:textColor="@color/white"
-                android:textStyle="normal"
-                android:alpha="0.7"
-                android:layout_marginStart="@dimen/dp_14"
-                android:textSize="@dimen/sp_24"
-                android:gravity="center"
-                android:shadowColor="@color/red"
-                android:shadowRadius="10.0"
-                android:shadowDx="50.0"
-                android:shadowDy="30.0"
-                android:singleLine="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:ellipsize="marquee"
-                android:clickable="true"
-                android:marqueeRepeatLimit="marquee_forever"
                 android:layout_width="@dimen/dp_320"
                 android:layout_height="wrap_content"
-                tools:text="@string/ask"
+                android:layout_marginStart="@dimen/dp_14"
+                android:alpha="0.7"
                 android:background="@drawable/rectangle"
+                android:clickable="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:shadowColor="@color/red"
+                android:shadowDx="50.0"
+                android:shadowDy="30.0"
+                android:shadowRadius="10.0"
+                android:singleLine="true"
+                android:text="@{@string/ask(wakeUpName.robotConfig().wakeUpWord)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_24"
+                android:textStyle="normal"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-                app:layout_constraintStart_toEndOf="@+id/imageView8" >
+                app:layout_constraintStart_toEndOf="@+id/imageView8"
+                tools:text="@string/ask">
+
                 <requestFocus />
             </TextView>
 
             <ImageView
                 android:layout_width="@dimen/dp_6"
                 android:layout_height="@dimen/dp_7"
+                android:contentDescription="@string/image_description"
                 android:src="@drawable/rt_horn"
                 app:layout_constraintBottom_toBottomOf="@+id/textView61"
                 app:layout_constraintEnd_toStartOf="@+id/textView61" />
 
+            <TextView
+                android:id="@+id/text_view_seconds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="76dp"
+                android:layout_marginEnd="250dp"
+                android:textColor="@color/color_E5FFFFFF"
+                android:textSize="@dimen/sp_40"
+                app:layout_constraintBottom_toTopOf="@+id/text_view_i_can_serve_you"
+                app:layout_constraintEnd_toStartOf="@+id/text_view_i_can_serve_you"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayoutPause"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayoutPause"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="30s" />
+
+            <TextView
+                android:id="@+id/text_view_return"
+                android:layout_width="@dimen/dp_120"
+                android:layout_height="@dimen/dp_56"
+                android:layout_marginStart="224dp"
+                android:text="@string/back"
+                android:textSize="@dimen/sp_32"
+                android:textColor="@color/color_E5FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/shape_corners_8dp_stroke_99ffffff"
+                app:layout_constraintBottom_toBottomOf="@+id/text_view_seconds"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayoutPause"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/text_view_i_can_serve_you"
+                app:layout_constraintTop_toTopOf="@+id/text_view_seconds" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Group
@@ -123,13 +159,15 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:constraint_referenced_ids="imageViewGoBack,goBackTv"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:visibility="gone"/>
 
         <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupGoBackPause"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:constraint_referenced_ids="constraintLayoutPause"
+            android:visibility="gone"
             tools:visibility="visible"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
