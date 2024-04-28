@@ -145,7 +145,6 @@ object FaceRecognition {
                             if (bm != null) {
                                 faceHttp(extractFeature, bm, needEtiquette)
                                 FaceDataListener.setFaceBit(bm)
-                                bm.recycle()
                             }
                         } catch (_: Exception) {
                         }
@@ -194,7 +193,7 @@ object FaceRecognition {
         needEtiquette: Boolean = false
     ) {
         val base64 = bitmapToBase64(bitmap)
-        System.gc()
+        bitmap.recycle()
         // 添加参数到JSON对象
         faceHttpJsonParams["img"] = base64 // 后续需要修改base64
         faceHttpJsonParams["extract"] = extractFeature

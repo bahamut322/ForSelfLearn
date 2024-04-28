@@ -96,7 +96,6 @@ class ConversationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         basicModel = QuerySql.QueryBasic()
-        initXTTS()
     }
 
     override fun onCreateView(
@@ -380,6 +379,7 @@ class ConversationFragment : Fragment() {
                     DialogHelper.loadingDialog.dismiss()
                     return@thread
                 }
+                initXTTS()
                 initSDK()
                 startRecord()
                 Thread.sleep(2000)
