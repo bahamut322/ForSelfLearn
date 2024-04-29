@@ -362,6 +362,7 @@ class ConversationFragment : Fragment() {
                     DialogHelper.loadingDialog.dismiss()
                     return@thread
                 }
+                initXTTS()
                 initSDK()
                 startRecord()
                 Thread.sleep(2000)

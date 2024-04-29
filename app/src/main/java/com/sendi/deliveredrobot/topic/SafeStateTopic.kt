@@ -42,10 +42,6 @@ object SafeStateTopic {
                 mutex.withLock {
                     if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
                         LogUtil.d("急停按下")
-                        TaskArray.setToDo("3")
-                        //播报语音音量
-                        MediaPlayerHelper.getInstance().pause()
-                        BaiduTTSHelper.getInstance().pause()
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_PRESSED
                         }
@@ -67,21 +63,15 @@ object SafeStateTopic {
                                 RobotCommand.MANAGE_STATUS_CONTINUE -> {
                                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
                                 }
+                                else -> {}
                             }
                         } else {
                             safeStateListener?.invoke(safeState)
                         }
-                        //按下急停时，释放开门，提升用户体验
-                        LiftHelper.releaseLiftDoor(
-                            BillManager.currentBill()?.currentTask()?.taskModel?.elevator ?: ""
-                        )
-                    } else if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
+                    }
+                    if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
                         DialogHelper.stopDialog.dismiss()
                         LogUtil.d("急停抬起")
-                        if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
-                            MediaPlayerHelper.getInstance().resume()
-                            BaiduTTSHelper.getInstance().resume()
-                        }
                         withContext(Dispatchers.Main) {
                             RobotStatus.stopButtonPressed.value = RobotCommand.STOP_BUTTON_UNPRESSED
                         }
@@ -100,10 +90,6 @@ object SafeStateTopic {
                         if (safeStateListener == null) {
                             when (RobotStatus.manageStatus) {
                                 RobotCommand.MANAGE_STATUS_STOP -> {
-                                    if (Universal.explainUnSpeak) {
-                                        TaskArray.setToDo("5")
-                                        return@launch
-                                    }
                                     if (BillManager.currentBill()?.firstPeek() is BeginDockTask) {
                                         ROSHelper.controlDock(RobotCommand.CMD_RESUME)
                                     } else {
@@ -112,16 +98,11 @@ object SafeStateTopic {
                                 }
 
                                 RobotCommand.MANAGE_STATUS_PAUSE -> {
-                                    if (Universal.explainUnSpeak) {
-                                        TaskArray.setToDo("5")
-                                        return@launch
-                                    }
-                                    Universal.explainUnSpeak = false
                                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
                                 }
 
                                 RobotCommand.MANAGE_STATUS_CONTINUE -> {}
-
+                                else ->{}
                             }
 
                         } else {

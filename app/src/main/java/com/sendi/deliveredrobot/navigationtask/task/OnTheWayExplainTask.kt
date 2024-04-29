@@ -51,6 +51,7 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
             ExplainManager.secondScreenModel(route)
             status = ExplainStatusModel.STATUS_ON_THE_WAY_PROCESS
             if(route!!.walktext.isNullOrEmpty() && route!!.walkvoice.isNullOrEmpty()){
+                delay(500) //延时500ms等一等导航topic上来，不然可能会误判
                 finishExplain()
                 DialogHelper.loadingDialog.dismiss()
                 LogUtil.i("walktext和walkvoice为空")

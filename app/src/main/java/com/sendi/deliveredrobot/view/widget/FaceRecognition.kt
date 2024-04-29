@@ -143,9 +143,9 @@ object FaceRecognition {
 //                    Log.d(TAG, "suerFaceInit人脸识别协程名: ${Thread.currentThread().name}")
                             val bm = decodeByteArrayToBitmap(data, width, height)
                             if (bm != null) {
+                                LogUtil.i("camera request")
                                 faceHttp(extractFeature, bm, needEtiquette)
                                 FaceDataListener.setFaceBit(bm)
-                                bm.recycle()
                             }
                         } catch (_: Exception) {
                         }
@@ -194,7 +194,7 @@ object FaceRecognition {
         needEtiquette: Boolean = false
     ) {
         val base64 = bitmapToBase64(bitmap)
-        System.gc()
+        bitmap.recycle()
         // 添加参数到JSON对象
         faceHttpJsonParams["img"] = base64 // 后续需要修改base64
         faceHttpJsonParams["extract"] = extractFeature
@@ -208,6 +208,7 @@ object FaceRecognition {
         // 发送POST请求
         x.http().post(faceHttpParams, object : CommonCallback<String> {
             override fun onSuccess(result: String?) {
+                LogUtil.i("camera request success")
                 val faceModelList: List<FaceModel> = gson.fromJson(result, listType)
                 FaceDataListener.setFaceModels(faceModelList)
                 // Update data
@@ -230,12 +231,14 @@ object FaceRecognition {
             override fun onError(ex: Throwable, isOnCallback: Boolean) {
                 // 请求出错，处理错误信息
                 canSendData = true
-                Log.i(TAG, "人脸检测请求出错: $ex")
+                LogUtil.i("camera request error")
+                LogUtil.e("$ex")
             }
 
             override fun onCancelled(cex: Callback.CancelledException) {
                 // 请求被取消，处理取消请求'
                 Log.d(TAG, "人脸检测请求被取消: ")
+                LogUtil.e("人脸检测请求被取消")
             }
 
             override fun onFinished() {
@@ -243,7 +246,7 @@ object FaceRecognition {
                 if (!extractFeature) {
                     canSendData = true
                 }
-                Log.d(TAG, "人脸检测请求完成: ")
+                LogUtil.i("camera request complete")
             }
         })
     }
@@ -317,6 +320,8 @@ object FaceRecognition {
         // 打印请求的JSON数据
         faceIdentifyParams.isAsJsonContent = true // 设置请求内容为JSON
         faceIdentifyParams.bodyContent = jsonString // 设置请求体为JSON字符串
+        faceIdentifyParams.connectTimeout = 5000
+        faceIdentifyParams.readTimeout = 5000
 //        Log.d(TAG, "人脸识别请求发送数据")
         // 发送POST请求
         x.http().post(faceIdentifyParams, object : CommonCallback<String> {
@@ -331,18 +336,19 @@ object FaceRecognition {
             override fun onError(ex: Throwable, isOnCallback: Boolean) {
                 // 请求出错，处理错误信息
                 canSendData = true
-                Log.i(TAG, "人脸识别请求出错: $ex")
+                LogUtil.i("camera request error")
+                LogUtil.e("$ex")
             }
 
             override fun onCancelled(cex: Callback.CancelledException) {
                 // 请求被取消，处理取消请求'
-                Log.d(TAG, "人脸识别请求被取消: ")
+                LogUtil.e("人脸识别被取消")
             }
 
             override fun onFinished() {
                 // 请求完成，无论成功或失败都会调用
                 canSendData = true
-                Log.d(TAG, "人脸识别请求完成: ")
+                LogUtil.e("人脸识别请求完成: ")
             }
         })
     }

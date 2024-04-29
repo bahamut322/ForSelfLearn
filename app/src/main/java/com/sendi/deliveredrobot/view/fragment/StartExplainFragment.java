@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.sendi.deliveredrobot.R;
+import com.sendi.deliveredrobot.RobotCommand;
 import com.sendi.deliveredrobot.adapter.ChangePointGridViewAdapter;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.databinding.FragmentStartExplantionBinding;
@@ -38,6 +39,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
 import com.sendi.deliveredrobot.helpers.DialogHelper;
 import com.sendi.deliveredrobot.helpers.ExplainManager;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.ROSHelper;
 import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.model.ExplainStatusModel;
 import com.sendi.deliveredrobot.model.MyResultModel;
@@ -217,9 +219,11 @@ public class StartExplainFragment extends Fragment {
             }
         });
         binding.parentCon.setOnClickListener(v -> {
-            Log.d("TAG", "onViewCreated: 点击");
-            Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-            processDialog();
+//            Log.d("TAG", "onViewCreated: 点击");
+            if (RobotStatus.INSTANCE.getManageStatus() != RobotCommand.MANAGE_STATUS_STOP) {
+                Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
+                processDialog();
+            }
         });
         //暂停讲解
         binding.pauseBtn.setOnClickListener(v -> {
@@ -499,7 +503,7 @@ public class StartExplainFragment extends Fragment {
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
                     RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
-                    DialogHelper.loadingDialog.dismiss();
+//                    DialogHelper.loadingDialog.dismiss();
                     //当前点显示的文字&图片
                     binding.goingName.setText(ExplainManager.INSTANCE.getRoutes().get(position).getName());
 //                    Log.e("TAG", "onBindViewLandholder: " + QuerySql.queryPointDate(RobotStatus.INSTANCE.getSelectRouteMapItemId()).get(position).getTouch_type());
@@ -710,9 +714,9 @@ public class StartExplainFragment extends Fragment {
             //显示内容
             binding.horizontalTV.setText(baseViewModel.getLength(fontContent));
             //背景颜色&图片
-            binding.horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            binding.horizontalTV.setBackgroundColor(Color.parseColor(fontBackGround));
             //文字颜色
-            binding.horizontalTV.setTextColor(Color.parseColor(fontColor + ""));
+            binding.horizontalTV.setTextColor(Color.parseColor(fontColor));
             //字体大小
             if (fontSize == 1) {
                 binding.horizontalTV.setTextSize(30);
@@ -729,9 +733,9 @@ public class StartExplainFragment extends Fragment {
             //显示内容
             binding.verticalTV.setText(fontContent);
             //背景颜色
-            binding.verticalTV.setBackgroundColor(Color.parseColor(fontBackGround + ""));
+            binding.verticalTV.setBackgroundColor(Color.parseColor(fontBackGround));
             //文字颜色
-            binding.verticalTV.setTextColor(Color.parseColor(fontColor + ""));
+            binding.verticalTV.setTextColor(Color.parseColor(fontColor));
             //字体大小
             if (fontSize == 1) {
                 binding.verticalTV.setTextSize(30);

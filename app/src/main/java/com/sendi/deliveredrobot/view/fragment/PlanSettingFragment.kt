@@ -25,6 +25,7 @@ import com.sendi.deliveredrobot.view.widget.FaceImageDialog
 import com.sendi.deliveredrobot.viewmodel.SettingViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -93,6 +94,9 @@ class PlanSettingFragment : Fragment() {
                     val bill = GoBackTaskBillFactory.createBill(TaskModel())
                     BillManager.addAllLast(bill)
                     ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                    DialogHelper.loadingDialog.show()
+                    delay(4000)
+                    DialogHelper.loadingDialog.dismiss()
                 }
             }
         }

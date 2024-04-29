@@ -40,14 +40,10 @@ class ExplainingTask (
             action = ACTION_NAVIGATE
             putExtra(NAVIGATE_ID, navigateId)
         })
-        RobotStatus.arrayPointExplain.postValue(0)
-
         //step1设置速度
 //        ROSHelper.setSpeed("${basicSettingViewModel.value.basicConfig.guideSpeed}")
         ROSHelper.navigateTo(taskModel!!.location!!)
         taskModel?.bill?.executeNextTask()
-        DialogHelper.loadingDialog.dismiss()
-
     }
 
     fun test(): Boolean{
