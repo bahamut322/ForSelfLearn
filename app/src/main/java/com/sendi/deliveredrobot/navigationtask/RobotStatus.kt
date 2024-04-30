@@ -28,7 +28,7 @@ object RobotStatus {
     var inLiftFlow = false //正在电梯流程内（start: callLift, end: outLift)
     var mqttConnected = false //mqtt连接状态
     var retryDockTimes = 0      //重试自主充电次数
-//    var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
+    var batteryStateNumber : MutableLiveData<Boolean> = MutableLiveData(false)//用于观察是否连接充电器（非适配器）来设置位置
     val sysTimeStamp : MutableLiveData<Long> = MutableLiveData(Date().time)//如果怕获取不到后台的时间，可以加上Date().time先设置系统时间进去
     var bootLocation: QueryPointEntity? = null //开机点
     var originalLocation: QueryPointEntity? = null//原始点，默认为充电桩停靠点

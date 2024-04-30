@@ -10,28 +10,41 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
+import chassis_msgs.SafeState
 import com.bumptech.glide.Glide
+import com.iflytek.vtncaetest.engine.EngineConstants
+import com.iflytek.vtncaetest.engine.WakeupEngine
+import com.iflytek.vtncaetest.engine.WakeupListener
+import com.iflytek.vtncaetest.utils.CopyAssetsUtils
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.CommonHelper
+import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.topic.SafeStateTopic
+import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
+import com.sendi.deliveredrobot.view.widget.FaceRecognition
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import okhttp3.internal.notify
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.Timer
 import java.util.TimerTask
 
-class GoBackFragment : Fragment() {
+class GoBackFragment : BaseFragment() {
     private lateinit var binding: FragmentGoBackBinding
     private lateinit var seconds: MutableLiveData<Int>
     private lateinit var mainScope: CoroutineScope
@@ -41,9 +54,27 @@ class GoBackFragment : Fragment() {
     private val viewWidth = 336
     private var timer: Timer? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var remainSeconds = 30
+    private var remainSeconds = REMAIN_DEFAULT
         set(value) = if(value < 0){
-            field = 30
+            mainScope.launch{
+                withContext(Dispatchers.Default){
+                    if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE){
+                        val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                        if(result){
+                            withContext(Dispatchers.Main){
+                                showGroupGoBacking()
+                            }
+                        }else{
+                            ToastUtil.show("恢复失败")
+                            field = REMAIN_DEFAULT
+                        }
+                    }else{
+                        ToastUtil.show("恢复失败")
+                        field = REMAIN_DEFAULT
+                    }
+                }
+            }
+            field = value
         }else{
             field = value
         }
@@ -66,6 +97,10 @@ class GoBackFragment : Fragment() {
         super.onStop()
         SafeStateTopic.resetSafeStateListener()
         mainScope.cancel()
+    }
+
+    override fun onBaseResume() {
+        // 空实现
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,21 +181,82 @@ class GoBackFragment : Fragment() {
                 }
             }
         }
-        binding.imageViewGoBack.apply {
-            setOnClickListener {
-                binding.groupGoBacking.visibility = View.GONE
-                binding.groupGoBackPause.visibility = View.VISIBLE
-                showGroupGoBackPause()
+        binding.imageViewGoBack.let { imageView ->
+            imageView.setOnClickListener {
+                imageView.isEnabled = false
+                mainScope.launch {
+                    withContext(Dispatchers.Default){
+                        if(RobotStatus.manageStatus != RobotCommand.MANAGE_STATUS_CONTINUE){
+                            val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+                            if(!result){
+                                initWakeUpEngine()
+                                withContext(Dispatchers.Main){
+                                    showGroupGoBackPause()
+                                }
+                            }else{
+                                ToastUtil.show("暂停失败")
+                            }
+                        }else{
+                            ToastUtil.show("暂停失败")
+                        }
+                        imageView.isEnabled = true
+                    }
+                }
             }
         }
-        binding.textViewReturn.run {
-            setOnClickListener {
-                binding.groupGoBacking.visibility = View.VISIBLE
-                binding.groupGoBackPause.visibility = View.GONE
-                timer?.cancel()
-                remainSeconds = 30
+        binding.textViewReturn.let {textView ->
+            textView.setOnClickListener {
+                textView.isEnabled = false
+                mainScope.launch{
+                    withContext(Dispatchers.Default){
+                        if(RobotStatus.manageStatus != RobotCommand.MANAGE_STATUS_PAUSE){
+                            val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                            if(!result){
+                                destroyWakeEngine()
+                                withContext(Dispatchers.Main){
+                                    showGroupGoBacking()
+                                }
+                            }else{
+                                ToastUtil.show("恢复失败")
+                            }
+                        }else{
+                            ToastUtil.show("恢复失败")
+                        }
+                        textView.isEnabled = true
+                    }
+                }
             }
         }
+        SafeStateTopic.setSafeStateListener { safeState ->
+            if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
+                LogUtil.d("急停按下")
+                when(RobotStatus.manageStatus){
+                    RobotCommand.MANAGE_STATUS_CONTINUE -> {
+                        mainScope.launch(Dispatchers.Default) {
+                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+                        }
+                    }
+                }
+            }
+            if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
+                LogUtil.d("急停抬起")
+                when(RobotStatus.manageStatus){
+                    RobotCommand.MANAGE_STATUS_PAUSE -> {
+                        if (binding.imageViewGoBack.visibility == View.VISIBLE){
+                            mainScope.launch(Dispatchers.Default) {
+                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        quitFragment()
+        SafeStateTopic.resetSafeStateListener()
     }
 
     /**
@@ -196,7 +292,7 @@ class GoBackFragment : Fragment() {
     /**
      * @description 根据bigButtonSize和smallButtonSize排列按钮
      */
-    private fun arrangeButtonPosition(pair: Pair<Int, Int>, columnMaxButtonSize: Int = 2): ArrayList<View>{
+    private fun arrangeButtonPosition(pair: Pair<Int, Int>, columnMaxButtonSize: Int): ArrayList<View>{
         val views = ArrayList<View>()
         val bigButtonSize = pair.first
         val smallButtonSize = pair.second
@@ -336,15 +432,69 @@ class GoBackFragment : Fragment() {
     }
 
     private fun showGroupGoBackPause(){
+        binding.groupGoBacking.visibility = View.GONE
+        binding.groupGoBackPause.visibility = View.VISIBLE
         timer = Timer()
         timer?.schedule(object : TimerTask(){
             override fun run() {
+                if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
                 val spannableString = CommonHelper.getTimeSpan(remainSeconds--, 1.6f)
                 handler.post {
                     binding.textViewSeconds.text = spannableString
                 }
             }
         }, Date(), 1000L)
+    }
 
+    private fun showGroupGoBacking(){
+        binding.groupGoBacking.visibility = View.VISIBLE
+        binding.groupGoBackPause.visibility = View.GONE
+        timer?.cancel()
+        remainSeconds = 30
+    }
+
+    private suspend fun initWakeUpEngine(){
+        wakeupListener = WakeupListener { angle, beam, score, keyWord ->
+            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+            quitFragment()
+            timer?.cancel()
+            findNavController().navigate(R.id.conversationFragment)
+        }
+        DialogHelper.loadingDialog.show()
+        withContext(Dispatchers.Default) {
+            if(!isResumed) {
+                DialogHelper.loadingDialog.dismiss()
+                return@withContext
+            }
+            CopyAssetsUtils.portingFile(MyApplication.context)
+            initSDK()
+            startRecord()
+            DialogHelper.loadingDialog.dismiss()
+        }
+    }
+
+    private suspend fun destroyWakeEngine(){
+        withContext(Dispatchers.Default){
+            DialogHelper.loadingDialog.show()
+            LogUtil.i("destroyWakeEngine")
+            FaceRecognition.onDestroy()
+            if (EngineConstants.isRecording) {
+                stopRecord()
+            }
+            if (recorder != null) {
+                recorder!!.destroyRecord()
+                recorder = null
+            }
+            if (wakeupListener != null) {
+                wakeupListener = null
+            }
+            WakeupEngine.destroy()
+            LogUtil.i("destroyWakeEngine is Done!")
+            DialogHelper.loadingDialog.dismiss()
+        }
+    }
+
+    companion object {
+        private const val REMAIN_DEFAULT = 30
     }
 }

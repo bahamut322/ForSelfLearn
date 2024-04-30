@@ -23,12 +23,16 @@ open class BaseFragment: Fragment(){
     /**
      * 唤醒回调
      */
-    private var wakeupListener: WakeupListener? = null
+    protected var wakeupListener: WakeupListener? = null
 
-    private var recorder: AudioRecorder? = null
+    protected var recorder: AudioRecorder? = null
 
     override fun onResume() {
         super.onResume()
+        onBaseResume()
+    }
+
+    open fun onBaseResume(){
         wakeupListener = WakeupListener { angle, beam, score, keyWord ->
             LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
             quitFragment()
@@ -48,7 +52,7 @@ open class BaseFragment: Fragment(){
         }
     }
 
-    private fun initSDK() {
+    protected fun initSDK() {
         //状态初始化
         EngineConstants.isRecording = false
         //注意事项1: sn每台设备需要唯一！！！！WakeupEngine的sn和AIUI的sn要一致
@@ -81,7 +85,7 @@ open class BaseFragment: Fragment(){
         }
     }
 
-    private fun startRecord() {
+    protected fun startRecord() {
         if (recorder != null) {
             val ret = recorder!!.startRecord()
             if (0 == ret) {
@@ -95,7 +99,7 @@ open class BaseFragment: Fragment(){
         }
     }
 
-    private fun stopRecord() {
+    protected fun stopRecord() {
         if (recorder != null) {
             recorder!!.stopRecord()
             LogUtil.i("停止录音")
