@@ -125,7 +125,10 @@ class ConversationFragment : Fragment() {
                 val durationSeconds = (System.currentTimeMillis() - startTime) / 1000
                 if (durationSeconds > 30) {
                     quitFragment()
-                    findNavController().popBackStack(R.id.homeFragment, false)
+                    val result = findNavController().popBackStack(R.id.homeFragment, false)
+                    if (!result) {
+                        findNavController().navigate(R.id.homeFragment)
+                    }
                 }
             }
         }, Date(), 1000)
@@ -425,7 +428,10 @@ class ConversationFragment : Fragment() {
         binding?.flHome?.apply {
             setOnClickListener {
                 quitFragment()
-                findNavController().popBackStack(R.id.homeFragment, false)
+                val result = findNavController().popBackStack(R.id.homeFragment, false)
+                if (!result) {
+                    findNavController().navigate(R.id.homeFragment)
+                }
             }
         }
         binding?.viewClose?.apply {

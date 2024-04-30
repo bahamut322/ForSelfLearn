@@ -1,5 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,18 +19,26 @@ import com.iflytek.vtncaetest.engine.EngineConstants
 import com.iflytek.vtncaetest.engine.WakeupEngine
 import com.iflytek.vtncaetest.engine.WakeupListener
 import com.iflytek.vtncaetest.utils.CopyAssetsUtils
+import com.sendi.deliveredrobot.ACTION_NAVIGATE
+import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
+import com.sendi.deliveredrobot.NAVIGATE_ID
+import com.sendi.deliveredrobot.NAVIGATE_TO_HOME
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
+import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.CommonHelper
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GoUsherPointBillFactory
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
@@ -54,6 +63,7 @@ class GoBackFragment : BaseFragment() {
     private val viewWidth = 336
     private var timer: Timer? = null
     private val handler = Handler(Looper.getMainLooper())
+    val res = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
     private var remainSeconds = REMAIN_DEFAULT
         set(value) = if(value < 0){
             mainScope.launch{
@@ -169,17 +179,9 @@ class GoBackFragment : BaseFragment() {
 
         } catch (_: Exception) {
         }
-        val res = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
+
         binding.constraintLayoutPause.setOnClickListener {
-            practicalSize++
-            val views = arrangeButtonPosition(calculateButtonPosition(totalSize = totalSize, practicalSize = practicalSize, columnMaxButtonSize = columnMaxButtonSize), columnMaxButtonSize = columnMaxButtonSize)
-            for ((index, s) in res.withIndex()) {
-                if(views.size > index){
-                    views[index].apply {
-                        calculateAndSetViewParams(s, this)
-                    }
-                }
-            }
+            calculateButtons(practicalSize++)
         }
         binding.imageViewGoBack.let { imageView ->
             imageView.setOnClickListener {
@@ -342,7 +344,16 @@ class GoBackFragment : BaseFragment() {
             findViewById<TextView>(R.id.text_view_main_title).text = inputStr
             findViewById<TextView>(R.id.text_view_sub_title).text = calculateEnglish(inputStr)
             setOnClickListener {
-                ToastUtil.show(inputStr)
+//                ToastUtil.show(inputStr)
+                when (val id = calculateNavigateId(inputStr)) {
+                    GO_USHER_ID -> {
+                        executeGoUsherBill()
+                    }
+                    null -> {}
+                    else -> {
+                        findNavController().navigate(id)
+                    }
+                }
             }
         }
     }
@@ -431,6 +442,31 @@ class GoBackFragment : BaseFragment() {
         }
     }
 
+    private fun calculateNavigateId(inputStr: String): Int?{
+        return when (inputStr) {
+            "智能引领" -> {
+                R.id.GuideFragment
+            }
+            "智能讲解" -> {
+                R.id.ExplanationFragment
+            }
+            "智能问答" -> {
+                R.id.conversationFragment
+            }
+            "更多服务" -> {
+                R.id.appContentFragment
+            }
+            "礼仪迎宾" -> {
+                GO_USHER_ID
+            }
+            "业务办理" -> {
+                R.id.businessFragment
+            }else -> {
+                null
+            }
+        }
+    }
+
     private fun showGroupGoBackPause(){
         binding.groupGoBacking.visibility = View.GONE
         binding.groupGoBackPause.visibility = View.VISIBLE
@@ -494,7 +530,39 @@ class GoBackFragment : BaseFragment() {
         }
     }
 
+    private fun calculateButtons(practicalSize: Int) {
+        val views = arrangeButtonPosition(
+            calculateButtonPosition(
+                totalSize = totalSize,
+                practicalSize = practicalSize,
+                columnMaxButtonSize = columnMaxButtonSize
+            ), columnMaxButtonSize = columnMaxButtonSize
+        )
+        for ((index, s) in res.withIndex()) {
+            if (views.size > index) {
+                views[index].apply {
+                    calculateAndSetViewParams(s, this)
+                }
+            }
+        }
+    }
+
+    private fun executeGoUsherBill(){
+        mainScope.launch(Dispatchers.Default) {
+            BillManager.currentBill()?.earlyFinish()
+            BillManager.clearBill()
+            val bill = GoUsherPointBillFactory.createBill(
+                TaskModel(
+                    location = DataBaseDeliveredRobotMap.getDatabase(requireContext()).getDao().selectGreetPoint(QuerySql.selectGreetConfig().greetPoint)
+                )
+            )
+            BillManager.addAllAtIndex(bill)
+            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+        }
+    }
+
     companion object {
         private const val REMAIN_DEFAULT = 30
+        private const val GO_USHER_ID = -1
     }
 }

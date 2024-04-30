@@ -406,24 +406,25 @@ class SelfCheckFragment : Fragment() {
             //智能引领
             0 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_guideFragment)
-                Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "智能引领", Toast.LENGTH_SHORT).show()
                 LogUtil.i("自检->智能引领")
             }
             //智能讲解
             1 -> {
                 controller!!.navigate(R.id.action_selfCheckFragment_to_explanationFragment)
-                Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "智能讲解", Toast.LENGTH_SHORT).show()
                 LogUtil.i("自检->智能讲解")
             }
             //智能问答
             2 -> {
-                Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "智能问答", Toast.LENGTH_SHORT).show()
+                controller?.navigate(R.id.conversationFragment)
                 LogUtil.i("自检->智能问答")
             }
             //更多服务
             3 -> {
                 controller!!.navigate(R.id.appContentFragment)
-                Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "更多服务", Toast.LENGTH_SHORT).show()
                 LogUtil.i("自检->更多服务")
             }
             //不只有一个选项
