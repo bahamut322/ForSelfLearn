@@ -38,13 +38,8 @@ class DialogHelper {
         @SuppressLint("StaticFieldLeak")
         lateinit var activity: Activity
         lateinit var troubleDialog: Dialog
-        lateinit var distractedDialog: Dialog
-        lateinit var rebootDialog: Dialog
         lateinit var stopDialog: Dialog
-        lateinit var dockFailDialog: Dialog
         lateinit var pullOutAdapterDialog: Dialog
-        lateinit var exceptionWaitForHelpDialog: Dialog
-        lateinit var chargingDialog: Dialog
         lateinit var loadingDialog: Dialog
         lateinit var robotUpDataDialog : Dialog
         lateinit var lowPowerGoBack : Dialog
@@ -59,12 +54,8 @@ class DialogHelper {
             activity = _activity
             troubleDialog = TroubleDialog(activity)
             briefingDialog = BrieFingDialog(activity)
-            distractedDialog = DistractedDialog(activity)
-            rebootDialog = TryRebootDialog(activity)
             stopDialog = ResetStopButtonDialog(activity, needBlur = false)
-            dockFailDialog = DockFailDialog(activity)
             pullOutAdapterDialog = PullOutAdapterDialog(activity)
-            exceptionWaitForHelpDialog = ExceptionWaitForHelpDialog(activity, needBlur = false)
             loadingDialog = LoadingDialog(activity, R.style.Dialog)
             robotUpDataDialog = RobotUpDataDialog(activity)
             containDialog = ContainDialog(activity,R.style.simpleDialogStyle)

@@ -4,6 +4,10 @@ import com.sendi.deliveredrobot.model.TaskModel
 
 object StandStillBillFactory: ITaskBillFactory {
     override fun createBill(taskModel: TaskModel?): List<ITaskBill> {
-        return StandStillTaskBill(taskModel).billBuild()
+        return StandStillTaskBill(taskModel, true).billBuild()
+    }
+
+    fun standStillBillCreate(taskModel: TaskModel?, needNavigate: Boolean = false): List<ITaskBill> {
+        return StandStillTaskBill(taskModel, needNavigate).billBuild()
     }
 }

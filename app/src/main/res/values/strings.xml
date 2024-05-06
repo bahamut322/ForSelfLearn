@@ -521,5 +521,7 @@
     <string name="explain_finish_no_go_back">讲解结束不返回充电桩</string>
     <string name="retry_dock">重新对接充电桩</string>
     <string name="go_back_2">返回中.....</string>
+    <string name="low_battery_tips_2">暂时无法为您提供服务\n请让我先返回充电桩补充精力吧</string>
+    <string name="go_back_low_battery">返回充电桩(%ss)</string>
 
 </resources>

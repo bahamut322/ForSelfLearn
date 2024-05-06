@@ -1,6 +1,6 @@
 package com.sendi.deliveredrobot.view.fragment
 
-import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,15 +19,10 @@ import com.iflytek.vtncaetest.engine.EngineConstants
 import com.iflytek.vtncaetest.engine.WakeupEngine
 import com.iflytek.vtncaetest.engine.WakeupListener
 import com.iflytek.vtncaetest.utils.CopyAssetsUtils
-import com.sendi.deliveredrobot.ACTION_NAVIGATE
-import com.sendi.deliveredrobot.BuildConfig
 import com.sendi.deliveredrobot.MyApplication
-import com.sendi.deliveredrobot.NAVIGATE_ID
-import com.sendi.deliveredrobot.NAVIGATE_TO_HOME
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.databinding.FragmentGoBackBinding
-import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.CommonHelper
@@ -38,8 +33,10 @@ import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointBillFactory
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.StandStillBillFactory
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.topic.SafeStateTopic
+import com.sendi.deliveredrobot.utils.FastBlurUtil
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.FaceRecognition
@@ -63,37 +60,32 @@ class GoBackFragment : BaseFragment() {
     private val viewWidth = 336
     private var timer: Timer? = null
     private val handler = Handler(Looper.getMainLooper())
-    val res = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
+    private val res = QuerySql.QueryBasic().defaultValue.split(" ").toTypedArray()
+    private var onResuming = false
+    private val goBackLowBatteryString by lazy { getString(R.string.go_back_low_battery) }
     private var remainSeconds = REMAIN_DEFAULT
-        set(value) = if(value < 0){
-            mainScope.launch{
-                withContext(Dispatchers.Default){
-                    if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE){
-                        val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-                        if(result){
-                            withContext(Dispatchers.Main){
-                                showGroupGoBacking()
-                            }
-                        }else{
-                            ToastUtil.show("恢复失败")
-                            field = REMAIN_DEFAULT
-                        }
-                    }else{
-                        ToastUtil.show("恢复失败")
-                        field = REMAIN_DEFAULT
-                    }
+        set(value){
+            if(value < 0){
+                mainScope.launch{
+                    resumeGoBacking()
                 }
+            }else{
+                field = value
             }
-            field = value
-        }else{
-            field = value
         }
-    private var practicalSize = 1
-        set(value) = if(value > totalSize) {
-            field = 1
-        } else {
-            field = value
+
+    private var lowPowerSeconds = LOW_BATTERY_DEFAULT
+        set(value) {
+            if (value < 0) {
+                mainScope.launch {
+                    resumeGoBacking()
+                }
+            } else {
+                binding.buttonCancelPauseGoBack.text = String.format(goBackLowBatteryString, value)
+                field = value
+            }
         }
+    private var practicalSize: Int? = null
 
 
     override fun onCreateView(
@@ -110,7 +102,7 @@ class GoBackFragment : BaseFragment() {
     }
 
     override fun onBaseResume() {
-        // 空实现
+        // 空实现，只是为了覆盖父类的实现
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -180,17 +172,18 @@ class GoBackFragment : BaseFragment() {
         } catch (_: Exception) {
         }
 
-        binding.constraintLayoutPause.setOnClickListener {
-            calculateButtons(practicalSize++)
-        }
+//        binding.constraintLayoutPause.setOnClickListener {
+//            // todo 临时代码，删掉
+//            calculateButtons(practicalSize++)
+//        }
         binding.imageViewGoBack.let { imageView ->
             imageView.setOnClickListener {
                 imageView.isEnabled = false
                 mainScope.launch {
                     withContext(Dispatchers.Default){
-                        if(RobotStatus.manageStatus != RobotCommand.MANAGE_STATUS_CONTINUE){
+                        if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE){
                             val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                            if(!result){
+                            if(result){
                                 initWakeUpEngine()
                                 withContext(Dispatchers.Main){
                                     showGroupGoBackPause()
@@ -210,22 +203,15 @@ class GoBackFragment : BaseFragment() {
             textView.setOnClickListener {
                 textView.isEnabled = false
                 mainScope.launch{
-                    withContext(Dispatchers.Default){
-                        if(RobotStatus.manageStatus != RobotCommand.MANAGE_STATUS_PAUSE){
-                            val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-                            if(!result){
-                                destroyWakeEngine()
-                                withContext(Dispatchers.Main){
-                                    showGroupGoBacking()
-                                }
-                            }else{
-                                ToastUtil.show("恢复失败")
-                            }
-                        }else{
-                            ToastUtil.show("恢复失败")
-                        }
-                        textView.isEnabled = true
-                    }
+                    resumeGoBacking()
+                    textView.isEnabled = true
+                }
+            }
+        }
+        binding.buttonCancelPauseGoBack.apply {
+            setOnClickListener {
+                mainScope.launch {
+                    resumeGoBacking()
                 }
             }
         }
@@ -253,6 +239,8 @@ class GoBackFragment : BaseFragment() {
                 }
             }
         }
+        practicalSize = res.size - 1
+        calculateButtons(practicalSize?:0)
     }
 
     override fun onDestroyView() {
@@ -344,15 +332,32 @@ class GoBackFragment : BaseFragment() {
             findViewById<TextView>(R.id.text_view_main_title).text = inputStr
             findViewById<TextView>(R.id.text_view_sub_title).text = calculateEnglish(inputStr)
             setOnClickListener {
-//                ToastUtil.show(inputStr)
-                when (val id = calculateNavigateId(inputStr)) {
-                    GO_USHER_ID -> {
-                        executeGoUsherBill()
+                if((RobotStatus.batteryPower.value?.times(100)?.toInt()
+                        ?: 0) <= RobotStatus.LOW_POWER_VALUE
+                ){
+                    showGroupLowBattery()
+                    return@setOnClickListener
+                }
+                mainScope.launch(Dispatchers.Default) {
+                    DialogHelper.loadingDialog.show()
+                    val standStillTaskBill = StandStillBillFactory.standStillBillCreate(
+                        TaskModel(
+                            taskId = BillManager.currentBill()?.taskId() ?: ""
+                        )
+                    )
+                    BillManager.currentBill()?.earlyFinish()
+                    BillManager.addAllAtIndex(standStillTaskBill)
+                    ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                    when (val id = calculateNavigateId(inputStr)) {
+                        GO_USHER_ID -> {
+                            executeGoUsherBill()
+                        }
+                        null -> {}
+                        else -> {
+                            findNavController().navigate(id)
+                        }
                     }
-                    null -> {}
-                    else -> {
-                        findNavController().navigate(id)
-                    }
+                    DialogHelper.loadingDialog.dismiss()
                 }
             }
         }
@@ -470,9 +475,13 @@ class GoBackFragment : BaseFragment() {
     private fun showGroupGoBackPause(){
         binding.groupGoBacking.visibility = View.GONE
         binding.groupGoBackPause.visibility = View.VISIBLE
+        binding.groupLowBattery.visibility = View.GONE
+        remainSeconds = REMAIN_DEFAULT
+        timer?.cancel()
         timer = Timer()
         timer?.schedule(object : TimerTask(){
             override fun run() {
+                if (onResuming) return
                 if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
                 val spannableString = CommonHelper.getTimeSpan(remainSeconds--, 1.6f)
                 handler.post {
@@ -485,16 +494,42 @@ class GoBackFragment : BaseFragment() {
     private fun showGroupGoBacking(){
         binding.groupGoBacking.visibility = View.VISIBLE
         binding.groupGoBackPause.visibility = View.GONE
+        binding.groupLowBattery.visibility = View.GONE
         timer?.cancel()
-        remainSeconds = 30
+    }
+
+    private fun showGroupLowBattery(){
+        binding.groupGoBacking.visibility = View.GONE
+        binding.groupGoBackPause.visibility = View.GONE
+        binding.groupLowBattery.visibility = View.VISIBLE
+        binding.constraintLayoutLowBattery.background = BitmapDrawable(resources, FastBlurUtil.getBlurBackgroundDrawer(requireActivity()))
+        lowPowerSeconds = LOW_BATTERY_DEFAULT
+        timer?.cancel()
+        timer = Timer()
+        timer?.schedule(object : TimerTask(){
+            override fun run() {
+                if (RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
+                lowPowerSeconds--
+            }
+        }, Date(), 1000L)
     }
 
     private suspend fun initWakeUpEngine(){
-        wakeupListener = WakeupListener { angle, beam, score, keyWord ->
-            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
-            quitFragment()
-            timer?.cancel()
-            findNavController().navigate(R.id.conversationFragment)
+        wakeupListener = WakeupListener { _, _, _, _ ->
+//            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+            mainScope.launch(Dispatchers.Default) {
+                val standStillTaskBill = StandStillBillFactory.standStillBillCreate(
+                    TaskModel(
+                        taskId = BillManager.currentBill()?.taskId() ?: ""
+                    )
+                )
+                BillManager.currentBill()?.earlyFinish()
+                BillManager.addAllAtIndex(standStillTaskBill)
+                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_STOP)
+                destroyWakeEngine()
+                timer?.cancel()
+                findNavController().navigate(R.id.conversationFragment)
+            }
         }
         DialogHelper.loadingDialog.show()
         withContext(Dispatchers.Default) {
@@ -561,8 +596,33 @@ class GoBackFragment : BaseFragment() {
         }
     }
 
+    private suspend fun resumeGoBacking(){
+        withContext(Dispatchers.Default) {
+            onResuming = true
+            if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_PAUSE) {
+                val result = ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                if (result) {
+                    destroyWakeEngine()
+                    withContext(Dispatchers.Main) {
+                        showGroupGoBacking()
+                    }
+                } else {
+                    ToastUtil.show("恢复失败")
+                    lowPowerSeconds = LOW_BATTERY_DEFAULT
+                    remainSeconds = REMAIN_DEFAULT
+                }
+            } else {
+                ToastUtil.show("恢复失败")
+                lowPowerSeconds = LOW_BATTERY_DEFAULT
+                remainSeconds = REMAIN_DEFAULT
+            }
+            onResuming = false
+        }
+    }
+
     companion object {
         private const val REMAIN_DEFAULT = 30
         private const val GO_USHER_ID = -1
+        private const val LOW_BATTERY_DEFAULT = 5
     }
 }

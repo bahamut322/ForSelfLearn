@@ -154,6 +154,96 @@
                 app:layout_constraintTop_toTopOf="@+id/text_view_seconds" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutLowBattery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <View
+                android:id="@+id/view_background"
+                android:layout_width="@dimen/dp_540"
+                android:layout_height="@dimen/dp_448"
+                android:layout_marginBottom="144dp"
+                android:background="@drawable/shape_solid_e53b37a7_corners_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <View
+                android:layout_width="@dimen/dp_540"
+                android:layout_height="@dimen/dp_164"
+                android:background="@drawable/ic_robot_low_battery_background"
+                app:layout_constraintBottom_toBottomOf="@+id/view_background"
+                app:layout_constraintEnd_toEndOf="@+id/view_background"
+                app:layout_constraintStart_toStartOf="@+id/view_background"
+                app:layout_constraintTop_toTopOf="@+id/view_background"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:layout_width="@dimen/dp_174"
+                android:layout_height="@dimen/dp_188"
+                android:translationY="-64dp"
+                android:background="@drawable/ic_robot_low_battery"
+                app:layout_constraintBottom_toBottomOf="@+id/view_background"
+                app:layout_constraintEnd_toEndOf="@+id/view_background"
+                app:layout_constraintStart_toStartOf="@+id/view_background"
+                app:layout_constraintTop_toTopOf="@+id/view_background"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/text_view_tip_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="148dp"
+                android:gravity="center"
+                android:text="@string/low_power"
+                android:textColor="@color/color_CCFFFFFF"
+                android:textSize="@dimen/sp_36"
+                app:layout_constraintBottom_toBottomOf="@+id/view_background"
+                app:layout_constraintEnd_toEndOf="@+id/view_background"
+                app:layout_constraintStart_toStartOf="@+id/view_background"
+                app:layout_constraintTop_toTopOf="@+id/view_background"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/text_view_tip_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_24"
+                android:gravity="center"
+                android:text="@string/low_battery_tips_2"
+                android:textColor="@color/color_CCFFFFFF"
+                android:textSize="@dimen/sp_28"
+                app:layout_constraintBottom_toBottomOf="@+id/view_background"
+                app:layout_constraintEnd_toEndOf="@+id/view_background"
+                app:layout_constraintStart_toStartOf="@+id/view_background"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_tip_1"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button_cancel_pause_go_back"
+                android:layout_width="@dimen/dp_240"
+                android:layout_height="@dimen/dp_64"
+                android:background="@drawable/shape_gradient_ff00eeff_ff00a7ff_corners_12dp"
+                android:layout_marginTop="@dimen/dp_32"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_30"
+                app:layout_constraintBottom_toBottomOf="@+id/view_background"
+                app:layout_constraintEnd_toEndOf="@+id/view_background"
+                app:layout_constraintStart_toStartOf="@+id/view_background"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_tip_2"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="返回充电桩(10s)" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/groupGoBacking"
             android:layout_width="0dp"
@@ -168,6 +258,14 @@
             android:layout_height="0dp"
             app:constraint_referenced_ids="constraintLayoutPause"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="gone"/>
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupLowBattery"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:constraint_referenced_ids="constraintLayoutLowBattery"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

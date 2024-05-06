@@ -1,5 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment;
 
+import static com.sendi.deliveredrobot.ConstsKt.TYPE_STAND_STILL;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
@@ -144,7 +146,7 @@ public class ExplanationFragment extends BaseFragment {
     private void findView() {
         ExplantionAdapter.OnItemClickListener listener = (position, routeMap) -> {
             Universal.lastValue = null;
-            if (Boolean.FALSE.equals(RobotStatus.INSTANCE.getChargeStatus().getValue()) || QuerySql.robotConfig().getChargePointName().isEmpty() || QuerySql.robotConfig().getWaitingPointName().isEmpty()) {
+            if ((Boolean.FALSE.equals(RobotStatus.INSTANCE.getChargeStatus().getValue()) && RobotStatus.INSTANCE.getCurrentStatus() != TYPE_STAND_STILL) || QuerySql.robotConfig().getChargePointName().isEmpty() || QuerySql.robotConfig().getWaitingPointName().isEmpty()) {
                 DialogHelper.briefingDialog.show();
             } else {
                 scrollToCenter(position);

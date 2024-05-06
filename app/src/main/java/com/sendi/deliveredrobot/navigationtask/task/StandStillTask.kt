@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
  *   @date: 2024-04-09
  *   @describe: 原地不动
  */
-class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
+class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true, private val needNavigate: Boolean) : AbstractTask(taskModel, needReportData) {
 
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.StandStillTask
@@ -40,7 +40,8 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
         RobotStatus.currentStatus = TYPE_STAND_STILL
         RobotStatus.selectRouteMapItemId = -1
         Universal.businessTask = null
-            val navigateId  = when (FunctionSkip.selectFunction()) {
+        if (needNavigate) {
+            val navigateId = when (FunctionSkip.selectFunction()) {
                 //智能引领
                 0 -> {
                     ToastUtil.show("智能引领")
@@ -49,7 +50,7 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
                 }
                 //智能讲解
                 1 -> {
-                    ToastUtil.show( "智能讲解")
+                    ToastUtil.show("智能讲解")
                     LogUtil.i("智能讲解")
                     R.id.ExplanationFragment
                 }
@@ -65,7 +66,8 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
                     LogUtil.i("更多服务")
                     R.id.appContentFragment
                 }
-                5 ->{
+
+                5 -> {
                     if (BuildConfig.DEBUG) {
                         ToastUtil.show("业务办理")
                     }
@@ -79,15 +81,17 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
                 -1 -> {
                     -1
                 }
+
                 else -> {
                     -1
                 }
             }
-            when(navigateId){
+            when (navigateId) {
                 -1 -> {
                     ToastUtil.show("请勾选主页面功能模块")
                     return
                 }
+
                 else -> {
                     MyApplication.instance!!.sendBroadcast(Intent().apply {
                         action = ACTION_NAVIGATE
@@ -95,7 +99,8 @@ class StandStillTask(taskModel: TaskModel, needReportData: Boolean = true) : Abs
                     })
                 }
             }
-            UpdateReturn.method()
-            taskModel?.bill?.executeNextTask()
+        }
+        UpdateReturn.method()
+        taskModel?.bill?.executeNextTask()
     }
 }

@@ -12,7 +12,7 @@ import java.util.*
  * @date 2024-04-09
  * @description 原地不动任务清单
  */
-class StandStillTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
+class StandStillTaskBill(taskModel: TaskModel?, private val needNavigate: Boolean) : AbstractTaskBill(taskModel) {
     init {
         setEndTarget(taskModel?.location?.pointName ?: "")
         setTaskId(taskModel?.taskId ?: "")
@@ -42,7 +42,8 @@ class StandStillTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                 TaskModel(
                     taskId = taskId(),
                     bill = this@StandStillTaskBill
-                )
+                ),
+                needNavigate = needNavigate
             ))
             add(
                 AllFinishTask(
