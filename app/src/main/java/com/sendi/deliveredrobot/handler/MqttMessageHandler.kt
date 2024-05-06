@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.MainActivity
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.TYPE_CHARGING
 import com.sendi.deliveredrobot.TYPE_IDLE
+import com.sendi.deliveredrobot.TYPE_STAND_STILL
 import com.sendi.deliveredrobot.entity.Table_Advertising
 import com.sendi.deliveredrobot.entity.Table_Explain_Config
 import com.sendi.deliveredrobot.entity.Table_Reply_Gate
@@ -140,7 +141,7 @@ object MqttMessageHandler {
                 }
                 //讲解配置
                 "replyExplanationConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
 //                    if (RobotStatus.batteryStateNumber.value == false) return
                     ToastUtil.show("收到讲解配置信息")
                     LogUtil.i("收到讲解配置信息")
@@ -170,7 +171,7 @@ object MqttMessageHandler {
                 }
                 //广告配置
                 "replyAdvertisementConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     val advertisingConfig = gson.fromJson(message, AdvertisingConfig::class.java)
                     deleteAll(Table_Advertising::class.java)
 //                    deleteFiles(File(Universal.advertisement))
@@ -264,7 +265,7 @@ object MqttMessageHandler {
                     }
                 }
                 "replyShoppingGuideConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到导购配置")
                     LogUtil.i("收到导购配置")
                     val shoppingConfig = gson.fromJson(message, ShoppingGuideConfing::class.java)
@@ -288,7 +289,7 @@ object MqttMessageHandler {
                 }
                 //讲解路线配置
                 "replyRouteList" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到讲解路线配置")
                     LogUtil.i("收到讲解路线配置")
                     InteractionMqtt().explainType(message)
@@ -296,7 +297,7 @@ object MqttMessageHandler {
 
                 //机器人门岗配置
                 "replyGateConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     val gatekeeper = gson.fromJson(message, Gatekeeper::class.java)
                     deleteAll(Table_Reply_Gate::class.java)
                     //提交到数据库
@@ -380,7 +381,7 @@ object MqttMessageHandler {
 
                 //机器人配置
                 "replyRobotConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到机器人配置")
                     LogUtil.i("收到机器人配置")
                     val robotConfig = gson.fromJson(message, RobotConfig::class.java)
@@ -518,13 +519,13 @@ object MqttMessageHandler {
                 }
                 //云平台下发导购配置
                 "replyShoppingGuideActionConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到发导购配置")
                     InteractionMqtt().ActionShoppingType(message)
                 }
                 //引领子功能配置
                 "replyGuidePointConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到引领子功能配置")
                     InteractionMqtt().guidePointConfig(message)
                 }
@@ -537,7 +538,7 @@ object MqttMessageHandler {
                 }
 
                 "replyGuideConfig" -> {
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     ToastUtil.show("收到引领配置")
                     InteractionMqtt().guideFoundation(message)
 
@@ -594,13 +595,13 @@ object MqttMessageHandler {
                     }
                 }
                 "replyGreetConfig" ->{
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     LogUtil.d("收到迎宾配置")
                     InteractionMqtt().replyGreet(message)
                 }
                 "replyAppletConfig" -> {
                     LogUtil.i("收到小程序配置")
-                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING) return
+                    if (RobotStatus.currentStatus != TYPE_IDLE && RobotStatus.currentStatus != TYPE_CHARGING && RobotStatus.currentStatus != TYPE_STAND_STILL) return
                     LogUtil.i("处理小程序配置")
                     ReplyAppletConfigHelper.replyAppletConfig(message)
                 }
