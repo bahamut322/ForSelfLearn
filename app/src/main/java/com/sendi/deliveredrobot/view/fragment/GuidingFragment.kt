@@ -130,7 +130,7 @@ class GuidingFragment : Fragment() {
 
         lifecycleScope.launch {
             delay(1000L) // 延迟1秒
-            if (actionData?.movePrompt!!.isNotEmpty()) {
+            if (!actionData?.movePrompt.isNullOrEmpty()) {
                 BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = actionData?.movePrompt!!,pointName =pointName , business = "智能引领"))
             }
         }
@@ -146,13 +146,13 @@ class GuidingFragment : Fragment() {
 
 
         mediatorLiveData.observe(viewLifecycleOwner) { (arrayPointObserver, progressObserver) ->
-            if (progressObserver == Universal.explainTextLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
+            if (actionData?.movePrompt.isNullOrEmpty() && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.postValue(-1)
                 MediaStatusManager.stopMediaPlay(false)
                 viewModel!!.hasArrive = true
                 arriveSpeak(actionData?.arrivePrompt!!)
-            } else if (actionData?.movePrompt.isNullOrEmpty() && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
+            } else if (progressObserver == Universal.explainTextLength && arrayPointObserver == 1 && !viewModel!!.hasArrive) {
                 LogUtil.i("到点，并任务执行完毕")
                 RobotStatus.progress.postValue(-1)
                 MediaStatusManager.stopMediaPlay(false)
@@ -202,7 +202,10 @@ class GuidingFragment : Fragment() {
         if (!viewModel!!.hasArrive) {
             return
         }
-        mediatorLiveData.value = Pair(0, 0)
+//        mediatorLiveData.value = Pair(0, 0)
+        mediatorLiveData.removeSource(arrayPoint)
+        mediatorLiveData.removeSource(progress)
+        mediatorLiveData.removeObservers(viewLifecycleOwner)
         //到点表情组
         if (actionData?.touchScreenConfig?.touch_type == 4) {
             Glide.with(this)
@@ -214,9 +217,22 @@ class GuidingFragment : Fragment() {
             binding.motionLayoutGuideArrive.visibility = View.VISIBLE
         }
         RobotStatus.progress.postValue(-1)
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText!!,pointName =pointName , business = "智能引领"))
+        if (!arriveText.isNullOrEmpty()) {
+            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText,pointName =pointName , business = "智能引领"))
+            RobotStatus.progress.observe(viewLifecycleOwner) {
+                if (it > -1 && it == Universal.explainTextLength && viewModel!!.hasArrive) {
+                    LogUtil.i("到点，并任务执行完毕_返回")
+                    mainScope.launch {
+                        BillManager.currentBill()?.executeNextTask()
+                    }
+                    RobotStatus.progress.postValue(-1)
+                    MediaStatusManager.stopMediaPlay(false)
+                    viewModel!!.hasArrive = false
+                }
+            }
+        }
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
-        if (arriveText.isEmpty() && viewModel!!.hasArrive) {
+        if (arriveText.isNullOrEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
             mainScope.launch {
                 BillManager.currentBill()?.executeNextTask()
@@ -224,17 +240,6 @@ class GuidingFragment : Fragment() {
             RobotStatus.progress.postValue(-1)
             MediaStatusManager.stopMediaPlay(false)
             viewModel!!.hasArrive = false
-        }
-        RobotStatus.progress.observe(viewLifecycleOwner) {
-            if (it == Universal.explainTextLength && viewModel!!.hasArrive) {
-                LogUtil.i("到点，并任务执行完毕_返回")
-                mainScope.launch {
-                    BillManager.currentBill()?.executeNextTask()
-                }
-                RobotStatus.progress.postValue(-1)
-                MediaStatusManager.stopMediaPlay(false)
-                viewModel!!.hasArrive = false
-            }
         }
     }
 
