@@ -20,6 +20,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.SecondModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
@@ -123,7 +124,7 @@ class BusinessViewModel : ViewModel() {
                     )
                 } else {
                     TaskNext.setToDo("1")
-                    BaiduTTSHelper.getInstance().speaks(QuerySql.ShoppingConfig().completePrompt!!)
+                    SpeakHelper.speaks(QuerySql.ShoppingConfig().completePrompt!!)
 //                    splitTextByPunctuation(QuerySql.ShoppingConfig().completePrompt!!)
 //                    BillManager.currentBill()?.executeNextTask()
                 }

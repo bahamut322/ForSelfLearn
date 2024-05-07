@@ -11,6 +11,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -49,7 +50,8 @@ class MyApplication : Application() {
         context = baseContext
         x.Ext.init(this)//初始化xUtils3
         CrashHandler().getInstance()?.init(this)
-        BaiduTTSHelper.getInstance()
+//        BaiduTTSHelper.getInstance()
+        SpeakHelper.initTTS()
         LitePal.initialize(this)//数据库实例
         listener = object : DownloadBill.DownloadListener {
             override fun onProgress(progress: Int) {

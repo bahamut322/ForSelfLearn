@@ -34,7 +34,7 @@ class DockingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        BaiduTTSHelper.getInstance().stop()
+        SpeakHelper.stop()
         SpeakHelper.speak(String.format(getString(R.string.start_docking), QuerySql.robotConfig().wakeUpWord))
     }
 

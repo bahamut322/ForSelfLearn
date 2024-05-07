@@ -37,6 +37,7 @@ import com.sendi.deliveredrobot.databinding.ActivityCameraPreviewBinding;
 import com.sendi.deliveredrobot.entity.Abnormal;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.interfaces.FaceDataListener;
 import com.sendi.deliveredrobot.model.FaceModel;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
@@ -295,7 +296,7 @@ public class CameraPreviewFragment extends Fragment {
                                     return;
                                 //通过tts语音合成播放文字
                                 if (BuildConfig.IS_SPEAK) {
-                                    BaiduTTSHelper.getInstance().speak(Universal.tipsTemperatureWarn, "");
+                                    SpeakHelper.INSTANCE.speak(Universal.tipsTemperatureWarn, "");
                                 }
                                 //异常
                                 binding.AbnormalTv1.setTextColor(Color.RED);
@@ -322,7 +323,7 @@ public class CameraPreviewFragment extends Fragment {
                                     return;
                                 //通过tts语音合成播放文字
                                 if (BuildConfig.IS_SPEAK) {
-                                    BaiduTTSHelper.getInstance().speak(Universal.tipsMaskWarn,"");
+                                    SpeakHelper.INSTANCE.speak(Universal.tipsMaskWarn,"");
                                 }
                                 abnormalNum = 1;
                             }

@@ -51,7 +51,6 @@ import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.GenerateReplyToX8Utils
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.SpanUtils
-import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.MyFlowLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -60,7 +59,6 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 import java.util.Date
-import java.util.Random
 import java.util.Timer
 import kotlin.concurrent.thread
 import kotlin.coroutines.resume
@@ -824,19 +822,6 @@ class ConversationFragment : Fragment() {
             LogUtil.i("conversation quitFragment is done")
         }
     }
-
-    val random = Random()
-    fun test1(): String {
-        return when (random.nextInt(100) > 50) {
-            true -> "test1"
-            false -> ""
-        }
-    }
-
-    fun test2(): String{
-        return "test2"
-    }
-
     private fun initXTTS() {
         if (aiSoundHelper != null) {
             aiSoundHelper!!.release()

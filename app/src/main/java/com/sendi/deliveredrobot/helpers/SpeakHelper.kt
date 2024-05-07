@@ -1,12 +1,9 @@
 package com.sendi.deliveredrobot.helpers
 
-import android.util.Log
 import com.sendi.deliveredrobot.BuildConfig
-import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
-import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.MainScope
@@ -18,29 +15,47 @@ import java.util.LinkedList
  *   @describe: 语音播报包装类
  */
 object SpeakHelper {
+    private const val TYPE_BAIDU = 0
+    private const val TYPE_XTTS = 1
+    private var SPEAK_TYPE = TYPE_XTTS
     val mainScope = MainScope()
     val list = LinkedList<SpeakModel>()
     val speakCallback = object : SpeakCallback {
         override fun speakFinish(utteranceId: String) {
-            Log.i("SpeakHelper", "speakFinish: $utteranceId")
-            Log.i("SpeakHelper", "list: ${list.size}")
-            playNext(utteranceId)
+//            Log.i("SpeakHelper", "speakFinish: $utteranceId")
+//            Log.i("SpeakHelper", "list: ${list.size}")
+            when (SPEAK_TYPE) {
+                TYPE_BAIDU -> {
+                    playNext(utteranceId)
+                }
+                TYPE_XTTS -> {
+                    // todo
+                }
+            }
         }
 
         override fun progressChange(utteranceId: String, progress: Int) {
-            var actualProgress = progress
-            if (startId != null) {
-                try {
-                    val utteranceIdTrans = (utteranceId.toLongOrNull())
-                    if (utteranceIdTrans != null) {
-                        val offset = utteranceIdTrans - (startId as Long)
-                        actualProgress = (offset * 60 + progress).toInt()
+            when (SPEAK_TYPE) {
+                TYPE_BAIDU -> {
+                    var actualProgress = progress
+                    if (startId != null) {
+                        try {
+                            val utteranceIdTrans = (utteranceId.toLongOrNull())
+                            if (utteranceIdTrans != null) {
+                                val offset = utteranceIdTrans - (startId as Long)
+                                actualProgress = (offset * 60 + progress).toInt()
+                            }
+                        }catch (e: ClassCastException){
+                            LogUtil.e("utteranceId转换异常")
+                        }
                     }
-                }catch (e: ClassCastException){
-                    LogUtil.e("utteranceId转换异常")
+                    speakUserCallback?.progressChange(utteranceId, actualProgress)
+                }
+                TYPE_XTTS -> {
+                    // todo
                 }
             }
-            speakUserCallback?.progressChange(utteranceId, actualProgress)
+
         }
     }
     var id: Long = 0
@@ -49,15 +64,30 @@ object SpeakHelper {
 
     var startId: Long? = null // 用于记录speakWithoutStop时的开始id
 
-    fun speak(msg: String) {
+    fun initTTS(){
+        when(SPEAK_TYPE){
+            TYPE_BAIDU -> {
+                BaiduTTSHelper.getInstance()
+            }
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+    }
+
+    fun speak(msg: String, utteranceId: String = "") {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
-            stop()
-            AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().voiceVolume)
-//            mainScope.launch(Dispatchers.IO) {
-                BaiduTTSHelper.getInstance().speak(msg, "")
-//            }
+            when(SPEAK_TYPE){
+                TYPE_BAIDU -> {
+                    stop()
+                    BaiduTTSHelper.getInstance().speak(msg, utteranceId)
+                }
+                TYPE_XTTS -> {
+                    // todo
+                }
+            }
         }
     }
 
@@ -67,35 +97,95 @@ object SpeakHelper {
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
 //            mainScope.launch(Dispatchers.IO) {
-            startId = id
-            var result = msg
-            if(result.length > 60){
-                while(result.length > 60){
-                    val result1 = result.substring(0,60)
-                    result = result.substring(60)
-                    list.add(SpeakModel("${id++}", result1))
+            when(SPEAK_TYPE){
+                TYPE_BAIDU -> {
+                    startId = id
+                    var result = msg
+                    if(result.length > 60){
+                        while(result.length > 60){
+                            val result1 = result.substring(0,60)
+                            result = result.substring(60)
+                            list.add(SpeakModel("${id++}", result1))
+                        }
+                        if(result.isNotEmpty()){
+                            list.add(SpeakModel("${id++}", result))
+                        }
+                    }else{
+                        list.add(SpeakModel("${id++}", result))
+                    }
+                    if (!RobotStatus.ttsIsPlaying) {
+                        playFirst()
+                    }
                 }
-                if(result.isNotEmpty()){
-                   list.add(SpeakModel("${id++}", result))
+
+                TYPE_XTTS -> {
+                    // todo
                 }
-            }else{
-                list.add(SpeakModel("${id++}", result))
-            }
-            if (!RobotStatus.ttsIsPlaying) {
-                playFirst()
             }
         }
     }
 
-    fun stop() {
-//        mainScope.launch(Dispatchers.IO) {
-            list.clear()
-            BaiduTTSHelper.getInstance().stop()
-            RobotStatus.ttsIsPlaying = false
-//        }
+    fun speaks(text: String?){
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+                BaiduTTSHelper.getInstance().speaks(text)
+            }
+
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+
     }
 
-    fun playNext(utteranceId: String){
+    fun stop() {
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+                list.clear()
+                BaiduTTSHelper.getInstance().stop()
+                RobotStatus.ttsIsPlaying = false
+            }
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+
+    }
+
+    fun pause() {
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+                BaiduTTSHelper.getInstance().pause()
+            }
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+    }
+
+    fun resume() {
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+                BaiduTTSHelper.getInstance().resume()
+            }
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+    }
+
+    fun setParam(params: Map<String, String>?, voiceType: String?){
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+                BaiduTTSHelper.getInstance().setParam(params, voiceType)
+            }
+            TYPE_XTTS -> {
+                // todo
+            }
+        }
+    }
+
+    private fun playNext(utteranceId: String){
         if(list.size > 0){
             if (list.first?.id == utteranceId) {
                 list.pop()

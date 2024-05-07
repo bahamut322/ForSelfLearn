@@ -3,6 +3,7 @@ package com.sendi.deliveredrobot.navigationtask;
 import androidx.core.util.Consumer;
 
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -55,7 +56,7 @@ public class TaskQueues<T> {
         return queue.peek();
     }
     public synchronized void clear() {
-        BaiduTTSHelper.getInstance().stop();
+        SpeakHelper.INSTANCE.stop();
         if (queue!=null) {
             queue.clear();
             isRunning = false;

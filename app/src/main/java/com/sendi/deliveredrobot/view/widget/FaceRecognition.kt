@@ -296,7 +296,7 @@ object FaceRecognition {
 //                Log.i(TAG, "人脸识别播报时间差：$timeOffset")
                 if (timeOffset > DELAY_TIME) {
                     lastSpeakTime = currentTime
-                    BaiduTTSHelper.getInstance().speak(speak, "0")
+                    SpeakHelper.speak(speak, "0")
                 }
             }
         }

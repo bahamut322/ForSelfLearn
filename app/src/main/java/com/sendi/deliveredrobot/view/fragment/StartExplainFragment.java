@@ -111,12 +111,12 @@ public class StartExplainFragment extends Fragment {
                 //暂停
 //                Universal.taskQueue.pause();
                 MediaPlayerHelper.getInstance().pause();
-                BaiduTTSHelper.getInstance().pause();
+                SpeakHelper.INSTANCE.pause();
             } else if (Stat.getFlage() == 3) {
                 //继续
 //                Universal.taskQueue.resume();
                 MediaPlayerHelper.getInstance().resume();
-                BaiduTTSHelper.getInstance().resume();
+                SpeakHelper.INSTANCE.resume();
             }
         });
     }
@@ -163,7 +163,7 @@ public class StartExplainFragment extends Fragment {
                 finishTaskDialog.cancelBtn.setOnClickListener(v12 -> {
                     finishTaskDialog.cancelBtn.setEnabled(false);
                     if (clickCount % 2 != 1) {
-                        BaiduTTSHelper.getInstance().resume();
+                        SpeakHelper.INSTANCE.resume();
                     }
                     MediaPlayerHelper.getInstance().resume();
                     Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
@@ -173,7 +173,7 @@ public class StartExplainFragment extends Fragment {
                 binding.finishBtn.setClickable(false);
                 isButtonClickable = false;
                 Objects.requireNonNull(viewModel.getCountDownTimer()).pause();
-                BaiduTTSHelper.getInstance().pause();
+                SpeakHelper.INSTANCE.pause();
                 MediaPlayerHelper.getInstance().pause();
                 finishTaskDialog.show();
                 finishTaskDialog.confirmBtn.setEnabled(true);
@@ -235,14 +235,14 @@ public class StartExplainFragment extends Fragment {
                 if (clickCount % 2 == 1) {
                     Universal.speaking = true;
                     // 奇数次点击，执行暂停操作
-                    BaiduTTSHelper.getInstance().pause();
+                    SpeakHelper.INSTANCE.pause();
                     MediaPlayerHelper.getInstance().pause();
                     binding.pauseBtn.setText("继续讲解");
                     binding.pauseTV.setVisibility(View.VISIBLE);
                 } else {
                     // 偶数次点击，执行恢复操作
                     Universal.speaking = false;
-                    BaiduTTSHelper.getInstance().resume();
+                    SpeakHelper.INSTANCE.resume();
                     MediaPlayerHelper.getInstance().resume();
                     binding.pauseTV.setVisibility(View.GONE);
                     binding.pauseBtn.setText("暂停讲解");
@@ -599,8 +599,8 @@ public class StartExplainFragment extends Fragment {
 
     private void changeDialog(boolean array) {
         //暂停页面
-        BaiduTTSHelper.getInstance().pause();
-        BaiduTTSHelper.getInstance().pause();
+        SpeakHelper.INSTANCE.pause();
+        SpeakHelper.INSTANCE.pause();
         changingOverDialog.show();
         if (!array) {
             UpdateReturn.INSTANCE.pause();
@@ -754,7 +754,7 @@ public class StartExplainFragment extends Fragment {
         changingOverDialog.dismiss();
         if (clickCount % 2 != 1) {
             MediaPlayerHelper.getInstance().resume();
-            BaiduTTSHelper.getInstance().resume();
+            SpeakHelper.INSTANCE.resume();
         }
         Objects.requireNonNull(viewModel.getCountDownTimer()).resume();
         UpdateReturn.INSTANCE.resume();

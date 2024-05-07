@@ -69,7 +69,7 @@ class ReadyingFragment : Fragment() {
                 pointName = pointName?.toList()?.joinToString(" ")
                 binding.RoomName.text = pointName
                 if (Universal.speakInt % 2 != 0) {
-                    BaiduTTSHelper.getInstance().speak(
+                    SpeakHelper.speak(
                         String.format(
                             getString(R.string.hello_we_are_going_to_please_follow_me_1),
                             QuerySql.robotConfig().wakeUpWord,

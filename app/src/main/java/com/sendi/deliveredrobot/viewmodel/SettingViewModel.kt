@@ -6,6 +6,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.BasicModel
 import java.io.BufferedReader
 import java.io.File
@@ -28,11 +29,11 @@ class SettingViewModel : ViewModel() {
     fun randomVoice(i: Int,speak: String) {
         val params = getParam(speak)
         if (i == 1) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_FEMALE)//女
+            SpeakHelper.setParam(params, OfflineResource.VOICE_FEMALE)//女
         } else if (i == 2) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_MALE)//男
+            SpeakHelper.setParam(params, OfflineResource.VOICE_MALE)//男
         } else if (i == 3) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
+            SpeakHelper.setParam(params, OfflineResource.VOICE_DUYY)//童
         }
     }
 

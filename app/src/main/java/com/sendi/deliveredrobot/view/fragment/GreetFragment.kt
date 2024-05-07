@@ -15,6 +15,7 @@ import com.sendi.deliveredrobot.entity.Table_Greet_Config
 import com.sendi.deliveredrobot.entity.TouchScreenShow
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
@@ -119,7 +120,7 @@ class GreetFragment : Fragment() {
             finishTaskDialog?.dismiss()
             //返回
             BillManager.currentBill()?.executeNextTask()
-            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
+            SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt?:"", business = "礼仪迎宾", pointName = BillManager.currentBill()?.endTarget()?.toList()?.joinToString(" ")?:""))
 
         }
         finishTaskDialog?.cancelBtn?.setOnClickListener { finishTaskDialog?.dismiss() }

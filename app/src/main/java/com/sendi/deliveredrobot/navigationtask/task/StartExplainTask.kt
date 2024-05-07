@@ -9,6 +9,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -61,7 +62,7 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
                 TaskArray.setToDo("3")
                 //播报语音音量
                 MediaPlayerHelper.getInstance().pause()
-                BaiduTTSHelper.getInstance().pause()
+                SpeakHelper.pause()
                 if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
                     CoroutineScope(Dispatchers.Default).launch {
                         ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
@@ -72,7 +73,7 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
                 // 抬起
                 if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
                     MediaPlayerHelper.getInstance().resume()
-                    BaiduTTSHelper.getInstance().resume()
+                    SpeakHelper.resume()
                 }
                 when (RobotStatus.manageStatus) {
                     RobotCommand.MANAGE_STATUS_STOP -> {

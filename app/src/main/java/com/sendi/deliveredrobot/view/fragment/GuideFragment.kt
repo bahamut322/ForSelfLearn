@@ -22,6 +22,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBillFactory
@@ -90,7 +91,7 @@ class GuideFragment : BaseFragment() {
         viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         updateDataAndRefreshList()
         viewModel!!.restoreVideo(viewLifecycleOwner)
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGuideFouConfig().firstPrompt!!, business = "智能引领"))
+        SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGuideFouConfig().firstPrompt!!, business = "智能引领"))
 
 //        viewModel!!.splitTextByPunctuation(QuerySql.selectGuideFouConfig().firstPrompt)
 //        UpdateReturn().method()
@@ -118,7 +119,7 @@ class GuideFragment : BaseFragment() {
                 if ((RobotStatus.chargeStatus.value == false && RobotStatus.currentStatus != TYPE_STAND_STILL) || QuerySql.robotConfig().chargePointName.isNullOrEmpty() || QuerySql.robotConfig().waitingPointName.isNullOrEmpty()) {
                     DialogHelper.briefingDialog.show()
                 } else {
-                    BaiduTTSHelper.getInstance().stop()
+                    SpeakHelper.stop()
                     LogUtil.i("点击了第${position}项,引领去往${queryFloorPoints[position].pointName}")
                     mainScope.launch {
                         quitFragment()
@@ -132,7 +133,7 @@ class GuideFragment : BaseFragment() {
                 }
             }
         binding.llReturn.setOnClickListener {
-            BaiduTTSHelper.getInstance().stop()
+            SpeakHelper.stop()
 
             navigateToFragment(R.id.action_guideFragment_to_homeFragment)
         }
@@ -141,7 +142,7 @@ class GuideFragment : BaseFragment() {
             RobotStatus.passWordToSetting.observe(viewLifecycleOwner) {
                 if (it == true) {
                     try {
-                        BaiduTTSHelper.getInstance().stop()
+                        SpeakHelper.stop()
                         navigateToFragment(R.id.action_guideFragment_to_settingHomeFragment)
                     } catch (_: Exception) {
                     }

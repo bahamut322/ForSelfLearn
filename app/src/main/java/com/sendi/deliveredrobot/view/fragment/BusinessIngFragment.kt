@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
@@ -137,7 +138,7 @@ class BusinessIngFragment : Fragment() {
 
             if (actionData?.actionType == 2) {
                 //添加任务
-                BaiduTTSHelper.getInstance().speaks(
+                SpeakHelper.speaks(
                     PlaceholderEnum.replaceText(
                         actionData?.moveText!!,
                         pointName = actionData?.pointName!!,
@@ -149,7 +150,7 @@ class BusinessIngFragment : Fragment() {
                     String.format(getString(R.string.business_going), Universal.shoppingName)
                 Universal.businessTask = actionData!!.name
             } else {
-                BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                SpeakHelper.speaks(PlaceholderEnum.replaceText(actionData?.standText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //                viewModel!!.splitTextByPunctuation(actionData?.standText)
                 binding.businessName.text =
                     String.format(getString(R.string.business_doing), Universal.shoppingName)
@@ -239,12 +240,12 @@ class BusinessIngFragment : Fragment() {
                 //暂停
 //                Universal.taskQueue.pause()
                 MediaPlayerHelper.getInstance().pause()
-                BaiduTTSHelper.getInstance().pause()
+                SpeakHelper.pause()
             } else if (Stat.getFlage() == 3) {
                 //继续
 //                Universal.taskQueue.resume()
                 MediaPlayerHelper.getInstance().resume()
-                BaiduTTSHelper.getInstance().resume()
+                SpeakHelper.resume()
             }
         }
     }
@@ -257,7 +258,7 @@ class BusinessIngFragment : Fragment() {
             return
         }
         arrayPic()
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+        SpeakHelper.speaks(PlaceholderEnum.replaceText(text = arriveText!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
 //        viewModel!!.splitTextByPunctuation(arriveText!!)
         if (arriveText!!.isEmpty() && viewModel!!.hasArrive) {
             LogUtil.i("到点，并任务执行完毕_返回")
@@ -322,7 +323,7 @@ class BusinessIngFragment : Fragment() {
                     if (arrayPoint.value != 1) {//如果到点点击结束
                     } else {
                         //中断提示
-                        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
+                        SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
                     //                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
                     }
                     viewModel!!.finishTask()

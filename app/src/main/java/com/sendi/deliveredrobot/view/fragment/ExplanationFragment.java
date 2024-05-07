@@ -67,7 +67,7 @@ public class ExplanationFragment extends BaseFragment {
             binding.llReturn.setVisibility(View.GONE);
         }
         updateDataAndRefreshList();
-        BaiduTTSHelper.getInstance().speak( PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"),"");
+        SpeakHelper.INSTANCE.speak( PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getRouteListText(),"","","","智能讲解"),"");
         binding.tvExplanationName.setText(QuerySql.QueryExplainConfig().getSlogan());
         //返回主页面
         binding.llReturn.setOnClickListener(v -> navigateToFragment(R.id.action_explanationFragment_to_homeFragment, null));

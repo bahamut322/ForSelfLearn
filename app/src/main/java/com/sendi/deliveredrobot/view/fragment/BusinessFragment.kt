@@ -24,6 +24,7 @@ import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.ReportDataHelper.reportTaskDto
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.BusinessTaskBillFactory
@@ -87,7 +88,7 @@ class BusinessFragment : BaseFragment() {
         ROSHelper.setSpeed("${QuerySql.QueryBasic().goBusinessPoint}")
         updateDataAndRefreshList()
         //进入页面播报
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(QuerySql.ShoppingConfig().firstPrompt!!, business = QuerySql.ShoppingConfig().name!!))
+        SpeakHelper.speaks(PlaceholderEnum.replaceText(QuerySql.ShoppingConfig().firstPrompt!!, business = QuerySql.ShoppingConfig().name!!))
 //        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().firstPrompt!!)
         if (FunctionSkip.selectFunction() == 4) {
             binding.firstFragment.visibility = View.GONE
@@ -102,7 +103,7 @@ class BusinessFragment : BaseFragment() {
 
         //返回按钮
         binding.llReturn.setOnClickListener {
-            BaiduTTSHelper.getInstance().stop()
+            SpeakHelper.stop()
             navigateToFragment(R.id.action_businessFragment_to_homeFragment)
         }
         //设置按钮
@@ -111,7 +112,7 @@ class BusinessFragment : BaseFragment() {
             RobotStatus.passWordToSetting.observe(viewLifecycleOwner) {
                 if (RobotStatus.passWordToSetting.value == true) {
                     try {
-                        BaiduTTSHelper.getInstance().stop()
+                        SpeakHelper.stop()
                         navigateToFragment(R.id.action_businessFragment_to_planSettingFragment)
                     } catch (_: Exception) {
                     }
@@ -133,7 +134,7 @@ class BusinessFragment : BaseFragment() {
                 }else {
                     LogUtil.i("点击了第：${position}项,引领去往：${shoppingActionList[position].pointName},当前点拟定名字为：${shoppingActionList[position].name}")
                     Log.d("TAG", "onViewCreated1: "+Universal.shoppingName)
-                    BaiduTTSHelper.getInstance().stop()
+                    SpeakHelper.stop()
                     if (shoppingActionList[position].actionType == 1) {
                         Universal.shoppingName = shoppingActionList[position].name
                         Universal.shoppingType = 1

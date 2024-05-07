@@ -2,6 +2,7 @@ package com.sendi.deliveredrobot.baidutts.listener
 
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 
@@ -13,7 +14,7 @@ import com.sendi.deliveredrobot.utils.LogUtil
 class PunctuationTextSplitter : TextSplitter {
     override fun splitTextByPunctuation(text: String?): List<String> {
         Universal.taskNum = 0
-        BaiduTTSHelper.getInstance().stop()
+        SpeakHelper.stop()
         Universal.explainSpeak = ArrayList()
         RobotStatus.progress.postValue(-1)
         if (Universal.explainSpeak != null) {

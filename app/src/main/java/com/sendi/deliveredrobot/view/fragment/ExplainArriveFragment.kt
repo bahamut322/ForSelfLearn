@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentExplanArriveBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
@@ -64,7 +65,7 @@ class ExplainArriveFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         Glide.with(this).load(R.drawable.img_arrive).into(binding.imgArrive)
         mainScope = MainScope()
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(QuerySql.QueryExplainConfig().endText, route = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[0].routename))
+        SpeakHelper.speaks(PlaceholderEnum.replaceText(QuerySql.QueryExplainConfig().endText, route = QuerySql.queryPointDate(RobotStatus.selectRouteMapItemId)[0].routename))
 //        viewModelGuide.splitTextByPunctuation(QuerySql.QueryExplainConfig().endText)
         binding.bottomAlarmTextViewArrive.text = BillManager.currentBill()?.endTarget() ?: ""
         binding.motionLayoutGuideArrive.apply {

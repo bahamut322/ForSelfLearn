@@ -19,6 +19,7 @@ import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.RemoteOrderHelper.mainScope
 import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.Area
 import com.sendi.deliveredrobot.model.Floor
 import com.sendi.deliveredrobot.model.Map
@@ -416,11 +417,11 @@ object UpdateReturn {
     fun randomVoice(i: Int, speak: String) {
         val params = getParam(speak)
         if (i == 1) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_FEMALE)//女
+            SpeakHelper.setParam(params, OfflineResource.VOICE_FEMALE)//女
         } else if (i == 2) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_MALE)//男
+            SpeakHelper.setParam(params, OfflineResource.VOICE_MALE)//男
         } else if (i == 3) {
-            BaiduTTSHelper.getInstance().setParam(params, OfflineResource.VOICE_DUYY)//童
+            SpeakHelper.setParam(params, OfflineResource.VOICE_DUYY)//童
         }
     }
 

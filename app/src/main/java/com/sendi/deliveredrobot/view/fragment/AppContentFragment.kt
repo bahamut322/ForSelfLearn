@@ -17,6 +17,7 @@ import com.sendi.deliveredrobot.databinding.FragmentAppContentBinding
 import com.sendi.deliveredrobot.entity.FunctionSkip
 import com.sendi.deliveredrobot.helpers.ReplyAppletConfigHelper
 import com.sendi.deliveredrobot.helpers.SecondScreenManageHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.InstallApkUtils
 import com.sendi.deliveredrobot.utils.LogUtil
@@ -65,7 +66,7 @@ class AppContentFragment : Fragment() {
         }
         //返回按钮
         binding.llReturn.setOnClickListener {
-            BaiduTTSHelper.getInstance().stop()
+            SpeakHelper.stop()
             controller!!.navigate(R.id.homeFragment)
         }
         //设置按钮
@@ -74,7 +75,7 @@ class AppContentFragment : Fragment() {
             RobotStatus.passWordToSetting.observe(viewLifecycleOwner) {
                 if (RobotStatus.passWordToSetting.value == true) {
                     try {
-                        BaiduTTSHelper.getInstance().stop()
+                        SpeakHelper.stop()
                         controller!!.navigate(R.id.planSettingFragment)
                     } catch (_: Exception) {
                     }

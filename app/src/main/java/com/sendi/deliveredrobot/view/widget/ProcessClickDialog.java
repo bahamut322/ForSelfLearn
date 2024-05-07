@@ -15,6 +15,7 @@ import com.sendi.deliveredrobot.R;
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper;
 import com.sendi.deliveredrobot.entity.Universal;
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper;
+import com.sendi.deliveredrobot.helpers.SpeakHelper;
 import com.sendi.deliveredrobot.navigationtask.BillManager;
 import com.sendi.deliveredrobot.navigationtask.RobotStatus;
 import com.sendi.deliveredrobot.service.UpdateReturn;
@@ -139,7 +140,7 @@ public class ProcessClickDialog extends Dialog {
         super.show();
         Universal.process = true;
         MediaPlayerHelper.getInstance().pause();
-        BaiduTTSHelper.getInstance().pause();
+        SpeakHelper.INSTANCE.pause();
         startCountdown(countdownTime); // 使用成员变量中的时间值
         mTimer.start();
         UpdateReturn.INSTANCE.pause();

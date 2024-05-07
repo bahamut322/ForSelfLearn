@@ -65,7 +65,7 @@ object ROSHelper {
                     1 -> {
                         if (status == 3 && !Universal.speaking){
                             MediaPlayerHelper.getInstance().resume()
-                            BaiduTTSHelper.getInstance().resume()
+                            SpeakHelper.resume()
                         }
                         "控制导航状态成功"
                     }

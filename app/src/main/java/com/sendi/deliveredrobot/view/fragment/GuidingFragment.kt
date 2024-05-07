@@ -23,6 +23,7 @@ import com.sendi.deliveredrobot.entity.TouchScreenShow
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -131,7 +132,7 @@ class GuidingFragment : Fragment() {
         lifecycleScope.launch {
             delay(1000L) // 延迟1秒
             if (!actionData?.movePrompt.isNullOrEmpty()) {
-                BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = actionData?.movePrompt!!,pointName =pointName , business = "智能引领"))
+                SpeakHelper.speaks(PlaceholderEnum.replaceText(text = actionData?.movePrompt!!,pointName =pointName , business = "智能引领"))
             }
         }
 
@@ -177,12 +178,12 @@ class GuidingFragment : Fragment() {
                 //暂停
                 Universal.taskQueue.pause()
                 MediaPlayerHelper.getInstance().pause()
-                BaiduTTSHelper.getInstance().pause()
+                SpeakHelper.pause()
             } else if (Stat.getFlage() == 3) {
                 //继续
                 Universal.taskQueue.resume()
                 MediaPlayerHelper.getInstance().resume()
-                BaiduTTSHelper.getInstance().resume()
+                SpeakHelper.resume()
             }
         }
     }
@@ -218,7 +219,7 @@ class GuidingFragment : Fragment() {
         }
         RobotStatus.progress.postValue(-1)
         if (!arriveText.isNullOrEmpty()) {
-            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = arriveText,pointName =pointName , business = "智能引领"))
+            SpeakHelper.speaks(PlaceholderEnum.replaceText(text = arriveText,pointName =pointName , business = "智能引领"))
             RobotStatus.progress.observe(viewLifecycleOwner) {
                 if (it > -1 && it == Universal.explainTextLength && viewModel!!.hasArrive) {
                     LogUtil.i("到点，并任务执行完毕_返回")
@@ -262,7 +263,7 @@ class GuidingFragment : Fragment() {
             finishTaskDialog?.dismiss()
             //中断提示
             if (QuerySql.selectGuideFouConfig().interruptPrompt!!.isNotEmpty()) {
-                BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName =pointName , business = "智能引领"))
+                SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName =pointName , business = "智能引领"))
             }
             //返回
             viewModel!!.finishTask()

@@ -13,6 +13,7 @@ import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentGoingGreetBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.GoUsherPointTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -63,7 +64,7 @@ class GoingGreetFragment : Fragment() {
             pointName = pointName.toList().joinToString(" ")
             binding.goingPoint.text = String.format(getString(R.string.business_going), pointName)
         }
-        BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().firstPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
+        SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().firstPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
 
         viewModel!!.greetBigScreenModel(QuerySql.selectGreetConfig()?.bigScreenConfig)
         //暂停
@@ -102,7 +103,7 @@ class GoingGreetFragment : Fragment() {
                 MediaStatusManager.stopMediaPlay(false)
                 RobotStatus.arrayPointExplain.postValue(0)
             }
-            BaiduTTSHelper.getInstance().speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
+            SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.selectGreetConfig().exitPrompt!!, business = "礼仪迎宾", pointName = BillManager.currentBill()!!.endTarget().toList().joinToString(" ")))
         }
         finishTaskDialog?.cancelBtn?.setOnClickListener {
             MainScope().launch {
