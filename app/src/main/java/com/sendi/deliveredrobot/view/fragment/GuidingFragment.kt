@@ -170,6 +170,15 @@ class GuidingFragment : Fragment() {
             processClickDialog?.show()
             pause()
         }
+
+        SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback{
+            override fun speakAllFinish() {
+                RobotStatus.progress.postValue(Universal.explainTextLength)
+            }
+
+            override fun progressChange(utteranceId: String, progress: Int) {
+            }
+        })
     }
 
     private fun status() {

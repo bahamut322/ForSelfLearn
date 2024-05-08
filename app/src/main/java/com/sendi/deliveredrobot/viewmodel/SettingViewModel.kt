@@ -41,6 +41,8 @@ class SettingViewModel : ViewModel() {
             randomVoice(1, speed)
         } else if ("童声" == QuerySql.QueryBasic().robotMode) {
             randomVoice(3, speed)
+        } else if ("粤语" == QuerySql.QueryBasic().robotMode) {
+            randomVoice(4, speed)
         }
     }
     fun isNumCharOne(num:Int): Boolean {

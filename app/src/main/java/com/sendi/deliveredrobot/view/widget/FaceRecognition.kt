@@ -447,8 +447,8 @@ object FaceRecognition {
      * 销毁
      */
     fun onDestroy() {
-        SpeakHelper.stop()
         if (null != c) {
+            SpeakHelper.stop()
             thread {
                 LogUtil.i("人脸识别销毁")
                 // 取消所有协程任务

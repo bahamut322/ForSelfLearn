@@ -201,6 +201,14 @@ class SelfCheckFragment : Fragment() {
                         }
                     }
                     SpeakHelper.initTTS()
+                    when (SpeakHelper.getType()) {
+                        SpeakHelper.TYPE_BAIDU -> {
+                            settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
+                        }
+                        SpeakHelper.TYPE_XTTS -> {
+                            SpeakHelper.setParam(null, RobotStatus.robotConfig?.value?.audioType)
+                        }
+                    }
                     DeliverMqttService.publish(ResetTimeModel().toString())
                     withContext(Dispatchers.Main) {
                         Log.d("TAG", "checkHardware: 获取时间戳")
@@ -376,7 +384,7 @@ class SelfCheckFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         controller = Navigation.findNavController(requireView())
-        settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
+//        settingViewModel.timbres(QuerySql.QueryBasic().speechSpeed.toString())
         //帧动画
         binding.bootIv.setImageResource(R.drawable.self_login)
         val animationDrawable: AnimationDrawable = binding.bootIv.drawable as AnimationDrawable;

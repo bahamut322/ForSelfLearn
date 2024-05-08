@@ -9,6 +9,7 @@ import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.baidutts.util.OfflineResource
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.model.BasicModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -32,19 +33,18 @@ object SpeakHelper {
         override fun speakFinish(utteranceId: String) {
 //            Log.i("SpeakHelper", "speakFinish: $utteranceId")
 //            Log.i("SpeakHelper", "list: ${list.size}")
-            when (SPEAK_TYPE) {
+            when (getType()) {
                 TYPE_BAIDU -> {
                     playNext(utteranceId)
                 }
                 TYPE_XTTS -> {
-                    // todo
                     speakUserCallback?.speakAllFinish()
                 }
             }
         }
 
         override fun progressChange(utteranceId: String, progress: Int) {
-            when (SPEAK_TYPE) {
+            when (getType()) {
                 TYPE_BAIDU -> {
                     var actualProgress = progress
                     if (startId != null) {
@@ -85,8 +85,7 @@ object SpeakHelper {
         SPEAK_TYPE = ttsType
     }
     fun initTTS(){
-        SPEAK_TYPE = getType()
-        when(SPEAK_TYPE){
+        when(getType()){
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance()
             }
@@ -101,7 +100,7 @@ object SpeakHelper {
         if(RobotStatus.currentStatus == TYPE_EXCEPTION) return
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
-            when(SPEAK_TYPE){
+            when(getType()){
                 TYPE_BAIDU -> {
                     stop()
                     BaiduTTSHelper.getInstance().speak(msg, utteranceId)
@@ -119,7 +118,7 @@ object SpeakHelper {
         if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         if (BuildConfig.IS_SPEAK) {
 //            mainScope.launch(Dispatchers.IO) {
-            when(SPEAK_TYPE){
+            when(getType()){
                 TYPE_BAIDU -> {
                     startId = id
                     var result = msg
@@ -141,7 +140,6 @@ object SpeakHelper {
                 }
 
                 TYPE_XTTS -> {
-                    // todo
                     xttsSpeech(msg)
                 }
             }
@@ -149,13 +147,14 @@ object SpeakHelper {
     }
 
     fun speaks(text: String){
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance().speaks(text)
             }
 
             TYPE_XTTS -> {
-                // todo
+                if (text.isEmpty()) return
+                Universal.explainTextLength = text.length
                 xttsSpeech(text)
             }
         }
@@ -163,7 +162,7 @@ object SpeakHelper {
     }
 
     fun stop() {
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
                 list.clear()
                 BaiduTTSHelper.getInstance().stop()
@@ -171,13 +170,14 @@ object SpeakHelper {
             }
             TYPE_XTTS -> {
                 aiSoundHelper?.stop()
+                RobotStatus.ttsIsPlaying = false
             }
         }
 
     }
 
     fun pause() {
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance().pause()
             }
@@ -188,7 +188,7 @@ object SpeakHelper {
     }
 
     fun resume() {
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance().resume()
             }
@@ -199,7 +199,7 @@ object SpeakHelper {
     }
 
     fun setParam(params: Map<String, String>?, voiceType: Int?){
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
                 if (params == null || voiceType == null) return
                 val voiceStr = when (voiceType) {
@@ -225,7 +225,7 @@ object SpeakHelper {
     }
 
     private fun setVCN(vcn: String){
-        when (SPEAK_TYPE) {
+        when (getType()) {
             TYPE_BAIDU -> {
             }
             TYPE_XTTS -> {

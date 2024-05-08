@@ -389,15 +389,17 @@ object UpdateReturn {
      * 云平台返回的声音设置数字转为中文
      * @param Nume 收到云平台音色配置的数据
      */
-    fun audioName(Num: Int): String {
+    fun audioName(num: Int): String {
         var audioModel = ""
         //注：云平台下发的0代表女声，在BaiduTTS中1代表女生
-        if (Num == 0) {
+        if (num == 0) {
             audioModel = "女声"
-        } else if (Num == 2) {
+        } else if (num == 2) {
             audioModel = "男声"
-        } else if (Num == 3) {
+        } else if (num == 3) {
             audioModel = "童声"
+        } else if (num == 4) {
+            audioModel = "粤语"
         }
         return audioModel
     }

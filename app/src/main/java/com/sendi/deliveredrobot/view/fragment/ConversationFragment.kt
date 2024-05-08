@@ -370,10 +370,12 @@ class ConversationFragment : Fragment() {
                     LogUtil.i("tts:播放完成")
                     SystemRecorder.AUDIO_TYPE_ASR = true
                     talkingView = null
+                    RobotStatus.ttsIsPlaying = false
                 }
 
             override fun progressChange(utteranceId: String, progress: Int) {
                 startTime = System.currentTimeMillis()
+                RobotStatus.ttsIsPlaying = true
             }
         })
         SpeakHelper.setParam(null, RobotStatus.robotConfig?.value?.audioType)
