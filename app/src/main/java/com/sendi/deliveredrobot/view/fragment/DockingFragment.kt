@@ -34,7 +34,9 @@ class DockingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        SpeakHelper.stop()
+        when (SpeakHelper.getType()) {
+            SpeakHelper.TYPE_BAIDU -> SpeakHelper.stop()
+        }
         SpeakHelper.speak(String.format(getString(R.string.start_docking), QuerySql.robotConfig().wakeUpWord))
     }
 

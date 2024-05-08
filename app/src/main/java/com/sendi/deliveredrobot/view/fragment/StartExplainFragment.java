@@ -499,7 +499,9 @@ public class StartExplainFragment extends Fragment {
                     vh.tv.setTextColor(getResources().getColor(R.color.color_49DCFA));
                     vh.tv.setHorizontallyScrolling(true);
                     vh.tv.setFocusable(true);
+                    vh.tv.setFocusableInTouchMode(true);
                     vh.tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                    vh.tv.setSelected(true);
                     vh.tvDot.setBackgroundResource(R.drawable.lline_dot_normal);
                     RobotStatus.INSTANCE.setPointItemIndex(position);
                     LogUtil.INSTANCE.d("当前讲解点开始");
@@ -527,11 +529,12 @@ public class StartExplainFragment extends Fragment {
                 vh.tv.setTextColor(getResources().getColor(R.color.white));
                 vh.tv.setHorizontallyScrolling(false);
                 vh.tv.setFocusable(false);
+                vh.tv.setFocusableInTouchMode(false);
+                vh.tv.setSelected(false);
                 vh.tv.setEllipsize(TextUtils.TruncateAt.END);
                 vh.tvDot.setBackgroundResource(R.drawable.lline_dot_first);
             }
             vh.tv.setText(Objects.requireNonNull(ExplainManager.INSTANCE.getRoutes()).get(position).getName());
-
         }
 
         private int selectPosition = -1;

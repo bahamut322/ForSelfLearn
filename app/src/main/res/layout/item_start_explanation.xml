@@ -54,6 +54,7 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="@+id/rlTimeline"
         app:layout_constraintStart_toEndOf="@+id/rlTimeline"
         tools:text="你好你好你好你好"
