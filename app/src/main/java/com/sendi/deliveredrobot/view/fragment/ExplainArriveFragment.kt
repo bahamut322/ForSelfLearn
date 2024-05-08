@@ -1,6 +1,7 @@
 package com.sendi.deliveredrobot.view.fragment
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,25 +29,16 @@ import kotlinx.coroutines.cancel
 class ExplainArriveFragment : Fragment() {
     private lateinit var binding: FragmentExplanArriveBinding
     lateinit var mainScope: CoroutineScope
-    private val viewModelGuide: StartExplainViewModel by viewModels({ requireActivity() })
 
     //倒计时
-//    val timer = object : CountDownTimer(3000, 1000) {
-//        override fun onTick(millisUntilFinished: Long) {
-//            binding.textViewSecond.text = (millisUntilFinished / 1000).toString()
-//            //暂停
-//            mainScope.launch {
-//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-//            }
-//        }
-//
-//        override fun onFinish() {
-//            mainScope.launch {
-//                //继续
-//                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
-//            }
-//        }
-//    }
+    val timer = object : CountDownTimer(3000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            binding.textViewSecond.text = (millisUntilFinished / 1000).toString()
+        }
+
+        override fun onFinish() {
+        }
+    }
 
     override fun onStop() {
         super.onStop()
@@ -72,7 +64,7 @@ class ExplainArriveFragment : Fragment() {
             transitionToState(R.id.state2)
         }
         //开始倒计时
-//        timer.start()
+        timer.start()
     }
 
 

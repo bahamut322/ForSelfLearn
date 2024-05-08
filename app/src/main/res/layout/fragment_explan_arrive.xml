@@ -92,7 +92,6 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="60dp"
                 android:gravity="bottom"
-                android:text="@string/min"
                 android:textColor="@color/white"
                 android:textSize="64sp"
                 app:layout_constraintBottom_toBottomOf="parent"
