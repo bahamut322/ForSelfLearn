@@ -28,13 +28,7 @@ class SettingViewModel : ViewModel() {
      */
     fun randomVoice(i: Int,speak: String) {
         val params = getParam(speak)
-        if (i == 1) {
-            SpeakHelper.setParam(params, OfflineResource.VOICE_FEMALE)//女
-        } else if (i == 2) {
-            SpeakHelper.setParam(params, OfflineResource.VOICE_MALE)//男
-        } else if (i == 3) {
-            SpeakHelper.setParam(params, OfflineResource.VOICE_DUYY)//童
-        }
+        SpeakHelper.setParam(params, i)
     }
 
     /**

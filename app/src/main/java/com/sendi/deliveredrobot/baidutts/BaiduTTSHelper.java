@@ -237,19 +237,6 @@ public class BaiduTTSHelper {
         MediaStatusManager.stopMediaPlay(true);
         synthesizer.resume();
     }
-    public void resetParam(){
-        Map<String, String> params = new HashMap<>();
-        // 以下参数均为选填
-        // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>, 其它发音人见文档
-        params.put(SpeechSynthesizer.PARAM_SPEAKER, "4");
-        // 设置合成的音量，0-15 ，默认 5
-        params.put(SpeechSynthesizer.PARAM_VOLUME, "15");
-        // 设置合成的语速，0-15 ，默认 5
-        params.put(SpeechSynthesizer.PARAM_SPEED, "7");
-        // 设置合成的语调，0-15 ，默认 5
-        params.put(SpeechSynthesizer.PARAM_PITCH, "5");
-        setParam(params, offlineVoice);
-    }
 }
 
 

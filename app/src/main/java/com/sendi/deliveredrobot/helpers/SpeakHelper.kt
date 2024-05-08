@@ -1,9 +1,16 @@
 package com.sendi.deliveredrobot.helpers
 
+import com.iflytek.aikitdemo.ability.AbilityCallback
+import com.iflytek.aikitdemo.ability.AbilityConstant
+import com.iflytek.aikitdemo.ability.tts.TtsHelper
 import com.sendi.deliveredrobot.BuildConfig
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.TYPE_EXCEPTION
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
+import com.sendi.deliveredrobot.baidutts.util.OfflineResource
+import com.sendi.deliveredrobot.entity.entitySql.QuerySql
+import com.sendi.deliveredrobot.model.BasicModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.utils.LogUtil
 import kotlinx.coroutines.MainScope
@@ -15,9 +22,10 @@ import java.util.LinkedList
  *   @describe: 语音播报包装类
  */
 object SpeakHelper {
-    private const val TYPE_BAIDU = 0
-    private const val TYPE_XTTS = 1
-    private var SPEAK_TYPE = TYPE_XTTS
+    private const val PATTERN = "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
+    const val TYPE_BAIDU = "0"
+    const val TYPE_XTTS = "1"
+    private var SPEAK_TYPE = ""
     val mainScope = MainScope()
     val list = LinkedList<SpeakModel>()
     val speakCallback = object : SpeakCallback {
@@ -30,6 +38,7 @@ object SpeakHelper {
                 }
                 TYPE_XTTS -> {
                     // todo
+                    speakUserCallback?.speakAllFinish()
                 }
             }
         }
@@ -53,6 +62,7 @@ object SpeakHelper {
                 }
                 TYPE_XTTS -> {
                     // todo
+                    speakUserCallback?.progressChange("", progress)
                 }
             }
 
@@ -64,13 +74,25 @@ object SpeakHelper {
 
     var startId: Long? = null // 用于记录speakWithoutStop时的开始id
 
+    private var aiSoundHelper: TtsHelper? = null
+    private var basicModel: BasicModel? = null
+
+    fun getType(): String{
+        return SPEAK_TYPE
+    }
+
+    fun setType(ttsType: String){
+        SPEAK_TYPE = ttsType
+    }
     fun initTTS(){
+        SPEAK_TYPE = getType()
         when(SPEAK_TYPE){
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance()
             }
             TYPE_XTTS -> {
-                // todo
+                basicModel = QuerySql.QueryBasic()
+                initXTTS()
             }
         }
     }
@@ -85,7 +107,7 @@ object SpeakHelper {
                     BaiduTTSHelper.getInstance().speak(msg, utteranceId)
                 }
                 TYPE_XTTS -> {
-                    // todo
+                    xttsSpeech(msg)
                 }
             }
         }
@@ -120,12 +142,13 @@ object SpeakHelper {
 
                 TYPE_XTTS -> {
                     // todo
+                    xttsSpeech(msg)
                 }
             }
         }
     }
 
-    fun speaks(text: String?){
+    fun speaks(text: String){
         when (SPEAK_TYPE) {
             TYPE_BAIDU -> {
                 BaiduTTSHelper.getInstance().speaks(text)
@@ -133,6 +156,7 @@ object SpeakHelper {
 
             TYPE_XTTS -> {
                 // todo
+                xttsSpeech(text)
             }
         }
 
@@ -146,7 +170,7 @@ object SpeakHelper {
                 RobotStatus.ttsIsPlaying = false
             }
             TYPE_XTTS -> {
-                // todo
+                aiSoundHelper?.stop()
             }
         }
 
@@ -158,7 +182,7 @@ object SpeakHelper {
                 BaiduTTSHelper.getInstance().pause()
             }
             TYPE_XTTS -> {
-                // todo
+                aiSoundHelper?.pause()
             }
         }
     }
@@ -169,18 +193,43 @@ object SpeakHelper {
                 BaiduTTSHelper.getInstance().resume()
             }
             TYPE_XTTS -> {
-                // todo
+                aiSoundHelper?.resume()
             }
         }
     }
 
-    fun setParam(params: Map<String, String>?, voiceType: String?){
+    fun setParam(params: Map<String, String>?, voiceType: Int?){
         when (SPEAK_TYPE) {
             TYPE_BAIDU -> {
-                BaiduTTSHelper.getInstance().setParam(params, voiceType)
+                if (params == null || voiceType == null) return
+                val voiceStr = when (voiceType) {
+                    1 -> OfflineResource.VOICE_FEMALE
+                    2 -> OfflineResource.VOICE_MALE
+                    3 -> OfflineResource.VOICE_DUYY
+                    4 -> OfflineResource.VOICE_FEMALE
+                    else -> OfflineResource.VOICE_FEMALE
+                }
+                BaiduTTSHelper.getInstance().setParam(params, voiceStr)
             }
             TYPE_XTTS -> {
-                // todo
+                val vcn = when (voiceType) {
+                    1 -> "xiaoyan"
+                    2 -> "xiaofeng"
+                    3 -> "xiaoyan"
+                    4 -> "xiaomei"
+                    else -> "xiaoyan"
+                }
+                setVCN(vcn)
+            }
+        }
+    }
+
+    private fun setVCN(vcn: String){
+        when (SPEAK_TYPE) {
+            TYPE_BAIDU -> {
+            }
+            TYPE_XTTS -> {
+                aiSoundHelper?.setVCN(vcn)
             }
         }
     }
@@ -218,6 +267,61 @@ object SpeakHelper {
                 }
             }
             resetStartId()
+        }
+    }
+
+    private fun initXTTS() {
+        if (aiSoundHelper != null) {
+            aiSoundHelper!!.release()
+        }
+        aiSoundHelper = TtsHelper().apply {
+            val callback = object : AbilityCallback {
+
+                override fun onAbilityBegin() {
+                    LogUtil.i("xtts开始合成数据")
+                }
+
+                override fun onAbilityResult(result: String) {
+//                    startTime = System.currentTimeMillis()
+                }
+
+                override fun onAbilityError(code: Int, error: Throwable?) {
+                    LogUtil.i("xtts合成失败:${error?.message}")
+                }
+
+                override fun onAbilityEnd() {
+                    LogUtil.i("xtts播放结束=====\n")
+                    speakUserCallback?.speakAllFinish()
+                    if (aiSoundHelper != null) {
+                        aiSoundHelper!!.stop()
+                    }
+                }
+            }
+            onCreate(AbilityConstant.XTTS_ID, callback, object: TtsHelper.XTTSCallback{
+                override fun speakAllFinish() {
+                    speakUserCallback?.speakAllFinish()
+                }
+
+                override fun progressChange(progress: Int) {
+                    speakUserCallback?.progressChange("", progress)
+                }
+            })
+        }
+
+    }
+
+    private fun xttsSpeech(text: String){
+        aiSoundHelper?.apply {
+            AudioMngHelper(MyApplication.instance).setVoice100(50)
+            var speed = basicModel?.speechSpeed?.times(7f)?.toInt()?:50
+            speed = speed.let {
+                if(it > 100) 100
+                else it
+            }
+            setSpeed(speed)
+            setVolume(basicModel?.voiceVolume?:50)
+            setPitch(50)
+            speechText(text.replace(Regex(PATTERN),""))
         }
     }
 

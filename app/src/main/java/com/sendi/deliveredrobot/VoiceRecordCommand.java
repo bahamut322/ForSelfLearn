@@ -21,10 +21,13 @@ public class VoiceRecordCommand {
 
     private String voiceRecordType;
 
+    private String ttsType;
+
     private VoiceRecordCommand(Context context) {
         try {
             Properties prop = load(context);
-            voiceRecordType = getProperty(prop);
+            voiceRecordType = getProperty(prop, "voiceRecordType");
+            ttsType = getProperty(prop, "ttsType");
         }catch (Exception ignored){}
     }
 
@@ -32,6 +35,9 @@ public class VoiceRecordCommand {
         return voiceRecordType;
     }
 
+    public String getTtsType() {
+        return ttsType;
+    }
     public static VoiceRecordCommand getInstance(Context context) {
         if (ourInstance == null) {
             synchronized (VoiceRecordCommand.class) {
@@ -40,11 +46,10 @@ public class VoiceRecordCommand {
         }
         return ourInstance;
     }
-
-    private String getProperty(Properties properties) {
-        String value = properties.getProperty("voiceRecordType");
+    private String getProperty(Properties properties, String key) {
+        String value = properties.getProperty(key);
         if (value == null) {
-            throw new VoiceRecordCheckException("在 assets/voice_record_command.properties里没有设置 " + "voiceRecordType");
+            throw new LiftCommand.LiftCommandCheckException("在 assets/voice_record_command.properties里没有设置  " + key);
         }
         return value.trim();
     }

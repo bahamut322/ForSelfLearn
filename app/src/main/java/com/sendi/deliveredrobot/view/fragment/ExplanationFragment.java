@@ -152,7 +152,7 @@ public class ExplanationFragment extends BaseFragment {
                 scrollToCenter(position);
                 RobotStatus.INSTANCE.setSelectRouteMapItemId(routeMap.getId());
                 navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
-                SpeakHelper.INSTANCE.speak(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","", routeMap.getRouteName(),"智能讲解"));
+                SpeakHelper.INSTANCE.speak(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","", routeMap.getRouteName(),"智能讲解"),"");
             }
         };
         mAdapter = new ExplantionAdapter(requireContext(), listener);

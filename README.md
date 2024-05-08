@@ -11,3 +11,8 @@ voice_record_command.properties  - voiceRecordType - 0:sendi 1:艾小越<br/>
 **V1.2.0**<br/>
 主要实现讲解机器人的迎宾管理、轻应用、新增机器人标语字段、Vip人脸识别<br/>
 <br/>
+
+**V1.4.0**<br/>
+/sdcard/config/voice_record_command.properties 增加了ttsType字段，用于控制tts的类型，0：BAIDU 1：XTTS
+更新v1.4.0前需要手动删除原机器人内的/sdcard/config/voice_record_command.properties文件
+<br/>

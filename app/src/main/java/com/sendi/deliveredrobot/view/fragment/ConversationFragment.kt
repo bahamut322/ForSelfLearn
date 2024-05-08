@@ -33,6 +33,7 @@ import com.iflytek.vtncaetest.utils.FileUtil
 import com.iflytek.vtncaetest.utils.StreamingAsrUtil
 import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.baidutts.util.OfflineResource
 import com.sendi.deliveredrobot.databinding.FragmentConversationBinding
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql
 import com.sendi.deliveredrobot.enum.ASROrNlpModelTypeEnum
@@ -86,19 +87,14 @@ class ConversationFragment : Fragment() {
     private var waitTalk = true
 //    private val defaultAnswer = "我没明白您的意思，可以换个方式提问吗？"
     private val defaultAnswer = PlaceholderEnum.replaceText("%唤醒词%未听清您说的话，可以再说一遍吗？")
-    private val pattern = "(((htt|ft|m)ps?):\\/\\/)?([\\da-zA-Z\\.-]+)\\.?([a-z]{2,6})(:\\d{1,5})?([\\/\\w\\.-]*)*\\/?([#=][\\S]+)?"
     private var aiuiListener: AIUIListener? = null
     private var wakeupListener: WakeupListener? = null
     private var recorder: AudioRecorder? = null
     private var mAIUIAgent: AIUIAgent? = null
-    private var aiSoundHelper: TtsHelper? = null
-    private var basicModel: BasicModel? = null
     private var voiceManager: VoiceManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        basicModel = QuerySql.QueryBasic()
-        initXTTS()
         voiceManager = VoiceManager()
     }
 
@@ -142,7 +138,7 @@ class ConversationFragment : Fragment() {
                 wakeupListener =
                     WakeupListener { angle: Int, beam: Int, score: Int, keyWord: String ->
                         //唤醒时停止播放tts
-                        aiSoundHelper?.stop()
+                        SpeakHelper.stop()
                         SpeakHelper.speakUserCallback?.speakAllFinish()
                     }
                 aiuiListener = AIUIListener { event: AIUIEvent ->
@@ -363,7 +359,7 @@ class ConversationFragment : Fragment() {
                     DialogHelper.loadingDialog.dismiss()
                     return@thread
                 }
-                initXTTS()
+//                initXTTS()
                 initSDK()
                 startRecord()
                 Thread.sleep(2000)
@@ -380,6 +376,7 @@ class ConversationFragment : Fragment() {
                 startTime = System.currentTimeMillis()
             }
         })
+        SpeakHelper.setParam(null, RobotStatus.robotConfig?.value?.audioType)
         SpeakHelper.speak(RESUME_SPEAK_TEXT)
 
     }
@@ -675,15 +672,15 @@ class ConversationFragment : Fragment() {
     }
 
     private fun findFinalAnswerAndStartTTS(sid: String, answerType: String, answer: String) {
-        val vcn = when (hashMap[sid]?.get(0)?.streamingAsrModel?.language) {
-            StreamingAsrUtil.MANDARIN -> "xiaoyan"
-            StreamingAsrUtil.GUANGDONG -> "xiaomei"
-            else -> "xiaomei"
+        val voiceType = when (hashMap[sid]?.get(0)?.streamingAsrModel?.language) {
+            StreamingAsrUtil.MANDARIN -> 1
+            StreamingAsrUtil.GUANGDONG -> 4
+            else -> 1
         }
         val finalAnswer = findFinalAnswer(sid, answerType, answer)
         if (finalAnswer != null) {
             DialogHelper.loadingDialog.dismiss()
-            aiSoundHelper?.setVCN(vcn)
+            SpeakHelper.setParam(null, voiceType)
             mainScope.launch {
                 addAnswer2(finalAnswer.answer)
                 val finalAnswerStr :String
@@ -714,18 +711,7 @@ class ConversationFragment : Fragment() {
 //            params.append(",volume=55")
 //            AiuiEngine.TTS_start(text, params)
 //        SpeakHelper.speakWithoutStop(text.replace(Regex(pattern),""))
-        aiSoundHelper?.apply {
-            AudioMngHelper(requireContext()).setVoice100(50)
-            var speed = basicModel?.speechSpeed?.times(7f)?.toInt()?:50
-            speed = speed.let {
-                if(it > 100) 100
-                else it
-            }
-            setSpeed(speed)
-            setVolume(basicModel?.voiceVolume?:50)
-            setPitch(50)
-            speechText(text.replace(Regex(pattern),""))
-        }
+        SpeakHelper.speak(text)
         SystemRecorder.AUDIO_TYPE_ASR = false
     }
 
@@ -796,6 +782,12 @@ class ConversationFragment : Fragment() {
     }
 
     fun quitFragment() {
+        when (SpeakHelper.getType()) {
+            SpeakHelper.TYPE_XTTS -> {
+                // 还原配置的音色
+                SpeakHelper.setParam(null, RobotStatus.robotConfig?.value?.audioType)
+            }
+        }
         thread {
             LogUtil.i("conversation quitFragment")
             if (EngineConstants.isRecording) {
@@ -818,42 +810,7 @@ class ConversationFragment : Fragment() {
                 wakeupListener = null
             }
             SpeakHelper.stop()
-            aiSoundHelper?.stop()
             LogUtil.i("conversation quitFragment is done")
         }
     }
-    private fun initXTTS() {
-        if (aiSoundHelper != null) {
-            aiSoundHelper!!.release()
-        }
-        aiSoundHelper = TtsHelper().apply {
-            val callback = object : AbilityCallback {
-
-                override fun onAbilityBegin() {
-                    LogUtil.i("xtts开始合成数据")
-                }
-
-                override fun onAbilityResult(result: String) {
-                    startTime = System.currentTimeMillis()
-                }
-
-                override fun onAbilityError(code: Int, error: Throwable?) {
-                    LogUtil.i("xtts合成失败:${error?.message}")
-                }
-
-                override fun onAbilityEnd() {
-                    LogUtil.i("xtts播放结束=====\n")
-                    SpeakHelper.speakUserCallback?.speakAllFinish()
-                    if (aiSoundHelper != null) {
-                        aiSoundHelper!!.stop()
-                    }
-                }
-            }
-            onCreate(AbilityConstant.XTTS_ID, callback)
-        }
-
-    }
-
-
-
 }

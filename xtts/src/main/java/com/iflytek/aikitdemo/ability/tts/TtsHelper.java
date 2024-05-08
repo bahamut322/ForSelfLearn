@@ -126,6 +126,7 @@ public class TtsHelper implements SynthesisCallback {
                 while (loop) {
                     text = textQueue.poll();
                     if (text != null) {
+                        ttsEngine.setText(text);
                         ttsEngine.textToSpeech(text, ttsParams, TtsHelper.this);
                     }
                     SystemClock.sleep(50L);
@@ -158,12 +159,12 @@ public class TtsHelper implements SynthesisCallback {
     }
 
 
-    public final void onCreate(@NotNull String engineId, @NotNull AbilityCallback callBack) {
+    public final void onCreate(@NotNull String engineId, @NotNull AbilityCallback callBack, @NotNull XTTSCallback xttsCallback) {
         this.engineId = engineId;
         if (this.ttsEngine == null) {
             this.ttsEngine = new TtsEngine();
             TtsEngine engine = this.ttsEngine;
-            engine.onCreate(engineId);
+            engine.onCreate(engineId, xttsCallback);
         }
         this.callBack = callBack;
     }
@@ -454,5 +455,10 @@ public class TtsHelper implements SynthesisCallback {
         } catch (Exception var6) {
             var6.printStackTrace();
         }
+    }
+    public interface XTTSCallback {
+        void speakAllFinish();
+
+        void progressChange(int progress);
     }
 }

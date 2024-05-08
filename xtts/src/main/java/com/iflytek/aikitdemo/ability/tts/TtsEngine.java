@@ -48,8 +48,13 @@ public class TtsEngine implements AiListener {
 
     private int cacheTotalLength = -1;
 
+    private String text = "";
 
-    public final void onCreate(@NotNull String engineId) {
+    public void setText(String text){
+        this.text = text;
+    }
+
+    public final void onCreate(@NotNull String engineId, TtsHelper.XTTSCallback xttsCallback) {
         this.engineId = engineId;
         AiHelper.getInst().registerListener(engineId, this);
         if (this.byteQueue == null) {
@@ -72,8 +77,10 @@ public class TtsEngine implements AiListener {
                                 float progress = (cacheTotalLength - queue.size()) * 1f / cacheTotalLength;
                                 if (progress > 0) {
                                     TtsEngine.this.isSpeaking = true;
+                                    xttsCallback.progressChange((int) (text.length() * progress));
                                     if(progress == 1){
                                         Log.d(TAG, "total length:" + cacheTotalLength );
+                                        xttsCallback.speakAllFinish();
                                     }
                                 }
                             }

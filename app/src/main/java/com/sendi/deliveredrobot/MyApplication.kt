@@ -51,7 +51,6 @@ class MyApplication : Application() {
         x.Ext.init(this)//初始化xUtils3
         CrashHandler().getInstance()?.init(this)
 //        BaiduTTSHelper.getInstance()
-        SpeakHelper.initTTS()
         LitePal.initialize(this)//数据库实例
         listener = object : DownloadBill.DownloadListener {
             override fun onProgress(progress: Int) {
@@ -93,7 +92,6 @@ class MyApplication : Application() {
                 Log.i("TAG", "downLoad Error: $e")
             }
         }
-
         //添加腾讯bugly
         CrashReport.initCrashReport(applicationContext, "3f38b69ec1", false)
         //初始化人脸识别&检测

@@ -196,7 +196,11 @@ class SelfCheckFragment : Fragment() {
 //                    }
                     VoiceRecordCommand.getInstance(requireContext()).apply {
                         ASROrNlpModelTypeEnum.voiceRecordType = this.voiceRecordType
+                        if (ttsType != null) {
+                            SpeakHelper.setType(ttsType)
+                        }
                     }
+                    SpeakHelper.initTTS()
                     DeliverMqttService.publish(ResetTimeModel().toString())
                     withContext(Dispatchers.Main) {
                         Log.d("TAG", "checkHardware: 获取时间戳")
