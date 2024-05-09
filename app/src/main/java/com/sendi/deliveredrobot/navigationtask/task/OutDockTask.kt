@@ -46,13 +46,13 @@ class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstra
         } else {
             mainScope.launch {
                 DialogHelper.loadingDialog.show()
+                MyApplication.instance!!.sendBroadcast(
+                    Intent().apply {
+                        action = ACTION_NAVIGATE
+                        putExtra(NAVIGATE_ID, R.id.readyForTaskFragment)
+                    }
+                )
                 if (judgeBeforeNavigate()) {
-                    MyApplication.instance!!.sendBroadcast(
-                        Intent().apply {
-                            action = ACTION_NAVIGATE
-                            putExtra(NAVIGATE_ID, R.id.readyForTaskFragment)
-                        }
-                    )
                     ROSHelper.controlDock(RobotCommand.CMD_OUT_DOCK)
                 }else{
                     taskModel?.bill?.executeNextTask()
