@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessingBinding
 import com.sendi.deliveredrobot.entity.Table_Guide_Foundation
@@ -29,6 +30,7 @@ import com.sendi.deliveredrobot.navigationtask.GuideTaskBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.ToastUtil
 import com.sendi.deliveredrobot.view.widget.FinishTaskDialog
 import com.sendi.deliveredrobot.view.widget.MediaStatusManager
 import com.sendi.deliveredrobot.view.widget.ProcessClickDialog
@@ -167,8 +169,10 @@ class GuidingFragment : Fragment() {
 
         //暂停
         binding.argPic.setOnClickListener {
-            processClickDialog?.show()
-            pause()
+            if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE){
+                processClickDialog?.show()
+                pause()
+            }
         }
 
         SpeakHelper.setUserCallback(object : SpeakHelper.SpeakUserCallback{
