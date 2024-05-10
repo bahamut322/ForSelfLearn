@@ -151,7 +151,7 @@ public class ExplanationFragment extends BaseFragment {
             } else {
                 scrollToCenter(position);
                 RobotStatus.INSTANCE.setSelectRouteMapItemId(routeMap.getId());
-                navigateToFragment(R.id.action_explanationFragment_to_CatalogueExplantionFragment, null);
+                navigateToFragment(R.id.CatalogueExplantionFragment, null);
                 SpeakHelper.INSTANCE.speak(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getPointListText(),"","", routeMap.getRouteName(),"智能讲解"),"");
             }
         };

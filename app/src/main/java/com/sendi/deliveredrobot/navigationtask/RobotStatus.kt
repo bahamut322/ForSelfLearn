@@ -104,4 +104,6 @@ object RobotStatus {
                 else -> -1
             }
         }
+
+    const val LOCK = "WAKE_UP_ENGINE_LOCK"
 }

@@ -590,7 +590,7 @@ class HomeFragment : BaseFragment(), IMainView {
                     Toast.makeText(context, "请先对接充电桩", Toast.LENGTH_SHORT).show()
                     DialogHelper.briefingDialog.show()
                 } else {
-                    homeFragmentNavigateToFragment(R.id.action_homeFragment_to_explanationFragment)
+                    homeFragmentNavigateToFragment(R.id.ExplanationFragment)
                     Log.d("TAG", "点击智能讲解 ")
                 }
             }

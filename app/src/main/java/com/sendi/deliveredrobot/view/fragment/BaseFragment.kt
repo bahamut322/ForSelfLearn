@@ -23,6 +23,7 @@ open class BaseFragment: Fragment(){
     /**
      * 唤醒回调
      */
+
     protected var wakeupListener: WakeupListener? = null
 
     protected var recorder: AudioRecorder? = null
@@ -33,22 +34,24 @@ open class BaseFragment: Fragment(){
     }
 
     open fun onBaseResume(){
-        wakeupListener = WakeupListener { angle, beam, score, keyWord ->
-            LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
-            quitFragment()
-            findNavController().navigate(R.id.conversationFragment)
-        }
         DialogHelper.loadingDialog.show()
         thread {
-            Thread.sleep(1000)
-            if(!isResumed) {
+            synchronized(RobotStatus.LOCK){
+                Thread.sleep(3000)
+                wakeupListener = WakeupListener { angle, beam, score, keyWord ->
+                    LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+                    quitFragment()
+                    findNavController().navigate(R.id.conversationFragment)
+                }
+                if(!isResumed) {
+                    DialogHelper.loadingDialog.dismiss()
+                    return@thread
+                }
+                CopyAssetsUtils.portingFile(MyApplication.context)
+                initSDK()
+                startRecord()
                 DialogHelper.loadingDialog.dismiss()
-                return@thread
             }
-            CopyAssetsUtils.portingFile(MyApplication.context)
-            initSDK()
-            startRecord()
-            DialogHelper.loadingDialog.dismiss()
         }
     }
 
@@ -114,20 +117,22 @@ open class BaseFragment: Fragment(){
 
     protected fun quitFragment(){
         thread {
-            LogUtil.i("quitFragment")
-            FaceRecognition.onDestroy()
-            if (EngineConstants.isRecording) {
-                stopRecord()
+            synchronized(RobotStatus.LOCK) {
+                LogUtil.i("quitFragment")
+                FaceRecognition.onDestroy()
+                if (EngineConstants.isRecording) {
+                    stopRecord()
+                }
+                if (recorder != null) {
+                    recorder!!.destroyRecord()
+                    recorder = null
+                }
+                if (wakeupListener != null) {
+                    wakeupListener = null
+                }
+                WakeupEngine.destroy()
+                LogUtil.i("quitFragment is Done!")
             }
-            if (recorder != null) {
-                recorder!!.destroyRecord()
-                recorder = null
-            }
-            if (wakeupListener != null) {
-                wakeupListener = null
-            }
-            WakeupEngine.destroy()
-            LogUtil.i("quitFragment is Done!")
         }
     }
 

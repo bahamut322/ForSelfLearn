@@ -111,21 +111,24 @@ class StandbyFragment : Fragment() {
 //                }
 //            }
 
-            wakeupListener = WakeupListener { angle, beam, score, keyWord ->
-                LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
-                navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
-            }
+
             DialogHelper.loadingDialog.show()
             thread {
-                Thread.sleep(500)
-                if (!isResumed) {
+                synchronized(RobotStatus.LOCK) {
+                    Thread.sleep(500)
+                    wakeupListener = WakeupListener { angle, beam, score, keyWord ->
+                        LogUtil.i("angle:$angle,beam:$beam,score:$score,keyWord:$keyWord")
+                        navigateToFragment(R.id.action_standbyFragment_to_homeFragment)
+                    }
+                    if (!isResumed) {
+                        DialogHelper.loadingDialog.dismiss()
+                        return@thread
+                    }
+                    CopyAssetsUtils.portingFile(MyApplication.context)
+                    initSDK()
+                    startRecord()
                     DialogHelper.loadingDialog.dismiss()
-                    return@thread
                 }
-                CopyAssetsUtils.portingFile(MyApplication.context)
-                initSDK()
-                startRecord()
-                DialogHelper.loadingDialog.dismiss()
             }
         }
     }
@@ -224,19 +227,21 @@ class StandbyFragment : Fragment() {
 
     private fun quitFragment() {
         thread {
-            LogUtil.i("standby fragment quitFragment")
-            if (EngineConstants.isRecording) {
-                stopRecord()
+            synchronized(RobotStatus.LOCK) {
+                LogUtil.i("standby fragment quitFragment")
+                if (EngineConstants.isRecording) {
+                    stopRecord()
+                }
+                if (recorder != null) {
+                    recorder!!.destroyRecord()
+                    recorder = null
+                }
+                if (wakeupListener != null) {
+                    wakeupListener = null
+                }
+                WakeupEngine.destroy()
+                LogUtil.i("standby fragment quitFragment done!")
             }
-            if (recorder != null) {
-                recorder!!.destroyRecord()
-                recorder = null
-            }
-            if (wakeupListener != null) {
-                wakeupListener = null
-            }
-            WakeupEngine.destroy()
-            LogUtil.i("standby fragment quitFragment done!")
         }
     }
 
