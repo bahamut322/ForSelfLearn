@@ -2,9 +2,13 @@ package com.sendi.deliveredrobot.helpers;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.MainThread;
 
 import com.sendi.deliveredrobot.MyApplication;
 import com.sendi.deliveredrobot.entity.entitySql.QuerySql;
+import com.sendi.deliveredrobot.topic.VoicePromptTopic;
 import com.sendi.deliveredrobot.view.widget.MediaStatusManager;
 
 import java.io.IOException;
@@ -24,6 +28,7 @@ public class MediaPlayerHelper {
 
     private MediaPlayer.OnCompletionListener mOnCompletionListener;
 
+
     private MediaPlayerHelper() {
         // 私有构造函数，防止外部实例化
     }
@@ -40,8 +45,18 @@ public class MediaPlayerHelper {
     }
 
     public void play(String fileName) {
-        new Handler().postDelayed(() -> {
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper());
+        }
+        mHandler.post(() -> {
             // 要延迟执行的方法
+//            int voicePromptTopicStatus = VoicePromptTopic.INSTANCE.getCurrentStatus();
+//            if (voicePromptTopicStatus > 0 && voicePromptTopicStatus != 1) {
+//                return;
+//            }
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                return;
+            }
             MediaStatusManager.stopMediaPlay(true);
             releaseMediaPlayer(); // 释放之前的 MediaPlayer
             mMediaPlayer = new MediaPlayer();
@@ -50,7 +65,11 @@ public class MediaPlayerHelper {
             }
             try {
                 if (fileName != null) {
-                    new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
+//                    new AudioMngHelper(MyApplication.context).setVoice100(QuerySql.QueryBasic().getVideoVolume());
+                    new AudioMngHelper(MyApplication.context).setVoice100(100);
+                    float volume = QuerySql.QueryBasic().getVideoVolume() / 100f;
+//                    float volume = 1f;
+                    mMediaPlayer.setVolume(volume,volume);
                     mMediaPlayer.setDataSource(fileName);
                     mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
                     mMediaPlayer.prepareAsync();
@@ -59,7 +78,7 @@ public class MediaPlayerHelper {
                 e.printStackTrace();
                 releaseMediaPlayer(); // 出现异常时释放 MediaPlayer
             }
-        }, 2000); // 延迟2秒执行
+        }); // 延迟2秒执行
     }
 
     public void pause() {
@@ -90,6 +109,10 @@ public class MediaPlayerHelper {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+    }
+
+    public void releaseOnCompletionListener() {
+        mOnCompletionListener = null;
     }
 
     public void setOnProgressListener(OnProgressListener onProgressListener) {

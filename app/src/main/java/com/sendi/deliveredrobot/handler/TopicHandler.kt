@@ -41,7 +41,7 @@ object TopicHandler {
                         handleSafeStateTopic(rosResult)
                     }
                     ClientConstant.VOICE_PROMPT_TOPIC -> {
-                            handleVoicePromptTopic(rosResult, navController)
+                            handleVoicePromptTopic(rosResult)
                     }
                     ClientConstant.BATTERY_STATE -> {
                         // =============== 电池信息上报 =================
@@ -152,12 +152,11 @@ object TopicHandler {
      * @describe 挡路
      */
     private fun handleVoicePromptTopic(
-        rosResult: RosResult<*>?,
-        navController: NavController
+        rosResult: RosResult<*>?
     ) {
-        if(RobotStatus.progress.value == Universal.explainTextLength || Universal.explainTextLength==-1) {
-            VoicePromptTopic.handle(rosResult, navController)
-        }
+//        if(RobotStatus.progress.value == Universal.explainTextLength || Universal.explainTextLength==-1) {
+            VoicePromptTopic.handle(rosResult)
+//        }
     }
 
     /**

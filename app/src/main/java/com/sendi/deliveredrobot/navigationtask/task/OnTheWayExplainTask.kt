@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
     private var finished = false
     private var route: MyResultModel? = null
-    private var type: Int = -1
+    var type: Int = -1
     private var position: Int = -1
     private var status = ExplainStatusModel.STATUS_ON_THE_WAY_BEFORE
     init {
@@ -91,6 +91,7 @@ class OnTheWayExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
                         LogUtil.i("结束 ${taskModel?.endTarget?:""} 途径播报（MP3）")
                         MediaStatusManager.stopMediaPlay(false)
                         finishExplain()
+                        MediaPlayerHelper.getInstance().releaseOnCompletionListener()
                     }
                     withContext(Dispatchers.Main){
                         MediaPlayerHelper.getInstance().play(route!!.walkvoice)

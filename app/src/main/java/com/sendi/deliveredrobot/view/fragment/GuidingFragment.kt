@@ -287,5 +287,6 @@ class GuidingFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mainScope.cancel()
+        SpeakHelper.releaseUserCallback()
     }
 }
