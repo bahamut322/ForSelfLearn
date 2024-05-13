@@ -1,15 +1,19 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import chassis_msgs.SafeState
 import com.sendi.deliveredrobot.*
 import com.sendi.deliveredrobot.ACTION_NAVIGATE
 import com.sendi.deliveredrobot.NAVIGATE_ID
 import com.sendi.deliveredrobot.helpers.DialogHelper
 import com.sendi.deliveredrobot.helpers.ROSHelper
+import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.BillManager
+import com.sendi.deliveredrobot.navigationtask.GoBackTaskBill
 import com.sendi.deliveredrobot.service.TaskStageEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +25,7 @@ import sensor_msgs.BatteryState
  *   @date: 2021/8/24 19:57
  *   @describe: 退出自主充电
  */
-class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : AbstractTask(taskModel, needReportData) {
+class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true, private val headBill: Boolean = false) : AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.OutDockTask
     }
@@ -37,6 +41,7 @@ class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstra
                         putExtra(NAVIGATE_ID, R.id.readyForTaskFragment)
                     }
                 )
+                speechReadyText()
                 ROSHelper.controlDock(RobotCommand.CMD_OUT_DOCK)
             } else {
                 //如果是适配器
@@ -52,6 +57,7 @@ class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstra
                         putExtra(NAVIGATE_ID, R.id.readyForTaskFragment)
                     }
                 )
+                speechReadyText()
                 if (judgeBeforeNavigate()) {
                     ROSHelper.controlDock(RobotCommand.CMD_OUT_DOCK)
                 }else{
@@ -78,5 +84,18 @@ class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true) : Abstra
             }
         }
         return resultCode == 1
+    }
+
+    private fun speechReadyText(){
+        val speakText = if (BillManager.currentBill() is GoBackTaskBill) {
+            MyApplication.instance?.getString(R.string.retry_dock)
+        }else{
+            if (headBill) {
+                MyApplication.instance?.getString(R.string.i_ready_to_work_excuse_me)
+            }else{
+                null
+            }
+        }
+        speakText?.let { SpeakHelper.speakWithoutStop(speakText) }
     }
 }

@@ -64,8 +64,15 @@ public class CatalogueExplanationFragment extends BaseFragment {
             quitFragment();
             viewModel.start();
             Universal.twice = true;
-            SpeakHelper.INSTANCE.stop();
-            SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
+//            SpeakHelper.INSTANCE.stop();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException ignored) {
+                }
+                SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getStartText(),"","",viewModel.inForListData().get(0).getRoutename(),"智能讲解"));
+            }).start();
+
         });
         ROSHelper.INSTANCE.setSpeed(QuerySql.QueryBasic().getGoExplanationPoint()+"");
         binding.returnHome.setOnClickListener(v -> navigateToFragment(R.id.action_CatalogueExplantionFragment_to_ExplanationFragment,null));

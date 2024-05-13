@@ -86,7 +86,11 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
-                val bill = ExplanationBillFactory.createBill(taskModel = taskModel)
+                val bill = if (index == position) {
+                    ExplanationBillFactory.createHeadBill(taskModel = taskModel)
+                }else{
+                    ExplanationBillFactory.createRegularBill(taskModel = taskModel)
+                }
                 BillManager.addAllLast(bill)
             }
 //            if (!array) {
@@ -127,14 +131,16 @@ class StartExplainViewModel : ViewModel() {
         ExplainManager.routes = inForListData()
         BillManager.billList().clear()
         mainScope.launch(Dispatchers.Default) {
-            for (data in inForListData()!!) {
+            inForListData()?.forEachIndexed { index, myResultModel ->
                 val taskModel = TaskModel(
-                    location = dao.queryPoint(data?.name?:""),
+                    location = dao.queryPoint(myResultModel?.name?:""),
                 )
-                val bill = ExplanationBillFactory.createBill(taskModel = taskModel)
-//                BillManager.addAllLast(bill)
+                val bill = if (index == 0) {
+                    ExplanationBillFactory.createHeadBill(taskModel = taskModel)
+                }else{
+                    ExplanationBillFactory.createRegularBill(taskModel = taskModel)
+                }
                 BillManager.addAllLast(bill)
-//                Universal.Model = "开始讲解"
             }
             BillManager.currentBill()?.executeNextTask()
             LogUtil.d("任务长度："+ BillManager.billList().size)

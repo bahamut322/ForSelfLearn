@@ -21,18 +21,13 @@ import com.sendi.deliveredrobot.navigationtask.GoBackTaskBill
  */
 class ReadyForTaskFragment : Fragment() {
     lateinit var binding:FragmentReadyForTaskBinding
-    private var speakText = ""
+    private var speakText: String? = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_ready_for_task, container, false)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,8 +39,9 @@ class ReadyForTaskFragment : Fragment() {
             }else{
                 getString(R.string.i_ready_to_work_excuse_me)
             }
-            SpeakHelper.speakWithoutStop(speakText)
-            bottomAlarmText1 = speakText
+            speakText?.let {
+                bottomAlarmText1 = it
+            }
         }
         binding.motionLayoutReadyForTask.apply {
             transitionToState(R.id.state2)

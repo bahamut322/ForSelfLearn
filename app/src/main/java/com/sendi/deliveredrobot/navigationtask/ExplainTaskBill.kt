@@ -19,7 +19,7 @@ import java.util.*
  * @date 2023-04-23
  * @description 智能讲解任务清单
  */
-class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
+class ExplainTaskBill(taskModel: TaskModel?, private val headBill: Boolean = false) : AbstractTaskBill(taskModel) {
     var route: MyResultModel? = null
     var position: Int = -1
 
@@ -106,7 +106,8 @@ class ExplainTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@ExplainTaskBill
-                    )
+                    ),
+                    headBill = headBill
                 )
             )
             // step 2.5: 切换地图
