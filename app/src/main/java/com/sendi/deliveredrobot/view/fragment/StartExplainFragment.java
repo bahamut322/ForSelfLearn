@@ -573,11 +573,11 @@ public class StartExplainFragment extends Fragment {
             finishTaskDialog.confirmBtn.setOnClickListener(v12 -> {
                 finishTaskDialog.confirmBtn.setClickable(false);
                 Universal.explainTextLength = -1;
+                SpeakHelper.INSTANCE.releaseUserCallback();
                 viewModel.finishTask();
                 MediaPlayerHelper.getInstance().stop();
                 processClickDialog.dismiss();
                 finishTaskDialog.dismiss();
-                SpeakHelper.INSTANCE.releaseUserCallback();
                 SpeakHelper.INSTANCE.speakWithoutStop(PlaceholderEnum.Companion.replaceText(QuerySql.QueryExplainConfig().getInterruptionText(),"",binding.nowExplanation.getText().toString(),ExplainManager.INSTANCE.getRoutes().get(0).getRoutename(),"智能讲解"));
             });
             finishTaskDialog.cancelBtn.setOnClickListener(v1 -> {

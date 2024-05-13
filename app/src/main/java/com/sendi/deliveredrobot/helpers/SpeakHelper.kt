@@ -61,7 +61,6 @@ object SpeakHelper {
                     speakUserCallback?.progressChange(utteranceId, actualProgress)
                 }
                 TYPE_XTTS -> {
-                    // todo
                     speakUserCallback?.progressChange("", progress)
                 }
             }

@@ -1,6 +1,5 @@
 package com.sendi.deliveredrobot.viewmodel
 
-import android.app.Dialog
 import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -17,7 +16,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.MyResultModel
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
-import com.sendi.deliveredrobot.navigationtask.ExplanationBill
+import com.sendi.deliveredrobot.navigationtask.ExplanationBillFactory
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.ros.constant.MyCountDownTimer
@@ -87,7 +86,7 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(inForListData()!![index]!!.name),
                 )
-                val bill = ExplanationBill.createBill(taskModel = taskModel)
+                val bill = ExplanationBillFactory.createBill(taskModel = taskModel)
                 BillManager.addAllLast(bill)
             }
 //            if (!array) {
@@ -132,7 +131,7 @@ class StartExplainViewModel : ViewModel() {
                 val taskModel = TaskModel(
                     location = dao.queryPoint(data?.name?:""),
                 )
-                val bill = ExplanationBill.createBill(taskModel = taskModel)
+                val bill = ExplanationBillFactory.createBill(taskModel = taskModel)
 //                BillManager.addAllLast(bill)
                 BillManager.addAllLast(bill)
 //                Universal.Model = "开始讲解"
@@ -281,6 +280,7 @@ class StartExplainViewModel : ViewModel() {
         DialogHelper.loadingDialog.show()
         mainScope.launch {
             MediaPlayerHelper.getInstance().stop()
+            SpeakHelper.releaseUserCallback()
             SpeakHelper.stop()
             countDownTimer?.pause()
             BillManager.currentBill()?.earlyFinish()
