@@ -270,6 +270,7 @@ class GuidingFragment : Fragment() {
 
     //二次确认
     private fun secondRecognition() {
+        SpeakHelper.releaseUserCallback()
         finishTaskDialog?.show()
         finishTaskDialog?.confirmBtn?.setOnClickListener {
             processClickDialog?.dismiss()

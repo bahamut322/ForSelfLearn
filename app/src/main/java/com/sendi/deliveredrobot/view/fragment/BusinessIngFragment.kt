@@ -15,6 +15,7 @@ import androidx.navigation.Navigation
 import com.alibaba.fastjson.JSONObject
 import com.bumptech.glide.Glide
 import com.sendi.deliveredrobot.R
+import com.sendi.deliveredrobot.RobotCommand
 import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.databinding.FragmentBusinessingBinding
 import com.sendi.deliveredrobot.entity.Table_Shopping_Action
@@ -228,10 +229,17 @@ class BusinessIngFragment : Fragment() {
         //暂停
         binding.argPic.setOnClickListener {
             if (QuerySql.QueryBasic().businessInterrupt) {
-                processClickDialog?.show()
-                pause()
+                if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
+                    processClickDialog?.show()
+                    pause()
+                }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        SpeakHelper.releaseUserCallback()
     }
 
     private fun status() {
@@ -318,6 +326,7 @@ class BusinessIngFragment : Fragment() {
 
             when (actionData!!.actionType) {
                 2 -> {
+                    SpeakHelper.releaseUserCallback()
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
                     if (arrayPoint.value != 1) {//如果到点点击结束
