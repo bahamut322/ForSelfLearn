@@ -73,7 +73,7 @@ class GuideTaskBill(taskModel: TaskModel?) : AbstractTaskBill(taskModel) {
                         endTarget = endTarget(),
                         taskId = taskId(),
                         bill = this@GuideTaskBill
-                    )
+                    ),
                 )
             )
             // step 2.5: 切换地图

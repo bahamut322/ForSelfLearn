@@ -25,7 +25,7 @@ import sensor_msgs.BatteryState
  *   @date: 2021/8/24 19:57
  *   @describe: 退出自主充电
  */
-class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true, private val headBill: Boolean = false) : AbstractTask(taskModel, needReportData) {
+class OutDockTask(taskModel: TaskModel, needReportData: Boolean = true, private val headBill: Boolean = true) : AbstractTask(taskModel, needReportData) {
     override fun configEnum(): TaskStageEnum {
         return TaskStageEnum.OutDockTask
     }
