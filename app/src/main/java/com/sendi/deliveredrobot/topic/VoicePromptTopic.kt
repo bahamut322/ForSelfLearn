@@ -14,6 +14,7 @@ import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
+import com.sendi.deliveredrobot.navigationtask.task.AdvanceGuidingTask
 import com.sendi.deliveredrobot.navigationtask.task.GuidingTask
 import com.sendi.deliveredrobot.navigationtask.task.OnTheWayExplainTask
 import com.sendi.deliveredrobot.ros.dto.RosResult
@@ -230,12 +231,24 @@ object VoicePromptTopic {
                                             MediaPlayerHelper.getInstance().play(it)
                                         }
                                      }
+
+                                     else -> {
+                                         voicePath?.let {
+                                             MediaPlayerHelper.getInstance().play(it)
+                                         }
+                                     }
                                 }
                             }
 
                             is GuidingTask -> {
                                 // 如果是GuidingTask，则直接播报mp3
 //                                SpeakHelper.pause()
+                                voicePath?.let {
+                                    MediaPlayerHelper.getInstance().play(it)
+                                }
+                            }
+
+                            is AdvanceGuidingTask -> {
                                 voicePath?.let {
                                     MediaPlayerHelper.getInstance().play(it)
                                 }
