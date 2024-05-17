@@ -329,12 +329,12 @@ class BusinessIngFragment : Fragment() {
                     SpeakHelper.releaseUserCallback()
                     processClickDialog?.dismiss()
                     finishTaskDialog?.dismiss()
-                    if (arrayPoint.value != 1) {//如果到点点击结束
-                    } else {
+//                    if (arrayPoint.value != 1) {//如果到点点击结束
+//                    } else {
                         //中断提示
                         SpeakHelper.speaks(PlaceholderEnum.replaceText(text = QuerySql.ShoppingConfig().interruptPrompt!!,pointName = actionData?.pointName!!, business = actionData?.name!!))
                     //                        viewModel!!.splitTextByPunctuation(QuerySql.ShoppingConfig().interruptPrompt!!)
-                    }
+//                    }
                     viewModel!!.finishTask()
                 }
 
