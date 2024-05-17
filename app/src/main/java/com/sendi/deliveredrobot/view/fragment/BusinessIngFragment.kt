@@ -229,10 +229,10 @@ class BusinessIngFragment : Fragment() {
         //暂停
         binding.argPic.setOnClickListener {
             if (QuerySql.QueryBasic().businessInterrupt) {
-                if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
+//                if(RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
                     processClickDialog?.show()
                     pause()
-                }
+//                }
             }
         }
     }
