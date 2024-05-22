@@ -84,8 +84,8 @@ class GuidePointAdapter (var context: Context, var datas:List<QueryPointEntity>)
 //                        .priority((Priority.HIGH))//优先级设置最高
 //                )
                 .transform(GranularRoundedCorners(12f,12f,0f,0f))
-                .skipMemoryCache(true) // 跳过内存缓存
-                .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
+//                .skipMemoryCache(true) // 跳过内存缓存
+//                .diskCacheStrategy(DiskCacheStrategy.NONE) // 不使用磁盘缓存
 //                .transition(DrawableTransitionOptions.withCrossFade()) // 添加淡入动画
                 .into(myHolder.imageId)
         }
