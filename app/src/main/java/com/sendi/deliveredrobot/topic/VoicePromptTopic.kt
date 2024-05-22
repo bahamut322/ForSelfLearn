@@ -77,6 +77,7 @@ object VoicePromptTopic {
 
 
     fun handle(rosResult: RosResult<*>?) {
+        if(RobotStatus.stopButtonPressed.value == RobotCommand.STOP_BUTTON_PRESSED) return
         CopyAssetsUtils.copyAssetFolder(MyApplication.instance,ASSETS_DIR,VOICE_DIR)
         // 挡路状态
         //                        LogUtil.i("VOICE_PROMPT_TOPIC-->${rosResult.response}")

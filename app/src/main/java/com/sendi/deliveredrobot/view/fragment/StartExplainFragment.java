@@ -106,19 +106,19 @@ public class StartExplainFragment extends Fragment {
 
 
     private void status() {
-        Stat.setOnChangeListener(() -> {
-            if (Stat.getFlage() == 2) {
-                //暂停
-//                Universal.taskQueue.pause();
-                MediaPlayerHelper.getInstance().pause();
-                SpeakHelper.INSTANCE.pause();
-            } else if (Stat.getFlage() == 3) {
-                //继续
-//                Universal.taskQueue.resume();
-                MediaPlayerHelper.getInstance().resume();
-                SpeakHelper.INSTANCE.resume();
-            }
-        });
+//        Stat.setOnChangeListener(() -> {
+//            if (Stat.getFlage() == 2) {
+//                //暂停
+////                Universal.taskQueue.pause();
+//                MediaPlayerHelper.getInstance().pause();
+//                SpeakHelper.INSTANCE.pause();
+//            } else if (Stat.getFlage() == 3) {
+//                //继续
+////                Universal.taskQueue.resume();
+//                MediaPlayerHelper.getInstance().resume();
+//                SpeakHelper.INSTANCE.resume();
+//            }
+//        });
     }
 
     @SuppressLint("SetTextI18n")

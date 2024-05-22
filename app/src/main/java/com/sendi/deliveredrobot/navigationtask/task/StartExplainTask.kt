@@ -12,6 +12,7 @@ import com.sendi.deliveredrobot.helpers.ReportDataHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
+import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.TaskDto
 import com.sendi.deliveredrobot.service.TaskStageEnum
@@ -57,43 +58,51 @@ class StartExplainTask(taskModel: TaskModel, needReportData: Boolean = true) : A
 //        }
 //        TaskQueues.executeNextTask()
         SafeStateTopic.setSafeStateListener { safeState: SafeState ->
-            if (safeState.safeState == SafeState.STATE_IS_TRIGGING) {
-                // 按下
-                TaskArray.setToDo("3")
-                //播报语音音量
-                MediaPlayerHelper.getInstance().pause()
-                SpeakHelper.pause()
-                if (RobotStatus.manageStatus == RobotCommand.MANAGE_STATUS_CONTINUE) {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
-                    }
-                }
-            }
-            if (safeState.safeState == SafeState.STATE_IS_NOT_TRIGGING) {
-                // 抬起
-                if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
-                    MediaPlayerHelper.getInstance().resume()
-                    SpeakHelper.resume()
-                }
-                when (RobotStatus.manageStatus) {
-                    RobotCommand.MANAGE_STATUS_STOP -> {
-                        if (Universal.explainUnSpeak) {
-                            TaskArray.setToDo("5")
+            when(safeState.safeState){
+                SafeState.STATE_IS_TRIGGING -> {
+                    // 按下
+                    TaskArray.setToDo("3")
+                    //播报语音音量
+                    MediaPlayerHelper.getInstance().pause()
+                    SpeakHelper.pause()
+                    when(RobotStatus.manageStatus){
+                        RobotCommand.MANAGE_STATUS_STOP -> {
+                            BillManager.currentBill()?.addCurrentTask()
                         }
-                    }
 
-                    RobotCommand.MANAGE_STATUS_PAUSE -> {
-                        if (Universal.explainUnSpeak) {
-                            TaskArray.setToDo("5")
-                            return@setSafeStateListener
+                        RobotCommand.MANAGE_STATUS_CONTINUE -> {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_PAUSE)
+                            }
                         }
-                        CoroutineScope(Dispatchers.Default).launch {
-                            ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                    }
+                }
+                SafeState.STATE_IS_NOT_TRIGGING -> {
+                    // 抬起
+                    if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
+                        MediaPlayerHelper.getInstance().resume()
+                        SpeakHelper.resume()
+                    }
+                    when (RobotStatus.manageStatus) {
+                        RobotCommand.MANAGE_STATUS_STOP -> {
+                            if (Universal.explainUnSpeak) {
+                                TaskArray.setToDo("5")
+                            }
+                            BillManager.currentBill()?.executeNextTask()
+                        }
+
+                        RobotCommand.MANAGE_STATUS_PAUSE -> {
+                            if (Universal.explainUnSpeak) {
+                                TaskArray.setToDo("5")
+                                return@setSafeStateListener
+                            }
+                            CoroutineScope(Dispatchers.Default).launch {
+                                ROSHelper.manageRobot(RobotCommand.MANAGE_STATUS_CONTINUE)
+                            }
                         }
                     }
                 }
             }
-            null
         }
         taskModel?.bill?.executeNextTask()
     }

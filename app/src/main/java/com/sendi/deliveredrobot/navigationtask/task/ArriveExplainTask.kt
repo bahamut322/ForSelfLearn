@@ -1,8 +1,12 @@
 package com.sendi.deliveredrobot.navigationtask.task
 
 import android.os.Looper
+import chassis_msgs.SafeState
+import com.sendi.deliveredrobot.RobotCommand
+import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.helpers.ExplainManager
 import com.sendi.deliveredrobot.helpers.MediaPlayerHelper
+import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.model.ExplainStatusModel
 import com.sendi.deliveredrobot.model.MyResultModel
@@ -10,13 +14,18 @@ import com.sendi.deliveredrobot.model.TaskModel
 import com.sendi.deliveredrobot.navigationtask.AbstractTask
 import com.sendi.deliveredrobot.navigationtask.BillManager
 import com.sendi.deliveredrobot.navigationtask.ExplainTaskBill
+import com.sendi.deliveredrobot.navigationtask.RobotStatus
 import com.sendi.deliveredrobot.service.PlaceholderEnum
 import com.sendi.deliveredrobot.service.PlaceholderEnum.Companion.replaceText
 import com.sendi.deliveredrobot.service.TaskStageEnum
+import com.sendi.deliveredrobot.topic.SafeStateTopic
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.view.widget.MediaStatusManager
+import com.sendi.deliveredrobot.view.widget.TaskArray
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -42,6 +51,24 @@ class ArriveExplainTask(taskModel: TaskModel): AbstractTask(taskModel) {
     }
 
     override suspend fun execute() {
+        SafeStateTopic.setSafeStateListener { safeState: SafeState ->
+            when(safeState.safeState){
+                SafeState.STATE_IS_TRIGGING -> {
+                    // 按下
+                    TaskArray.setToDo("3")
+                    //播报语音音量
+                    MediaPlayerHelper.getInstance().pause()
+                    SpeakHelper.pause()
+                }
+                SafeState.STATE_IS_NOT_TRIGGING -> {
+                    // 抬起
+                    if (!Universal.speaking && !Universal.process && !Universal.changing && !Universal.finish) {
+                        MediaPlayerHelper.getInstance().resume()
+                        SpeakHelper.resume()
+                    }
+                }
+            }
+        }
         if (route != null) {
             notifyFragmentUpdate()
             status = ExplainStatusModel.STATUS_ARRIVE_PROCESS
