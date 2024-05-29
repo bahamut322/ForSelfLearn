@@ -25,6 +25,7 @@ import com.sendi.deliveredrobot.helpers.ROSHelper
 import com.sendi.deliveredrobot.room.dao.DeliveredRobotDao
 import com.sendi.deliveredrobot.room.database.DataBaseDeliveredRobotMap
 import com.sendi.deliveredrobot.room.entity.BasicConfig
+import com.sendi.deliveredrobot.service.UpdateReturn
 import com.sendi.deliveredrobot.utils.LogUtil
 import com.sendi.deliveredrobot.utils.NavigationBarUtil
 import com.sendi.deliveredrobot.utils.ToastUtil
@@ -238,6 +239,7 @@ class DebugSettingFragment : Fragment() {
                             resetResultStatusDialog.show()
                             delay(1000)
                             resetResultStatusDialog.dismiss()
+                            UpdateReturn.sendMapData()
                         }else{
                             //重置失败
                             val resetResultStatusDialog = getResetResultDialog(ResetFactoryDataStatusDialog.RESET_TYPE_FAILURE)

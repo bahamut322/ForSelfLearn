@@ -3,15 +3,12 @@ package com.sendi.deliveredrobot
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.Log
 import com.iflytek.aikitdemo.ability.IFlytekAbilityManager
 import com.iflytek.vtncaetest.ContextHolder
-import com.sendi.deliveredrobot.baidutts.BaiduTTSHelper
 import com.sendi.deliveredrobot.entity.Universal
 import com.sendi.deliveredrobot.handler.CrashHandler
 import com.sendi.deliveredrobot.helpers.DialogHelper
-import com.sendi.deliveredrobot.helpers.SpeakHelper
 import com.sendi.deliveredrobot.interfaces.DownLoadListener
 import com.sendi.deliveredrobot.navigationtask.DownloadBill
 import com.sendi.deliveredrobot.navigationtask.RobotStatus
@@ -25,6 +22,7 @@ import org.litepal.LitePal
 import org.xutils.x
 import java.io.File
 import kotlin.concurrent.thread
+
 
 class MyApplication : Application() {
     companion object {
@@ -99,8 +97,14 @@ class MyApplication : Application() {
             if (Usbcontorl.isload) {
                 Usbcontorl.usb3803_mode_setting(1) //打开5V
             }
-//        CommonHelper.executeRebootVoiceRecord()
 
-
+        val cacheFile = File(
+            this.cacheDir,
+//            Environment.getExternalStorageDirectory(),
+            "cache_path_name"
+        )
+        if (!cacheFile.exists()) {
+            cacheFile.mkdir()
+        }
     }
 }

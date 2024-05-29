@@ -4,17 +4,21 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -22,9 +26,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.sendi.deliveredrobot.MyApplication
 import com.sendi.deliveredrobot.R
 import com.sendi.deliveredrobot.databinding.FragmentAppManagerBinding
 import com.sendi.deliveredrobot.utils.LogUtil
+import com.sendi.deliveredrobot.utils.MimeTypeMapUtils
+import com.sendi.deliveredrobot.utils.NetUtils
+import okhttp3.Cache
+import okhttp3.CacheControl
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.File
+import java.io.IOException
+import java.lang.reflect.Method
 import kotlin.math.abs
 
 
@@ -55,8 +71,19 @@ class AppManagerFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility", "SetJavaScriptEnabled")
     private fun initWebView() {
         // 设置 WebView 的基本属性
-        val webSettings: WebSettings = binding.webView.settings
-        webSettings.javaScriptEnabled = true
+//        val settings: WebSettings = binding.webView.settings
+//        settings.javaScriptEnabled = true
+//        //设置缓存模式
+//        settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+//        // 开启DOM storage API 功能
+//        settings.domStorageEnabled = true
+//        // 开启database storage API功能
+//        settings.databaseEnabled = true
+//        settings.setAppCacheEnabled(true)
+//        settings.setAppCacheMaxSize(1024*1024*100)
+////        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+//        val path = "${MyApplication.instance?.cacheDir}/cache_path_name"
+//        settings.setAppCachePath(path)
         // 设置 WebViewClient，处理页面导航
         binding.webView.webViewClient = WebViewClient()
         // 设置 WebChromeClient，处理页面加载进度等
@@ -66,6 +93,43 @@ class AppManagerFragment : Fragment() {
             gestureDetector.onTouchEvent(event)
             false
         }
+
+        //网页监听
+        binding.webView.apply {
+            webViewClient = object : WebViewClient() {
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): WebResourceResponse? {
+                    return getNewResponse(request)
+                }
+                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                    val url = request.url.toString()
+                    // 默认情况下，继续在 WebView 内加载新的链接
+                    view.loadUrl(url)
+                    return true
+                }
+                override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+                    binding.progress.visibility = View.VISIBLE
+                    super.onPageStarted(view, url, favicon)
+                }
+//
+                override fun onPageFinished(view: WebView, url: String) {
+                    binding.progress.visibility = View.GONE
+                    super.onPageFinished(view, url)
+                }
+
+                override fun onReceivedError(
+                    view: WebView?,
+                    request: WebResourceRequest?,
+                    error: WebResourceError?
+                ) {
+                    binding.progress.visibility = View.GONE
+                    LogUtil.i("网页请求出错：code:${error?.errorCode}\n description:${error?.description}")
+                }
+            }
+        }
+
     }
 
     private inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -141,46 +205,13 @@ class AppManagerFragment : Fragment() {
                 AppContentFragment.APPLET_TYPE_RICH_TEXT -> {
                     val richText = it.getString(RICH_TEXT)?:""
                     binding.webView.loadDataWithBaseURL(null, getHtmlData(richText), "text/html", "utf-8", null)
+                    binding.webView.loadData(richText, null, null)
                 }
             }
             binding.tvAppTitle.text  = name
         }
         binding.returnBlack.setOnClickListener {
             goBackInWebView()
-        }
-        //网页监听
-        binding.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                val url = request.url.toString()
-                // 默认情况下，继续在 WebView 内加载新的链接
-                view.loadUrl(url)
-                return true
-            }
-            override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-                binding.progress.visibility = View.VISIBLE
-                super.onPageStarted(view, url, favicon)
-            }
-
-            override fun onPageFinished(view: WebView, url: String) {
-                binding.progress.visibility = View.GONE
-                super.onPageFinished(view, url)
-            }
-
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                binding.progress.visibility = View.GONE
-                LogUtil.i("网页请求出错：code:${error?.errorCode}\n description:${error?.description}")
-            }
-
-            override fun onRenderProcessGone(
-                view: WebView?,
-                detail: RenderProcessGoneDetail?
-            ): Boolean {
-                return super.onRenderProcessGone(view, detail)
-            }
         }
 
     }
@@ -191,5 +222,86 @@ class AppManagerFragment : Fragment() {
                 + "<style>img{max-width: 100%; width:100%; height:auto;}*{margin:0px;}</style>"
                 + "</head>")
         return "<html>$head<body>$bodyHTML</body></html>"
+    }
+
+    private fun getNewResponse(webResourceRequest: WebResourceRequest?): WebResourceResponse? {
+        return try {
+            if (webResourceRequest?.url == null) return null
+            if(!checkUrl(webResourceRequest.url.toString())) return null
+            val cacheFile = File(
+                MyApplication.instance?.cacheDir,
+                "cache_path_name"
+            )
+            val cache = Cache(cacheFile, 1024 * 1024 * 100)
+            val okHttpClient = OkHttpClient.Builder()
+                .addNetworkInterceptor(HttpCacheInterceptor())
+                .cache(cache)
+                .connectTimeout(20L, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(20L, java.util.concurrent.TimeUnit.SECONDS)
+                .build()
+            val reqBuilder: Request.Builder = Request.Builder().url(webResourceRequest.url.toString())
+            val mimeType = MimeTypeMapUtils.getMimeTypeFromUrl(webResourceRequest.url.toString())
+            addHeader(reqBuilder, webResourceRequest.requestHeaders)
+            reqBuilder.removeHeader("Range")
+            if (!NetUtils.isConnected(requireContext())) {
+                reqBuilder.cacheControl(CacheControl.FORCE_CACHE)
+            }
+            val request: Request = reqBuilder.build()
+            val response: Response = okHttpClient.newCall(request).execute()
+            val bytes = response.body?.bytes()
+            val webResourceResponse = WebResourceResponse(
+                mimeType, "", bytes?.inputStream()
+            )
+            return if (response.code == 504 && !NetUtils.isConnected(requireContext())) {
+                null
+            } else {
+                var message = response.message
+                if (TextUtils.isEmpty(message)) {
+                    message = "OK"
+                }
+                try {
+                    webResourceResponse.setStatusCodeAndReasonPhrase(response.code, message)
+                } catch (var13: java.lang.Exception) {
+                    return null
+                }
+                webResourceResponse.setResponseHeaders(
+                    NetUtils.multimapToSingle(
+                        response.headers.toMultimap()
+                    )
+                )
+                webResourceResponse
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    internal class HttpCacheInterceptor : Interceptor {
+        @Throws(IOException::class)
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request: Request = chain.request()
+            val originResponse: Response = chain.proceed(request)
+            return originResponse.newBuilder()
+                .removeHeader("Pragma").removeHeader("Cache-Control")
+                .header("Cache-Control", "max-age=31536000").build()
+        }
+    }
+
+    private fun addHeader(reqBuilder: Request.Builder, headers: Map<String?, String?>?) {
+        if (headers != null) {
+            val var3: Iterator<*> = headers.entries.iterator()
+            while (var3.hasNext()) {
+                val (key, value) = var3.next() as Map.Entry<*, *>
+                reqBuilder.addHeader(key as String, value as String)
+            }
+        }
+    }
+
+    private fun checkUrl(url: String): Boolean{
+        if (TextUtils.isEmpty(url)) {
+            return false
+        } else if (!url.startsWith("http")) {
+            return false
+        }
+        return true
     }
 }

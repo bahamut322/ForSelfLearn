@@ -168,4 +168,6 @@ dependencies {
         exclude group: 'com.squareup.okio'
         exclude group: 'org.jetbrains.kotlin'
     }
+    //cache web view 原生的缓存机制不生效，只好搞个三方的用用
+//    implementation 'ren.yale.android:cachewebviewlib:2.2.1'
 }
