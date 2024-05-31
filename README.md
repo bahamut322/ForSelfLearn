@@ -13,7 +13,7 @@ voice_record_command.properties  - voiceRecordType - 0:sendi 1:艾小越<br/>
 <br/>
 
 **1.3.1注意事项**<br/>
-目前debug版应用配置了2个真实的语义模型和2个模拟的语义模型：
+目前debug版应用配置了2个真实的语义模型和2个模拟的语义模型：voiceRecordType
 0：aiui
 1: 艾小越
 2: 模拟1（50%几率回复“test1"，50%几率无回复）

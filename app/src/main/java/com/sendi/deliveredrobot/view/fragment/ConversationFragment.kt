@@ -638,7 +638,7 @@ class ConversationFragment : Fragment() {
     }
 
     /**
-     * @description 定义 未返回 null，无答案 ""
+     * @description 定义 conversationAnswerModel 未返回 null，无答案 conversationAnswerModel.answer ""
      * @description 如果当前有答案，则查看 < index 的答案，如果都有返回且均没有答案，则使用当前答案，并从集合中清除此项；如果存在未返回，则缓存当前答案。
      *              如果当前没有答案，如果 < index 存在未返回，则缓存当前未无答案，否则往后遍历，如果未遇到未返回，则使用首个答案，如果遇到队列末尾，则输出一个默认语句；如果遇到未返回，则缓存当前为无答案。
      *
